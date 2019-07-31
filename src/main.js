@@ -8,6 +8,8 @@ import router from './router/index'
 import ElementUI from './lib/elementUI/config'
 ElementUI(Vue);
 
+import './assets/css/base.css'
+
 Vue.config.productionTip = false
 
 window.vm = new Vue({
