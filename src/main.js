@@ -8,6 +8,10 @@ import router from './router/index'
 import ElementUI from './lib/elementUI/config'
 ElementUI(Vue);
 
+// 导入并挂载axios
+import axios from './lib/axiosInterceptor/axios'
+window.axios = axios;
+
 import './assets/css/base.css'
 
 Vue.config.productionTip = false
