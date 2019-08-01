@@ -1,5 +1,8 @@
 import axios from 'axios'
 
+// axios.defaults.baseURL = "";
+axios.defaults.withCredentials = true;
+
 // 添加一个请求拦截器
 axios.interceptors.request.use(function (config) {
   // Do something before request is sent
@@ -18,4 +21,4 @@ axios.interceptors.response.use(function (response) {
   return Promise.reject(error);
 });
 
-export default axios
+export default axios;

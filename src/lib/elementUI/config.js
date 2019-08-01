@@ -59,9 +59,11 @@ import {
   // Cascader,
   // ColorPicker,
   // Transfer,
-  // Container,
-  // Header,
-  // Aside,
+  Container,
+  Header,
+	Aside,
+	Divider,
+	Avatar,
   // Main,
   // Footer,
   // Loading,
@@ -129,9 +131,11 @@ export default (Vue) => {
 	// Vue.use(CollapseItem)
 	// Vue.use(Cascader)
 	// Vue.use(ColorPicker)
-	// Vue.use(Container)
-	// Vue.use(Header)
-	// Vue.use(Aside)
+	Vue.use(Container)
+	Vue.use(Header)
+	Vue.use(Aside)
+	Vue.use(Divider)
+	Vue.use(Avatar)
 	// Vue.use(Main)
 	// Vue.use(Footer)
 
