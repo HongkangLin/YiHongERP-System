@@ -74,7 +74,7 @@ import {
 
 export default (Vue) => {
 	Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 };
-    Vue.use(Pagination)
+  Vue.use(Pagination)
 	// Vue.use(Dialog)
 	// Vue.use(Autocomplete)
 	// Vue.use(Dropdown)

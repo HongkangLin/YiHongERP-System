@@ -11,6 +11,10 @@ const routes = [{
 		path: '/F0101/F010101', //首页
 		name: 'indexPage',
 		component: () => import(/* webpackChunkName: "indexPage" */ '../views/indexPage/index.vue'),
+	}, {
+		path: '/F0701/F010102', //系统管理-权限-用户管理
+		name: 'userMgmt',
+		component: () => import(/* webpackChunkName: "userMgmt" */ '../views/systemManagement/userMgmt.vue'),
 	}]
 }, {
 	path: '/login', //登录页
