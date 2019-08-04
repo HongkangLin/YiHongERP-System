@@ -12,9 +12,6 @@ module.exports = {
 				'@': resolve('src'),
 				'^': resolve('views')
 			}
-		},
-		externals: {
-			'axios': 'axios'
 		}
 	}
 }

@@ -104,9 +104,11 @@ export default {
         
     }
   }
+  // 左侧导航栏及内容区
   .navAndMain {
     height: calc(100vh - 60px);
     >.el-aside {
+      width: 64px !important;
       height: 100%;
       .classTwoMenu {
         height: 100%;
@@ -137,6 +139,7 @@ export default {
 .el-menu--vertical {
   .el-menu.el-menu--popup {
     padding: 0;
+    margin-left: 0;
     background-color: #eaedf1!important;
     .el-menu-item-group {
       .el-menu-item-group__title {
