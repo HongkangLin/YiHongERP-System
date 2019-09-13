@@ -49,7 +49,7 @@
         </el-menu>
       </el-aside>
       <!-- 主体区域 -->
-		  <router-view></router-view>
+		  <router-view class="mainView"></router-view>
     </el-container>
   </el-container>
 </template>
@@ -131,6 +131,14 @@ export default {
         }
         
       }
+    }
+
+    // router-view区域
+    .mainView {
+      width: calc(100vw - 64px);
+      height: calc(100vh - 60px);
+      overflow: auto;
+      font-size: 14px;
     }
   }
 }
