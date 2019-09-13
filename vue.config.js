@@ -10,7 +10,8 @@ module.exports = {
 			alias: {
 				'@public': resolve('public'),
 				'@': resolve('src'),
-				'^': resolve('views')
+				'^': resolve('views'),
+				'#': resolve('src/components')
 			}
 		}
 	}
