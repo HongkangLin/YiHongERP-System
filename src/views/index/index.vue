@@ -3,7 +3,7 @@
     <!-- 顶部一级菜单 -->
     <el-header>
       <div class="logo"></div>
-      <el-menu default-active="F01" class="classOneMenu" mode="horizontal" background-color="#65c87a" text-color="#fff" active-text-color="#555c63" @select="handleSelect">
+      <el-menu default-active="F01" class="classOneMenu" mode="horizontal" background-color="#70b69e" text-color="#fff" active-text-color="#555c63" @select="handleSelect">
         <el-menu-item index="F01">后台首页</el-menu-item>
         <el-menu-item index="F02">产品管理</el-menu-item>
         <el-menu-item index="F03">采购管理</el-menu-item>
@@ -49,7 +49,7 @@
         </el-menu>
       </el-aside>
       <!-- 主体区域 -->
-		  <router-view></router-view>
+		  <router-view class="mainView"></router-view>
     </el-container>
   </el-container>
 </template>
@@ -78,7 +78,7 @@ export default {
     .logo {
       width: 120px;
       height: 100%;
-      background-color: #65c87a;
+      background-color: #70b69e;
     }
     .classOneMenu {
       width: calc(100vw - 395px);
@@ -87,10 +87,10 @@ export default {
       width: 275px;
       display: flex;
       align-items: center;
-      background-color: #65c87a;
+      background-color: #70b69e;
       color: #fff;
       .el-divider {
-        background-color: #51a062;
+        background-color: #539a86;
         margin: 0 15px;
       }
       .el-icon-s-home,
@@ -131,6 +131,14 @@ export default {
         }
         
       }
+    }
+
+    // router-view区域
+    .mainView {
+      width: calc(100vw - 64px);
+      height: calc(100vh - 60px);
+      overflow: auto;
+      font-size: 14px;
     }
   }
 }
