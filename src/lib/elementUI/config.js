@@ -2,7 +2,7 @@
 import './theme/index.css'
 import {
   Pagination,
-  // Dialog,
+  Dialog,
   // Autocomplete,
   // Dropdown,
   // DropdownMenu,
@@ -34,8 +34,8 @@ import {
   // Tooltip,
   // Breadcrumb,
   // BreadcrumbItem,
-  // Form,
-  // FormItem,
+  Form,
+  FormItem,
   Tabs,
   TabPane,
   // Tag,
@@ -75,7 +75,7 @@ import {
 export default (Vue) => {
 	Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 };
   Vue.use(Pagination)
-	// Vue.use(Dialog)
+	Vue.use(Dialog)
 	// Vue.use(Autocomplete)
 	// Vue.use(Dropdown)
 	// Vue.use(DropdownMenu)
@@ -107,8 +107,8 @@ export default (Vue) => {
 	// Vue.use(Tooltip)
 	// Vue.use(Breadcrumb)
 	// Vue.use(BreadcrumbItem)
-	// Vue.use(Form)
-	// Vue.use(FormItem)
+	Vue.use(Form)
+	Vue.use(FormItem)
 	Vue.use(Tabs)
 	Vue.use(TabPane)
 	// Vue.use(Tag)
