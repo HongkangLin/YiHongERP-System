@@ -62,7 +62,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <pageination :total="60"></pageination>
+    <div class="splitPage"><pageination :total="90" :pageNum="10"></pageination></div>
   </div>
 </template>
 
@@ -97,6 +97,15 @@ export default {
         desc: '负责小家电销售业务'
       }]
     };
+  },
+  mounted () {
+    this.queryList();
+  },
+  methods: {
+    async queryList () {
+      let data = await window.axios.get('/func/queryAllFuncList');
+      console.log(data.data);
+    }
   }
 }
 </script>

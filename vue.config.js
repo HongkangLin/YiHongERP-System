@@ -14,5 +14,18 @@ module.exports = {
 				'#': resolve('src/components')
 			}
 		}
+	},
+	devServer: {
+		port: '8080',
+		proxy: {
+			'^': {
+				target: 'http://47.112.213.96',
+				changeOrigin: true,
+				secure: false,
+				pathRewrite: {
+					'^': '/erp'
+				}
+			}
+		}
 	}
 }
