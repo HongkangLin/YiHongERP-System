@@ -2,7 +2,11 @@
   <div class="userMgmt_wrap">
     <!-- 顶部面包屑 -->
 
-    <div class="main">
+    <!-- 新增或编辑用户组件 -->
+    <AddOrEditPerson v-if="showAddOrEditPage"></AddOrEditPerson>
+
+    <!-- 权限设置 > 用户管理页 -->
+    <div v-else class="main">
       <!-- 侧边栏 -->
       <aside class="aside">
         <div class="top">架构管理</div>
@@ -92,7 +96,7 @@
               </el-option>
             </el-select>
           </div>
-          <el-button type="primary">新增用户</el-button>
+          <el-button type="primary" @click="showAddOrEditPage = true">新增用户</el-button>
         </div>
         <!-- 列表区 -->
         <div class="tableArea">
@@ -182,14 +186,14 @@
       </span>
     </el-dialog>
 
-    <!-- 新增或编辑用户组件 -->
-    
 	</div>
 </template>
 
 <script>
 import DialogContent from './dialogContent';
+import AddOrEditPerson from './addOrEditPerson';
 import Pagination from '../../components/pagination/pagination';
+
 export default {
   data() {
     return {
@@ -253,10 +257,13 @@ export default {
       dialogVisible: false, //显示弹窗
       dialogType: "", //哪个弹窗
       dialogTitle: "", //弹窗标题
+
+      showAddOrEditPage: false, //显示/新增或编辑用户页
     }
   },
   components: {
     DialogContent, //弹窗
+    AddOrEditPerson, //新增或编辑用户组件
     Pagination
   },
   methods: {
