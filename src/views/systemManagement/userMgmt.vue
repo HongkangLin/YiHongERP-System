@@ -2,7 +2,11 @@
   <div class="userMgmt_wrap">
     <!-- 顶部面包屑 -->
 
-    <div class="main">
+    <!-- 新增或编辑用户组件 -->
+    <AddOrEditPerson v-if="showAddOrEditPage"></AddOrEditPerson>
+
+    <!-- 权限设置 > 用户管理页 -->
+    <div v-else class="main">
       <!-- 侧边栏 -->
       <aside class="aside">
         <div class="top">架构管理</div>
@@ -92,7 +96,7 @@
               </el-option>
             </el-select>
           </div>
-          <el-button type="primary">新增用户</el-button>
+          <el-button type="primary" @click="showAddOrEditPage = true">新增用户</el-button>
         </div>
         <!-- 列表区 -->
         <div class="tableArea">
@@ -159,7 +163,7 @@
               <template slot-scope="scope">
                 <el-button type="text" size="small">编辑</el-button>
                 <el-divider direction="vertical"></el-divider>
-                <el-button type="text" size="small">删除</el-button>
+                <el-button type="text" size="small" @click="deletePerson">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -169,27 +173,27 @@
       </main>
     </div>
 
-    <!-- 弹窗 - 新建一级部门 -->
+    <!-- 弹窗 -->
+    <el-dialog
+      :title="dialogTitle"
+      :visible.sync="dialogVisible"
+      width="40%">
+      <!-- 各弹窗内容 -->
+      <DialogContent :dialogType="dialogType"></DialogContent>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
 
-    <!-- 弹窗 - 新建部门 -->
-
-    <!-- 弹窗 - 编辑部门 -->
-
-    <!-- 弹窗 - 删除部门 -->
-
-    <!-- 弹窗 - 批量修改部门 -->
-
-    <!-- 弹窗 - 批量修改角色 -->
-
-    <!-- 弹窗 - 表格内删除用户 -->
-
-    <!-- 新增或编辑用户组件 -->
-    
 	</div>
 </template>
 
 <script>
+import DialogContent from './dialogContent';
+import AddOrEditPerson from './addOrEditPerson';
 import Pagination from '../../components/pagination/pagination';
+
 export default {
   data() {
     return {
@@ -250,32 +254,74 @@ export default {
 
       tableData: [{}],
       multipleSelection: [], //批量选中的项
+      dialogVisible: false, //显示弹窗
+      dialogType: "", //哪个弹窗
+      dialogTitle: "", //弹窗标题
 
+      showAddOrEditPage: false, //显示/新增或编辑用户页
     }
   },
   components: {
+    DialogContent, //弹窗
+    AddOrEditPerson, //新增或编辑用户组件
     Pagination
   },
   methods: {
+    // 显示弹窗
+    showDialog(type) {
+      switch (type) {
+        case "1":
+        case "2":
+          this.dialogTitle = "新建部门";
+          break;
+
+        case "3":
+          this.dialogTitle = "编辑部门";
+          break;
+
+        case "4":
+          this.dialogTitle = "删除确认";
+          break;
+
+        case "5":
+          
+          break;
+
+        case "6":
+          
+          break;
+
+        case "7":
+          this.dialogTitle = "删除确认";
+          break;
+      }
+      this.dialogType = type;
+      this.dialogVisible = true;
+    },
 
     // 新建一级部门
     addFirstClassDpt(node, data) {
-
+      this.showDialog("1");
     },
 
     // 新增部门
     addDpt(node, data) {
-
+      this.showDialog("2");
     },
 
     // 编辑部门
     editDpt(node, data) {
-
+      this.showDialog("3");
     },
 
     // 删除部门
     deleteDpt(node, data) {
-
+      this.showDialog("4");
+    },
+    
+    // 删除个人
+    deletePerson() {
+      this.showDialog("7");
     },
 
     filterDpt(value, data) {
