@@ -2,19 +2,10 @@
   <el-container class="index_wrap">
     <!-- 顶部一级菜单 -->
     <el-header>
-      <div class="logo"></div>
-      <el-menu default-active="F01" class="classOneMenu" mode="horizontal" background-color="#70b69e" text-color="#fff" active-text-color="#555c63" @select="handleSelect">
-        <el-menu-item index="F01">后台首页</el-menu-item>
-        <el-menu-item index="F02">产品管理</el-menu-item>
-        <el-menu-item index="F03">采购管理</el-menu-item>
-      </el-menu>
+      <div class="systemName"><a href="/">毅宏ERP管理系统</a></div>
       <div class="iconPanel">
         <el-avatar icon="el-icon-user-solid"></el-avatar>
         <span class="userName">Admin</span>
-        <el-divider direction="vertical"></el-divider>
-        <i class="el-icon-s-home"></i>
-        <el-divider direction="vertical"></el-divider>
-        <i class="el-icon-message-solid"></i>
         <el-divider direction="vertical"></el-divider>
         <i class="el-icon-switch-button"></i>
       </div>
@@ -73,35 +64,36 @@ export default {
 .index_wrap {
   // 顶部一级菜单
   .el-header {
+    height: 50px !important;
+    background-color: #68c0a7;
     display: flex;
-    padding: 0;
-    .logo {
-      width: 120px;
-      height: 100%;
-      background-color: #70b69e;
-    }
-    .classOneMenu {
-      width: calc(100vw - 395px);
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    .systemName > a{
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
     }
     .iconPanel {
-      width: 275px;
       display: flex;
       align-items: center;
-      background-color: #70b69e;
       color: #fff;
+      .el-avatar {
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+      }
       .el-divider {
         background-color: #539a86;
         margin: 0 15px;
       }
-      .el-icon-s-home,
-      .el-icon-message-solid,
-      .el-icon-switch-button {
-        font-size: 22px;
-      }
       .userName {
         margin-left: 8px;
       }
-        
+      .el-icon-switch-button:hover {
+        cursor: pointer;
+      }
     }
   }
   // 左侧导航栏及内容区
