@@ -80,12 +80,8 @@
               </el-option>
             </el-select>
             <el-select v-model="groupHandler" placeholder="批量操作" size="mini">
-              <el-option
-                v-for="item in []"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
+              <el-option label="批量修改部门" value="1"></el-option>
+              <el-option label="批量修改角色" value="2"></el-option>
             </el-select>
             <el-select v-model="searchOpts.roleName" placeholder="角色名称" size="mini">
               <el-option
