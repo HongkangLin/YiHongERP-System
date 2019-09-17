@@ -15,6 +15,10 @@ const routes = [{
 		path: '/F0701/F010102', //系统管理-权限-用户管理
 		name: 'userMgmt',
 		component: () => import(/* webpackChunkName: "userMgmt" */ '../views/systemManagement/userMgmt.vue'),
+	}, {
+		path: '/F0701/F010103', //系统管理-权限-用户角色管理
+		name: 'userRoleMgmt',
+		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/systemManagement/userRoleMgmt.vue'),
 	}]
 }, {
 	path: '/login', //登录页
