@@ -24,22 +24,25 @@
             :filter-node-method="filterDpt"
             :expand-on-click-node="false">
             <span class="custom-tree-node" slot-scope="{ node, data }">
-              <span>{{ node.label }}</span>
+              <span @click="clickTreeQueryTable(data.id)">{{ node.label + "  (" + data.userCount + ")"}}</span>
               <!-- 一级 -->
               <span v-if="node.level === 1">
+                <i class="el-icon-plus"></i>
                 <el-button
                   type="text"
                   size="mini"
-                  @click="() => addFirstClassDpt(data)">
+                  @click="() => addFirstClassDpt(node, data)">
                   新建一级部门
                 </el-button>
               </span>
-              <!-- 三级 -->
+              <!-- 二级 -->
+              <span v-if="node.level === 2" class="noBtn"></span>
+              <!-- 大于等于三级 -->
               <span v-if="node.level > 2">
                 <el-button
                   type="text"
                   size="mini"
-                  @click="() => addDpt(data)">
+                  @click="() => addDpt(node, data)">
                   新增
                 </el-button>
                 <el-button
@@ -49,6 +52,7 @@
                   编辑
                 </el-button>
                 <el-button
+                  v-if="data.userCount === 0"
                   type="text"
                   size="mini"
                   @click="() => deleteDpt(node, data)">
@@ -68,27 +72,24 @@
               size="mini"
               class="searchMatch"
               placeholder="输入员工姓名/邮箱/手机号"
-              v-model="searchOpts.searchMatch">
-              <i slot="suffix" class="el-input__icon el-icon-search"></i>
+              v-model="searchOpts.searchValue">
+              <i slot="suffix" class="el-input__icon el-icon-search" @click="resetPageNumAndQuery"></i>
             </el-input>
             <el-select v-model="searchOpts.roleType" placeholder="角色类型" size="mini">
-              <el-option
-                v-for="item in []"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
+              <el-option label="超级管理员" :value="1"></el-option>
+              <el-option label="主管" :value="2"></el-option>
+              <el-option label="员工" :value="3"></el-option>
             </el-select>
             <el-select v-model="groupHandler" placeholder="批量操作" size="mini">
               <el-option label="批量修改部门" value="1"></el-option>
               <el-option label="批量修改角色" value="2"></el-option>
             </el-select>
-            <el-select v-model="searchOpts.roleName" placeholder="角色名称" size="mini">
+            <el-select v-model="searchOpts.roleId" placeholder="角色名称" size="mini">
               <el-option
-                v-for="item in []"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
+                v-for="item in roleNameList"
+                :key="item.roleId"
+                :label="item.roleName"
+                :value="item.roleId">
               </el-option>
             </el-select>
           </div>
@@ -110,7 +111,7 @@
             </el-table-column>
             <el-table-column
               align="center"
-              prop="name"
+              prop="userName"
               label="姓名"
               min-width="120"
               show-overflow-tooltip>
@@ -124,7 +125,7 @@
             </el-table-column>
             <el-table-column
               align="center"
-              prop="phone"
+              prop="mobile"
               label="手机号"
               min-width="120"
               show-overflow-tooltip>
@@ -148,7 +149,7 @@
               label="状态"
               min-width="120">
               <template slot-scope="scope">
-                <el-switch v-model="scope.row.status" ></el-switch>
+                <el-switch v-model="scope.row.status" @change="changeUserStatus({id: scope.row.id, action: scope.row.status})"></el-switch>
               </template>
             </el-table-column>
             <el-table-column
@@ -165,7 +166,7 @@
           </el-table>
         </div>
         <!-- 分页器 -->
-        <Pagination :total="100" :pageNum="1"></Pagination>
+        <Pagination :total="pagination.total" :pageNum="searchOpts.pageNum" :pageSize="searchOpts.pageSize" @changePageNum="changePageNum" @changePageSize="changePageSize"></Pagination>
       </main>
     </div>
 
@@ -193,62 +194,24 @@ import Pagination from '../../components/pagination/pagination';
 export default {
   data() {
     return {
-      dptTreeData: [{
-          id: 1,
-          label: '某某公司',
-          level: 1,
-          children: [{
-            id: 2,
-            label: '销售部',
-            level: 2,
-            children: [{
-              id: 5,
-              label: '销售一部',
-              level: 3
-            }, {
-              id: 6,
-              label: '销售二部',
-              level: 3
-            }]
-          },{
-            id: 3,
-            label: '财务部',
-            level: 2,
-            children: [{
-              id: 7,
-              label: '财务一部',
-              level: 3
-            }, {
-              id: 8,
-              label: '财务二部',
-              level: 3
-            }]
-          },{
-            id: 4,
-            label: '采购部',
-            level: 2,
-            children: [{
-              id: 9,
-              label: '采购一部',
-              level: 3
-            }, {
-              id: 10,
-              label: '采购二部',
-              level: 3
-            }]
-          }]
-        }
-      ],
+      dptTreeData: [], //架构树
 
       filterText: "",
       searchOpts: {
-        searchMatch: "", //输入员工姓名/邮箱/手机号
-        roleType: "", //角色类型
-        roleName: "" //角色名称
+        deptId: 1, //部门id
+        searchValue: "", //输入员工姓名/邮箱/手机号
+        roleType: null, //角色类型
+        roleId:  null, //角色名称
+        pageSize: 10,
+        pageNum: 1
       },
       groupHandler: "", //批量操作
+      roleNameList: [], //角色名称下拉
 
-      tableData: [{}],
+      tableData: [],
+      pagination: {
+        total: 0
+      },
       multipleSelection: [], //批量选中的项
       dialogVisible: false, //显示弹窗
       dialogType: "", //哪个弹窗
@@ -263,6 +226,85 @@ export default {
     Pagination
   },
   methods: {
+    init() {
+      let _this = this;
+      let params = {
+        deptId: 1,
+        searchValue: "",
+        pageNum: 1,
+        pageSize: 10
+      }
+      axios.all([
+        axios.get("/dept/queryAllDept"),
+        axios.get("/role/queryAllRole4Select"),
+        axios.post("/user/queryUser4DeptByPage", params)
+      ])
+      .then(axios.spread(function (AllDept, RoleName, UserTable) {
+        _this.parseAllDptData(AllDept);
+        _this.parseRoleNameData(RoleName);
+        _this.parseUserTableData(UserTable);
+      }));
+    },
+
+    // 架构树
+    parseAllDptData(data) {
+      if (data.code !== 0) return
+      let arr = JSON.parse(JSON.stringify(data.data));
+
+      let fn = (array) => {
+        array.forEach(item => {
+          if (item.childNodeList) item.childNodeList = fn(item.childNodeList)
+          item.children = item.childNodeList;
+          item.label = item.deptName;
+          delete item.childNodeList;
+          delete item.deptName;
+        });
+        return array;
+      }
+
+      this.dptTreeData = fn(arr);
+    },
+    
+    // 角色名称
+    parseRoleNameData(data) {
+      if (data.code !== 0) return
+      this.roleNameList = data.data;
+    },
+    
+    // 用户信息列表
+    parseUserTableData(data) {
+      if (data.code !== 0) return
+      data.data.list.forEach(element => {
+        if (element.roleType === 1) {
+          element.roleType = "超级管理员";
+        } else if (element.roleType === 2) {
+          element.roleType = "主管";
+        } else {
+          element.roleType = "员工";
+        }
+        element.status = Boolean(element.status);
+      });
+      // console.log(data.data);
+      this.tableData = data.data.list;
+      this.pagination.total = data.data.total;
+    },
+ 
+    resetPageNumAndQuery() {
+      this.searchOpts.pageNum = 1;
+      this.queryUserTable();
+    },
+
+    queryUserTable() {
+      axios.post("/user/queryUser4DeptByPage", this.searchOpts).then((data) => {
+        this.parseUserTableData(data);
+      })
+    },
+
+    clickTreeQueryTable(deptId) {
+      this.searchOpts.deptId = deptId;
+      this.queryUserTable();
+    },
+
     // 显示弹窗
     showDialog(type) {
       switch (type) {
@@ -327,7 +369,32 @@ export default {
 
     handleSelectionChange(val) {
       this.multipleSelection = val;
+    },
+
+    changePageNum(v) {
+      this.searchOpts.pageNum = v;
+      this.queryUserTable();
+    },
+
+    changePageSize(v) {
+      this.searchOpts.pageSize = v;
+      this.queryUserTable();
+    },
+
+    // 禁用/启用用户
+    changeUserStatus({id, action}) {
+      let params = {
+        id,
+        action: action ? "enable" : "disable"
+      }
+      axios.post("/user/enableUser", params).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("修改成功");
+      })
     }
+  },
+  created() {
+    this.init();
   },
 };
 </script>
@@ -355,13 +422,36 @@ export default {
       }
       .dptTree {
         padding: 20px;
-        .custom-tree-node {
-          flex: 1;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          font-size: 14px;
-          padding-right: 8px;
+        .el-tree {
+          /deep/.el-tree-node__content {
+            height: auto;
+            align-items: flex-start;
+            .el-tree-node__expand-icon {
+              padding-top: 0;
+              &.el-icon-caret-right {
+                padding-top: 4px;
+              }
+            }
+            .custom-tree-node {
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+              font-size: 14px;
+              padding-right: 8px;
+              padding-top: 4px;
+              .el-icon-plus {
+                color: #68c0a7;
+                font-weight: bold;
+                padding-right: 4px;
+              }
+              .noBtn {
+                display: block;
+                width: 100%;
+                height: 10px;
+              }
+            }
+          }
         }
         .searchDpt {
           margin-bottom: 20px;

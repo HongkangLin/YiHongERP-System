@@ -15,7 +15,10 @@ axios.interceptors.request.use(function (config) {
 // 添加一个响应拦截器
 axios.interceptors.response.use(function (response) {
   // Do something with response data
-  return response;
+  if (response.data.code !== 0) {
+    window.vm.$message.error(response.data.message);
+  }
+  return response.data;
 }, function (error) {
   // Do something with response error
   return Promise.reject(error);

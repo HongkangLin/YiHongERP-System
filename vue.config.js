@@ -19,6 +19,7 @@ module.exports = {
 		port: '8080',
 		proxy: {
 			'^': {
+				ws: false, // proxy websockets
 				target: 'http://47.112.213.96',
 				changeOrigin: true,
 				secure: false,

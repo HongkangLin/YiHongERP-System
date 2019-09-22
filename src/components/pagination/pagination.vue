@@ -11,8 +11,8 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page.sync="pageNum"
-      :page-size="pageSize"
+      :current-page.sync="pagination.pageNum"
+      :page-size="pagination.pageSize"
       :page-sizes="pageSizes"
       :total="total"
       layout="sizes, prev, pager, next, jumper"
@@ -47,12 +47,18 @@ export default {
   computed: {
     pagetotal() {
       return Math.ceil(this.total/this.pageSize);
+    },
+    pagination() {
+      return {
+        pageNum: this.pageNum,
+        pageSize: this.pageSize
+      }
     }
   },
   methods: {
     // 改变pageSize
     handleSizeChange(size) {
-      this.$$emit("changePageSize", size);
+      this.$emit("changePageSize", size);
     },
 
     // 改变pageNum
