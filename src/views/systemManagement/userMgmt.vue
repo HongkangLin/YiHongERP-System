@@ -173,13 +173,14 @@
 
     <!-- 弹窗 -->
     <el-dialog
+      destroy-on-close
       :title="dialogTitle"
       :visible.sync="dialogVisible"
       width="50%">
       <!-- 各弹窗内容 -->
       <DialogContent ref="dialogContent" :dialogType="dialogType" :deptName="dialogParam.deptName" :dptList="dptList" :roleNameList="roleNameList" @submitForm="dialogAct"></DialogContent>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="closeDialog">取 消</el-button>
         <el-button type="primary" @click="$refs.dialogContent.submitForm()">确 定</el-button>
       </span>
     </el-dialog>
@@ -549,6 +550,19 @@ export default {
         this.$message.success("批量修改角色成功");
         this.init();
       })
+    },
+
+    closeDialog() {
+      this.dialogVisible = false;
+      this.clearDialogData();
+    },
+
+    clearDialogData() {
+      this.$refs.dialogContent.ruleForm1.deptName = "";
+      this.$refs.dialogContent.ruleForm2.deptLevel = "";
+      this.$refs.dialogContent.ruleForm2.deptName = "";
+      this.$refs.dialogContent.ruleForm3.deptList = [];
+      this.$refs.dialogContent.ruleForm4.roleName = "";
     }
   },
   created() {
