@@ -18,7 +18,7 @@
           </el-form-item>
           <el-form-item label="角色" prop="roleId">
             <el-select v-model="ruleForm.roleId" placeholder="选择角色">
-              <el-option label="" value=""></el-option>
+              <el-option v-for="(item, index) in roleNameList" :key="index" :label="item.roleName" :value="item.roleId"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="是否启用" prop="status">
@@ -28,7 +28,7 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="选择部门" prop="deptIds">
-            <el-transfer v-model="ruleForm.deptIds" :data="deptList"></el-transfer>
+            <el-transfer v-model="ruleForm.deptIds" :data="dptList"></el-transfer>
           </el-form-item>
           <div class="chooseDptHints">部门支持多选</div>
           <el-button type="primary" size="medium" @click="submitForm('ruleForm')" class="submitBtn">提交</el-button>
@@ -51,16 +51,10 @@ export default {
         mobile: "",
         email: "",
         password: "",
-        roleId: "",
+        roleId: null,
         status: null,
         deptIds: []
       },
-      deptList: [
-        {
-          key: 1,
-          label: "采购部"
-        }
-      ],
       rules: {
         userName: [
           { required: true, message: '请输入姓名', trigger: 'blur' }
@@ -84,20 +78,91 @@ export default {
       }
     }
   },
+  props: {
+    roleNameList: { //角色下拉列表
+      type: Array,
+      required: true
+    },
+    dptList: { //部门列表
+      type: Array,
+      required: true
+    },
+    userId: { //编辑用户返显内容
+      type: Number
+    }
+  },
   methods: {
+    // 编辑用户返显内容
+    refillForm() {
+      // console.log("编辑用户返显内容");
+      axios.get(`/user/queryUserInfo4Update/${this.userId}`).then((data) => {
+        if (data.code !== 0) return
+        let obj = JSON.parse(JSON.stringify(data.data));
+        this.ruleForm.email = obj.email;
+        this.ruleForm.mobile = obj.mobile;
+        this.ruleForm.userName = obj.userName;
+        // 密码返显待解密
+        this.ruleForm.password = obj.password;
+
+        this.roleNameList.map((item) => {
+          if (item.roleId === obj.roleId) {
+            return this.ruleForm.roleId = item.roleName
+          }
+        })
+
+        this.ruleForm.status = obj.status;
+        this.ruleForm.deptIds = obj.deptIds;
+      })
+    },
     // 提交
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           console.log('submit!');
+          if (this.userId !== null) {
+            // 编辑用户
+            this.editUser();
+          } else {
+            // 新增用户
+            this.addNewUser();
+          }
         } else {
           console.log('error submit!!');
           return false;
         }
       });
     },
+
+    addNewUser() {
+      axios.post("/user/addUser", this.ruleForm).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("新增用户成功");
+        this.$emit("backToListPage");
+      })
+    },
+
+    editUser() {
+      let params = JSON.parse(JSON.stringify(this.ruleForm));
+      if (typeof(this.ruleForm.roleId) === 'string') { //直接返显,没有用下拉选
+        this.roleNameList.map((item) => {
+          if (item.roleName === params.roleId) {
+            return params.roleId = item.roleId;
+          }
+        })
+      }
+      //是否修改密码-待改
+      params.pwdFlag = "yes";
+      params.id = this.userId;
+      axios.post("/user/updateUserInfo", params).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("编辑用户成功");
+        this.$emit("backToListPage");
+      })
+    }
   },
-  
+  created() {
+    this.userId !== null && this.refillForm();
+  },
 }
 </script>
 <style lang="less" scoped>

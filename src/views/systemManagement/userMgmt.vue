@@ -3,7 +3,7 @@
     <!-- 顶部面包屑 -->
 
     <!-- 新增或编辑用户组件 -->
-    <AddOrEditPerson v-if="showAddOrEditPage"></AddOrEditPerson>
+    <AddOrEditPerson v-if="showAddOrEditPage" :roleNameList="roleNameList" :dptList="dptList" :userId="userInfoForEdit" @backToListPage="backToListPage"></AddOrEditPerson>
 
     <!-- 权限设置 > 用户管理页 -->
     <div v-else class="main">
@@ -15,6 +15,7 @@
             class="searchDpt"
             placeholder="请输入部门名称"
             v-model="filterText">
+            <i slot="suffix" class="el-input__icon el-icon-search" @click="$refs.dptTree.filter(filterText)"></i>
           </el-input>
           <el-tree
             ref="dptTree"
@@ -31,7 +32,7 @@
                 <el-button
                   type="text"
                   size="mini"
-                  @click="() => addFirstClassDpt(node, data)">
+                  @click="() => showDialog({type: '1'})">
                   新建一级部门
                 </el-button>
               </span>
@@ -42,20 +43,20 @@
                 <el-button
                   type="text"
                   size="mini"
-                  @click="() => addDpt(node, data)">
+                  @click="() => showDialog({type: '2', myId: data.id, parentId: data.parentId})">
                   新增
                 </el-button>
                 <el-button
                   type="text"
                   size="mini"
-                  @click="() => editDpt(node, data)">
+                  @click="() => showDialog({type: '3', dptId: data.id})">
                   编辑
                 </el-button>
                 <el-button
                   v-if="data.userCount === 0"
                   type="text"
                   size="mini"
-                  @click="() => deleteDpt(node, data)">
+                  @click="() => showDialog({type: '4', dptId: data.id, deptName: data.label})">
                   删除
                 </el-button>
               </span>
@@ -80,7 +81,7 @@
               <el-option label="主管" :value="2"></el-option>
               <el-option label="员工" :value="3"></el-option>
             </el-select>
-            <el-select v-model="groupHandler" placeholder="批量操作" size="mini">
+            <el-select v-model="groupHandler" placeholder="批量操作" size="mini" @change="handleMultSelection">
               <el-option label="批量修改部门" value="1"></el-option>
               <el-option label="批量修改角色" value="2"></el-option>
             </el-select>
@@ -149,7 +150,7 @@
               label="状态"
               min-width="120">
               <template slot-scope="scope">
-                <el-switch v-model="scope.row.status" @change="changeUserStatus({id: scope.row.id, action: scope.row.status})"></el-switch>
+                <el-switch v-model="scope.row.status" @change="changeUserStatus({userId: scope.row.id, action: scope.row.status})"></el-switch>
               </template>
             </el-table-column>
             <el-table-column
@@ -158,9 +159,9 @@
               label="操作"
               width="120">
               <template slot-scope="scope">
-                <el-button type="text" size="small">编辑</el-button>
+                <el-button type="text" size="small" @click="editUser(scope.row)">编辑</el-button>
                 <el-divider direction="vertical"></el-divider>
-                <el-button type="text" size="small" @click="deletePerson">删除</el-button>
+                <el-button type="text" size="small" @click="showDialog({type: '7', userId: scope.row.id})">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -174,12 +175,12 @@
     <el-dialog
       :title="dialogTitle"
       :visible.sync="dialogVisible"
-      width="40%">
+      width="50%">
       <!-- 各弹窗内容 -->
-      <DialogContent :dialogType="dialogType"></DialogContent>
+      <DialogContent ref="dialogContent" :dialogType="dialogType" :deptName="dialogParam.deptName" :dptList="dptList" :roleNameList="roleNameList" @submitForm="dialogAct"></DialogContent>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="$refs.dialogContent.submitForm()">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -206,6 +207,7 @@ export default {
         pageNum: 1
       },
       groupHandler: "", //批量操作
+      dptList: [], //部门列表
       roleNameList: [], //角色名称下拉
 
       tableData: [],
@@ -218,6 +220,14 @@ export default {
       dialogTitle: "", //弹窗标题
 
       showAddOrEditPage: false, //显示/新增或编辑用户页
+      userInfoForEdit: null, //编辑用户返显内容
+      dialogParam: {
+        userId: null, // 删除个人
+        myId: null, //新增部门
+        parentId: null, //新增部门
+        dptId: null, //编辑/删除部门
+        deptName: "", //删除部门
+      }
     }
   },
   components: {
@@ -237,12 +247,14 @@ export default {
       axios.all([
         axios.get("/dept/queryAllDept"),
         axios.get("/role/queryAllRole4Select"),
-        axios.post("/user/queryUser4DeptByPage", params)
+        axios.post("/user/queryUser4DeptByPage", params),
+        axios.get("/dept/queryDept4Select")
       ])
-      .then(axios.spread(function (AllDept, RoleName, UserTable) {
+      .then(axios.spread(function (AllDept, RoleName, UserTable, DptList) {
         _this.parseAllDptData(AllDept);
         _this.parseRoleNameData(RoleName);
         _this.parseUserTableData(UserTable);
+        _this.parseDptListData(DptList);
       }));
     },
 
@@ -288,6 +300,19 @@ export default {
       this.tableData = data.data.list;
       this.pagination.total = data.data.total;
     },
+    
+    // 部门列表
+    parseDptListData(data) {
+      if (data.code !== 0) return
+      let arr = JSON.parse(JSON.stringify(data.data));
+      arr.forEach(element => {
+        element.key = element.id;
+        element.label = element.deptName;
+        delete element.id;
+        delete element.deptName;
+      });
+      this.dptList = arr;
+    },
  
     resetPageNumAndQuery() {
       this.searchOpts.pageNum = 1;
@@ -296,6 +321,7 @@ export default {
 
     queryUserTable() {
       axios.post("/user/queryUser4DeptByPage", this.searchOpts).then((data) => {
+        if (data.code !== 0) return
         this.parseUserTableData(data);
       })
     },
@@ -306,60 +332,154 @@ export default {
     },
 
     // 显示弹窗
-    showDialog(type) {
+    showDialog({type, userId, myId, parentId, dptId, deptName}) {
       switch (type) {
         case "1":
+          this.dialogTitle = "新建部门";
+          break;
+
         case "2":
           this.dialogTitle = "新建部门";
+          this.dialogParam.myId = myId;
+          this.dialogParam.parentId = parentId;
           break;
 
         case "3":
           this.dialogTitle = "编辑部门";
+          this.dialogParam.dptId = dptId;
           break;
 
         case "4":
           this.dialogTitle = "删除确认";
+          this.dialogParam.deptName = deptName;
+          this.dialogParam.dptId = dptId;
           break;
 
         case "5":
-          
+          this.dialogTitle = "批量修改分组";
           break;
 
         case "6":
-          
+          this.dialogTitle = "批量修改角色";
           break;
 
         case "7":
           this.dialogTitle = "删除确认";
+          this.dialogParam.userId = userId;
           break;
       }
       this.dialogType = type;
       this.dialogVisible = true;
     },
 
+    dialogAct(type) {
+      switch (type) {
+        case "1":
+          this.addFirstClassDpt();
+          break;
+
+        case "2":
+          this.addDpt();
+          break;
+
+        case "3":
+          this.editDpt();
+          break;
+
+        case "4":
+          this.deleteDpt();
+          break;
+
+        case "5":
+          this.multiChangeDpt();
+          break;
+
+        case "6":
+          this.multiChangeRole();
+          break;
+
+        case "7":
+          this.deletePerson();
+          break;
+      
+        default:
+          break;
+      }
+      this.dialogVisible = false;
+    },
+
     // 新建一级部门
-    addFirstClassDpt(node, data) {
-      this.showDialog("1");
+    addFirstClassDpt() {
+      let params = {
+        deptName: this.$refs.dialogContent.ruleForm1.deptName,
+        parentId: 1
+      }
+      // console.log(params);
+      this.addDeptment(params);
     },
 
     // 新增部门
-    addDpt(node, data) {
-      this.showDialog("2");
+    addDpt() {
+      let chooseId = this.$refs.dialogContent.ruleForm2.deptLevel;
+      let params = {
+        deptName: this.$refs.dialogContent.ruleForm2.deptName,
+        parentId: chooseId === "sameLevel" ? this.dialogParam.parentId : this.dialogParam.myId  // 选择同级,用父级id; 选择下级,用自己的id 
+      }
+      this.addDeptment(params);
+    },
+
+    // 封装新建部门
+    addDeptment(params) {
+      axios.post("/dept/addChild", params).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("新增部门成功");
+        this.init();
+      })
     },
 
     // 编辑部门
-    editDpt(node, data) {
-      this.showDialog("3");
+    editDpt() {
+      let params = {
+        deptName: this.$refs.dialogContent.ruleForm1.deptName,
+        id: this.dialogParam.dptId
+      }
+      axios.post("/dept/updateDeptInfo", params).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("编辑部门成功");
+        this.init();
+      })
     },
 
     // 删除部门
-    deleteDpt(node, data) {
-      this.showDialog("4");
+    deleteDpt() {
+      let deptId = this.dialogParam.dptId;
+      axios.get(`/dept/deleteDept/${deptId}`).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("删除部门成功");
+        this.init();
+      })
+    },
+
+    // 编辑用户
+    editUser(obj) {
+      this.userInfoForEdit = obj.id;
+      this.showAddOrEditPage = true;
     },
     
     // 删除个人
     deletePerson() {
-      this.showDialog("7");
+      axios.get(`/user/delUser/${this.dialogParam.userId}`).then((data) => {
+        this.dialogParam.userId = null;
+        if (data.code !== 0) return
+        this.$message.success("删除成功");
+        this.searchOpts.pageNum = 1;
+        this.queryUserTable();
+      })
+    },
+
+    backToListPage() {
+      this.showAddOrEditPage = false;
+      this.queryUserTable();
     },
 
     filterDpt(value, data) {
@@ -369,6 +489,7 @@ export default {
 
     handleSelectionChange(val) {
       this.multipleSelection = val;
+      this.groupHandler = "";
     },
 
     changePageNum(v) {
@@ -382,14 +503,51 @@ export default {
     },
 
     // 禁用/启用用户
-    changeUserStatus({id, action}) {
+    changeUserStatus({userId, action}) {
       let params = {
-        id,
+        userId,
         action: action ? "enable" : "disable"
       }
       axios.post("/user/enableUser", params).then((data) => {
         if (data.code !== 0) return
         this.$message.success("修改成功");
+      })
+    },
+
+    // 批量操作
+    handleMultSelection(v) {
+      if (this.multipleSelection.length === 0) return this.$message.warning("请选择用户")
+      
+      this.showDialog({type: v === "1" ? '5' : '6'});
+    },
+
+    // 批量修改部门
+    multiChangeDpt() {
+      let userIds = this.multipleSelection.map((item) => {
+        return item.id;
+      })
+      axios.post("/user/batchUpdateDept", {
+        userIds,
+        deptIds: this.$refs.dialogContent.ruleForm3.deptList
+      }).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("批量修改部门成功");
+        this.init();
+      })
+    },
+
+    // 批量修改角色
+    multiChangeRole() {
+      let userIds = this.multipleSelection.map((item) => {
+        return item.id;
+      })
+      axios.post("/user/batchUpdateRole", {
+        userIds,
+        roleId: this.$refs.dialogContent.ruleForm4.roleName
+      }).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("批量修改角色成功");
+        this.init();
       })
     }
   },
@@ -455,6 +613,9 @@ export default {
         }
         .searchDpt {
           margin-bottom: 20px;
+          .el-input__icon.el-icon-search:hover {
+            cursor: pointer;
+          }
         }
 
       }
