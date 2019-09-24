@@ -19,6 +19,10 @@ const routes = [{
 		path: '/F0701/F010103', //系统管理-权限-用户角色管理
 		name: 'userRoleMgmt',
 		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/systemManagement/userRoleMgmt.vue'),
+	}, {
+		path: '/F0701/F010104', //系统管理-权限-用户角色管理-新增角色
+		name: 'addRole',
+		component: () => import(/* webpackChunkName: "addRole" */ '../views/systemManagement/addRole.vue'),
 	}]
 }, {
 	path: '/login', //登录页

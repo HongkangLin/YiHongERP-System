@@ -52,7 +52,7 @@ export default {
   methods: {
     // 改变pageSize
     handleSizeChange(size) {
-      this.$$emit("changePageSize", size);
+      this.$emit("changePageSize", size);
     },
 
     // 改变pageNum

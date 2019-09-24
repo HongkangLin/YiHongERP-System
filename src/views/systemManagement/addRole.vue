@@ -1,0 +1,248 @@
+<template>
+  <div class="addRole">
+    <div class="title">{{title}}</div>
+    <div class="content">
+      <div class="label">基础信息</div>
+      <div class="base">
+        <el-form ref="formData" :model="formData" label-width="110px">
+          <el-form-item label="角色类型：">
+            <el-radio v-model="formData.roleType" label="2">管理员</el-radio><span class="info">管理员可对员工提的审核内容进行审批</span><br>
+            <el-radio v-model="formData.roleType" label="3">员工</el-radio>
+          </el-form-item>
+          <el-form-item label="角色名：" prop="roleName" :rules="{ required: true, message: '角色名不能为空', trigger: 'blur'}">
+            <el-input v-model="formData.roleName" placeholder="请输入角色名"></el-input>
+          </el-form-item>
+          <el-form-item label="角色描述：">
+            <el-input type="textarea" :rows="7" v-model="formData.roleDesc" placeholder="请输入角色描述"></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="label">权限配置</div>
+      <div class="roleConfig">
+        <div class="selArea">
+          <div class="selTitle"><el-checkbox v-model="checkAll" @change="selAll">选择全部</el-checkbox></div>
+        </div>
+        <div class="selArea" v-for="(items, idx) in roleList" :key="idx">
+          <div class="selTitle"><el-checkbox v-model="items.check" @change="selArr(idx)">{{items.menuName}}</el-checkbox></div>
+          <div class="selContent">
+            <div v-for="(item, index) in items.funcList" :key="index">
+              <el-checkbox v-model="item.check" @change="selSome(idx)">{{item.funcName.replace(items.menuName + '-', '')}}</el-checkbox>
+            </div>
+            <div v-for="(empty, i) in (6 - items.funcList.length % 6)" :key="'empty' + i"></div>
+          </div>
+        </div>
+      </div>
+      <div class="submit" @click="submit('formData')">提交</div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      title: '新增角色',
+      formData: { // 基本信息
+        roleType: '2',
+        roleName: '',
+        roleDesc: ''
+      },
+      id: '',
+      roleList: [],
+      checkAll: false // 全选
+    };
+  },
+  mounted () {
+    this.id = this.$route.query.id;
+    if (!this.id) { // 编辑
+      this.queryList();
+    } else { // 新建
+      this.queryListByRole();
+    }
+  },
+  methods: {
+    async queryList () { // 新增权限查询
+      let data = await window.axios.get('/func/queryAllFuncList');
+      this.roleList = data.data.data;
+    },
+    async queryListByRole () { // 编辑权限查询
+      let data = await window.axios.get(`/func/queryFuncListByRoleId/${this.id}`);
+      data = data.data.data;
+      this.formData = {
+        roleType: data.roleType + '',
+        roleName: data.roleName,
+        roleDesc: data.roleDesc
+      };
+      let all = 0;
+      data.menuFuncList.forEach(item => {
+        let curr = 0;
+        item.funcList.forEach(key => {
+          if (key.ownFlag) {
+            curr++;
+          }
+          key.check = !!key.ownFlag;
+        });
+        if (curr === item.funcList.length) {
+          item.check = true;
+          all++;
+        } else {
+          item.check = false;
+        }
+      });
+      this.roleList = data.menuFuncList;
+      this.checkAll = all === this.roleList.length;
+    },
+    selAll () { // 全选
+      this.roleList.forEach(item => {
+        item.check = this.checkAll;
+        item.funcList.forEach(key => {
+          key.check = this.checkAll;
+        });
+      });
+    },
+    selArr (idx) { // 选择某组
+      let curr = this.roleList[idx].check;
+      this.roleList[idx].funcList.forEach(item => {
+        item.check = curr;
+      });
+      let list = this.roleList.filter(item => item.check);
+      this.checkAll = list.length === this.roleList.length;
+    },
+    selSome (idx) { // 选择某个
+      let list = this.roleList[idx].funcList.filter(item => item.check);
+      this.roleList[idx].check = list.length === this.roleList[idx].funcList.length;
+      let slist = this.roleList.filter(item => item.check);
+      this.checkAll = slist.length === this.roleList.length;
+    },
+    submit (formName) { // 提交
+      let menuWithFuncList = [];
+      this.roleList.forEach(item => { // 整理权限列表
+        let curr = {
+          'menuId': item.menuId,
+          'funcIds': []
+        };
+        item.funcList.forEach(key => {
+          if (key.check) {
+            curr.funcIds.push(key.funcId);
+          }
+        });
+        if (curr.funcIds.length) {
+          menuWithFuncList.push(curr);
+        }
+      });
+      if (!menuWithFuncList.length) { // 检查权限列表是否为空
+        this.$message({
+          message: '请先给角色分配权限',
+          type: 'warning'
+        });
+        return;
+      }
+      this.$refs[formName].validate((valid) => { // 提交
+        if (valid) {
+          let url = this.id ? '/role/updateRole' : '/role/addRole'; // 存在id时表示是修改
+          let param = this.id ? {
+            roleId: this.id,
+            ...this.formData,
+            menuWithFuncList: menuWithFuncList
+          } : {
+            ...this.formData,
+            menuWithFuncList: menuWithFuncList
+          }
+          window.axios.post(url, param).then(data => {
+            if (data.data.code === 0) {
+              this.$message({
+                message: data.data.message,
+                type: 'success'
+              });
+              this.$router.back();
+            } else {
+              this.$message.error(data.data.message);
+            }
+          });
+        } else {
+          return false;
+        }
+      });
+    }
+  }
+}
+</script>
+
+<style lang="less">
+.addRole {
+  padding: 20px;
+  font-size: 12px;
+  .title {
+    color: #666;
+    background-color: #f3f3f3;
+    height: 50px;
+    line-height: 50px;
+    border: 1px solid rgb(228, 228, 228);
+    text-indent: 20px;
+  }
+  .content {
+    border: 1px solid rgb(228, 228, 228);
+    border-top: none;
+    overflow: hidden;
+    .label {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.847);
+      text-indent: 30px;
+      line-height: 80px;
+      font-weight: bold;
+    }
+    .base {
+      box-sizing: border-box;
+      margin: 0 100px;
+      .el-input--small {
+        width: 400px;
+      }
+      .el-radio {
+        margin-right: 10px;
+      }
+      .info {
+        color: #999;
+      }
+    }
+    .roleConfig {
+      box-sizing: border-box;
+      margin: 0 30px;
+      .selArea {
+        margin-bottom: 10px;
+        line-height: 50px;
+        .selTitle {
+          background-color: #f9fafc;
+          padding: 0 20px;
+          border: 1px solid rgb(228, 228, 228);
+        }
+        .selContent {
+          display: flex;
+          flex-wrap: wrap;
+          border-right: 1px solid rgb(228, 228, 228);
+          div {
+            width: 16.66%;
+            border-left: 1px solid rgb(228, 228, 228);
+            border-bottom: 1px solid rgb(228, 228, 228);
+            box-sizing: border-box;
+            padding-left: 20px;
+          }
+        }
+      }
+    }
+    .submit {
+      float: right;
+      cursor: pointer;
+      width: 80px;
+      height: 35px;
+      line-height: 35px;
+      text-align: center;
+      background-color: #1ABC9C;
+      margin-top: 20px;
+      border-radius: 4px;
+      color: white;
+      margin-right: 30px;
+      margin-bottom: 30px;
+    }
+  }
+}
+</style>
