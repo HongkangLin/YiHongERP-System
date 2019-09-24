@@ -3,28 +3,21 @@
     <div class="search">
       <div class="head">
         <div class="label">角色权限管理</div>
-        <div class="new">新增角色</div>
+        <div class="new" @click="addRole">新增角色</div>
       </div>
       <div class="content">
         <div class="inputDiv">
-          <el-select class="selList" v-model="value" placeholder="请选择角色名">
+          <el-input class="name" v-model="name" placeholder="请输入角色名"></el-input>
+          <el-select class="selList" v-model="type" placeholder="请选择角色类型">
             <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          <el-select class="selList" v-model="value" placeholder="请选择角色类型">
-            <el-option
-              v-for="item in options"
+              v-for="item in typeOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value">
             </el-option>
           </el-select>
         </div>
-        <div class="sel">查询</div>
+        <div class="sel" @click="search">查询</div>
       </div>
     </div>
     <div class="table">
@@ -33,19 +26,19 @@
         border
         style="width: 100%">
         <el-table-column
-          prop="name"
+          prop="roleName"
           label="角色名"
           align="center"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="type"
+          prop="roleType"
           label="角色类型"
           align="center"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="desc"
+          prop="roleDesc"
           align="center"
           label="描述">
         </el-table-column>
@@ -62,7 +55,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="splitPage"><pageination :total="90" :pageNum="10"></pageination></div>
+    <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
   </div>
 </template>
 
@@ -74,37 +67,80 @@ export default {
   },
   data () {
     return {
-      value: '',
-      options: [{
-        label: '我',
-        value: '我'
+      name: '', // 角色名
+      type: '', // 类型
+      typeList: ['超级管理员', '主管', '员工'],
+      nameOptions: [],
+      typeOptions: [{
+        label: '超级管理员',
+        value: '1'
+      }, {
+        label: '主管',
+        value: '2'
+      }, {
+        label: '员工',
+        value: '3'
       }],
-      tableData: [{
-        name: '超级管理员',
-        type: '超级管理员',
-        desc: '系统预设角色不支持编辑与删除'
-      }, {
-        name: '采购总监',
-        type: '管理员',
-        desc: '主管采购部，全面统筹采购业务'
-      }, {
-        name: '采购员',
-        type: '员工',
-        desc: '负责小家电采购'
-      }, {
-        name: '销售员',
-        type: '员工',
-        desc: '负责小家电销售业务'
-      }]
+      total: 0, // 总数
+      pageNum: 1, // pageNumber
+      pageSize: 10, // pageSize
+      tableData: [] // 表格数据
     };
   },
   mounted () {
     this.queryList();
   },
+  activated () {
+    this.queryList();
+  },
   methods: {
-    async queryList () {
-      let data = await window.axios.get('/func/queryAllFuncList');
-      console.log(data.data);
+    async queryList () { // 查询列表
+      let data = await window.axios.post('/role/queryAllRoleList', {
+        roleType: this.type,
+        roleName: this.name,
+        pageNum: this.pageNum,
+        pageSize: this.pageSize
+      });
+      data = data.data.data;
+      data.list.forEach(item => {
+        item.roleType = this.typeList[item.roleType - 1];
+      });
+      this.total = data.total;
+      this.tableData = data.list;
+    },
+    search () { // 查询按钮
+      this.pageNum = 1;
+      this.queryList();
+    },
+    handleEdit (index) { // 编辑角色
+      this.$router.push({path: '/F0701/F010104', query: {id: this.tableData[index].roleId}});
+    },
+    async handleDelete (index) { // 删除角色
+      let data = await window.axios.get(`/role/deleteRole/${this.tableData[index].roleId}`);
+      if (data.data.code === 0) {
+        this.$message({
+          message: data.data.message,
+          type: 'success'
+        });
+      } else {
+        this.$message.error(data.data.message);
+      }
+      if (this.tableData.length === 1) { // 当前页最后一条数据
+        this.pageNum = (this.pageNum - 1) || 1;
+      }
+      this.queryList(); // 重新获取数据
+    },
+    changeNum (num) { // 改变页码
+      this.pageNum = num;
+      this.queryList();
+    },
+    changePageSize (size) { // 改变每页条数
+      this.pageNum = 1;
+      this.pageSize = size;
+      this.queryList();
+    },
+    addRole () { // 新增角色
+      this.$router.push('/F0701/F010104');
     }
   }
 }
@@ -147,6 +183,7 @@ export default {
           background-color: #1ABC9C;
           color: white;
           width: 100px;
+          cursor: pointer;
           text-align: center;
           border-radius: 4px;
         }
@@ -167,7 +204,15 @@ export default {
           border: 1px solid #1ABC9C;
           border-radius: 4px;
           color: #1ABC9C;
+          cursor: pointer;
           text-align: center;
+        }
+        &.name {
+          width: 180px;
+          font-size: 14px;
+          border-radius: 4px;
+          color: #1ABC9C;
+          margin-right: 20px;
         }
         .selList {
           width: 180px;
