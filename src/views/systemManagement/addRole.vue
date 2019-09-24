@@ -63,11 +63,11 @@ export default {
   methods: {
     async queryList () { // 新增权限查询
       let data = await window.axios.get('/func/queryAllFuncList');
-      this.roleList = data.data.data;
+      this.roleList = data.data;
     },
     async queryListByRole () { // 编辑权限查询
       let data = await window.axios.get(`/func/queryFuncListByRoleId/${this.id}`);
-      data = data.data.data;
+      data = data.data;
       this.formData = {
         roleType: data.roleType + '',
         roleName: data.roleName,
@@ -149,15 +149,11 @@ export default {
             menuWithFuncList: menuWithFuncList
           }
           window.axios.post(url, param).then(data => {
-            if (data.data.code === 0) {
-              this.$message({
-                message: data.data.message,
-                type: 'success'
-              });
-              this.$router.back();
-            } else {
-              this.$message.error(data.data.message);
-            }
+            this.$message({
+              message: data.message,
+              type: 'success'
+            });
+            this.$router.back();
           });
         } else {
           return false;

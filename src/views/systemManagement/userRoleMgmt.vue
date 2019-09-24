@@ -101,7 +101,7 @@ export default {
         pageNum: this.pageNum,
         pageSize: this.pageSize
       });
-      data = data.data.data;
+      data = data.data;
       data.list.forEach(item => {
         item.roleType = this.typeList[item.roleType - 1];
       });
@@ -117,14 +117,10 @@ export default {
     },
     async handleDelete (index) { // 删除角色
       let data = await window.axios.get(`/role/deleteRole/${this.tableData[index].roleId}`);
-      if (data.data.code === 0) {
-        this.$message({
-          message: data.data.message,
-          type: 'success'
-        });
-      } else {
-        this.$message.error(data.data.message);
-      }
+      this.$message({
+        message: data.message,
+        type: 'success'
+      });
       if (this.tableData.length === 1) { // 当前页最后一条数据
         this.pageNum = (this.pageNum - 1) || 1;
       }
