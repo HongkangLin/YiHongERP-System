@@ -220,6 +220,14 @@ export default {
               width: 240px;
             }
           }
+          //修改form里el-transfer组件的样式bug
+          .el-form-item__content .el-transfer {
+            /deep/.el-checkbox:first-of-type {
+              .el-checkbox__label {
+                margin-bottom: -15px;
+              }
+            }
+          }
         }
         
         .chooseDptHints {

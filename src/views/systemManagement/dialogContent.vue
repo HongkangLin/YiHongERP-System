@@ -112,4 +112,11 @@ export default {
 .el-alert {
   margin-bottom: 20px;
 }
+.el-form-item__content .el-transfer {
+  /deep/.el-checkbox:first-of-type {
+    .el-checkbox__label {
+      margin-bottom: -15px;
+    }
+  }
+}
 </style>
