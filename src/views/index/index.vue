@@ -7,7 +7,7 @@
         <el-avatar icon="el-icon-user-solid"></el-avatar>
         <span class="userName">Admin</span>
         <el-divider direction="vertical"></el-divider>
-        <i class="el-icon-switch-button"></i>
+        <i @click="loginOut" class="el-icon-switch-button"></i>
       </div>
     </el-header>
     <el-container class="navAndMain">
@@ -50,6 +50,10 @@ export default {
     async getMenu () {
       let data = await window.axios.get('/menu/menu');
       this.menuList = data.data;
+    },
+    // 退出登陆
+    loginOut () {
+      this.$router.replace('/login');
     }
   },
 };

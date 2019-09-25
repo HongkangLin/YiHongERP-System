@@ -4,14 +4,20 @@
     <div class="login">
       <div class="title">毅宏ERP管理系统</div>
       <div class="input">
-        <el-input v-model="name" placeholder="请输入用户名">
-          <i class="el-icon-s-custom el-input__icon" slot="prefix"></i>
-        </el-input>
-        <el-input v-model="pwd" placeholder="请输入密码">
-          <i class="el-icon-edit el-input__icon" slot="prefix"></i>
-        </el-input>
+        <el-form :model="form" :rules="rules" ref="ruleForm">
+          <el-form-item prop="email">
+            <el-input v-model="form.email" placeholder="请输入邮箱">
+              <i class="el-icon-s-custom el-input__icon" slot="prefix"></i>
+            </el-input>
+          </el-form-item>
+          <el-form-item prop="password">
+            <el-input type="password" v-model="form.password" placeholder="请输入密码">
+              <i class="el-icon-edit el-input__icon" slot="prefix"></i>
+            </el-input>
+          </el-form-item>
+        </el-form>
       </div>
-      <div class="submit">登陆</div>
+      <div class="submit" @click="login('ruleForm')">登陆</div>
     </div>
   </div>
 </template>
@@ -20,10 +26,46 @@
 export default {
   data() {
     return {
-      name: '',
-      pwd: ''
+      publicKey: 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCCw8LEbXLArEnUwnGiOPw0YqDUwopOs3s0c5SWZgMID2J3s3pBD+Fme1a6JuMgiisBmFOt2bYkzHfVWkiqaZEjq5u+LAvmRhRoxgP4ESKE1Z99PWu8BlANHlctA6ybBOyWilPAYbkeUy355ot7pI97GIcLSsftD1p/8VBsJ6PafwIDAQAB',
+      form: {
+        email: '',
+        password: ''
+      },
+      rules: {
+        email: [
+          {required: true, message: '请输入邮箱', trigger: 'blur'}
+        ],
+        password: [
+          {required: true, message: '请输入密码', trigger: 'blur'}
+        ]
+      }
     }
   },
+  methods: {
+    login (formName) { // 登陆
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let encrypt = new window.JSEncrypt();
+          encrypt.setPublicKey(this.publicKey);
+          let param = {
+            email: this.form.email,
+            password: encrypt.encrypt(this.form.password) // 加密密码
+          };
+          window.axios.post('/user/login', param).then(e => {
+            if (e.code === 0) {
+              this.$message({
+                message: e.message,
+                type: 'success'
+              });
+              this.$router.replace('/F0101/F010101'); // 登陆成功
+            }
+          });
+        } else {
+          return false;
+        }
+      });
+    }
+  }
 };
 </script>
 
