@@ -14,7 +14,7 @@
             <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
           </el-form-item>
           <el-form-item label="密码" prop="password">
-            <el-input v-model="ruleForm.password" placeholder="6到20位数字与字母组合"></el-input>
+            <el-input v-model="ruleForm.password" placeholder="6到20位数字与字母组合" type="password"></el-input>
           </el-form-item>
           <el-form-item label="角色" prop="roleId">
             <el-select v-model="ruleForm.roleId" placeholder="选择角色">
@@ -38,10 +38,11 @@
   </div>
 </template>
 <script>
+const publicKey = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCCw8LEbXLArEnUwnGiOPw0YqDUwopOs3s0c5SWZgMID2J3s3pBD+Fme1a6JuMgiisBmFOt2bYkzHfVWkiqaZEjq5u+LAvmRhRoxgP4ESKE1Z99PWu8BlANHlctA6ybBOyWilPAYbkeUy355ot7pI97GIcLSsftD1p/8VBsJ6PafwIDAQAB';
 export default {
   data() {
     var validatePassword = (rule, value, callback) => {
-      let res = /^[a-z0-9]{6,20}$/i.test(value); //6到20位数字与字母组合
+      let res = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/.test(value); //6到20位数字与字母组合
       if (!res) callback(new Error('请输入6到20位数字与字母组合'));
       callback();
     };
@@ -55,6 +56,8 @@ export default {
         status: null,
         deptIds: []
       },
+      encryptedPwd: "",
+      pwdFlag: 0,
       rules: {
         userName: [
           { required: true, message: '请输入姓名', trigger: 'blur' }
@@ -101,9 +104,9 @@ export default {
         this.ruleForm.email = obj.email;
         this.ruleForm.mobile = obj.mobile;
         this.ruleForm.userName = obj.userName;
-        // 密码返显待解密
-        this.ruleForm.password = obj.password;
-
+        this.ruleForm.password = "0000000a";
+        // 记录原始密码-加密的
+        this.encryptedPwd = obj.password;
         this.roleNameList.map((item) => {
           if (item.roleId === obj.roleId) {
             return this.ruleForm.roleId = item.roleName
@@ -134,7 +137,13 @@ export default {
     },
 
     addNewUser() {
-      axios.post("/user/addUser", this.ruleForm).then((data) => {
+      // 加密密码
+      let params = JSON.parse(JSON.stringify(this.ruleForm));
+      let encrypt = new window.JSEncrypt();
+      encrypt.setPublicKey(publicKey);
+      params.password = encrypt.encrypt(params.password);
+      
+      axios.post("/user/addUser", params).then((data) => {
         if (data.code !== 0) return
         this.$message.success("新增用户成功");
         this.$emit("backToListPage");
@@ -150,14 +159,29 @@ export default {
           }
         })
       }
-      //是否修改密码-待改
-      params.pwdFlag = "yes";
+      //是否修改密码
+      params.pwdFlag = this.pwdFlag > 1 ? "yes" : "no";
+      
+      let encrypt = new window.JSEncrypt();
+      encrypt.setPublicKey(publicKey);
+      let nowPwd = encrypt.encrypt(params.password);
+      params.password = params.pwdFlag === "yes" ? nowPwd : this.encryptedPwd;
+
       params.id = this.userId;
       axios.post("/user/updateUserInfo", params).then((data) => {
         if (data.code !== 0) return
         this.$message.success("编辑用户成功");
         this.$emit("backToListPage");
       })
+    }
+  },
+  watch: {
+    "ruleForm.password"(v) {
+      if (this.userId === null ) return
+      if (this.pwdFlag === 1) { //编辑时,首次改动密码输入框
+        this.ruleForm.password = "";
+      }
+      this.pwdFlag++;
     }
   },
   created() {

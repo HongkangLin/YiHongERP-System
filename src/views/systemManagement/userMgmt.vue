@@ -636,7 +636,7 @@ export default {
     }
     .mainArea {
       width: 76%;
-      height: 100%;
+      // height: 100%;
       min-height: @pageMinHeight;
       background-color: #fff;
       border: 1px solid #e4e4e4;
