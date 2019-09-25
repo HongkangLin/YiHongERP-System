@@ -5,6 +5,7 @@ axios.defaults.withCredentials = true;
 
 // 添加一个请求拦截器
 axios.interceptors.request.use(function (config) {
+  config.url = '/erp' + config.url; // 请求全局拼接erp路径
   // Do something before request is sent
   return config;
 }, function (error) {
