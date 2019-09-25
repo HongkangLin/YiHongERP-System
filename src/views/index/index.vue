@@ -14,29 +14,15 @@
       <!-- 左侧二级菜单 -->
       <el-aside>
         <el-menu default-active="F0101-F010101" class="classTwoMenu" :collapse="true" background-color="#474c5a">
-          <el-submenu index="F0101">
+          <el-submenu :index="item.menuPath" v-for="(item, index) in menuList" :key="index">
             <template slot="title">
-              <i class="classTwoMenuName el-icon-menu">导航一</i>
+              <i class="classTwoMenuName el-icon-menu">{{item.menuName}}</i>
             </template>
-            <el-menu-item-group>
-              <span slot="title">分组名</span>
-              <el-menu-item index="F0101-F010101">•选项1</el-menu-item>
-              <el-menu-item index="F0101-F010102">•选项2</el-menu-item>
+            <el-menu-item-group v-for="(key, idx) in item.childNodeList" :key="idx">
+              <span slot="title">{{key.menuName}}</span>
+              <el-menu-item @click="handleSelect('/' + key.menuPath + '/' + last.menuPath)" :index="key.menuPath + '-' + last.menuPath" v-for="(last, pos) in key.childNodeList" :key="pos">{{last.menuName}}</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-
-          <el-submenu index="F0201">
-            <template slot="title">
-              <i class="classTwoMenuName el-icon-menu">导航二</i>
-            </template>
-            <el-menu-item-group>
-              <span slot="title">分组名</span>
-              <el-menu-item index="F0201-F020101">•选项1</el-menu-item>
-              <el-menu-item index="F0201-F020102">•选项2</el-menu-item>
-              <el-menu-item index="F0201-F020102">•选项3</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-
         </el-menu>
       </el-aside>
       <!-- 主体区域 -->
@@ -49,12 +35,21 @@
 export default {
   data() {
     return {
-      
+      menuList: [] // 菜单列表
     }
   },
+  mounted () {
+    this.getMenu();
+  },
   methods: {
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath);
+    // 跳转到对应页面
+    handleSelect(path) {
+      this.$router.replace(path);
+    },
+    // 获取菜单列表
+    async getMenu () {
+      let data = await window.axios.get('/menu/menu');
+      this.menuList = data.data;
     }
   },
 };
@@ -65,7 +60,7 @@ export default {
   // 顶部一级菜单
   .el-header {
     height: 50px !important;
-    background-color: #68c0a7;
+    background-color: #1ABC9C;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -85,7 +80,7 @@ export default {
         line-height: 30px;
       }
       .el-divider {
-        background-color: #539a86;
+        background-color: #1ABC9C;
         margin: 0 15px;
       }
       .userName {

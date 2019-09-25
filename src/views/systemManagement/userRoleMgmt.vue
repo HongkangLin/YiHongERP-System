@@ -113,7 +113,7 @@ export default {
       this.queryList();
     },
     handleEdit (index) { // 编辑角色
-      this.$router.push({path: '/F0701/F010104', query: {id: this.tableData[index].roleId}});
+      this.$router.push({path: '/addRole', query: {id: this.tableData[index].roleId}});
     },
     async handleDelete (index) { // 删除角色
       let data = await window.axios.get(`/role/deleteRole/${this.tableData[index].roleId}`);
@@ -136,7 +136,7 @@ export default {
       this.queryList();
     },
     addRole () { // 新增角色
-      this.$router.push('/F0701/F010104');
+      this.$router.push('/addRole');
     }
   }
 }
