@@ -6,8 +6,9 @@
       <div class="base">
         <el-form ref="formData" :model="formData" label-width="110px">
           <el-form-item label="角色类型：">
-            <el-radio v-model="formData.roleType" label="2">管理员</el-radio><span class="info">管理员可对员工提的审核内容进行审批</span><br>
-            <el-radio v-model="formData.roleType" label="3">员工</el-radio>
+            <el-radio v-model="formData.roleType" v-if="formData.roleType === '1'" label="1">超级管理员</el-radio>
+            <el-radio v-model="formData.roleType" v-if="formData.roleType !== '1'" label="2">管理员</el-radio><span class="info">管理员可对员工提的审核内容进行审批</span><br>
+            <el-radio v-model="formData.roleType" v-if="formData.roleType !== '1'" label="3">员工</el-radio>
           </el-form-item>
           <el-form-item label="角色名：" prop="roleName" :rules="{ required: true, message: '角色名不能为空', trigger: 'blur'}">
             <el-input v-model="formData.roleName" placeholder="请输入角色名"></el-input>
@@ -23,10 +24,10 @@
           <div class="selTitle"><el-checkbox v-model="checkAll" @change="selAll">选择全部</el-checkbox></div>
         </div>
         <div class="selArea" v-for="(items, idx) in roleList" :key="idx">
-          <div class="selTitle"><el-checkbox v-model="items.check" @change="selArr(idx)">{{items.menuName}}</el-checkbox></div>
+          <div class="selTitle"><el-checkbox :disabled="items.disable" v-model="items.check" @change="selArr(idx)">{{items.menuName}}</el-checkbox></div>
           <div class="selContent">
             <div v-for="(item, index) in items.funcList" :key="index">
-              <el-checkbox v-model="item.check" @change="selSome(idx)">{{item.funcName.replace(items.menuName + '-', '')}}</el-checkbox>
+              <el-checkbox :disabled="item.disable" v-model="item.check" @change="selSome(idx)">{{item.funcName.replace(items.menuName + '-', '')}}</el-checkbox>
             </div>
             <div v-for="(empty, i) in (6 - items.funcList.length % 6)" :key="'empty' + i"></div>
           </div>
@@ -77,8 +78,14 @@ export default {
       };
       let all = 0;
       data.menuFuncList.forEach(item => {
+        if (data.roleType === 1 && item.menuId === 4) { // 超级管理员不允许编辑角色权限管理模块
+          item.disable = true;
+        }
         let curr = 0;
         item.funcList.forEach(key => {
+          if (data.roleType === 1 && item.menuId === 4) {
+            key.disable = true;
+          }
           if (key.ownFlag) {
             curr++;
           }
@@ -96,10 +103,12 @@ export default {
     },
     selAll () { // 全选
       this.roleList.forEach(item => {
-        item.check = this.checkAll;
-        item.funcList.forEach(key => {
-          key.check = this.checkAll;
-        });
+        if (!item.disable) { // 设置勾选时过滤掉不可操作模块
+          item.check = this.checkAll;
+          item.funcList.forEach(key => {
+            key.check = this.checkAll;
+          });
+        }
       });
     },
     selArr (idx) { // 选择某组
@@ -107,13 +116,13 @@ export default {
       this.roleList[idx].funcList.forEach(item => {
         item.check = curr;
       });
-      let list = this.roleList.filter(item => item.check);
+      let list = this.roleList.filter(item => item.check || item.disable); // 计算全选时将不可选和已选中认为已选择
       this.checkAll = list.length === this.roleList.length;
     },
     selSome (idx) { // 选择某个
       let list = this.roleList[idx].funcList.filter(item => item.check);
       this.roleList[idx].check = list.length === this.roleList[idx].funcList.length;
-      let slist = this.roleList.filter(item => item.check);
+      let slist = this.roleList.filter(item => item.check || item.disable);
       this.checkAll = slist.length === this.roleList.length;
     },
     submit (formName) { // 提交
