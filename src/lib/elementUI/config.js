@@ -45,7 +45,7 @@ import {
   // Icon,
   // Row,
   // Col,
-  // Upload,
+  Upload,
   // Progress,
   // Badge,
   // Card,
@@ -118,7 +118,7 @@ export default (Vue) => {
 	// Vue.use(Icon)
 	// Vue.use(Row)
 	// Vue.use(Col)
-	// Vue.use(Upload)
+	Vue.use(Upload)
 	// Vue.use(Progress)
 	// Vue.use(Badge)
 	// Vue.use(Card)

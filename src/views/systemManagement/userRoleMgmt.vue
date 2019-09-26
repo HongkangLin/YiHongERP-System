@@ -45,11 +45,13 @@
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
             <el-button
+              type="text"
               size="mini"
               @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-divider direction="vertical"></el-divider>
             <el-button
               size="mini"
-              type="danger"
+              type="text"
               @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -145,17 +147,12 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .userRoleMgmt {
-  .el-input--small .el-input__inner {
+  /deep/.el-input--small .el-input__inner {
     height: 35px;
     line-height: 35px;
   }
-}
-</style>
-
-<style lang="less" scoped>
-.userRoleMgmt {
   box-sizing: border-box;
   padding: 20px;
   width: 100%;

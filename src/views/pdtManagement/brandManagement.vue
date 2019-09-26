@@ -1,21 +1,13 @@
 <template>
-  <div class="userRoleMgmt">
+  <div class="brandManagement">
     <div class="search">
       <div class="head">
-        <div class="label">角色权限管理</div>
-        <div class="new" @click="addRole">新增角色</div>
+        <div class="label">品牌列表</div>
+        <div class="new" @click="addBrand">新增品牌</div>
       </div>
       <div class="content">
         <div class="inputDiv">
-          <el-input class="name" v-model="name" placeholder="请输入角色名"></el-input>
-          <el-select class="selList" v-model="type" placeholder="请选择角色类型">
-            <el-option
-              v-for="item in typeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+          <el-input class="name" v-model="name" placeholder="品牌名/品牌缩写"></el-input>
         </div>
         <div class="sel" @click="search">查询</div>
       </div>
@@ -26,30 +18,34 @@
         border
         style="width: 100%">
         <el-table-column
-          prop="roleName"
-          label="角色名"
+          prop="goodsBrandName"
+          label="品牌名"
           align="center"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="roleType"
-          label="角色类型"
+          label="LOGO"
           align="center"
           width="180">
+          <template slot-scope="scope">
+            <img class="img" :src="scope.row.goodsBrandPicUrl">
+          </template>
         </el-table-column>
         <el-table-column
-          prop="roleDesc"
+          prop="goodsBrandLetter"
           align="center"
-          label="描述">
+          label="品牌缩写">
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
             <el-button
               size="mini"
+              type="text"
               @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-divider direction="vertical"></el-divider>
             <el-button
               size="mini"
-              type="danger"
+              type="text"
               @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -67,23 +63,7 @@ export default {
   },
   data () {
     return {
-      name: '', // 角色名
-      type: '', // 类型
-      typeList: ['超级管理员', '主管', '员工'],
-      nameOptions: [],
-      typeOptions: [{
-        label: '全部',
-        value: ''
-      }, {
-        label: '超级管理员',
-        value: '1'
-      }, {
-        label: '主管',
-        value: '2'
-      }, {
-        label: '员工',
-        value: '3'
-      }],
+      name: '', // 品牌名/品牌缩写
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
@@ -97,17 +77,13 @@ export default {
     this.queryList();
   },
   methods: {
-    async queryList () { // 查询列表
-      let data = await window.axios.post('/role/queryAllRoleList', {
-        roleType: this.type,
-        roleName: this.name,
+    async queryList () { // 查询品牌列表
+      let data = await window.axios.post('/product/queryProductBrandList', {
+        goodsBrandNameOrLetter: this.name.toUpperCase(),
         pageNum: this.pageNum,
         pageSize: this.pageSize
       });
       data = data.data;
-      data.list.forEach(item => {
-        item.roleType = this.typeList[item.roleType - 1];
-      });
       this.total = data.total;
       this.tableData = data.list;
     },
@@ -115,11 +91,13 @@ export default {
       this.pageNum = 1;
       this.queryList();
     },
-    handleEdit (index) { // 编辑角色
-      this.$router.push({path: '/addRole', query: {id: this.tableData[index].roleId}});
+    handleEdit (index) { // 编辑品牌
+      this.$router.push({path: '/addBrand', query: {...this.tableData[index]}});
     },
-    async handleDelete (index) { // 删除角色
-      let data = await window.axios.get(`/role/deleteRole/${this.tableData[index].roleId}`);
+    async handleDelete (index) { // 删除品牌
+      let data = await window.axios.post('/product/deleteProductBrand', {
+        id: this.tableData[index].id
+      });
       this.$message({
         message: data.message,
         type: 'success'
@@ -138,29 +116,28 @@ export default {
       this.pageSize = size;
       this.queryList();
     },
-    addRole () { // 新增角色
-      this.$router.push('/addRole');
+    addBrand () { // 新增品牌
+      this.$router.push('/addBrand');
     }
   }
 }
 </script>
 
-<style lang="less">
-.userRoleMgmt {
-  .el-input--small .el-input__inner {
+<style lang="less" scoped>
+.brandManagement {
+  /deep/.el-input--small .el-input__inner {
     height: 35px;
     line-height: 35px;
   }
-}
-</style>
-
-<style lang="less" scoped>
-.userRoleMgmt {
   box-sizing: border-box;
   padding: 20px;
   width: 100%;
   height: 100%;
   font-size: 12px;
+  .img {
+    width: 100px;
+    height: 100px;
+  }
   .search {
     width: 100%;
     border: 1px solid rgb(228, 228, 228);

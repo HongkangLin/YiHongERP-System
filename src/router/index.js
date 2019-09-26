@@ -31,6 +31,10 @@ const routes = [{
 		path: '/F0201/F020103', //产品管理-产品管理-品牌管理
 		name: 'brandManagement',
 		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/pdtManagement/brandManagement.vue'),
+	}, {
+		path: '/addBrand', //产品管理-产品管理-品牌管理-新增品牌
+		name: 'addBrand',
+		component: () => import(/* webpackChunkName: "addBrand" */ '../views/pdtManagement/addBrand.vue'),
 	}]
 }, {
 	path: '/login', //登录页

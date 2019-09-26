@@ -54,9 +54,11 @@ export default {
   },
   mounted () {
     this.id = this.$route.query.id;
-    if (!this.id) { // 编辑
+    if (!this.id) { // 新增
+      this.title = '新增角色';
       this.queryList();
-    } else { // 新建
+    } else { // 编辑
+      this.title = '编辑角色';
       this.queryListByRole();
     }
   },
@@ -164,7 +166,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .addRole {
   padding: 20px;
   font-size: 12px;
