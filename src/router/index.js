@@ -21,8 +21,16 @@ const routes = [{
 		component: () => import(/* webpackChunkName: "addRole" */ '../views/systemManagement/addRole.vue'),
 	}, {
 		path: '/F0201/F020101', //产品管理-产品管理-产品列表
-		name: 'productList',
-		component: () => import(/* webpackChunkName: "productList" */ '../views/pdtManagement/index.vue'),
+		name: 'pdtList',
+		component: () => import(/* webpackChunkName: "pdtList" */ '../views/pdtManagement/pdtList.vue'),
+	}, {
+		path: '/F0201/F020102', //产品管理-产品管理-产品分类
+		name: 'pdtType',
+		component: () => import(/* webpackChunkName: "pdtType" */ '../views/pdtManagement/pdtType.vue'),
+	}, {
+		path: '/F0201/F020103', //产品管理-产品管理-品牌管理
+		name: 'brandManagement',
+		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/pdtManagement/brandManagement.vue'),
 	}]
 }, {
 	path: '/login', //登录页

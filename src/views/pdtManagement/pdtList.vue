@@ -2,13 +2,37 @@
   <div class="userRoleMgmt">
     <div class="search">
       <div class="head">
-        <div class="label">角色权限管理</div>
-        <div class="new" @click="addRole">新增角色</div>
+        <div class="label">产品列表</div>
+        <div class="new" @click="addRole">新增产品</div>
       </div>
       <div class="content">
         <div class="inputDiv">
-          <el-input class="name" v-model="name" placeholder="请输入角色名"></el-input>
-          <el-select class="selList" v-model="type" placeholder="请选择角色类型">
+          <el-input class="name" v-model="name" placeholder="产品名称/SKU/海关编码"></el-input>
+          <el-select class="selList" v-model="status" placeholder="产品状态">
+            <el-option
+              v-for="item in prdStatus"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <el-select class="selList" v-model="type" placeholder="产品分类">
+            <el-option
+              v-for="item in prdType"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <el-select class="selList" v-model="type" placeholder="品牌">
+            <el-option
+              v-for="item in typeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <el-select class="selList" v-model="type" placeholder="采购人">
             <el-option
               v-for="item in typeOptions"
               :key="item.value"
@@ -67,14 +91,24 @@ export default {
   },
   data () {
     return {
-      name: '', // 角色名
-      type: '', // 类型
-      typeList: ['超级管理员', '主管', '员工'],
-      nameOptions: [],
-      typeOptions: [{
+      name: '', // 产品名称/SKU/海关编码
+      status: '', // 产品状态
+      prdStatus: [{ // 产品状态选项
         label: '全部',
         value: ''
       }, {
+        label: '在售',
+        value: '1'
+      }, {
+        label: '停售',
+        value: '2'
+      }],
+      type: '', // 产品分类
+      prdType: [{ // 分类选项
+
+      }],
+      nameOptions: [],
+      typeOptions: [{
         label: '超级管理员',
         value: '1'
       }, {
@@ -139,7 +173,6 @@ export default {
       this.queryList();
     },
     addRole () { // 新增角色
-      this.$router.push('/addRole');
     }
   }
 }
@@ -211,7 +244,7 @@ export default {
           font-size: 14px;
           border-radius: 4px;
           color: #1ABC9C;
-          margin-right: 20px;
+          margin-right: 10px;
         }
         .selList {
           width: 180px;
