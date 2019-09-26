@@ -2,22 +2,8 @@
   <div class="userRoleMgmt">
     <div class="search">
       <div class="head">
-        <div class="label">角色权限管理</div>
-        <div class="new" @click="addRole">新增角色</div>
-      </div>
-      <div class="content">
-        <div class="inputDiv">
-          <el-input class="name" v-model="name" placeholder="请输入角色名"></el-input>
-          <el-select class="selList" v-model="type" placeholder="请选择角色类型">
-            <el-option
-              v-for="item in typeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </div>
-        <div class="sel" @click="search">查询</div>
+        <div class="label">产品分类</div>
+        <div class="new" @click="addRole">+添加分类</div>
       </div>
     </div>
     <div class="table">
@@ -144,15 +130,6 @@ export default {
   }
 }
 </script>
-
-<style lang="less">
-.userRoleMgmt {
-  .el-input--small .el-input__inner {
-    height: 35px;
-    line-height: 35px;
-  }
-}
-</style>
 
 <style lang="less" scoped>
 .userRoleMgmt {

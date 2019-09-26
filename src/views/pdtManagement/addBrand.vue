@@ -90,7 +90,7 @@ export default {
         goodsBrandPicUrl: [{url: query.goodsBrandPicUrl}],
         goodsBrandDecription: query.goodsBrandDecription
       };
-      console.log(this.formData);
+      this.dialogImageUrl = query.goodsBrandPicUrl.replace('_80x80', '');
     }
   },
   methods: {
@@ -111,12 +111,12 @@ export default {
       this.formData.goodsBrandPicUrl = [];
     },
     handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
+      this.dialogImageUrl = file.url.replace('_80x80', '');
       this.dialogVisible = true;
     },
     up (response) { // 上传成功
       this.formData.goodsBrandPicUrl.push({
-        url: response.data.originUrl
+        url: response.data.thumbUrl
       });
     },
     submit (formName) { // 提交
@@ -132,11 +132,13 @@ export default {
             ...buf
           }
           window.axios.post(url, param).then(data => {
-            this.$message({
-              message: data.message,
-              type: 'success'
-            });
-            this.$router.back();
+            if (data.code === 0) {
+              this.$message({
+                message: data.message,
+                type: 'success'
+              });
+              this.$router.back();
+            }
           });
         } else {
           return false;
