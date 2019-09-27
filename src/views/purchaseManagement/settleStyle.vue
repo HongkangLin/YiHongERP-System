@@ -1,45 +1,13 @@
 <template>
-  <div class="pdtList">
+  <div class="settleStyle">
     <div class="search">
       <div class="head">
-        <div class="label">产品列表</div>
-        <div class="new" @click="addRole">新增产品</div>
+        <div class="label">结算方式</div>
+        <div class="new" @click="addSettle">新增结算方式</div>
       </div>
       <div class="content">
         <div class="inputDiv">
-          <el-input class="name" v-model="name" placeholder="产品名称/SKU/海关编码"></el-input>
-          <el-select class="selList" v-model="status" placeholder="产品状态">
-            <el-option
-              v-for="item in prdStatus"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          <el-select class="selList" v-model="type" placeholder="产品分类">
-            <el-option
-              v-for="item in prdType"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          <el-select class="selList" v-model="type" placeholder="品牌">
-            <el-option
-              v-for="item in typeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          <el-select class="selList" v-model="type" placeholder="采购人">
-            <el-option
-              v-for="item in typeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+          <el-input class="name" v-model="name" placeholder="结算方式"></el-input>
         </div>
         <div class="sel" @click="search">查询</div>
       </div>
@@ -50,31 +18,28 @@
         border
         style="width: 100%">
         <el-table-column
-          prop="roleName"
-          label="角色名"
+          prop="name"
+          label="结算方式"
           align="center"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="roleType"
-          label="角色类型"
+          prop="createName"
+          label="创建人"
           align="center"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="roleDesc"
+          prop="remark"
           align="center"
-          label="描述">
+          label="备注">
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
             <el-button
               size="mini"
+              type="text"
               @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -91,33 +56,7 @@ export default {
   },
   data () {
     return {
-      name: '', // 产品名称/SKU/海关编码
-      status: '', // 产品状态
-      prdStatus: [{ // 产品状态选项
-        label: '全部',
-        value: ''
-      }, {
-        label: '在售',
-        value: '1'
-      }, {
-        label: '停售',
-        value: '2'
-      }],
-      type: '', // 产品分类
-      prdType: [{ // 分类选项
-
-      }],
-      nameOptions: [],
-      typeOptions: [{
-        label: '超级管理员',
-        value: '1'
-      }, {
-        label: '主管',
-        value: '2'
-      }, {
-        label: '员工',
-        value: '3'
-      }],
+      name: '', // 品牌名/品牌缩写
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
@@ -131,17 +70,9 @@ export default {
     this.queryList();
   },
   methods: {
-    async queryList () { // 查询列表
-      let data = await window.axios.post('/role/queryAllRoleList', {
-        roleType: this.type,
-        roleName: this.name,
-        pageNum: this.pageNum,
-        pageSize: this.pageSize
-      });
+    async queryList () { // 查询品牌列表
+      let data = await window.axios.get(`/settletype/listAll?pageNum=${this.pageNum}&pageSize=${this.pageSize}&nameKeyword=${this.name}`);
       data = data.data;
-      data.list.forEach(item => {
-        item.roleType = this.typeList[item.roleType - 1];
-      });
       this.total = data.total;
       this.tableData = data.list;
     },
@@ -149,19 +80,8 @@ export default {
       this.pageNum = 1;
       this.queryList();
     },
-    handleEdit (index) { // 编辑角色
-      this.$router.push({path: '/addRole', query: {id: this.tableData[index].roleId}});
-    },
-    async handleDelete (index) { // 删除角色
-      let data = await window.axios.get(`/role/deleteRole/${this.tableData[index].roleId}`);
-      this.$message({
-        message: data.message,
-        type: 'success'
-      });
-      if (this.tableData.length === 1) { // 当前页最后一条数据
-        this.pageNum = (this.pageNum - 1) || 1;
-      }
-      this.queryList(); // 重新获取数据
+    handleEdit (index) { // 编辑品牌
+      this.$router.push({path: '/addSettle', query: {...this.tableData[index]}});
     },
     changeNum (num) { // 改变页码
       this.pageNum = num;
@@ -172,28 +92,30 @@ export default {
       this.pageSize = size;
       this.queryList();
     },
-    addRole () { // 新增角色
+    addSettle () { // 新增品牌
+      this.$router.push('/addSettle');
     }
   }
 }
 </script>
 
-<style lang="less">
-.pdtList {
-  .el-input--small .el-input__inner {
-    height: 35px;
-    line-height: 35px;
-  }
-}
-</style>
-
 <style lang="less" scoped>
-.pdtList {
+.settleStyle {
+  .content {
+    /deep/.el-input--small .el-input__inner {
+      height: 35px;
+      line-height: 35px;
+    }
+  }
   box-sizing: border-box;
   padding: 20px;
   width: 100%;
   height: 100%;
   font-size: 12px;
+  .img {
+    width: 100px;
+    height: 100px;
+  }
   .search {
     width: 100%;
     border: 1px solid rgb(228, 228, 228);
@@ -244,7 +166,7 @@ export default {
           font-size: 14px;
           border-radius: 4px;
           color: #1ABC9C;
-          margin-right: 10px;
+          margin-right: 20px;
         }
         .selList {
           width: 180px;

@@ -1,5 +1,5 @@
 <template>
-  <div class="addBrand">
+  <div class="addType">
     <div class="title">{{title}}</div>
     <div class="content">
       <div class="base">
@@ -119,7 +119,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.addBrand {
+.addType {
   /deep/.el-input--small {
     .el-input__inner {
       width: 240px;

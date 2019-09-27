@@ -39,6 +39,18 @@ const routes = [{
 		path: '/addBrand', //产品管理-产品管理-品牌管理-新增品牌
 		name: 'addBrand',
 		component: () => import(/* webpackChunkName: "addBrand" */ '../views/pdtManagement/addBrand.vue'),
+	}, {
+		path: '/F0302/F030201', //采购-供应商管理-供应商管理
+		name: 'supplierManagement',
+		component: () => import(/* webpackChunkName: "supplierManagement" */ '../views/purchaseManagement/supplierManagement.vue'),
+	}, {
+		path: '/F0302/F030202', //采购-供应商管理-结算方式
+		name: 'settleStyle',
+		component: () => import(/* webpackChunkName: "settleStyle" */ '../views/purchaseManagement/settleStyle.vue'),
+	}, {
+		path: '/addSettle', //采购-供应商管理-结算方式-新增结算方式
+		name: 'addSettle',
+		component: () => import(/* webpackChunkName: "addSettle" */ '../views/purchaseManagement/addSettle.vue'),
 	}]
 }, {
 	path: '/login', //登录页
