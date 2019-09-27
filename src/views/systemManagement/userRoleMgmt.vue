@@ -48,10 +48,11 @@
               type="text"
               size="mini"
               @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-divider direction="vertical"></el-divider>
+            <el-divider direction="vertical" v-if="scope.row.roleType !== '超级管理员'"></el-divider>
             <el-button
               size="mini"
               type="text"
+              v-if="scope.row.roleType !== '超级管理员'"
               @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -149,9 +150,11 @@ export default {
 
 <style lang="less" scoped>
 .userRoleMgmt {
-  /deep/.el-input--small .el-input__inner {
-    height: 35px;
-    line-height: 35px;
+  .content {
+    /deep/.el-input--small .el-input__inner {
+      height: 35px;
+      line-height: 35px;
+    }
   }
   box-sizing: border-box;
   padding: 20px;

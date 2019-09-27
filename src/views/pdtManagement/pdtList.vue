@@ -1,5 +1,5 @@
 <template>
-  <div class="userRoleMgmt">
+  <div class="pdtList">
     <div class="search">
       <div class="head">
         <div class="label">产品列表</div>
@@ -179,7 +179,7 @@ export default {
 </script>
 
 <style lang="less">
-.userRoleMgmt {
+.pdtList {
   .el-input--small .el-input__inner {
     height: 35px;
     line-height: 35px;
@@ -188,7 +188,7 @@ export default {
 </style>
 
 <style lang="less" scoped>
-.userRoleMgmt {
+.pdtList {
   box-sizing: border-box;
   padding: 20px;
   width: 100%;

@@ -1,13 +1,13 @@
 <template>
-  <div class="brandManagement">
+  <div class="settleStyle">
     <div class="search">
       <div class="head">
-        <div class="label">品牌列表</div>
-        <div class="new" @click="addBrand">新增品牌</div>
+        <div class="label">结算方式</div>
+        <div class="new" @click="addSettle">新增结算方式</div>
       </div>
       <div class="content">
         <div class="inputDiv">
-          <el-input class="name" v-model="name" placeholder="品牌名/品牌缩写"></el-input>
+          <el-input class="name" v-model="name" placeholder="结算方式"></el-input>
         </div>
         <div class="sel" @click="search">查询</div>
       </div>
@@ -18,23 +18,21 @@
         border
         style="width: 100%">
         <el-table-column
-          prop="goodsBrandName"
-          label="品牌名"
+          prop="name"
+          label="结算方式"
           align="center"
           width="180">
         </el-table-column>
         <el-table-column
-          label="LOGO"
+          prop="createName"
+          label="创建人"
           align="center"
           width="180">
-          <template slot-scope="scope">
-            <img class="img" :src="scope.row.goodsBrandPicUrl">
-          </template>
         </el-table-column>
         <el-table-column
-          prop="goodsBrandLetter"
+          prop="remark"
           align="center"
-          label="品牌缩写">
+          label="备注">
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
@@ -42,11 +40,6 @@
               size="mini"
               type="text"
               @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-divider direction="vertical"></el-divider>
-            <el-button
-              size="mini"
-              type="text"
-              @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -78,11 +71,7 @@ export default {
   },
   methods: {
     async queryList () { // 查询品牌列表
-      let data = await window.axios.post('/product/queryProductBrandList', {
-        goodsBrandNameOrLetter: this.name.toUpperCase(),
-        pageNum: this.pageNum,
-        pageSize: this.pageSize
-      });
+      let data = await window.axios.get(`/settletype/listAll?pageNum=${this.pageNum}&pageSize=${this.pageSize}&nameKeyword=${this.name}`);
       data = data.data;
       this.total = data.total;
       this.tableData = data.list;
@@ -92,20 +81,7 @@ export default {
       this.queryList();
     },
     handleEdit (index) { // 编辑品牌
-      this.$router.push({path: '/addBrand', query: {...this.tableData[index]}});
-    },
-    async handleDelete (index) { // 删除品牌
-      let data = await window.axios.post('/product/deleteProductBrand', {
-        id: this.tableData[index].id
-      });
-      this.$message({
-        message: data.message,
-        type: 'success'
-      });
-      if (this.tableData.length === 1) { // 当前页最后一条数据
-        this.pageNum = (this.pageNum - 1) || 1;
-      }
-      this.queryList(); // 重新获取数据
+      this.$router.push({path: '/addSettle', query: {...this.tableData[index]}});
     },
     changeNum (num) { // 改变页码
       this.pageNum = num;
@@ -116,15 +92,15 @@ export default {
       this.pageSize = size;
       this.queryList();
     },
-    addBrand () { // 新增品牌
-      this.$router.push('/addBrand');
+    addSettle () { // 新增品牌
+      this.$router.push('/addSettle');
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-.brandManagement {
+.settleStyle {
   .content {
     /deep/.el-input--small .el-input__inner {
       height: 35px;

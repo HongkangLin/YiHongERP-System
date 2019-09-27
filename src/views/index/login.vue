@@ -49,6 +49,7 @@ export default {
           encrypt.setPublicKey(this.publicKey);
           let param = {
             email: this.form.email,
+            notToken: 1,
             password: encrypt.encrypt(this.form.password) // 加密密码
           };
           window.axios.post('/user/login', param).then(e => {
@@ -57,6 +58,7 @@ export default {
                 message: e.message,
                 type: 'success'
               });
+              localStorage.setItem('token', e.data.token);
               this.$router.replace('/F0101/F010101'); // 登陆成功
             }
           });

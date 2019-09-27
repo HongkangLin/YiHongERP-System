@@ -28,6 +28,10 @@ const routes = [{
 		name: 'pdtType',
 		component: () => import(/* webpackChunkName: "pdtType" */ '../views/pdtManagement/pdtType.vue'),
 	}, {
+		path: '/addType', //产品管理-产品管理-产品分类-新增分类
+		name: 'addType',
+		component: () => import(/* webpackChunkName: "addType" */ '../views/pdtManagement/addType.vue'),
+	}, {
 		path: '/F0201/F020103', //产品管理-产品管理-品牌管理
 		name: 'brandManagement',
 		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/pdtManagement/brandManagement.vue'),
@@ -35,6 +39,18 @@ const routes = [{
 		path: '/addBrand', //产品管理-产品管理-品牌管理-新增品牌
 		name: 'addBrand',
 		component: () => import(/* webpackChunkName: "addBrand" */ '../views/pdtManagement/addBrand.vue'),
+	}, {
+		path: '/F0302/F030201', //采购-供应商管理-供应商管理
+		name: 'supplierManagement',
+		component: () => import(/* webpackChunkName: "supplierManagement" */ '../views/purchaseManagement/supplierManagement.vue'),
+	}, {
+		path: '/F0302/F030202', //采购-供应商管理-结算方式
+		name: 'settleStyle',
+		component: () => import(/* webpackChunkName: "settleStyle" */ '../views/purchaseManagement/settleStyle.vue'),
+	}, {
+		path: '/addSettle', //采购-供应商管理-结算方式-新增结算方式
+		name: 'addSettle',
+		component: () => import(/* webpackChunkName: "addSettle" */ '../views/purchaseManagement/addSettle.vue'),
 	}, {
 		path: '/F0401/F040104', //库存管理 > 仓库设置
 		name: 'storeManagement',
