@@ -40,7 +40,7 @@
         align="center"
         label="商品数量"
         width="180"
-        prop="goodsCategoryLevel">
+        prop="totalCount">
       </el-table-column>
       <el-table-column
         align="center"
@@ -94,8 +94,11 @@ export default {
   },
   methods: {
     async queryList () { // 查询列表
-      let data = await window.axios.get('/product/queryAllCategory');
-      // this.total = data.total;
+      let data = await window.axios.post('/product/queryAllCategory', {
+        pageSize: this.pageSize,
+        pageNum: pageNum
+      });
+      this.total = data.total;
       this.tableData = data.data;
       let buf = [];
       data.data.forEach(item => {
