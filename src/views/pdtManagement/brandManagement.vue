@@ -125,9 +125,11 @@ export default {
 
 <style lang="less" scoped>
 .brandManagement {
-  /deep/.el-input--small .el-input__inner {
-    height: 35px;
-    line-height: 35px;
+  .content {
+    /deep/.el-input--small .el-input__inner {
+      height: 35px;
+      line-height: 35px;
+    }
   }
   box-sizing: border-box;
   padding: 20px;

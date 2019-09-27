@@ -1,46 +1,72 @@
 <template>
-  <div class="userRoleMgmt">
+  <div class="pdtType">
     <div class="search">
       <div class="head">
         <div class="label">产品分类</div>
-        <div class="new" @click="addRole">+添加分类</div>
+        <div class="new" @click="addType">+添加分类</div>
       </div>
     </div>
-    <div class="table">
-      <el-table
-        :data="tableData"
-        border
-        style="width: 100%">
-        <el-table-column
-          prop="roleName"
-          label="角色名"
-          align="center"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          prop="roleType"
-          label="角色类型"
-          align="center"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          prop="roleDesc"
-          align="center"
-          label="描述">
-        </el-table-column>
-        <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
+    <el-table
+      border
+      :data="tableData"
+      style="width: 100%">
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-table :show-header="false" v-if="props.row.listChildCategory.length" style="width: 100%" :data="props.row.listChildCategory">
+            <el-table-column prop="goodsCategoryName"></el-table-column>
+            <el-table-column prop="goodsCategoryLevel" align="center" width="180"></el-table-column>
+            <el-table-column prop="goodsCategorySortId" align="center" width="180"></el-table-column>
+            <el-table-column align="center">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  type="text"
+                  @click="handleEdit(props.$index, scope.$index, scope.row.id)">编辑分类</el-button>
+                <el-divider direction="vertical"></el-divider>
+                <el-button
+                  size="mini"
+                  type="text"
+                  @click="handleDelete(scope.row.id)">删除分类</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="分类名称"
+        prop="goodsCategoryName">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="商品数量"
+        width="180"
+        prop="goodsCategoryLevel">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="分类排序"
+        width="180"
+        prop="goodsCategorySortId">
+      </el-table-column>
+      <el-table-column label="设置" align="center">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            @click="handleAdd(scope.$index)">新增下级</el-button>
+          <el-divider direction="vertical"></el-divider>
+          <el-button
+            size="mini"
+            type="text"
+            @click="handleEdit(scope.$index, '', scope.row.id)">编辑分类</el-button>
+          <el-divider direction="vertical"></el-divider>
+          <el-button
+            size="mini"
+            type="text"
+            @click="handleDelete(scope.row.id)">删除分类</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
     <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
   </div>
 </template>
@@ -53,26 +79,10 @@ export default {
   },
   data () {
     return {
-      name: '', // 角色名
-      type: '', // 类型
-      typeList: ['超级管理员', '主管', '员工'],
-      nameOptions: [],
-      typeOptions: [{
-        label: '全部',
-        value: ''
-      }, {
-        label: '超级管理员',
-        value: '1'
-      }, {
-        label: '主管',
-        value: '2'
-      }, {
-        label: '员工',
-        value: '3'
-      }],
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
+      typeList: [], // 可选分类列表
       tableData: [] // 表格数据
     };
   },
@@ -84,28 +94,29 @@ export default {
   },
   methods: {
     async queryList () { // 查询列表
-      let data = await window.axios.post('/role/queryAllRoleList', {
-        roleType: this.type,
-        roleName: this.name,
-        pageNum: this.pageNum,
-        pageSize: this.pageSize
+      let data = await window.axios.get('/product/queryAllCategory');
+      // this.total = data.total;
+      this.tableData = data.data;
+      let buf = [];
+      data.data.forEach(item => {
+        buf.push({
+          label: item.goodsCategoryName,
+          value: item.id
+        });
       });
-      data = data.data;
-      data.list.forEach(item => {
-        item.roleType = this.typeList[item.roleType - 1];
+      this.typeList = buf; // 初始化新增分类页面可选分类
+    },
+    handleAdd (index) { // 新增下级
+      this.$router.push({path: '/addType', query: {list: this.typeList, id: this.tableData[index].id, data: []}});
+    },
+    handleEdit (top, sub, id) { // 编辑分类
+      let data = sub !== '' ? this.tableData[top].listChildCategory[sub] : this.tableData[top];
+      this.$router.push({path: '/addType', query: {list: this.typeList, id: id, data: data}});
+    },
+    async handleDelete (id) { // 删除分类
+      let data = await window.axios.post('/product/deleteCategory', {
+        id: id
       });
-      this.total = data.total;
-      this.tableData = data.list;
-    },
-    search () { // 查询按钮
-      this.pageNum = 1;
-      this.queryList();
-    },
-    handleEdit (index) { // 编辑角色
-      this.$router.push({path: '/addRole', query: {id: this.tableData[index].roleId}});
-    },
-    async handleDelete (index) { // 删除角色
-      let data = await window.axios.get(`/role/deleteRole/${this.tableData[index].roleId}`);
       this.$message({
         message: data.message,
         type: 'success'
@@ -124,15 +135,15 @@ export default {
       this.pageSize = size;
       this.queryList();
     },
-    addRole () { // 新增角色
-      this.$router.push('/addRole');
+    addType () { // 新增角色
+      this.$router.push({path: '/addType', query: {list: this.typeList}});
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-.userRoleMgmt {
+.pdtType {
   box-sizing: border-box;
   padding: 20px;
   width: 100%;
@@ -141,6 +152,7 @@ export default {
   .search {
     width: 100%;
     border: 1px solid rgb(228, 228, 228);
+    border-bottom: none;
     .head {
       display: flex;
       justify-content: space-between;
@@ -165,42 +177,16 @@ export default {
         }
       }
     }
-    .content {
-      display: flex;
-      justify-content: space-between;
-      height: 60px;
-      border-top: 1px solid rgb(228, 228, 228);
-      box-sizing: border-box;
-      padding: 12.5px 20px;
-      div {
-        line-height: 32px;
-        &.sel {
-          width: 80px;
-          font-size: 14px;
-          border: 1px solid #1ABC9C;
-          border-radius: 4px;
-          color: #1ABC9C;
-          cursor: pointer;
-          text-align: center;
-        }
-        &.name {
-          width: 180px;
-          font-size: 14px;
-          border-radius: 4px;
-          color: #1ABC9C;
-          margin-right: 20px;
-        }
-        .selList {
-          width: 180px;
-          height: 35px;
-          line-height: 35px;
-          margin-right: 10px;
-        }
-      }
-    }
   }
-  .table {
-    margin-top: 20px;
+  /deep/.el-table__expanded-cell {
+    padding: 0 !important;
+    padding-left: 50px !important;
+  }
+  /deep/.el-table__row:last-child td{
+    border-bottom: none !important;
+  }
+  /deep/.el-table__row td:last-child {
+    border-right: none;
   }
 }
 </style>

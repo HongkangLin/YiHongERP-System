@@ -28,6 +28,10 @@ const routes = [{
 		name: 'pdtType',
 		component: () => import(/* webpackChunkName: "pdtType" */ '../views/pdtManagement/pdtType.vue'),
 	}, {
+		path: '/addType', //产品管理-产品管理-产品分类-新增分类
+		name: 'addType',
+		component: () => import(/* webpackChunkName: "addType" */ '../views/pdtManagement/addType.vue'),
+	}, {
 		path: '/F0201/F020103', //产品管理-产品管理-品牌管理
 		name: 'brandManagement',
 		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/pdtManagement/brandManagement.vue'),
