@@ -40,7 +40,7 @@
         align="center"
         label="商品数量"
         width="180"
-        prop="totalCount">
+        prop="productCount">
       </el-table-column>
       <el-table-column
         align="center"
