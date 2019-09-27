@@ -1,5 +1,7 @@
 <template>
-  <div class="storeSetting_wrap">
+<div class="storeSetting_wrap">
+  <!-- 列表页 -->
+  <div class="storeSettingList" v-if="showListPage">
 		<div class="search">
       <div class="head">
         <div class="label">仓库设置</div>
@@ -49,7 +51,7 @@
             <el-switch v-model="scope.row.status" ></el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" fixed="right">
+        <el-table-column label="操作" align="center" fixed="right" min-width="120">
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -65,16 +67,21 @@
       </el-table>
     </div>
     <div class="splitPage">
-      <pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination>
+      <Pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></Pageination>
     </div>
 	</div>
+  <!-- 新增/编辑页 -->
+  <AddOrEditStore v-else></AddOrEditStore>
+</div>
 </template>
 
 <script>
-import pageination from '#/pagination/pagination.vue';
+import Pageination from '#/pagination/pagination.vue';
+import AddOrEditStore from './addOrEditStore.vue';
 export default {
   components: {
-    'pageination': pageination
+    Pageination,
+    AddOrEditStore
   },
   data() {
     return {
@@ -82,7 +89,9 @@ export default {
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
-      tableData: [] // 表格数据
+      tableData: [], // 表格数据
+
+      showListPage: false,
     }
   },
   mounted () {
@@ -140,7 +149,7 @@ export default {
 
     // 添加仓库
     addStore () { 
-      
+      this.showListPage = false;
     }
   }
 };
@@ -152,7 +161,7 @@ export default {
     line-height: 35px;
   }
   box-sizing: border-box;
-  padding: 20px 40px;
+  padding: 20px 60px;
   background-color: #f6f7f9;
   width: 100%;
   height: 100%;

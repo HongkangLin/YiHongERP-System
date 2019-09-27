@@ -1,0 +1,256 @@
+<template>
+  <div class="addOrEditStore_wrap">
+		<div class="header">新增仓库</div>
+    <div class="formArea">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="140px" class="ruleForm">
+        <el-form-item label="仓库编号：" prop="id">
+          <el-input v-model="ruleForm.id" placeholder="提交后自动生成"></el-input>
+        </el-form-item>
+        <el-form-item label="仓库名称：" prop="name">
+          <el-input v-model="ruleForm.name" placeholder="请输入仓库名称"></el-input>
+        </el-form-item>
+        <el-form-item label="负责人：" prop="chargePersonId">
+          <el-select v-model="ruleForm.chargePersonId" placeholder="选择负责人">
+            <el-option v-for="(item, index) in []" :key="index" :label="item.roleName" :value="item.roleId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="仓库状态：" prop="status">
+          <el-radio-group v-model="ruleForm.status">
+            <el-radio :label="1">启用</el-radio>
+            <el-radio :label="0">禁用</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="仓库类型：" prop="type">
+          <el-select v-model="ruleForm.type" placeholder="选择仓库类型">
+            <el-option v-for="(item, index) in []" :key="index" :label="item.roleName" :value="item.roleId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="揽收联系人：" prop="collectorName">
+          <el-input v-model="ruleForm.collectorName" placeholder="请输入揽收联系人姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="揽收联系人电话：" prop="collectorMobile">
+          <el-input v-model="ruleForm.collectorMobile" placeholder="请输入揽收联系人电话"></el-input>
+        </el-form-item>
+        <el-form-item label="公司名称：" prop="companyName">
+          <el-input v-model="ruleForm.companyName" placeholder="请输入公司名称"></el-input>
+        </el-form-item>
+        <el-form-item label="邮编：" prop="postCode">
+          <el-input v-model="ruleForm.postCode" placeholder="请输入邮编"></el-input>
+        </el-form-item>
+        <el-form-item label="所在地：" prop="address">
+          <el-cascader
+            v-model="ruleForm.address"
+            :options="[]"
+            @change="handleAddressChange"></el-cascader>
+        </el-form-item>
+        <el-form-item label="详细地址：" prop="addrDetail">
+          <el-input v-model="ruleForm.addrDetail" placeholder="示例:某某街某某路"></el-input>
+        </el-form-item>
+        <el-form-item label="固定电话：" prop="fixedPhone">
+          <el-input v-model="ruleForm.fixedPhone" placeholder="请输入固定电话"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱地址：" prop="email">
+          <el-input v-model="ruleForm.email" placeholder="请输入邮箱地址"></el-input>
+        </el-form-item>
+        <el-button type="primary" size="medium" @click="submitForm('ruleForm')" class="submitBtn">提交</el-button>
+      </el-form>
+    </div>
+	</div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      ruleForm: {
+        id: "",
+        name: "",
+        chargePersonId: null,
+        status: null,
+        type: null,
+        collectorName: "",
+        collectorMobile: "",
+        companyName: "",
+        postCode: "",
+        address: [],
+        addrDetail: "",
+        fixedPhone: "",
+        email: ""
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入仓库名称', trigger: 'blur' }
+        ],
+        chargePersonId: [
+          { required: true, message: '选择负责人', trigger: 'blur' }
+        ],
+        status: [
+          { required: true, message: '请选择状态', trigger: 'blur' }
+        ],
+        type: [
+          { required: true, message: '选择仓库类型', trigger: 'blur' }
+        ],
+        collectorName: [
+          { required: true, message: '请输入揽收联系人姓名', trigger: 'blur' }
+        ],
+        collectorMobile: [
+          { required: true, message: '请输入揽收联系人电话', trigger: 'blur' }
+        ],
+        companyName: [
+          { required: true, message: '请输入公司名称', trigger: 'blur' }
+        ],
+        postCode: [
+          { required: true, message: '请输入邮编', trigger: 'blur' }
+        ],
+        address: [
+          { required: true, message: '请选择地区', trigger: 'blur' }
+        ],
+        addrDetail: [
+          { required: true, message: '请填写详细地址', trigger: 'blur' }
+        ]
+      }
+    }
+  },
+  props: {
+    
+  },
+  created() {
+    // this.userId !== null && this.refillForm();
+  },
+  methods: {
+    // 编辑仓库返显内容
+    refillForm() {
+      axios.get(`/user/queryUserInfo4Update/${this.userId}`).then((data) => {
+        if (data.code !== 0) return
+        let obj = JSON.parse(JSON.stringify(data.data));
+        this.ruleForm.email = obj.email;
+        this.ruleForm.mobile = obj.mobile;
+        this.ruleForm.userName = obj.userName;
+        this.ruleForm.password = "0000000a";
+        // 记录原始密码-加密的
+        this.encryptedPwd = obj.password;
+        this.roleNameList.map((item) => {
+          if (item.roleId === obj.roleId) {
+            return this.ruleForm.roleId = item.roleName
+          }
+        })
+
+        this.ruleForm.status = obj.status;
+        this.ruleForm.deptIds = obj.deptIds;
+      })
+    },
+    // 提交
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          console.log('submit!');
+          if (this.userId !== null) {
+            // 编辑用户
+            this.editUser();
+          } else {
+            // 新增用户
+            this.addNewUser();
+          }
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+
+    addNewUser() {
+      // 加密密码
+      let params = JSON.parse(JSON.stringify(this.ruleForm));
+      let encrypt = new window.JSEncrypt();
+      encrypt.setPublicKey(publicKey);
+      params.password = encrypt.encrypt(params.password);
+      
+      axios.post("/user/addUser", params).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("新增用户成功");
+        this.$emit("backToListPage");
+      })
+    },
+
+    editUser() {
+      let params = JSON.parse(JSON.stringify(this.ruleForm));
+      if (typeof(this.ruleForm.roleId) === 'string') { //直接返显,没有用下拉选
+        this.roleNameList.map((item) => {
+          if (item.roleName === params.roleId) {
+            return params.roleId = item.roleId;
+          }
+        })
+      }
+      //是否修改密码
+      params.pwdFlag = this.pwdFlag > 1 ? "yes" : "no";
+      
+      let encrypt = new window.JSEncrypt();
+      encrypt.setPublicKey(publicKey);
+      let nowPwd = encrypt.encrypt(params.password);
+      params.password = params.pwdFlag === "yes" ? nowPwd : this.encryptedPwd;
+
+      params.id = this.userId;
+      axios.post("/user/updateUserInfo", params).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("编辑用户成功");
+        this.$emit("backToListPage");
+      })
+    },
+
+    handleAddressChange(value) {
+      console.log(value);
+    }
+  },
+};
+</script>
+<style lang="less" scoped>
+.addOrEditStore_wrap {
+  .header {
+    color: #666666;
+    height: 50px;
+    line-height: 50px;
+    background-color: #f3f3f3;
+    padding-left: 20px;
+    border: 1px solid #e4e4e4;
+  }
+
+  .formArea {
+    // height: 1000px;
+    background-color: #fff;
+    border: 1px solid #e4e4e4;
+    border-top: none;
+    .ruleForm {
+      width: fit-content;
+      margin: 0 auto;
+      padding: 50px 0;
+      /deep/.el-form-item {
+        width: fit-content;
+        .el-form-item__content {
+          width: fit-content;
+          .el-input,
+          .el-select {
+            width: 240px;
+          }
+        }
+        //修改form里el-transfer组件的样式bug
+        .el-form-item__content .el-transfer {
+          /deep/.el-checkbox:first-of-type {
+            .el-checkbox__label {
+              margin-bottom: -15px;
+            }
+          }
+        }
+      }
+      .chooseDptHints {
+        padding-left: 100px;
+        margin-bottom: 34px;
+        color: #a3a3a3;
+        font-size: 12px;
+      }
+      .submitBtn {
+        margin-left: 140px;
+      }
+    }
+  }
+}
+</style>
