@@ -14,7 +14,7 @@
         <template slot-scope="props">
           <el-table :show-header="false" v-if="props.row.listChildCategory.length" style="width: 100%" :data="props.row.listChildCategory">
             <el-table-column prop="goodsCategoryName"></el-table-column>
-            <el-table-column prop="goodsCategoryLevel" align="center" width="180"></el-table-column>
+            <el-table-column prop="productCount" align="center" width="180"></el-table-column>
             <el-table-column prop="goodsCategorySortId" align="center" width="180"></el-table-column>
             <el-table-column align="center">
               <template slot-scope="scope">
@@ -96,12 +96,13 @@ export default {
     async queryList () { // 查询列表
       let data = await window.axios.post('/product/queryAllCategory', {
         pageSize: this.pageSize,
-        pageNum: pageNum
+        pageNum: this.pageNum
       });
+      data = data.data;
       this.total = data.total;
-      this.tableData = data.data;
+      this.tableData = data.list;
       let buf = [];
-      data.data.forEach(item => {
+      data.list.forEach(item => {
         buf.push({
           label: item.goodsCategoryName,
           value: item.id

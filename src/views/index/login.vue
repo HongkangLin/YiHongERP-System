@@ -132,6 +132,7 @@ export default {
       width: 300px;
       margin: 0 auto;
       border-radius: 4px;
+      cursor: pointer;
       line-height: 50px;
       text-align: center;
       background-color: #1ABC9C;
