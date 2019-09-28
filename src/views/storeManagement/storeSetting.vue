@@ -71,7 +71,7 @@
     </div>
 	</div>
   <!-- 新增/编辑页 -->
-  <AddOrEditStore v-else></AddOrEditStore>
+  <AddOrEditStore v-else @backToListPage="backToListPage"></AddOrEditStore>
 </div>
 </template>
 
@@ -91,7 +91,7 @@ export default {
       pageSize: 10, // pageSize
       tableData: [], // 表格数据
 
-      showListPage: false,
+      showListPage: true,
     }
   },
   mounted () {
@@ -150,6 +150,13 @@ export default {
     // 添加仓库
     addStore () { 
       this.showListPage = false;
+    },
+
+    backToListPage() {
+      this.showListPage = true;
+      this.pageNum = 1;
+      this.nameKeyword = "";
+      this.queryList();
     }
   }
 };
