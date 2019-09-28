@@ -61,7 +61,7 @@
             <el-button
               size="mini"
               type="text"
-              @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+              @click="handleEdit(scope.row.id)">编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -71,7 +71,7 @@
     </div>
 	</div>
   <!-- 新增/编辑页 -->
-  <AddOrEditStore v-else @backToListPage="backToListPage"></AddOrEditStore>
+  <AddOrEditStore v-else @backToListPage="backToListPage" :storeId="storeId"></AddOrEditStore>
 </div>
 </template>
 
@@ -92,6 +92,7 @@ export default {
       tableData: [], // 表格数据
 
       showListPage: true,
+      storeId: null
     }
   },
   mounted () {
@@ -130,8 +131,9 @@ export default {
     },
 
     // 编辑仓库
-    handleEdit (index) { 
-      // this.$router.push({path: '/addBrand', query: {...this.tableData[index]}});
+    handleEdit (storeId) { 
+      this.storeId = storeId;
+      this.showListPage = false;
     },
 
     // 改变页码

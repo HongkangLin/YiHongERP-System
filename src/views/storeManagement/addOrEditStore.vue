@@ -4,7 +4,7 @@
     <div class="formArea">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="140px" class="ruleForm">
         <el-form-item label="仓库编号：" prop="id">
-          <el-input v-model="ruleForm.id" placeholder="提交后自动生成"></el-input>
+          <el-input v-model="ruleForm.id" placeholder="提交后自动生成" disabled></el-input>
         </el-form-item>
         <el-form-item label="仓库名称：" prop="name">
           <el-input v-model="ruleForm.name" placeholder="请输入仓库名称"></el-input>
@@ -73,7 +73,7 @@ export default {
       ruleForm: {
         id: "",
         name: "",
-        chargePersonId: "10", //null
+        chargePersonId: 10, //null
         status: null,
         type: null,
         collectorName: "",
@@ -125,40 +125,47 @@ export default {
     }
   },
   props: {
-    
+    storeId: {
+      type: Number
+    }
   },
   created() {
-    // this.userId !== null && this.refillForm();
+    this.storeId && this.refillForm();
     this.getAddressList("province");
   },
   methods: {
     // 编辑仓库返显内容
     refillForm() {
-      axios.get(`/user/queryUserInfo4Update/${this.userId}`).then((data) => {
+      axios.get(`/warehouse/detail/${this.storeId}`).then((data) => {
         if (data.code !== 0) return
-        let obj = JSON.parse(JSON.stringify(data.data));
-        this.ruleForm.email = obj.email;
-        this.ruleForm.mobile = obj.mobile;
-        this.ruleForm.userName = obj.userName;
-        this.ruleForm.password = "0000000a";
-        // 记录原始密码-加密的
-        this.encryptedPwd = obj.password;
-        this.roleNameList.map((item) => {
-          if (item.roleId === obj.roleId) {
-            return this.ruleForm.roleId = item.roleName
-          }
-        })
 
+        let obj = JSON.parse(JSON.stringify(data.data));
+        this.ruleForm.id = obj.id;
+        this.ruleForm.name = obj.name;
+        this.ruleForm.chargePersonId = obj.chargePersonName;
+        this.ruleForm.chargePersonId_copy = obj.chargePersonId;
         this.ruleForm.status = obj.status;
-        this.ruleForm.deptIds = obj.deptIds;
+        this.ruleForm.type = obj.type ? "国外" : "国内";
+        this.ruleForm.type_copy = obj.type;
+        this.ruleForm.collectorName = obj.collectorName;
+        this.ruleForm.collectorMobile = obj.collectorMobile;
+        this.ruleForm.companyName = obj.companyName;
+        this.ruleForm.postCode = obj.postCode;
+        this.ruleForm.addrProvince = obj.addrProvince;
+        this.ruleForm.addrCity = obj.addrCity;
+        this.ruleForm.addrArea = obj.addrArea;
+        this.ruleForm.addrDetail = obj.addrDetail;
+        this.ruleForm.fixedPhone = obj.fixedPhone;
+        this.ruleForm.email = obj.email;
       })
     },
+
     // 提交
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           console.log('submit!');
-          if (this.userId) {
+          if (this.storeId) {
             // 编辑仓库
             this.editStore();
           } else {
@@ -187,25 +194,20 @@ export default {
 
     editStore() {
       let params = JSON.parse(JSON.stringify(this.ruleForm));
-      if (typeof(this.ruleForm.roleId) === 'string') { //直接返显,没有用下拉选
-        this.roleNameList.map((item) => {
-          if (item.roleName === params.roleId) {
-            return params.roleId = item.roleId;
-          }
-        })
+      params.addrProvince = params.addrProvince.split(",")[0];
+      params.addrCity = params.addrCity.split(",")[0];
+      params.addrArea = params.addrArea.split(",")[0];
+      // 若是返显的负责人
+      if (typeof(this.ruleForm.chargePersonId) !== "number") { 
+        params.chargePersonId = params.chargePersonId_copy;
       }
-      //是否修改密码
-      params.pwdFlag = this.pwdFlag > 1 ? "yes" : "no";
-      
-      let encrypt = new window.JSEncrypt();
-      encrypt.setPublicKey(publicKey);
-      let nowPwd = encrypt.encrypt(params.password);
-      params.password = params.pwdFlag === "yes" ? nowPwd : this.encryptedPwd;
-
-      params.id = this.userId;
-      axios.post("/user/updateUserInfo", params).then((data) => {
+      // 若是返显的仓库类型
+      if (typeof(this.ruleForm.chargePersonId) !== "number") { 
+        params.type = params.type_copy;
+      }
+      axios.post("/warehouse/update", params).then((data) => {
         if (data.code !== 0) return
-        this.$message.success("编辑用户成功");
+        this.$message.success("更新仓库信息成功");
         this.$emit("backToListPage");
       })
     },
