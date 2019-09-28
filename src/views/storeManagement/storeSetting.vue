@@ -48,7 +48,7 @@
           label="仓库状态"
           min-width="180">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.status" ></el-switch>
+            <el-switch v-model="scope.row.status" @change="changeStatus({status: scope.row.status, id: scope.row.id})"></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" fixed="right" min-width="120">
@@ -161,6 +161,18 @@ export default {
       this.pageNum = 1;
       this.nameKeyword = "";
       this.queryList();
+    },
+
+    // 启用/禁用仓库
+    changeStatus({status, id}) {
+      axios.post("/warehouse/changestatus", {
+        id,
+        newStatus: status ? 1 : 0
+      }).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("更改仓库状态成功")
+        this.queryList();
+      })
     }
   }
 };
