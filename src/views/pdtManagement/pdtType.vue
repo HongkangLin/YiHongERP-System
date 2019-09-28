@@ -14,7 +14,7 @@
         <template slot-scope="props">
           <el-table :show-header="false" v-if="props.row.listChildCategory.length" style="width: 100%" :data="props.row.listChildCategory">
             <el-table-column prop="goodsCategoryName"></el-table-column>
-            <el-table-column prop="goodsCategoryLevel" align="center" width="180"></el-table-column>
+            <el-table-column prop="productCount" align="center" width="180"></el-table-column>
             <el-table-column prop="goodsCategorySortId" align="center" width="180"></el-table-column>
             <el-table-column align="center">
               <template slot-scope="scope">
