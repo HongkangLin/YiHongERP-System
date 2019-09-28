@@ -56,7 +56,7 @@
             <el-button
               size="mini"
               type="text"
-              @click="handleView(scope.$index, scope.row)">查看</el-button>
+              @click="handleView(scope.row.id)">查看</el-button>
             <el-divider direction="vertical"></el-divider>
             <el-button
               size="mini"
@@ -126,8 +126,10 @@ export default {
     },
 
     // 查看仓库
-    handleView() {
-
+    handleView(storeId) {
+      this.$router.push({
+        path: `/F0401/F040104/${storeId}`
+      })
     },
 
     // 编辑仓库

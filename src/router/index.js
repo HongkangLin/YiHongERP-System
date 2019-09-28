@@ -52,9 +52,13 @@ const routes = [{
 		name: 'addSettle',
 		component: () => import(/* webpackChunkName: "addSettle" */ '../views/purchaseManagement/addSettle.vue'),
 	}, {
-		path: '/F0401/F040104', //库存管理 > 仓库设置
-		name: 'storeManagement',
+		path: '/F0401/F040104', //库存管理 > 仓库设置 
+		name: 'storeSetting',
 		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/storeSetting.vue'),
+	}, {
+		path: '/F0401/F040104/:storeId', //库存管理 > 仓库设置 > 仓库详情
+		name: 'storeInfo',
+		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/storeInfo.vue'),
 	}]
 }, {
 	path: '/login', //登录页
