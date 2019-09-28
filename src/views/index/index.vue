@@ -53,6 +53,7 @@ export default {
     },
     // 退出登陆
     loginOut () {
+      localStorage.removeItem('token');
       this.$router.replace('/login');
     }
   },
