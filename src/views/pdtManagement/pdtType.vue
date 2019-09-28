@@ -96,12 +96,13 @@ export default {
     async queryList () { // 查询列表
       let data = await window.axios.post('/product/queryAllCategory', {
         pageSize: this.pageSize,
-        pageNum: pageNum
+        pageNum: this.pageNum
       });
+      data = data.data;
       this.total = data.total;
-      this.tableData = data.data;
+      this.tableData = data.list;
       let buf = [];
-      data.data.forEach(item => {
+      data.list.forEach(item => {
         buf.push({
           label: item.goodsCategoryName,
           value: item.id
