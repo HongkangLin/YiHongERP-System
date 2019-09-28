@@ -21,13 +21,14 @@ axios.interceptors.request.use(function (config) {
 // 添加一个响应拦截器
 axios.interceptors.response.use(function (response) {
   // Do something with response data
-  if (response.data.code !== 0) { // 请求不成功全局提示
+  if (response.data.code === 401) { // token失效
+    localStorage.removeItem('token');
+    location.replace(location.origin + '/#/login');
+  } else if (response.data.code !== 0) { // 请求不成功全局提示
     window.vm.$message.error(response.data.message);
   }
   return response.data;
 }, function (error) {
-  localStorage.removeItem('token');
-  location.replace(location.origin + '/#/login');
   // Do something with response error
   return Promise.reject(error);
 });
