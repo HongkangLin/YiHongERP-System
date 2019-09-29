@@ -57,7 +57,7 @@ export default {
   },
   created() {
     this.queryList();
-    this.getStoreList();
+    // this.getStoreList();
   },
   methods: {
     // 仓库下拉
