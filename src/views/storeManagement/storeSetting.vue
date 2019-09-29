@@ -71,7 +71,7 @@
     </div>
 	</div>
   <!-- 新增/编辑页 -->
-  <AddOrEditStore v-else @backToListPage="backToListPage" :storeId="storeId"></AddOrEditStore>
+  <AddOrEditStore v-else @backToListPage="backToListPage" :storeId="storeId" :chargePersonList="chargePersonList"></AddOrEditStore>
 </div>
 </template>
 
@@ -92,16 +92,25 @@ export default {
       tableData: [], // 表格数据
 
       showListPage: true,
-      storeId: null
+      storeId: null,
+      chargePersonList: [] //负责人下拉
     }
   },
   mounted () {
     this.queryList();
+    this.getChargerList();
   },
   activated () {
     this.queryList();
   },
   methods: {
+    // 新增/编辑页 负责人下拉
+    async getChargerList() {
+      let data = await window.axios.get('/user/queryUserList4Select/stockCharge');
+      if (data.code !== 0) return
+      
+      this.chargePersonList = data.data;
+    },
     // 查询仓库信息列表
     async queryList () { 
       let params = {

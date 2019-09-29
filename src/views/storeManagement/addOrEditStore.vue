@@ -11,7 +11,7 @@
         </el-form-item>
         <el-form-item label="负责人：" prop="chargePersonId">
           <el-select v-model="ruleForm.chargePersonId" placeholder="选择负责人">
-            <el-option v-for="(item, index) in []" :key="index" :label="item.roleName" :value="item.roleId"></el-option>
+            <el-option v-for="(item, index) in chargePersonList" :key="index" :label="item.userName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="仓库状态：" prop="status">
@@ -73,7 +73,7 @@ export default {
       ruleForm: {
         id: "",
         name: "",
-        chargePersonId: 10, //null
+        chargePersonId: null, 
         status: null,
         type: null,
         collectorName: "",
@@ -127,6 +127,10 @@ export default {
   props: {
     storeId: {
       type: Number
+    },
+    chargePersonList: {
+      type: Array,
+      required: true
     }
   },
   created() {
@@ -202,7 +206,7 @@ export default {
         params.chargePersonId = params.chargePersonId_copy;
       }
       // 若是返显的仓库类型
-      if (typeof(this.ruleForm.chargePersonId) !== "number") { 
+      if (typeof(this.ruleForm.type) !== "number") { 
         params.type = params.type_copy;
       }
       axios.post("/warehouse/update", params).then((data) => {
