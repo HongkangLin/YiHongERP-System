@@ -59,6 +59,10 @@ const routes = [{
 		path: '/F0401/F040104/:storeId', //库存管理 > 仓库设置 > 仓库详情
 		name: 'storeInfo',
 		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/storeInfo.vue'),
+	}, {
+		path: '/F0401/F040101', //库存管理 > 库存清单
+		name: 'inventoryList',
+		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/inventoryList/index.vue'),
 	}]
 }, {
 	path: '/login', //登录页
