@@ -8,7 +8,7 @@
         <div class="inputDiv">
           <el-input class="nameKeyword" v-model="gnameOrSkuKeyword" placeholder="产品名称/SKU"></el-input>
           <el-select v-model="warehouseId" placeholder="仓库">
-            <el-option v-for="(item, index) in []" :key="index" :label="item.roleName" :value="item.roleId"></el-option>
+            <el-option v-for="(item, index) in storeList" :key="index" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </div>
         <div class="sel" @click="search">查询</div>
@@ -57,12 +57,12 @@ export default {
   },
   created() {
     this.queryList();
-    // this.getStoreList();
+    this.getStoreList();
   },
   methods: {
     // 仓库下拉
     async getStoreList() {
-      let data = await window.axios.get('');
+      let data = await window.axios.get('/warehouse/simpList');
       if (data.code !== 0) return
       
       this.storeList = data.data;
