@@ -24,17 +24,17 @@
     <section class="tableArea">
       <el-table :data="tableData" border style="width: 100%">
         <el-table-column prop="sn" label="入库单号" align="center" min-width="130"></el-table-column>
-        <el-table-column prop="" label="供应商名称" align="center" min-width="170"></el-table-column>
+        <el-table-column prop="supplierName" label="供应商名称" align="center" min-width="170"></el-table-column>
         <el-table-column prop="warehouseName" label="仓库" align="center" min-width="120"></el-table-column>
-        <el-table-column prop="" label="入库类型" align="center" min-width="135"></el-table-column>
+        <el-table-column prop="type" label="入库类型" align="center" min-width="135"></el-table-column>
         <el-table-column prop="status" label="入库状态" align="center" min-width="110"></el-table-column>
         <el-table-column prop="warehouseChargePersonName" label="仓管" align="center" min-width="75"></el-table-column>
         <el-table-column prop="arriveTime" label="到货日期" align="center" min-width="200"></el-table-column>
         <el-table-column align="center" fixed="right" label="操作" width="160">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="handleView">查看</el-button>
-            <el-divider direction="vertical"></el-divider>
-            <el-button type="text" size="small" @click="handleEdit">编辑</el-button>
+            <el-divider v-if="scope.row.type === '外贸入库'" direction="vertical"></el-divider>
+            <el-button v-if="scope.row.type === '外贸入库'" type="text" size="small" @click="handleEdit">编辑</el-button>
             <el-divider v-if="scope.row.status === '待入库'" direction="vertical"></el-divider>
             <el-button v-if="scope.row.status === '待入库'" type="text" size="small" @click="handleStore">入库</el-button>
           </template>
@@ -97,7 +97,7 @@ export default {
       let arr = data.data.list;
       arr.map((item) => {
         item.status = item.status ? "已入库" : "待入库";
-
+        item.type = item.type ? "采购入库" : "外贸入库";
       })
       this.tableData = arr;
       this.total = data.data.total;
