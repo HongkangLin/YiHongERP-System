@@ -32,7 +32,7 @@
         <el-table-column prop="arriveTime" label="到货日期" align="center" min-width="200"></el-table-column>
         <el-table-column align="center" fixed="right" label="操作" width="160">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="handleView">查看</el-button>
+            <el-button type="text" size="small" @click="handleView(scope.row.id, scope.row.type)">查看</el-button>
             <el-divider v-if="scope.row.type === '外贸入库'" direction="vertical"></el-divider>
             <el-button v-if="scope.row.type === '外贸入库'" type="text" size="small" @click="handleEdit">编辑</el-button>
             <el-divider v-if="scope.row.status === '待入库'" direction="vertical"></el-divider>
@@ -128,8 +128,10 @@ export default {
     },
 
     // 查看
-    handleView() {
-
+    handleView(inId, type) {
+      this.$router.push({
+        path: `/F0401/F040102/${inId}?type=${type === "外贸入库"? "0" : "1"}`
+      })
     },
 
     // 编辑
