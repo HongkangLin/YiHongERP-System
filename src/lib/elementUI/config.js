@@ -27,7 +27,7 @@ import {
   ButtonGroup,
   Table,
   TableColumn,
-  // DatePicker,
+  DatePicker,
   // TimeSelect,
   // TimePicker,
   // Popover,
@@ -56,7 +56,7 @@ import {
   // CarouselItem,
   // Collapse,
   // CollapseItem,
-  // Cascader,
+  Cascader,
   // ColorPicker,
   Transfer,
   Container,
@@ -100,7 +100,7 @@ export default (Vue) => {
 	Vue.use(ButtonGroup)
 	Vue.use(Table)
 	Vue.use(TableColumn)
-	// Vue.use(DatePicker)
+	Vue.use(DatePicker)
 	// Vue.use(TimeSelect)
 	// Vue.use(TimePicker)
 	// Vue.use(Popover)
@@ -129,7 +129,7 @@ export default (Vue) => {
 	// Vue.use(CarouselItem)
 	// Vue.use(Collapse)
 	// Vue.use(CollapseItem)
-	// Vue.use(Cascader)
+	Vue.use(Cascader)
 	// Vue.use(ColorPicker)
 	Vue.use(Transfer)
 	Vue.use(Container)

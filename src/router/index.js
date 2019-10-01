@@ -59,6 +59,26 @@ const routes = [{
 		path: '/addSettle', //采购-供应商管理-结算方式-新增结算方式
 		name: 'addSettle',
 		component: () => import(/* webpackChunkName: "addSettle" */ '../views/purchaseManagement/addSettle.vue'),
+	}, {
+		path: '/F0401/F040104', //库存管理 > 仓库设置 
+		name: 'storeSetting',
+		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/storeSetting/storeSetting.vue'),
+	}, {
+		path: '/F0401/F040104/:storeId', //库存管理 > 仓库设置 > 仓库详情
+		name: 'storeInfo',
+		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/storeSetting/storeInfo.vue'),
+	}, {
+		path: '/F0401/F040101', //库存管理 > 库存清单
+		name: 'inventoryList',
+		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/inventoryList/index.vue'),
+	}, {
+		path: '/F0401/F040102', //库存管理 > 入库管理
+		name: 'inStoreManagement',
+		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/inStoreManagement/index.vue'),
+	}, {
+		path: '/F0401/F040102/:inId', //库存管理 > 入库管理 > 入库单
+		name: 'inStoreView',
+		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/inStoreManagement/viewStore.vue'),
 	}]
 }, {
 	path: '/login', //登录页
