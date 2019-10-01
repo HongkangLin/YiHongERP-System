@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
+import crumbs from '#/crumbs/crumbs'
+
+Vue.component('crumbs', crumbs);
 
 // 引入路由配置
 import router from './router/index'

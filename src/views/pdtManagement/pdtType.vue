@@ -1,73 +1,76 @@
 <template>
-  <div class="pdtType">
-    <div class="search">
-      <div class="head">
-        <div class="label">产品分类</div>
-        <div class="new" @click="addType">+添加分类</div>
+  <div>
+    <crumbs :list="crumbList"></crumbs>
+    <div class="pdtType">
+      <div class="search">
+        <div class="head">
+          <div class="label">产品分类</div>
+          <div class="new" @click="addType">+添加分类</div>
+        </div>
       </div>
+      <el-table
+        border
+        :data="tableData"
+        style="width: 100%">
+        <el-table-column type="expand">
+          <template slot-scope="props">
+            <el-table :show-header="false" v-if="props.row.listChildCategory.length" style="width: 100%" :data="props.row.listChildCategory">
+              <el-table-column prop="goodsCategoryName"></el-table-column>
+              <el-table-column prop="productCount" align="center" width="180"></el-table-column>
+              <el-table-column prop="goodsCategorySortId" align="center" width="180"></el-table-column>
+              <el-table-column align="center">
+                <template slot-scope="scope">
+                  <el-button
+                    size="mini"
+                    type="text"
+                    @click="handleEdit(props.$index, scope.$index, scope.row.id)">编辑分类</el-button>
+                  <el-divider direction="vertical"></el-divider>
+                  <el-button
+                    size="mini"
+                    type="text"
+                    @click="handleDelete(scope.row.id)">删除分类</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="分类名称"
+          prop="goodsCategoryName">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          label="商品数量"
+          width="180"
+          prop="productCount">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          label="分类排序"
+          width="180"
+          prop="goodsCategorySortId">
+        </el-table-column>
+        <el-table-column label="设置" align="center">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              @click="handleAdd(scope.$index)">新增下级</el-button>
+            <el-divider direction="vertical"></el-divider>
+            <el-button
+              size="mini"
+              type="text"
+              @click="handleEdit(scope.$index, '', scope.row.id)">编辑分类</el-button>
+            <el-divider direction="vertical"></el-divider>
+            <el-button
+              size="mini"
+              type="text"
+              @click="handleDelete(scope.row.id)">删除分类</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
     </div>
-    <el-table
-      border
-      :data="tableData"
-      style="width: 100%">
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-table :show-header="false" v-if="props.row.listChildCategory.length" style="width: 100%" :data="props.row.listChildCategory">
-            <el-table-column prop="goodsCategoryName"></el-table-column>
-            <el-table-column prop="productCount" align="center" width="180"></el-table-column>
-            <el-table-column prop="goodsCategorySortId" align="center" width="180"></el-table-column>
-            <el-table-column align="center">
-              <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  type="text"
-                  @click="handleEdit(props.$index, scope.$index, scope.row.id)">编辑分类</el-button>
-                <el-divider direction="vertical"></el-divider>
-                <el-button
-                  size="mini"
-                  type="text"
-                  @click="handleDelete(scope.row.id)">删除分类</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="分类名称"
-        prop="goodsCategoryName">
-      </el-table-column>
-      <el-table-column
-        align="center"
-        label="商品数量"
-        width="180"
-        prop="productCount">
-      </el-table-column>
-      <el-table-column
-        align="center"
-        label="分类排序"
-        width="180"
-        prop="goodsCategorySortId">
-      </el-table-column>
-      <el-table-column label="设置" align="center">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            @click="handleAdd(scope.$index)">新增下级</el-button>
-          <el-divider direction="vertical"></el-divider>
-          <el-button
-            size="mini"
-            type="text"
-            @click="handleEdit(scope.$index, '', scope.row.id)">编辑分类</el-button>
-          <el-divider direction="vertical"></el-divider>
-          <el-button
-            size="mini"
-            type="text"
-            @click="handleDelete(scope.row.id)">删除分类</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
   </div>
 </template>
 
@@ -79,6 +82,13 @@ export default {
   },
   data () {
     return {
+      crumbList: [{ // 面包屑
+        name: '产品管理',
+        path: '/F0201/F020102'
+      }, {
+        name: '产品分类',
+        path: ''
+      }],
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
@@ -149,9 +159,10 @@ export default {
 <style lang="less" scoped>
 .pdtType {
   box-sizing: border-box;
-  padding: 20px;
+  padding: 20px 50px;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 50px);
+  overflow: auto;
   font-size: 12px;
   .search {
     width: 100%;

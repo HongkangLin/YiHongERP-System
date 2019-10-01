@@ -6,7 +6,7 @@ const routes = [{
 	path: '/',
 	name: 'index',
 	component: () => import(/* webpackChunkName: "index" */ '../views/index/index.vue'),
-	redirect: '/F0101/F010101',
+	redirect: '/F0201/F020101',
 	children: [{
 		path: '/F0101/F010101', //系统管理-权限-用户管理
 		name: 'userMgmt',
@@ -43,6 +43,14 @@ const routes = [{
 		path: '/F0302/F030201', //采购-供应商管理-供应商管理
 		name: 'supplierManagement',
 		component: () => import(/* webpackChunkName: "supplierManagement" */ '../views/purchaseManagement/supplierManagement.vue'),
+	}, {
+		path: '/supplierDetail/:id', //采购-供应商管理-供应商管理-供应商信息
+		name: 'supplierDetail',
+		component: () => import(/* webpackChunkName: "supplierDetail" */ '../views/purchaseManagement/supplierDetail.vue'),
+	}, {
+		path: '/supplierPdt', //采购-供应商管理-供应商管理-供应中产品
+		name: 'supplierPdt',
+		component: () => import(/* webpackChunkName: "supplierPdt" */ '../views/purchaseManagement/supplierPdt.vue'),
 	}, {
 		path: '/F0302/F030202', //采购-供应商管理-结算方式
 		name: 'settleStyle',

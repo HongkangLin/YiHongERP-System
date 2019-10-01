@@ -1,64 +1,67 @@
 <template>
-  <div class="userRoleMgmt">
-    <div class="search">
-      <div class="head">
-        <div class="label">角色权限管理</div>
-        <div class="new" @click="addRole">新增角色</div>
-      </div>
-      <div class="content">
-        <div class="inputDiv">
-          <el-input class="name" v-model="name" placeholder="请输入角色名"></el-input>
-          <el-select class="selList" v-model="type" placeholder="请选择角色类型">
-            <el-option
-              v-for="item in typeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+  <div>
+    <crumbs :list="crumbList"></crumbs>
+    <div class="userRoleMgmt">
+      <div class="search">
+        <div class="head">
+          <div class="label">角色权限管理</div>
+          <div class="new" @click="addRole">新增角色</div>
         </div>
-        <div class="sel" @click="search">查询</div>
+        <div class="content">
+          <div class="inputDiv">
+            <el-input class="name" v-model="name" placeholder="请输入角色名"></el-input>
+            <el-select class="selList" v-model="type" placeholder="请选择角色类型">
+              <el-option
+                v-for="item in typeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+          <div class="sel" @click="search">查询</div>
+        </div>
       </div>
+      <div class="table">
+        <el-table
+          :data="tableData"
+          border
+          style="width: 100%">
+          <el-table-column
+            prop="roleName"
+            label="角色名"
+            align="center"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="roleType"
+            label="角色类型"
+            align="center"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="roleDesc"
+            align="center"
+            label="描述">
+          </el-table-column>
+          <el-table-column label="操作" align="center">
+            <template slot-scope="scope">
+              <el-button
+                type="text"
+                size="mini"
+                @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+              <el-divider direction="vertical" v-if="scope.row.roleType !== '超级管理员'"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                v-if="scope.row.roleType !== '超级管理员'"
+                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
     </div>
-    <div class="table">
-      <el-table
-        :data="tableData"
-        border
-        style="width: 100%">
-        <el-table-column
-          prop="roleName"
-          label="角色名"
-          align="center"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          prop="roleType"
-          label="角色类型"
-          align="center"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          prop="roleDesc"
-          align="center"
-          label="描述">
-        </el-table-column>
-        <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="mini"
-              @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-divider direction="vertical" v-if="scope.row.roleType !== '超级管理员'"></el-divider>
-            <el-button
-              size="mini"
-              type="text"
-              v-if="scope.row.roleType !== '超级管理员'"
-              @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
   </div>
 </template>
 
@@ -70,6 +73,13 @@ export default {
   },
   data () {
     return {
+      crumbList: [{ // 面包屑
+        name: '权限管理',
+        path: '/F0101/F010102'
+      }, {
+        name: '角色权限管理',
+        path: ''
+      }],
       name: '', // 角色名
       type: '', // 类型
       typeList: ['超级管理员', '主管', '员工'],
@@ -157,9 +167,10 @@ export default {
     }
   }
   box-sizing: border-box;
-  padding: 20px;
+  padding: 20px 50px;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 50px);
+  overflow: auto;
   font-size: 12px;
   .search {
     width: 100%;

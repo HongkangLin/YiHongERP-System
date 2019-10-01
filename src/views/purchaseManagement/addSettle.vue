@@ -1,19 +1,22 @@
 <template>
-  <div class="addSettle">
-    <div class="title">{{title}}</div>
-    <div class="content">
-      <div class="base">
-        <el-form ref="formData" :model="formData" :rules="rules" label-width="110px">
-          <el-form-item label="结算方式：" prop="name">
-            <el-input v-model="formData.name" placeholder="请输入结算方式"></el-input>
-          </el-form-item>
-          <el-form-item label="备注：">
-            <el-input type="textarea" :rows="7" v-model="formData.remark" placeholder="请输入备注"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <div class="submit" @click="submit('formData')">提交</div>
-          </el-form-item>
-        </el-form>
+  <div>
+    <crumbs :list="crumbList"></crumbs>
+    <div class="addSettle">
+      <div class="title">{{title}}</div>
+      <div class="content">
+        <div class="base">
+          <el-form ref="formData" :model="formData" :rules="rules" label-width="110px">
+            <el-form-item label="结算方式：" prop="name">
+              <el-input v-model="formData.name" placeholder="请输入结算方式"></el-input>
+            </el-form-item>
+            <el-form-item label="备注：">
+              <el-input type="textarea" :rows="7" v-model="formData.remark" placeholder="请输入备注"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <div class="submit" @click="submit('formData')">提交</div>
+            </el-form-item>
+          </el-form>
+        </div>
       </div>
     </div>
   </div>
@@ -23,6 +26,13 @@
 export default {
   data () {
     return {
+      crumbList: [{ // 面包屑
+        name: '供应商管理',
+        path: '/F0302/F030202'
+      }, {
+        name: '结算方式',
+        path: '/F0302/F030202'
+      }],
       title: '新增结算方式',
       formData: { // 基本信息
         name: '',
@@ -41,8 +51,16 @@ export default {
     this.id = query.id;
     if (!this.id) { // 新增
       this.title = '新增结算方式';
+      this.crumbList.push({
+        name: '新增结算方式',
+        path: ''
+      });
     } else { // 编辑
       this.title = '编辑结算方式';
+      this.crumbList.push({
+        name: '编辑结算方式',
+        path: ''
+      });
       this.formData = {
         name: query.name,
         remark: query.remark
@@ -87,8 +105,10 @@ export default {
       line-height: 35px;
     }
   }
-  padding: 20px;
+  padding: 20px 50px;
   font-size: 12px;
+  height: calc(100% - 50px);
+  overflow: auto;
   .title {
     color: #666;
     background-color: #f3f3f3;
