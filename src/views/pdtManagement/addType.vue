@@ -1,33 +1,36 @@
 <template>
-  <div class="addType">
-    <div class="title">{{title}}</div>
-    <div class="content">
-      <div class="base">
-        <el-form ref="formData" :model="formData" :rules="rules" label-width="110px">
-          <el-form-item label="分类名称：" prop="goodsCategoryName">
-            <el-input v-model="formData.goodsCategoryName" placeholder="请输入分类名称"></el-input>
-          </el-form-item>
-          <el-form-item label="上级分类：">
-            <el-select class="selList" :disabled="disable" v-model="formData.parentId" placeholder="请选择分类">
-              <el-option
-                v-for="item in typeOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-            <div class="desc">不选择上级分类默认为顶级分类</div>
-          </el-form-item>
-          <el-form-item label="排序：" prop="goodsBrandPicUrl">
-            <el-input type="number" v-model="formData.goodsCategorySortId" placeholder="请输入分类排序"></el-input>
-          </el-form-item>
-          <el-form-item label="分类描述：">
-            <el-input type="textarea" :rows="7" v-model="formData.goodDescribe" placeholder="请输入内容"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <div class="submit" @click="submit('formData')">提交</div>
-          </el-form-item>
-        </el-form>
+  <div>
+    <crumbs :list="crumbList"></crumbs>
+    <div class="addType">
+      <div class="title">{{title}}</div>
+      <div class="content">
+        <div class="base">
+          <el-form ref="formData" :model="formData" :rules="rules" label-width="110px">
+            <el-form-item label="分类名称：" prop="goodsCategoryName">
+              <el-input v-model="formData.goodsCategoryName" placeholder="请输入分类名称"></el-input>
+            </el-form-item>
+            <el-form-item label="上级分类：">
+              <el-select class="selList" :disabled="disable" v-model="formData.parentId" placeholder="请选择分类">
+                <el-option
+                  v-for="item in typeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <div class="desc">不选择上级分类默认为顶级分类</div>
+            </el-form-item>
+            <el-form-item label="排序：" prop="goodsBrandPicUrl">
+              <el-input type="number" v-model="formData.goodsCategorySortId" placeholder="请输入分类排序"></el-input>
+            </el-form-item>
+            <el-form-item label="分类描述：">
+              <el-input type="textarea" :rows="7" v-model="formData.goodDescribe" placeholder="请输入内容"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <div class="submit" @click="submit('formData')">提交</div>
+            </el-form-item>
+          </el-form>
+        </div>
       </div>
     </div>
   </div>
@@ -37,6 +40,13 @@
 export default {
   data () {
     return {
+      crumbList: [{ // 面包屑
+        name: '产品管理',
+        path: '/F0201/F020102'
+      }, {
+        name: '产品分类',
+        path: '/F0201/F020102'
+      }],
       title: '新增分类',
       typeOptions: [{
         label: '顶级',
@@ -67,13 +77,25 @@ export default {
     this.id = query.id;
     if (!this.id) { // 新增
       this.title = '新增分类';
+      this.crumbList.push({
+        name: '添加分类',
+        path: ''
+      });
     } else { // 编辑
       let data = query.data;
       if (data.goodsCategoryName) { // 存在名称时表示当前处于编辑状态
         this.title = '编辑分类';
         this.formData = data;
+        this.crumbList.push({
+          name: '编辑分类',
+          path: ''
+        });
       } else { // 否则为新增下级状态
         this.title = '新增下级';
+        this.crumbList.push({
+          name: '新增下级',
+          path: ''
+        });
         this.disable = true;
         this.formData.parentId = this.id;
       }
@@ -127,8 +149,10 @@ export default {
       line-height: 35px;
     }
   }
-  padding: 20px;
+  padding: 20px 50px;
   font-size: 12px;
+  height: calc(100% - 50px);
+  overflow: auto;
   .title {
     color: #666;
     background-color: #f3f3f3;

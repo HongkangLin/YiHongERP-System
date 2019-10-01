@@ -16,7 +16,7 @@
         <el-menu default-active="F0101-F010101" class="classTwoMenu" :collapse="true" background-color="#474c5a">
           <el-submenu :index="item.menuPath" v-for="(item, index) in menuList" :key="index">
             <template slot="title">
-              <i class="classTwoMenuName el-icon-menu">{{item.menuName}}</i>
+              <i class="classTwoMenuName" :class="classList[item.menuName]">{{item.menuName}}</i>
             </template>
             <el-menu-item-group v-for="(key, idx) in item.childNodeList" :key="idx">
               <span slot="title">{{key.menuName}}</span>
@@ -26,7 +26,7 @@
         </el-menu>
       </el-aside>
       <!-- 主体区域 -->
-		  <router-view class="mainView"></router-view>
+      <router-view class="mainView"></router-view>
     </el-container>
   </el-container>
 </template>
@@ -35,6 +35,13 @@
 export default {
   data() {
     return {
+      classList: {
+        '产品': 'el-icon-goods',
+        '采购': 'el-icon-shopping-cart-2',
+        '库存': 'el-icon-box',
+        '财务': 'el-icon-s-data',
+        '系统': 'el-icon-setting'
+      },
       menuList: [] // 菜单列表
     }
   },
@@ -98,7 +105,7 @@ export default {
   }
   // 左侧导航栏及内容区
   .navAndMain {
-    height: calc(100vh - 60px);
+    height: calc(100vh - 50px);
     >.el-aside {
       width: 64px !important;
       height: 100%;
@@ -124,11 +131,10 @@ export default {
         
       }
     }
-
     // router-view区域
     .mainView {
       width: calc(100vw - 64px);
-      height: calc(100vh - 60px);
+      height: calc(100vh - 50px);
       overflow: auto;
       font-size: 14px;
     }

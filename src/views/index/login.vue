@@ -59,7 +59,7 @@ export default {
                 type: 'success'
               });
               localStorage.setItem('token', e.data.token);
-              this.$router.replace('/F0101/F010101'); // 登陆成功
+              this.$router.replace('/F0201/F020101'); // 登陆成功
             }
           });
         } else {

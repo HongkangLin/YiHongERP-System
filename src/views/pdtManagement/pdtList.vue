@@ -1,85 +1,88 @@
 <template>
-  <div class="pdtList">
-    <div class="search">
-      <div class="head">
-        <div class="label">产品列表</div>
-        <div class="new" @click="addRole">新增产品</div>
-      </div>
-      <div class="content">
-        <div class="inputDiv">
-          <el-input class="name" v-model="name" placeholder="产品名称/SKU/海关编码"></el-input>
-          <el-select class="selList" v-model="status" placeholder="产品状态">
-            <el-option
-              v-for="item in prdStatus"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          <el-select class="selList" v-model="type" placeholder="产品分类">
-            <el-option
-              v-for="item in prdType"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          <el-select class="selList" v-model="type" placeholder="品牌">
-            <el-option
-              v-for="item in typeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          <el-select class="selList" v-model="type" placeholder="采购人">
-            <el-option
-              v-for="item in typeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+  <div>
+    <crumbs :list="crumbList"></crumbs>
+    <div class="pdtList">
+      <div class="search">
+        <div class="head">
+          <div class="label">产品列表</div>
+          <div class="new" @click="addRole">新增产品</div>
         </div>
-        <div class="sel" @click="search">查询</div>
+        <div class="content">
+          <div class="inputDiv">
+            <el-input class="name" v-model="name" placeholder="产品名称/SKU/海关编码"></el-input>
+            <el-select class="selList" v-model="status" placeholder="产品状态">
+              <el-option
+                v-for="item in prdStatus"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+            <el-select class="selList" v-model="type" placeholder="产品分类">
+              <el-option
+                v-for="item in prdType"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+            <el-select class="selList" v-model="type" placeholder="品牌">
+              <el-option
+                v-for="item in typeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+            <el-select class="selList" v-model="type" placeholder="采购人">
+              <el-option
+                v-for="item in typeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+          <div class="sel" @click="search">查询</div>
+        </div>
       </div>
+      <div class="table">
+        <el-table
+          :data="tableData"
+          border
+          style="width: 100%">
+          <el-table-column
+            prop="roleName"
+            label="角色名"
+            align="center"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="roleType"
+            label="角色类型"
+            align="center"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="roleDesc"
+            align="center"
+            label="描述">
+          </el-table-column>
+          <el-table-column label="操作" align="center">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+              <el-button
+                size="mini"
+                type="danger"
+                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
     </div>
-    <div class="table">
-      <el-table
-        :data="tableData"
-        border
-        style="width: 100%">
-        <el-table-column
-          prop="roleName"
-          label="角色名"
-          align="center"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          prop="roleType"
-          label="角色类型"
-          align="center"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          prop="roleDesc"
-          align="center"
-          label="描述">
-        </el-table-column>
-        <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
   </div>
 </template>
 
@@ -91,6 +94,13 @@ export default {
   },
   data () {
     return {
+      crumbList: [{ // 面包屑
+        name: '产品管理',
+        path: '/F0201/F020101'
+      }, {
+        name: '产品列表',
+        path: ''
+      }],
       name: '', // 产品名称/SKU/海关编码
       status: '', // 产品状态
       prdStatus: [{ // 产品状态选项
@@ -131,6 +141,9 @@ export default {
     this.queryList();
   },
   methods: {
+    goBack () {
+      console.log(11);
+    },
     async queryList () { // 查询列表
       let data = await window.axios.post('/role/queryAllRoleList', {
         roleType: this.type,
@@ -190,9 +203,10 @@ export default {
 <style lang="less" scoped>
 .pdtList {
   box-sizing: border-box;
-  padding: 20px;
+  padding: 20px 50px;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 50px);
+  overflow: auto;
   font-size: 12px;
   .search {
     width: 100%;

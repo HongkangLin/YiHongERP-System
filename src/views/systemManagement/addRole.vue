@@ -1,39 +1,42 @@
 <template>
-  <div class="addRole">
-    <div class="title">{{title}}</div>
-    <div class="content">
-      <div class="label">基础信息</div>
-      <div class="base">
-        <el-form ref="formData" :model="formData" label-width="110px">
-          <el-form-item label="角色类型：">
-            <el-radio v-model="formData.roleType" v-if="formData.roleType === '1'" label="1">超级管理员</el-radio>
-            <el-radio v-model="formData.roleType" v-if="formData.roleType !== '1'" label="2">管理员</el-radio><span class="info">管理员可对员工提的审核内容进行审批</span><br>
-            <el-radio v-model="formData.roleType" v-if="formData.roleType !== '1'" label="3">员工</el-radio>
-          </el-form-item>
-          <el-form-item label="角色名：" prop="roleName" :rules="{ required: true, message: '角色名不能为空', trigger: 'blur'}">
-            <el-input v-model="formData.roleName" placeholder="请输入角色名"></el-input>
-          </el-form-item>
-          <el-form-item label="角色描述：">
-            <el-input type="textarea" :rows="7" v-model="formData.roleDesc" placeholder="请输入角色描述"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div class="label">权限配置</div>
-      <div class="roleConfig">
-        <div class="selArea">
-          <div class="selTitle"><el-checkbox v-model="checkAll" @change="selAll">选择全部</el-checkbox></div>
+  <div>
+    <crumbs :list="crumbList"></crumbs>
+    <div class="addRole">
+      <div class="title">{{title}}</div>
+      <div class="content">
+        <div class="label">基础信息</div>
+        <div class="base">
+          <el-form ref="formData" :model="formData" label-width="110px">
+            <el-form-item label="角色类型：">
+              <el-radio v-model="formData.roleType" v-if="formData.roleType === '1'" label="1">超级管理员</el-radio>
+              <el-radio v-model="formData.roleType" v-if="formData.roleType !== '1'" label="2">管理员</el-radio><span class="info">管理员可对员工提的审核内容进行审批</span><br>
+              <el-radio v-model="formData.roleType" v-if="formData.roleType !== '1'" label="3">员工</el-radio>
+            </el-form-item>
+            <el-form-item label="角色名：" prop="roleName" :rules="{ required: true, message: '角色名不能为空', trigger: 'blur'}">
+              <el-input v-model="formData.roleName" placeholder="请输入角色名"></el-input>
+            </el-form-item>
+            <el-form-item label="角色描述：">
+              <el-input type="textarea" :rows="7" v-model="formData.roleDesc" placeholder="请输入角色描述"></el-input>
+            </el-form-item>
+          </el-form>
         </div>
-        <div class="selArea" v-for="(items, idx) in roleList" :key="idx">
-          <div class="selTitle"><el-checkbox :disabled="items.disable" v-model="items.check" @change="selArr(idx)">{{items.menuName}}</el-checkbox></div>
-          <div class="selContent">
-            <div v-for="(item, index) in items.funcList" :key="index">
-              <el-checkbox :disabled="item.disable" v-model="item.check" @change="selSome(idx)">{{item.funcName.replace(items.menuName + '-', '')}}</el-checkbox>
+        <div class="label">权限配置</div>
+        <div class="roleConfig">
+          <div class="selArea">
+            <div class="selTitle"><el-checkbox v-model="checkAll" @change="selAll">选择全部</el-checkbox></div>
+          </div>
+          <div class="selArea" v-for="(items, idx) in roleList" :key="idx">
+            <div class="selTitle"><el-checkbox :disabled="items.disable" v-model="items.check" @change="selArr(idx)">{{items.menuName}}</el-checkbox></div>
+            <div class="selContent">
+              <div v-for="(item, index) in items.funcList" :key="index">
+                <el-checkbox :disabled="item.disable" v-model="item.check" @change="selSome(idx)">{{item.funcName.replace(items.menuName + '-', '')}}</el-checkbox>
+              </div>
+              <div v-for="(empty, i) in (6 - items.funcList.length % 6)" :key="'empty' + i"></div>
             </div>
-            <div v-for="(empty, i) in (6 - items.funcList.length % 6)" :key="'empty' + i"></div>
           </div>
         </div>
+        <div class="submit" @click="submit('formData')">提交</div>
       </div>
-      <div class="submit" @click="submit('formData')">提交</div>
     </div>
   </div>
 </template>
@@ -42,6 +45,13 @@
 export default {
   data () {
     return {
+      crumbList: [{ // 面包屑
+        name: '权限管理',
+        path: '/F0101/F010102'
+      }, {
+        name: '角色权限管理',
+        path: '/F0101/F010102'
+      }],
       title: '新增角色',
       formData: { // 基本信息
         roleType: '2',
@@ -57,9 +67,17 @@ export default {
     this.id = this.$route.query.id;
     if (!this.id) { // 新增
       this.title = '新增角色';
+      this.crumbList.push({
+        name: '新增角色',
+        path: ''
+      });
       this.queryList();
     } else { // 编辑
       this.title = '编辑角色';
+      this.crumbList.push({
+        name: '编辑角色',
+        path: ''
+      });
       this.queryListByRole();
     }
   },
@@ -177,8 +195,10 @@ export default {
 
 <style lang="less" scoped>
 .addRole {
-  padding: 20px;
+  padding: 20px 50px;
   font-size: 12px;
+  height: calc(100% - 50px);
+  overflow: auto;
   .title {
     color: #666;
     background-color: #f3f3f3;

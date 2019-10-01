@@ -32,8 +32,8 @@ import {
   // TimePicker,
   // Popover,
   // Tooltip,
-  // Breadcrumb,
-  // BreadcrumbItem,
+  Breadcrumb,
+  BreadcrumbItem,
   Form,
   FormItem,
   Tabs,
@@ -67,7 +67,7 @@ import {
   // Main,
   // Footer,
   // Loading,
-  // MessageBox,
+  MessageBox,
   Message,
   // Notification
 } from 'element-ui'
@@ -105,8 +105,8 @@ export default (Vue) => {
 	// Vue.use(TimePicker)
 	// Vue.use(Popover)
 	// Vue.use(Tooltip)
-	// Vue.use(Breadcrumb)
-	// Vue.use(BreadcrumbItem)
+	Vue.use(Breadcrumb)
+	Vue.use(BreadcrumbItem)
 	Vue.use(Form)
 	Vue.use(FormItem)
 	Vue.use(Tabs)
@@ -144,8 +144,8 @@ export default (Vue) => {
 
 	// Vue.prototype.$loading = Loading.service
 	// Vue.prototype.$msgbox = MessageBox
-	// Vue.prototype.$alert = MessageBox.alert
-	// Vue.prototype.$confirm = MessageBox.confirm
+	Vue.prototype.$alert = MessageBox.alert
+	Vue.prototype.$confirm = MessageBox.confirm
 	// Vue.prototype.$prompt = MessageBox.prompt
 	// Vue.prototype.$notify = Notification
 	Vue.prototype.$message = Message

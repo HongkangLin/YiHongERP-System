@@ -1,84 +1,94 @@
 <template>
-  <div class="supplierManagement">
-    <div class="search">
-      <div class="head">
-        <div class="label">供应商管理</div>
-        <div class="new" @click="addSettle">新增供应商</div>
-      </div>
-      <div class="content">
-        <div class="inputDiv">
-          <el-input class="name" v-model="name" placeholder="供应商名称/编号"></el-input>
+  <div>
+    <crumbs :list="crumbList"></crumbs>
+    <div class="supplierManagement">
+      <div class="search">
+        <div class="head">
+          <div class="label">供应商管理</div>
+          <div class="new" @click="addSettle">新增供应商</div>
         </div>
-        <div class="sel" @click="search">查询</div>
+        <div class="content">
+          <div class="inputDiv">
+            <el-input class="name" v-model="name" placeholder="供应商名称/编号"></el-input>
+          </div>
+          <div class="sel" @click="search">查询</div>
+        </div>
       </div>
+      <div class="table">
+        <el-table
+          :data="tableData"
+          border
+          style="width: 100%">
+          <el-table-column
+            prop="sn"
+            label="供应商编号"
+            align="center"
+            width="150">
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="供应商名称"
+            align="center"
+            width="150">
+          </el-table-column>
+          <el-table-column
+            label="所在地"
+            align="center">
+            <template slot-scope="scope">
+              <div>{{scope.row.addrProvince + scope.row.addrCity}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="供应中产品"
+            align="center"
+            width="150">
+            <template slot-scope="scope">
+              <a>{{scope.row.productCount + '种'}}</a>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="状态"
+            align="center"
+            width="150">
+            <template slot-scope="scope">
+              <el-switch
+                v-model="scope.row.status"
+                active-color="#1ABC9C"
+                active-text="启用"
+                inactive-text="禁用"
+                @change="changeStatus(scope.$index, scope.row.id, scope.row.status)"
+                inactive-color="#ccc">
+              </el-switch>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="purchaserName"
+            label="采购员"
+            align="center"
+            width="150">
+          </el-table-column>
+          <el-table-column label="操作" align="center">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+              <el-divider direction="vertical"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleLook(scope.row.id)">查看</el-button>
+              <el-divider direction="vertical"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleDelete(scope.row.id)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
     </div>
-    <div class="table">
-      <el-table
-        :data="tableData"
-        border
-        style="width: 100%">
-        <el-table-column
-          prop="sn"
-          label="供应商编号"
-          align="center"
-          width="150">
-        </el-table-column>
-        <el-table-column
-          prop="name"
-          label="供应商名称"
-          align="center"
-          width="150">
-        </el-table-column>
-        <el-table-column
-          prop="addrCity"
-          label="所在地"
-          align="center"
-          width="150">
-        </el-table-column>
-        <el-table-column
-          prop="productCount"
-          label="供应中产品"
-          align="center"
-          width="150">
-        </el-table-column>
-        <el-table-column
-          prop="status"
-          label="状态"
-          align="center"
-          width="150">
-        </el-table-column>
-        <el-table-column
-          prop="purchaserId"
-          label="采购员"
-          align="center"
-          width="150">
-        </el-table-column>
-        <el-table-column
-          prop="remark"
-          align="center"
-          label="备注">
-        </el-table-column>
-        <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="text"
-              @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-divider direction="vertical"></el-divider>
-            <el-button
-              size="mini"
-              type="text"
-              @click="handleDelete(scope.$index, scope.row)">查看</el-button>
-            <el-divider direction="vertical"></el-divider>
-            <el-button
-              size="mini"
-              type="text"
-              @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
   </div>
 </template>
 
@@ -90,6 +100,13 @@ export default {
   },
   data () {
     return {
+      crumbList: [{ // 面包屑
+        name: '供应商管理',
+        path: '/F0302/F030201'
+      }, {
+        name: '供应商管理',
+        path: ''
+      }],
       name: '', // 品牌名/品牌缩写
       total: 0, // 总数
       pageNum: 1, // pageNumber
@@ -105,7 +122,7 @@ export default {
   },
   methods: {
     async queryList () { // 查询品牌列表
-      let data = await window.axios.get(`/supplier/listAll?pageNum=${this.pageNum}&pageSize=${this.pageSize}&snOrNameKeyword=${name}`);
+      let data = await window.axios.get(`/supplier/listAll?pageNum=${this.pageNum}&pageSize=${this.pageSize}&snOrNameKeyword=${this.name}`);
       data = data.data;
       this.total = data.total;
       this.tableData = data.list;
@@ -114,8 +131,24 @@ export default {
       this.pageNum = 1;
       this.queryList();
     },
-    handleEdit (index) { // 编辑品牌
+    handleEdit (index) { // 编辑供应商
       this.$router.push({path: '/addSettle', query: {...this.tableData[index]}});
+    },
+    handleLook (id) { // 查看详情
+      this.$router.push(`/supplierDetail/${id}`);
+    },
+    async handleDelete (id) { // 删除供应商
+      let data = await window.axios.post('/supplier/delete', {
+        id: id
+      });
+      this.$message({
+        message: data.message,
+        type: 'success'
+      });
+      if (this.tableData.length === 1) { // 当前页最后一条数据
+        this.pageNum = (this.pageNum - 1) || 1;
+      }
+      this.queryList(); // 重新获取数据
     },
     changeNum (num) { // 改变页码
       this.pageNum = num;
@@ -126,8 +159,30 @@ export default {
       this.pageSize = size;
       this.queryList();
     },
-    addSettle () { // 新增品牌
+    addSettle () { // 新增供应商
       this.$router.push('/addSettle');
+    },
+    changeStatus (idx, id, status) { // 改变switch状态
+      if (!status) {
+        this.$confirm('确定要禁用该供应商吗？禁用后新增采购单时当前供应商将不可见，数据将不受到任何影响', '禁用供应商', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.submitStatus(id, status);
+        }).catch(() => {
+          this.tableData[idx].status = true;
+        });
+      } else {
+        this.submitStatus(id, status);
+      }
+    },
+    async submitStatus (id, status) { // 提交修改的状态
+      let data = await window.axios.post('/supplier/changestatus', {
+        id: id,
+        newStatus: ~~status
+      });
+      data.code === 0 ? this.$message.success(data.message) : this.$message.error(data.message);
     }
   }
 }
@@ -141,10 +196,17 @@ export default {
       line-height: 35px;
     }
   }
+  /deep/.el-switch__label--left {
+    color: #ccc;
+  }
+  /deep/.el-switch__label--right {
+    color: #1ABC9C;
+  }
   box-sizing: border-box;
-  padding: 20px;
+  padding: 20px 50px;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 50px);
+  overflow: auto;
   font-size: 12px;
   .img {
     width: 100px;

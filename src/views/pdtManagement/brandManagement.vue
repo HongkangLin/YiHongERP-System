@@ -1,57 +1,60 @@
 <template>
-  <div class="brandManagement">
-    <div class="search">
-      <div class="head">
-        <div class="label">品牌列表</div>
-        <div class="new" @click="addBrand">新增品牌</div>
-      </div>
-      <div class="content">
-        <div class="inputDiv">
-          <el-input class="name" v-model="name" placeholder="品牌名/品牌缩写"></el-input>
+  <div>
+    <crumbs :list="crumbList"></crumbs>
+    <div class="brandManagement">
+      <div class="search">
+        <div class="head">
+          <div class="label">品牌列表</div>
+          <div class="new" @click="addBrand">新增品牌</div>
         </div>
-        <div class="sel" @click="search">查询</div>
+        <div class="content">
+          <div class="inputDiv">
+            <el-input class="name" v-model="name" placeholder="品牌名/品牌缩写"></el-input>
+          </div>
+          <div class="sel" @click="search">查询</div>
+        </div>
       </div>
+      <div class="table">
+        <el-table
+          :data="tableData"
+          border
+          style="width: 100%">
+          <el-table-column
+            prop="goodsBrandName"
+            label="品牌名"
+            align="center"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            label="LOGO"
+            align="center"
+            width="180">
+            <template slot-scope="scope">
+              <img class="img" :src="scope.row.goodsBrandPicUrl">
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="goodsBrandLetter"
+            align="center"
+            label="品牌缩写">
+          </el-table-column>
+          <el-table-column label="操作" align="center">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+              <el-divider direction="vertical"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
     </div>
-    <div class="table">
-      <el-table
-        :data="tableData"
-        border
-        style="width: 100%">
-        <el-table-column
-          prop="goodsBrandName"
-          label="品牌名"
-          align="center"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          label="LOGO"
-          align="center"
-          width="180">
-          <template slot-scope="scope">
-            <img class="img" :src="scope.row.goodsBrandPicUrl">
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="goodsBrandLetter"
-          align="center"
-          label="品牌缩写">
-        </el-table-column>
-        <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="text"
-              @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-divider direction="vertical"></el-divider>
-            <el-button
-              size="mini"
-              type="text"
-              @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
   </div>
 </template>
 
@@ -63,6 +66,13 @@ export default {
   },
   data () {
     return {
+      crumbList: [{ // 面包屑
+        name: '产品管理',
+        path: '/F0201/F020103'
+      }, {
+        name: '品牌管理',
+        path: ''
+      }],
       name: '', // 品牌名/品牌缩写
       total: 0, // 总数
       pageNum: 1, // pageNumber
@@ -132,9 +142,10 @@ export default {
     }
   }
   box-sizing: border-box;
-  padding: 20px;
+  padding: 20px 50px;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 50px);
+  overflow: auto;
   font-size: 12px;
   .img {
     width: 100px;
