@@ -10,7 +10,7 @@
           <el-col :span="8" class="content">{{tableData[item.col4]}}</el-col>
         </el-row>
       </section>
-
+      
     </div>
 	</div>
 </template>
