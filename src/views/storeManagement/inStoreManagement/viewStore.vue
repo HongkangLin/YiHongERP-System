@@ -1,6 +1,7 @@
 <template>
   <div class="viewStore_wrap">
 		<div class="storeDetail">
+      <!-- 基础信息 -->
       <div class="header"> <i class="el-icon-collection-tag"></i> 基础信息</div>
       <section class="table">
         <el-row v-for="(item, index) in tableList" :key="index">
@@ -10,7 +11,34 @@
           <el-col :span="8" class="content">{{tableData[item.col4]}}</el-col>
         </el-row>
       </section>
-      
+      <!-- 产品信息 -->
+      <div class="header"> <i class="el-icon-collection-tag"></i> 产品信息</div>
+      <!-- 产品信息-外贸入库 -->
+      <el-table v-if="$route.query.type === '0'" :data="tableData.goods" border style="width: 100%">
+        <el-table-column label="图片" align="center" min-width="130">
+          <template slot-scope="scope">
+            <img class="img" :src="scope.row.goodsPicUrl">
+          </template>
+        </el-table-column>
+        <el-table-column prop="goodsSku" label="SKU" align="center" min-width="190"></el-table-column>
+        <el-table-column prop="goodsName" label="产品名称" align="center" min-width="300"></el-table-column>
+        <el-table-column prop="arriveCount" label="到货数量（套）" align="center" min-width="200"></el-table-column>
+        <el-table-column prop="checkinCount" label="入库数量（套）" align="center" min-width="200"></el-table-column>
+      </el-table>
+      <!-- 产品信息-采购入库 -->
+      <el-table v-else :data="tableData.goods" border style="width: 100%">
+        <el-table-column label="图片" align="center" min-width="90">
+          <template slot-scope="scope">
+            <img class="img" :src="scope.row.goodsPicUrl">
+          </template>
+        </el-table-column>
+        <el-table-column prop="goodsSku" label="SKU" align="center" min-width="135"></el-table-column>
+        <el-table-column prop="goodsName" label="产品名称" align="center" min-width="210"></el-table-column>
+        <el-table-column prop="" label="采购数量（套）" align="center" min-width="140"></el-table-column>
+        <el-table-column prop="" label="已到货（套）" align="center" min-width="145"></el-table-column>
+        <el-table-column prop="arriveCount" label="本次到货数量（套）" align="center" min-width="160"></el-table-column>
+        <el-table-column prop="checkinCount" label="入库数量（套）" align="center" min-width="145"></el-table-column>
+      </el-table>
     </div>
 	</div>
 </template>
@@ -19,7 +47,7 @@
 export default {
   data() {
     return {
-      tableData: {}
+      tableData: {}, 
     }
   },
   computed: {
@@ -90,6 +118,7 @@ export default {
       font-size: 14px;
       border-top: 1px solid #e4e4e4;
       border-left: 1px solid #e4e4e4;
+      margin-bottom: 15px;
       .el-row {
         line-height: 45px;
         .el-col {
