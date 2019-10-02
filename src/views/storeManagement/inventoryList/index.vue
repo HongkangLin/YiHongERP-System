@@ -1,4 +1,7 @@
 <template>
+<div>
+  <!-- 顶部面包屑 -->
+  <crumbs :list="crumbList" :showReturn="false"></crumbs>
   <div class="inventoryList_wrap">
 		<div class="search">
       <div class="head">
@@ -35,6 +38,7 @@
       </div>
     </section>
 	</div>
+</div>
 </template>
 
 <script>
@@ -52,7 +56,15 @@ export default {
       pageSize: 10, // pageSize
 
       tableData: [],
-      storeList: []
+      storeList: [],
+
+      crumbList: [{ // 面包屑
+        name: '库存管理',
+        path: '/F0401/F040101'
+      }, {
+        name: '库存清单',
+        path: ''
+      }]
     }
   },
   created() {

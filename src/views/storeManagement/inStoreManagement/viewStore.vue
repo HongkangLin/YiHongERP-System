@@ -1,4 +1,7 @@
 <template>
+<div>
+  <!-- 顶部面包屑 -->
+  <crumbs :list="crumbList"></crumbs>
   <div class="viewStore_wrap">
 		<div class="storeDetail">
       <!-- 基础信息 -->
@@ -41,12 +44,23 @@
       </el-table>
     </div>
 	</div>
+</div>
 </template>
 
 <script>
 export default {
   data() {
     return {
+      crumbList: [{ // 面包屑
+        name: '库存管理',
+        path: '/F0401/F040102'
+      }, {
+        name: '入库管理',
+        path: '/F0401/F040102'
+      }, {
+        name: '入库单',
+        path: ''
+      }],
       tableData: {}, 
     }
   },

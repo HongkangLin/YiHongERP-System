@@ -1,4 +1,7 @@
 <template>
+<div>
+  <!-- 顶部面包屑 -->
+  <crumbs :list="crumbList" :showReturn="false"></crumbs>
   <div class="inStoreList_wrap">
 		<div class="search">
       <div class="head">
@@ -45,6 +48,7 @@
       </div>
     </section>
 	</div>
+</div>
 </template>
 
 <script>
@@ -55,6 +59,13 @@ export default {
   },
   data() {
     return {
+      crumbList: [{ // 面包屑
+        name: '库存管理',
+        path: '/F0401/F040102'
+      }, {
+        name: '入库管理',
+        path: ''
+      }],
       snOrNameKeyword: "", //搜索的关键字
       warehouseId: null, //仓库id
       status: null, //入库单状态

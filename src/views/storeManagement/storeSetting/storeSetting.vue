@@ -1,77 +1,81 @@
 <template>
-<div class="storeSetting_wrap">
-  <!-- 列表页 -->
-  <div class="storeSettingList" v-if="showListPage">
-		<div class="search">
-      <div class="head">
-        <div class="label">仓库设置</div>
-        <div class="new" @click="addStore">添加仓库</div>
-      </div>
-      <div class="content">
-        <div class="inputDiv">
-          <el-input class="nameKeyword" v-model="nameKeyword" placeholder="仓库名称/联系人"></el-input>
+<div>
+  <!-- 顶部面包屑 -->
+  <crumbs :list="crumbList" :showReturn="!showListPage" :goBack="backToListPage" :forceReload="true"></crumbs>
+  <div class="storeSetting_wrap">
+    <!-- 列表页 -->
+    <div class="storeSettingList" v-if="showListPage">
+      <div class="search">
+        <div class="head">
+          <div class="label">仓库设置</div>
+          <div class="new" @click="addStore">添加仓库</div>
         </div>
-        <div class="sel" @click="search">查询</div>
+        <div class="content">
+          <div class="inputDiv">
+            <el-input class="nameKeyword" v-model="nameKeyword" placeholder="仓库名称/联系人"></el-input>
+          </div>
+          <div class="sel" @click="search">查询</div>
+        </div>
+      </div>
+      <div class="table">
+        <el-table
+          :data="tableData"
+          border
+          style="width: 100%">
+          <el-table-column
+            prop="name"
+            label="仓库名称"
+            align="center"
+            min-width="150">
+          </el-table-column>
+          <el-table-column
+            prop="address"
+            label="仓库地址"
+            align="center"
+            min-width="290">
+          </el-table-column>
+          <el-table-column
+            prop="collectorName"
+            label="揽收联系人"
+            align="center"
+            min-width="170">
+          </el-table-column>
+          <el-table-column
+            prop="collectorMobile"
+            label="揽收联系人电话"
+            align="center"
+            min-width="180">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="仓库状态"
+            min-width="180">
+            <template slot-scope="scope">
+              <el-switch v-model="scope.row.status" @change="changeStatus({status: scope.row.status, id: scope.row.id})"></el-switch>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="center" fixed="right" min-width="120">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleView(scope.row.id)">查看</el-button>
+              <el-divider direction="vertical"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleEdit(scope.row.id)">编辑</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="splitPage">
+        <Pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></Pageination>
       </div>
     </div>
-    <div class="table">
-      <el-table
-        :data="tableData"
-        border
-        style="width: 100%">
-        <el-table-column
-          prop="name"
-          label="仓库名称"
-          align="center"
-          min-width="150">
-        </el-table-column>
-        <el-table-column
-          prop="address"
-          label="仓库地址"
-          align="center"
-          min-width="290">
-        </el-table-column>
-        <el-table-column
-          prop="collectorName"
-          label="揽收联系人"
-          align="center"
-          min-width="170">
-        </el-table-column>
-        <el-table-column
-          prop="collectorMobile"
-          label="揽收联系人电话"
-          align="center"
-          min-width="180">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          label="仓库状态"
-          min-width="180">
-          <template slot-scope="scope">
-            <el-switch v-model="scope.row.status" @change="changeStatus({status: scope.row.status, id: scope.row.id})"></el-switch>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" align="center" fixed="right" min-width="120">
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="text"
-              @click="handleView(scope.row.id)">查看</el-button>
-            <el-divider direction="vertical"></el-divider>
-            <el-button
-              size="mini"
-              type="text"
-              @click="handleEdit(scope.row.id)">编辑</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="splitPage">
-      <Pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></Pageination>
-    </div>
-	</div>
-  <!-- 新增/编辑页 -->
-  <AddOrEditStore v-else @backToListPage="backToListPage" :storeId="storeId" :chargePersonList="chargePersonList"></AddOrEditStore>
+    <!-- 新增/编辑页 -->
+    <AddOrEditStore v-else @backToListPage="backToListPage" :storeId="storeId" :chargePersonList="chargePersonList"></AddOrEditStore>
+  </div>
 </div>
 </template>
 
@@ -94,6 +98,44 @@ export default {
       showListPage: true,
       storeId: null,
       chargePersonList: [] //负责人下拉
+    }
+  },
+  computed: {
+    // 面包屑
+    crumbList() {
+      if (this.showListPage) {
+        return [{ 
+          name: '库存管理',
+          path: '/F0401/F040104'
+        }, {
+          name: '仓库设置',
+          path: ''
+        }]
+      } else {
+        if (this.storeId) { //编辑
+          return [{ 
+            name: '库存管理',
+            path: '/F0401/F040104'
+          }, {
+            name: '仓库设置',
+            path: '/F0401/F040104'
+          }, {
+            name: '编辑仓库',
+            path: ''
+          }]
+        } else { //新建
+          return [{ 
+            name: '库存管理',
+            path: '/F0401/F040104'
+          }, {
+            name: '仓库设置',
+            path: '/F0401/F040104'
+          }, {
+            name: '新增仓库',
+            path: ''
+          }]
+        }
+      }
     }
   },
   mounted () {
