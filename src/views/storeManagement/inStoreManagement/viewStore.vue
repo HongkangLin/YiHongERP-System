@@ -37,8 +37,8 @@
         </el-table-column>
         <el-table-column prop="goodsSku" label="SKU" align="center" min-width="135"></el-table-column>
         <el-table-column prop="goodsName" label="产品名称" align="center" min-width="210"></el-table-column>
-        <el-table-column prop="" label="采购数量（套）" align="center" min-width="140"></el-table-column>
-        <el-table-column prop="" label="已到货（套）" align="center" min-width="145"></el-table-column>
+        <el-table-column prop="purchaseAmount" label="采购数量（套）" align="center" min-width="140"></el-table-column>
+        <el-table-column prop="arrivedAmount" label="已到货（套）" align="center" min-width="145"></el-table-column>
         <el-table-column prop="arriveCount" label="本次到货数量（套）" align="center" min-width="160"></el-table-column>
         <el-table-column prop="checkinCount" label="入库数量（套）" align="center" min-width="145"></el-table-column>
       </el-table>
@@ -71,7 +71,7 @@ export default {
           {col1: "入库单号", col2: "sn", col3: "入库状态", col4: "status"},
           {col1: "入库类型", col2: "type", col3: "入库仓库", col4: "warehouseName"},
           {col1: "供应商", col2: "supplierName", col3: "采购员", col4: "purchaserName"},
-          {col1: "运单号", col2: "deliverSn", col3: "入库时间", col4: ""},
+          {col1: "运单号", col2: "deliverSn", col3: "入库时间", col4: "checkinTime"},
           {col1: "备注", col2: "remark", col3: "", col4: ""}
         ]
       } else { //采购入库
@@ -80,7 +80,7 @@ export default {
           {col1: "供应商名称", col2: "supplierName", col3: "采购员", col4: "purchaserName"},
           {col1: "入库仓库", col2: "warehouseName", col3: "入库状态", col4: "status"},
           {col1: "入库类型", col2: "type", col3: "运单号", col4: "deliverSn"},
-          {col1: "入库时间", col2: "", col3: "备注", col4: "remark"}
+          {col1: "入库时间", col2: "checkinTime", col3: "备注", col4: "remark"}
         ]
       }
     }
