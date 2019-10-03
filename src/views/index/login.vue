@@ -1,6 +1,6 @@
 <template>
   <div class="login_wrap">
-    <img src="../../assets/image/svg/hexagon.svg" alt="">
+    <img src="../../assets/image/svg/hexagons.svg" alt="">
     <div class="login">
       <div class="title">毅宏ERP管理系统</div>
       <div class="input">

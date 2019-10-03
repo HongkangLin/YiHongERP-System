@@ -16,6 +16,7 @@
               <el-upload
                 action="/erp/file/upload"
                 list-type="picture-card"
+                :headers="{'x-token': token}"
                 accept=".jpg, .png"
                 :limit="1"
                 :file-list="formData.goodsBrandPicUrl"
@@ -56,6 +57,7 @@ export default {
       }
     };
     return {
+      token: localStorage.getItem('token'),
       crumbList: [{ // 面包屑
         name: '产品管理',
         path: '/F0201/F020103'

@@ -5,7 +5,7 @@
       <div class="search">
         <div class="head">
           <div class="label">供应商管理</div>
-          <div class="new" @click="addSettle">新增供应商</div>
+          <div class="new" @click="addSupplier">新增供应商</div>
         </div>
         <div class="content">
           <div class="inputDiv">
@@ -132,7 +132,7 @@ export default {
       this.queryList();
     },
     handleEdit (index) { // 编辑供应商
-      this.$router.push({path: '/addSettle', query: {...this.tableData[index]}});
+      this.$router.push({path: '/addSupplier', query: {...this.tableData[index]}});
     },
     handleLook (id) { // 查看详情
       this.$router.push(`/supplierDetail/${id}`);
@@ -159,8 +159,8 @@ export default {
       this.pageSize = size;
       this.queryList();
     },
-    addSettle () { // 新增供应商
-      this.$router.push('/addSettle');
+    addSupplier () { // 新增供应商
+      this.$router.push('/addSupplier');
     },
     changeStatus (idx, id, status) { // 改变switch状态
       if (!status) {

@@ -44,6 +44,10 @@ const routes = [{
 		name: 'supplierManagement',
 		component: () => import(/* webpackChunkName: "supplierManagement" */ '../views/purchaseManagement/supplierManagement.vue'),
 	}, {
+		path: '/addSupplier', //采购-供应商管理-供应商管理-新增供应商
+		name: 'addSupplier',
+		component: () => import(/* webpackChunkName: "addSupplier" */ '../views/purchaseManagement/addSupplier.vue'),
+	}, {
 		path: '/supplierDetail/:id', //采购-供应商管理-供应商管理-供应商信息
 		name: 'supplierDetail',
 		component: () => import(/* webpackChunkName: "supplierDetail" */ '../views/purchaseManagement/supplierDetail.vue'),

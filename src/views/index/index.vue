@@ -51,7 +51,7 @@ export default {
   methods: {
     // 跳转到对应页面
     handleSelect(path) {
-      this.$router.replace(path);
+      this.$router.push(path);
     },
     // 获取菜单列表
     async getMenu () {
