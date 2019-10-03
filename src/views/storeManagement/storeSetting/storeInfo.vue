@@ -1,4 +1,7 @@
 <template>
+<div>
+  <!-- 顶部面包屑 -->
+  <crumbs :list="crumbList"></crumbs>
   <div class="storeInfo_wrap">
 		<div class="storeDetail">
       <div class="header"> <i class="el-icon-collection-tag"></i> 仓库详情</div>
@@ -12,6 +15,7 @@
       </section>
     </div>
 	</div>
+</div>
 </template>
 
 <script>
@@ -27,7 +31,20 @@ export default {
         {col1: "公司名称", col2: "companyName",col3: "固定电话",col4: "fixedPhone"},
         {col1: "邮箱地址", col2: "email",col3: "邮编",col4: "postCode"},
         {col1: "地址", col2: "address",col3: "备注",col4: "remark"}
-      ])
+      ]),
+      // 面包屑
+      crumbList: Object.freeze(
+        [{ 
+          name: '库存管理',
+          path: '/F0401/F040104'
+        }, {
+          name: '仓库设置',
+          path: '/F0401/F040104'
+        }, {
+          name: '仓库详情',
+          path: ''
+        }]
+      )
     }
   },
   created() {

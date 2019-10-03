@@ -1,7 +1,7 @@
 <template>
   <div class="userMgmt_wrap">
     <!-- 顶部面包屑 -->
-
+    <crumbs :list="crumbList" :showReturn="showAddOrEditPage" :goBack="backToListPage" :forceReload="true"></crumbs>
     <!-- 新增或编辑用户组件 -->
     <AddOrEditPerson v-if="showAddOrEditPage" :roleNameList="roleNameList" :dptList="dptList" :userId="userInfoForEdit" @backToListPage="backToListPage"></AddOrEditPerson>
 
@@ -231,6 +231,44 @@ export default {
       }
     }
   },
+  computed: {
+    // 面包屑
+    crumbList() {
+      if (!this.showAddOrEditPage) {
+        return [{ 
+          name: '权限设置',
+          path: '/F0101/F010101'
+        }, {
+          name: '用户管理',
+          path: ''
+        }]
+      } else {
+        if (this.userInfoForEdit) { //编辑
+          return [{ 
+            name: '权限设置',
+            path: '/F0101/F010101'
+          }, {
+            name: '用户管理',
+            path: '/F0101/F010101'
+          }, {
+            name: '编辑用户',
+            path: ''
+          }]
+        } else { //新建
+          return [{ 
+            name: '权限设置',
+            path: '/F0101/F010101'
+          }, {
+            name: '用户管理',
+            path: '/F0101/F010101'
+          }, {
+            name: '新增用户',
+            path: ''
+          }]
+        }
+      }
+    }
+  },
   components: {
     DialogContent, //弹窗
     AddOrEditPerson, //新增或编辑用户组件
@@ -276,6 +314,13 @@ export default {
       }
 
       this.dptTreeData = fn(arr);
+    },
+
+    queryDptTree() {
+      axios.get("/dept/queryAllDept").then((data) => {
+        if (data.code !== 0) return
+        this.parseAllDptData(data);
+      })
     },
     
     // 角色名称
@@ -481,6 +526,7 @@ export default {
     backToListPage() {
       this.showAddOrEditPage = false;
       this.queryUserTable();
+      this.queryDptTree();
     },
 
     filterDpt(value, data) {

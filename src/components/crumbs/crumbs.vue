@@ -2,9 +2,13 @@
   <div class="crumbsDiv">
     <div class="crumbs" v-if="showCrumbs">
       <span class="label"></span>
-      <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item @click="goLink(idx)" v-for="(item, idx) in list" :key="idx" :to="{ path: item.path }">{{item.name}}</el-breadcrumb-item>
-      </el-breadcrumb>
+      <!-- <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item @click="goLink(idx)" v-for="(item, idx) in list" :key="idx" >{{item.name}}</el-breadcrumb-item>
+      </el-breadcrumb> -->
+      <span class="crumbName" v-for="(item, index) in list" :key="index">
+        <i class="name" @click="goLink(index)">{{item.name}}</i>
+        <i v-if="index < list.length - 1" class="el-icon-arrow-right"></i>
+      </span>
     </div>
     <div class="return" v-if="showReturn" @click="goBack"><i class="el-icon-arrow-left"></i>返回</div>
   </div>
@@ -37,11 +41,18 @@ export default {
       default: () => {
         history.go(-1);
       }
+    },
+    forceReload: { //是否需要刷新页面
+      type: Boolean,
+      default: false
     }
   },
   methods: {
     goLink (idx) {
-      this.$router.push(this.list[idx].path);
+      if (this.list[idx].path) {
+        if (this.forceReload) this.goBack() // location.reload();
+        this.$router.push(this.list[idx].path);
+      }
     }
   }
 };
@@ -59,6 +70,8 @@ export default {
     justify-content: space-between;
     .crumbs {
       margin-left: 50px;
+      display: flex;
+      align-items: center;
       .label {
         display: inline-block;
         vertical-align: middle;
@@ -67,16 +80,39 @@ export default {
         margin-right: 5px;
         background-color: #1ABC9C;
       }
-      > div {
-        display: inline-block;
-        vertical-align: middle;
-        cursor: pointer;
-      }
-      /deep/.el-breadcrumb {
-        .el-breadcrumb__item:last-child .el-breadcrumb__inner {
+      .crumbName {
+        color: #999999;
+        &:last-of-type {
           color: #1ABC9C;
         }
+        &:not(:last-of-type) {
+          .name:hover {
+            color: #1ABC9C;
+            cursor: pointer;
+          }
+        }
+        .el-icon-arrow-right {
+          margin-right: 4px;
+          margin-left: 2px;
+        }
+
       }
+      // > div {
+      //   display: inline-block;
+      //   vertical-align: middle;
+      //   cursor: pointer;
+      // }
+      // /deep/.el-breadcrumb {
+      //   .el-breadcrumb__inner {
+      //     color: #999999;
+      //     &:hover {
+      //       color: #1ABC9C;
+      //     }
+      //   }
+      //   .el-breadcrumb__item:last-child .el-breadcrumb__inner {
+      //     color: #1ABC9C;
+      //   }
+      // }
     }
     .return {
       margin: 10px 50px;

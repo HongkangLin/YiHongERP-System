@@ -1,6 +1,6 @@
 <template>
   <div class="addOrEditStore_wrap">
-		<div class="header">新增仓库</div>
+		<div class="header">{{storeId ? "编辑仓库" : "新增仓库"}}</div>
     <div class="formArea">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="140px" class="ruleForm">
         <el-form-item label="仓库编号：" prop="id">
