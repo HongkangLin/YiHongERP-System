@@ -1,12 +1,21 @@
 <template>
   <div>
-    <crumbs :list="crumbList"></crumbs>
-    <div class="supplierDetail">
+    <div class="crumbsDiv">
+      <div class="changeTab">
+        <span @click="changeTab(0)" :class="active ? '' : 'active'">供应商信息</span>
+        <span @click="changeTab(1)" :class="active ? 'active' : ''">供应中产品</span>
+      </div>
+      <div class="tool">
+        <span @click="refreash"><i class="el-icon-refresh"></i>&nbsp;刷新</span>
+        <span @click="goBack"><i class="el-icon-arrow-left"></i>&nbsp;返回</span>
+      </div>
+    </div>
+    <div class="supplierDetail" v-if="!active">
       <div class="title"><i class="el-icon-collection-tag"></i><span>基本信息</span></div>
       <div class="info">
         <el-row>
           <el-col :span="4"><div class="td label">产品分类</div></el-col>
-          <el-col :span="8"><div class="td">{{info.level}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.goodsCategoryId}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">供应商名称</div></el-col>
           <el-col :span="8"><div class="td">{{info.name}}&nbsp;</div></el-col>
         </el-row>
@@ -146,6 +155,37 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="spanDiv"></div>
+    </div>
+    <div class="pdt" v-if="active">
+      <div class="title">
+        <i class="el-icon-s-operation"></i>数据列表
+      </div>
+      <el-table
+        :data="info.contact"
+        border
+        style="width: 100%">
+        <el-table-column
+          prop="name"
+          label="产品名称"
+          align="center">
+        </el-table-column>
+        <el-table-column
+          prop="gender"
+          label="SKU"
+          align="center">
+        </el-table-column>
+        <el-table-column
+          prop="mobile"
+          label="交期"
+          align="center">
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="采购价（元）"
+          align="center">
+        </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
@@ -164,6 +204,7 @@ export default {
         name: '供应商详情',
         path: ''
       }],
+      active: 0,
       info: {}
     };
   },
@@ -174,17 +215,63 @@ export default {
     async getInfo (id) { // 获取信息
       let data = await window.axios.get(`/supplier/detail/${id}`);
       this.info = data.data;
+    },
+    changeTab (idx) { // 改变tab
+      this.active = idx;
+    },
+    refreash () {
+      location.reload();
+    },
+    goBack () { // 返回
+      history.go(-1);
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
+.crumbsDiv {
+  position: fixed;
+  z-index: 10;
+  width: calc(100% - 64px);
+  height: 50px;
+  line-height: 50px;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgb(228, 228, 228);
+  background-color: rgba(243, 243, 243, 1);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 50px;
+  span {
+    display: inline-block;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid rgb(228, 228, 228);
+    padding: 0 10px;
+    border-radius: 3px;
+    color: #666;
+    background-color: white;
+    cursor: pointer;
+  }
+  .changeTab {
+    span {
+      margin-right: 10px;
+    }
+    span.active {
+      background-color: #1ABC9C;
+      color: white;
+      border: 1px solid #1ABC9C;
+    }
+  }
+  .tool {
+    span {
+      margin-left: 10px;
+    }
+  }
+}
 .supplierDetail {
   box-sizing: border-box;
-  margin: 20px 50px;
-  height: calc(100% - 50px);
-  overflow: auto;
+  margin: 70px 50px 20px;
   border: 1px solid rgb(228, 228, 228);
   padding: 0 30px;
   color: #666;
@@ -211,6 +298,22 @@ export default {
       background-color: #f2f2f2;
       text-align: right;
     }
+  }
+  .spanDiv {
+    width: 100%;
+    height: 30px;
+  }
+}
+.pdt {
+  box-sizing: border-box;
+  margin: 70px 50px 20px;
+  color: #666;
+  .title {
+    height: 50px;
+    line-height: 50px;
+    border: 1px solid rgb(228, 228, 228);
+    background-color: rgba(243, 243, 243, 1);
+    text-indent: 10px;
   }
 }
 </style>

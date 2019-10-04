@@ -72,7 +72,7 @@
               <el-button
                 size="mini"
                 type="text"
-                @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                @click="handleEdit(scope.row.id)">编辑</el-button>
               <el-divider direction="vertical"></el-divider>
               <el-button
                 size="mini"
@@ -131,8 +131,8 @@ export default {
       this.pageNum = 1;
       this.queryList();
     },
-    handleEdit (index) { // 编辑供应商
-      this.$router.push({path: '/addSupplier', query: {...this.tableData[index]}});
+    handleEdit (id) { // 编辑供应商
+      this.$router.push({path: '/addSupplier', query: {id}});
     },
     handleLook (id) { // 查看详情
       this.$router.push(`/supplierDetail/${id}`);

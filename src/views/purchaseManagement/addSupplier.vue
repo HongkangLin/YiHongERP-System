@@ -103,20 +103,20 @@
               </el-select>
             </el-form-item>
             <el-form-item label="交期（天）：" prop="deliverDay">
-              <el-input v-model="form.deliverDay" placeholder="请输入交期（天）"></el-input>
+              <el-input type="number" v-model="form.deliverDay" placeholder="请输入交期（天）"></el-input>
             </el-form-item>
             <div class="spanDiv"></div>
             <el-form-item label="收款人（私账）：" prop="priAccountName">
               <el-input v-model="form.priAccountName" placeholder="请输入私账收款人"></el-input>
             </el-form-item>
             <el-form-item label="银行卡号（私账）：" prop="priAccountNo">
-              <el-input v-model="form.priAccountNo" placeholder="请输入私账银行卡号"></el-input>
+              <el-input type="number" v-model="form.priAccountNo" placeholder="请输入私账银行卡号"></el-input>
             </el-form-item>
             <el-form-item label="开户行：" prop="priAccountBankname">
               <el-input v-model="form.priAccountBankname" placeholder="请输入私账开户行"></el-input>
             </el-form-item>
             <el-form-item label="税率：">
-              <el-input v-model="form.taxRate" placeholder="请输入税率"></el-input>
+              <el-input type="number" v-model="form.taxRate" placeholder="请输入税率"></el-input>
             </el-form-item>
             <el-form-item label="结算方式：">
               <el-select v-model="form.settleType" placeholder="请选择结算方式">
@@ -132,7 +132,7 @@
               <el-input v-model="form.pubAccountCompanyName" placeholder="请输入公司全称"></el-input>
             </el-form-item>
             <el-form-item label="银行对公账号：">
-              <el-input v-model="form.pubAccountNo" placeholder="请输入银行对公账号"></el-input>
+              <el-input type="number" v-model="form.pubAccountNo" placeholder="请输入银行对公账号"></el-input>
             </el-form-item>
             <el-form-item label="对公账号开户行：">
               <el-input v-model="form.pubAccountBankname" placeholder="请输入对公账号开户行"></el-input>
@@ -150,7 +150,7 @@
               <el-input v-model="form.addrDetail" placeholder="请输入详细地址"></el-input>
             </el-form-item>
             <el-form-item label="统一社会信用代码：">
-              <el-input v-model="form.socialCreditCode" placeholder="请输入统一社会信用代码"></el-input>
+              <el-input type="number" v-model="form.socialCreditCode" placeholder="请输入统一社会信用代码"></el-input>
             </el-form-item>
             <el-form-item label="公司规模：">
               <el-select v-model="form.companySize" placeholder="请选择公司规模">
@@ -363,27 +363,27 @@ export default {
       compSel: [ // 公司规模
         {
           label: '0～20人',
-          value: '20'
+          value: 1
         },
         {
           label: '20～25人',
-          value: '50'
+          value: 2
         },
         {
           label: '50～100人',
-          value: '100'
+          value: 3
         },
         {
           label: '100～500人',
-          value: '500'
+          value: 4
         },
         {
           label: '500～1000人',
-          value: '1000'
+          value: 5
         },
         {
           label: '1000人以上',
-          value: '1100'
+          value: 6
         }
       ],
       show: false, // 是否显示添加界面
@@ -617,10 +617,25 @@ export default {
         return;
       }
       let param = JSON.parse(JSON.stringify(this.form));
-      param.addrProvince = param.selectedOptions[0]; // 省
-      param.addrCity = param.selectedOptions[1]; // 市
-      param.addrArea = param.selectedOptions[2]; // 区
+      for (let i = 0, len = regionData.length; i < len; i++) {
+        if (param.selectedOptions[0] === regionData[i].value) {
+          param.addrProvince = regionData[i].label; // 省
+          for (let j = 0, jLen = regionData[i].children.length; j < jLen; j++) {
+            let curr = regionData[i].children;
+            if (curr[j].value === param.selectedOptions[1]) {
+              param.addrCity = curr[j].label; // 市
+              for (let k = 0, kLen = curr[j].children.length; k < kLen; k++) {
+                let kCurr = curr[j].children;
+                if (kCurr[k].value === param.selectedOptions[2]) {
+                  param.addrArea = kCurr[k].label; // 区
+                }
+              }
+            }
+          }
+        }
+      }
       param.addrRegionCode = param.selectedOptions[2]; // 地区编号
+      delete param.selectedOptions;
       param.busLicensPicUrl = param.busLicensPicUrl[0] && param.busLicensPicUrl[0].url; // 图片url
       param.goodsCategoryId = this.seconedList[this.currSecond].id; // 商品目录
       let data = await window.axios.post('/supplier/create', param);
