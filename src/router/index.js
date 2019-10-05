@@ -79,6 +79,10 @@ const routes = [{
 		path: '/F0401/F040102/:inId', //库存管理 > 入库管理 > 入库单
 		name: 'inStoreView',
 		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/inStoreManagement/viewStore.vue'),
+	}, {
+		path: '/F0401/inStoreAddOrEdit', //库存管理 > 入库管理 > 新增/编辑入库
+		name: 'inStoreAddOrEdit',
+		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/inStoreManagement/addOrEdit.vue'),
 	}]
 }, {
 	path: '/login', //登录页
