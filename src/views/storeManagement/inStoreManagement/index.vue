@@ -37,7 +37,7 @@
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="handleView(scope.row.id, scope.row.type)">查看</el-button>
             <el-divider v-if="scope.row.type === '外贸入库'" direction="vertical"></el-divider>
-            <el-button v-if="scope.row.type === '外贸入库'" type="text" size="small" @click="handleEdit">编辑</el-button>
+            <el-button v-if="scope.row.type === '外贸入库'" type="text" size="small" @click="handleEdit(scope.row.id)">编辑</el-button>
             <el-divider v-if="scope.row.status === '待入库'" direction="vertical"></el-divider>
             <el-button v-if="scope.row.status === '待入库'" type="text" size="small" @click="handleStore">入库</el-button>
           </template>
@@ -122,7 +122,9 @@ export default {
 
     // 新增入库
     addInStore() {
-
+      this.$router.push({
+        path: '/F0401/inStoreAddOrEdit'
+      })
     },
 
     // 改变页码
@@ -146,8 +148,10 @@ export default {
     },
 
     // 编辑
-    handleEdit() {
-
+    handleEdit(inId) {
+      this.$router.push({
+        path: '/F0401/inStoreAddOrEdit?inId=' + inId
+      })
     },
 
     // 入库
