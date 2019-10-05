@@ -511,7 +511,7 @@ export default {
       this.peopleSel = data.data;
     },
     async getSettle () { // 获取结算方式
-      let data = await window.axios.get(`/settletype/listAll?pageSize=999999&pageNum=1&nameKeyword=`);
+      let data = await window.axios.get(`/settletype/simpList`);
       data.data.list.forEach(item => {
         item.label = item.name,
         item.value = item.id

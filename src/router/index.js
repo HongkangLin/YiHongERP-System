@@ -24,6 +24,10 @@ const routes = [{
 		name: 'pdtList',
 		component: () => import(/* webpackChunkName: "pdtList" */ '../views/pdtManagement/pdtList.vue'),
 	}, {
+		path: '/addPdt', //产品管理-产品管理-产品列表
+		name: 'addPdt',
+		component: () => import(/* webpackChunkName: "addPdt" */ '../views/pdtManagement/addPdt.vue'),
+	}, {
 		path: '/F0201/F020102', //产品管理-产品管理-产品分类
 		name: 'pdtType',
 		component: () => import(/* webpackChunkName: "pdtType" */ '../views/pdtManagement/pdtType.vue'),
