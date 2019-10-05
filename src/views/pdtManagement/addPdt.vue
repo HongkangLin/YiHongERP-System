@@ -602,7 +602,7 @@ export default {
     },
     up2 (response) { // 上传成功
       this.form.fnskuFileUrl.push({
-        name: response.data.originFileName,
+        name: response.data.fileName,
         url: response.data.thumbUrl
       });
     },
