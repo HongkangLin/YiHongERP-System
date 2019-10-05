@@ -23,7 +23,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="供应商：" prop="supplierName">
-            <el-select v-model="ruleForm.supplierName" placeholder="请选择供应商">
+            <el-select v-model="ruleForm.supplierName" placeholder="请选择供应商" @change="getPurchaser">
               <el-option v-for="(item, index) in supplierList" :key="index" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
@@ -41,7 +41,7 @@
         <div class="secTitle">产品信息</div>
         <el-button type="primary" icon="el-icon-plus" class="addPdtBtn" @click="dialogTableVisible = true">选择产品</el-button>
         <div class="productTable">
-          <el-table :data="productList" border show-summary style="width: 100%">
+          <el-table :data="productList" border show-summary sum-text="汇总" style="width: 100%">
             <el-table-column label="图片" align="center" min-width="125">
               <template slot-scope="scope">
                 <img class="img" :src="scope.row.goodsPicUrl">
@@ -49,7 +49,7 @@
             </el-table-column>
             <el-table-column prop="goodsSku" label="SKU" align="center" min-width="190"></el-table-column>
             <el-table-column prop="goodsName" label="产品名称" align="center" min-width="300"></el-table-column>
-            <el-table-column align="center" min-width="210">
+            <el-table-column prop="arriveCount" align="center" min-width="210">
               <template slot="header">
                 <span class="star">*</span>
                 <span class="tableHeader">到货数量（套）</span>
@@ -96,17 +96,6 @@
 export default {
   data() {
     return {
-      crumbList: [{ // 面包屑
-        name: '库存管理',
-        path: '/F0401/F040102'
-      }, {
-        name: '入库管理',
-        path: '/F0401/F040102'
-      }, {
-        name: '新增入库',
-        path: ''
-      }],
-
       ruleForm: {
         id: null,
         sn: "", //入库单SN
@@ -116,8 +105,8 @@ export default {
         warehouseId: null,
         supplierName: "", //供应商名字
         supplierId: null,
-        purchaserName: "采购员x", //采购员名字
-        purchaserId: 10, //改null
+        purchaserName: "", //采购员名字
+        purchaserId: null,
         deliverSn: "", //运单号
         remark: "" //备注
       },
@@ -144,6 +133,34 @@ export default {
       },
       dialogPdtList: [],
       dialogTotal: 0
+    }
+  },
+  computed: {
+    // 面包屑
+    crumbList() {
+      if (this.$route.query.inId) {
+        return [{ 
+          name: '库存管理',
+          path: '/F0401/F040102'
+        }, {
+          name: '入库管理',
+          path: '/F0401/F040102'
+        }, {
+          name: '编辑入库',
+          path: ''
+        }]
+      } else {
+        return [{ 
+          name: '库存管理',
+          path: '/F0401/F040102'
+        }, {
+          name: '入库管理',
+          path: '/F0401/F040102'
+        }, {
+          name: '新增入库',
+          path: ''
+        }]
+      }
     }
   },
   created() {
@@ -273,7 +290,7 @@ export default {
         id : this.ruleForm.id,
         warehouseId : typeof(this.ruleForm.warehouseName) === "number" ? this.ruleForm.warehouseName : this.ruleForm.warehouseId,
         supplierId : typeof(this.ruleForm.supplierName) === "number" ? this.ruleForm.supplierName : this.ruleForm.supplierId,
-        purchaserId : this.ruleForm.purchaserId, //待修改
+        // purchaserId : this.ruleForm.purchaserId, //待修改
         deliverSn : this.ruleForm.deliverSn,
         remark : this.ruleForm.remark,
         goods: []
@@ -305,7 +322,7 @@ export default {
       let params = {
         warehouseId : this.ruleForm.warehouseName,
         supplierId : this.ruleForm.supplierName,
-        purchaserId : this.ruleForm.purchaserId,
+        // purchaserId : this.ruleForm.purchaserId,
         deliverSn : this.ruleForm.deliverSn,
         remark : this.ruleForm.remark,
         goods: []
@@ -376,6 +393,15 @@ export default {
           }
         });
       }
+    },
+    
+    // 供应商带出采购员
+    getPurchaser(supplierId) {
+      axios.get(`/supplier/getPurchaser?supplierId=${supplierId}`).then((data) => {
+        if (data.code !== 0) return
+        this.ruleForm.purchaserId = data.data.purchaserId;
+        this.ruleForm.purchaserName = data.data.purchaserName;
+      })
     }
   },
 };

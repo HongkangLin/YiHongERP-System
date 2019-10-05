@@ -39,7 +39,7 @@
             <el-divider v-if="scope.row.type === '外贸入库'" direction="vertical"></el-divider>
             <el-button v-if="scope.row.type === '外贸入库'" type="text" size="small" @click="handleEdit(scope.row.id)">编辑</el-button>
             <el-divider v-if="scope.row.status === '待入库'" direction="vertical"></el-divider>
-            <el-button v-if="scope.row.status === '待入库'" type="text" size="small" @click="handleStore">入库</el-button>
+            <el-button v-if="scope.row.status === '待入库'" type="text" size="small" @click="handleInStore(scope.row.id)">入库</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -155,8 +155,10 @@ export default {
     },
 
     // 入库
-    handleStore() {
-
+    handleInStore(inId) {
+      this.$router.push({
+        path: '/F0401/inStore?inId=' + inId
+      })
     }
   },
 
