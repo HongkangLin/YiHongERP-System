@@ -43,7 +43,10 @@
             align="center"
             width="150">
             <template slot-scope="scope">
-              <a>{{scope.row.productCount + '种'}}</a>
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleEdit(scope.row.id)">{{scope.row.productCount + '种'}}</el-button>
             </template>
           </el-table-column>
           <el-table-column
@@ -121,7 +124,7 @@ export default {
     this.queryList();
   },
   methods: {
-    async queryList () { // 查询品牌列表
+    async queryList () { // 获取供应商列表
       let data = await window.axios.get(`/supplier/listAll?pageNum=${this.pageNum}&pageSize=${this.pageSize}&snOrNameKeyword=${this.name}`);
       data = data.data;
       this.total = data.total;

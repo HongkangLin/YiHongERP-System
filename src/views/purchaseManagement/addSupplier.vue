@@ -142,8 +142,7 @@
               <el-cascader
                 size="large"
                 :options="options"
-                v-model="form.selectedOptions"
-                @change="handleChange">
+                v-model="form.selectedOptions">
               </el-cascader>
             </el-form-item>
             <el-form-item label="详细地址：" prop="addrDetail">
@@ -168,14 +167,14 @@
             <el-form-item label="企业网站：">
               <el-input v-model="form.website" placeholder="请输入企业网站"></el-input>
             </el-form-item>
-            <el-form-item label="营业执照照片：" prop="busLicensPicUrl">
+            <el-form-item label="营业执照照片：" prop="busLicensePicUrl">
               <el-upload
                 action="/erp/file/upload"
                 list-type="picture-card"
                 :headers="{'x-token': token}"
                 accept=".jpg, .png"
                 :limit="1"
-                :file-list="form.busLicensPicUrl"
+                :file-list="form.busLicensePicUrl"
                 :on-exceed="() => {this.$message.warning('上传失败，只能上传一张图片哦～')}"
                 :before-upload="checkSize"
                 :on-error="() => {this.$message.error('上传失败')}"
@@ -333,9 +332,6 @@ export default {
       }, {
         name: '供应商管理',
         path: '/F0302/F030201'
-      }, {
-        name: '新增供应商',
-        path: ''
       }],
       typeList: [], // 分类数据
       currFirst: '', // 当前一级
@@ -410,7 +406,7 @@ export default {
         companySize: '', // 公司规模
         legalPersonName: '', // 法人姓名
         website: '', // 公司网站
-        busLicensPicUrl: [], // 营业执照
+        busLicensePicUrl: [], // 营业执照
         description: '', // 描述
         contact: [] // 联系人
       },
@@ -472,14 +468,28 @@ export default {
           { validator: validateTel, trigger: 'blur' }
         ]
       },
+      id: '',
       mode: 0, // 0：新增，1:编辑
       curr: 0 // 当前操作索引
     };
   },
-  mounted () {
-    this.getType();
-    this.getRole();
-    this.getSettle();
+  async mounted () {
+    await this.getType();
+    await this.getRole();
+    await this.getSettle();
+    this.id = this.$route.query.id;
+    if (this.id) { // 编辑时
+      this.crumbList.push({
+        name: '编辑供应商',
+        path: ''
+      });
+      this.getDetail();
+    } else {
+      this.crumbList.push({
+        name: '新增供应商',
+        path: ''
+      });
+    }
   },
   methods: {
     goBack () { // 返回
@@ -494,6 +504,50 @@ export default {
           this.active = 1;
           break;
       }
+    },
+    async getDetail () { // 获取详情
+      let data = await window.axios.get(`/supplier/detail/${this.id}`);
+      data = data.data;
+      // 处理产品分类
+      for (let i = 0, len = this.typeList.length; i < len; i++) {
+        for (let j = 0, jLen = this.typeList[i].listChildCategory.length; j < jLen; j++) {
+          if (data.goodsCategoryId === this.typeList[i].listChildCategory[j].id) {
+            this.firstName = this.typeList[i].goodsCategoryName;
+            this.currFirst = i;
+            this.seconedList = this.typeList[i].listChildCategory;
+            this.seconedName = this.typeList[i].listChildCategory[j].goodsCategoryName;
+            this.currSecond = j;
+            break;
+          }
+        }
+      }
+      // 处理联系人
+      data.contact.forEach(item => {
+        item.gender = item.gender + '';
+      });
+      // 处理供应商信息
+      this.form = data;
+      this.form.status = this.form.status + '';
+      this.form.busLicensePicUrl = this.form.busLicensePicUrl ? [{url: this.form.busLicensePicUrl.replace('80*80', '')}] : [];
+      let arr = [];
+      for (let i = 0, len = regionData.length; i < len; i++) {
+        if (data.addrProvince === regionData[i].label) {
+          arr.push(regionData[i].value); // 省编号
+          for (let j = 0, jLen = regionData[i].children.length; j < jLen; j++) {
+            let curr = regionData[i].children;
+            if (curr[j].label === data.addrCity) {
+              arr.push(curr[j].value); // 市编号
+              for (let k = 0, kLen = curr[j].children.length; k < kLen; k++) {
+                let kCurr = curr[j].children;
+                if (kCurr[k].label === data.addrArea) {
+                  arr.push(kCurr[k].value); // 区编号
+                }
+              }
+            }
+          }
+        }
+      }
+      this.form.selectedOptions = arr;
     },
     async getType () { // 获取产品分类
       let data = await window.axios.post('/product/queryAllCategory', {
@@ -512,11 +566,11 @@ export default {
     },
     async getSettle () { // 获取结算方式
       let data = await window.axios.get(`/settletype/simpList`);
-      data.data.list.forEach(item => {
+      data.data.forEach(item => {
         item.label = item.name,
         item.value = item.id
       });
-      this.settleSel = data.data.list;
+      this.settleSel = data.data;
     },
     clickFirst (idx) { // 选择一级分类
       this.seconedList = this.typeList[idx].listChildCategory;
@@ -538,9 +592,9 @@ export default {
             return false;
           }
         });
-      } else if (!this.firstName) { // 未选择分类
+      } else if (!this.seconedName) { // 未选择分类
         this.$message({
-          message: '请先选择产品分类',
+          message: '请先选择精确产品分类',
           type: 'warning'
         });
         return;
@@ -559,19 +613,16 @@ export default {
       return true;
     },
     handleRemove() { // 删除文件
-      this.form.busLicensPicUrl = [];
+      this.form.busLicensePicUrl = [];
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url.replace('_80x80', '');
       this.dialogVisible = true;
     },
     up (response) { // 上传成功
-      this.form.busLicensPicUrl.push({
+      this.form.busLicensePicUrl.push({
         url: response.data.thumbUrl
       });
-    },
-    handleChange (value) { // 年月日修改
-      console.log(value)
     },
     handleSet (idx) { // 设为首选
       this.form.contact[0].firstChoice = 0;
@@ -636,9 +687,16 @@ export default {
       }
       param.addrRegionCode = param.selectedOptions[2]; // 地区编号
       delete param.selectedOptions;
-      param.busLicensPicUrl = param.busLicensPicUrl[0] && param.busLicensPicUrl[0].url; // 图片url
+      param.busLicensePicUrl = param.busLicensePicUrl[0] && param.busLicensePicUrl[0].url; // 图片url
       param.goodsCategoryId = this.seconedList[this.currSecond].id; // 商品目录
-      let data = await window.axios.post('/supplier/create', param);
+      let url = this.id ? '/supplier/update' : '/supplier/create'; // 存在id时表示是修改
+      let postData = this.id ? {
+        id: this.id,
+        ...param
+      } : {
+        ...param
+      }
+      let data = await window.axios.post(url, postData);
       if (data.code === 0) {
         this.$message({
           message: data.message,
@@ -663,6 +721,20 @@ export default {
   width: 100%;
   height: calc(100% - 50px);
   overflow: auto;
+  /deep/.el-step__head.is-success {
+    color: #1ABC9C;
+    border-color: #1ABC9C;
+  }
+  /deep/.el-step__head.is-process,/deep/.el-step__head.is-wait  {
+    color: rgb(153, 153, 153);
+    border-color: rgb(153, 153, 153);
+  }
+  /deep/.el-step__title.is-success {
+    color: #1ABC9C;
+  }
+  /deep/.el-step__title.is-process,/deep/.el-step__title.is-wait {
+    color: rgb(153, 153, 153);
+  }
   .page {
     display: flex;
     border: 1px solid rgb(228, 228, 228);
