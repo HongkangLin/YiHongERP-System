@@ -15,7 +15,7 @@
       <div class="info">
         <el-row>
           <el-col :span="4"><div class="td label">产品分类</div></el-col>
-          <el-col :span="8"><div class="td">{{info.goodsCategoryId}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.firstName}}&nbsp;>&nbsp;{{info.seconedName}}</div></el-col>
           <el-col :span="4"><div class="td label">供应商名称</div></el-col>
           <el-col :span="8"><div class="td">{{info.name}}&nbsp;</div></el-col>
         </el-row>
@@ -113,7 +113,7 @@
           label="性别"
           align="center">
           <template slot-scope="scope">
-            <div>{{scope.row.gender ? scope.row.gender === 1 ? '男' : '女' : 0}}</div>
+            <div>{{scope.row.gender ? scope.row.gender === 1 ? '男' : '女' : '未知'}}</div>
           </template>
         </el-table-column>
         <el-table-column
@@ -122,7 +122,7 @@
           align="center">
         </el-table-column>
         <el-table-column
-          prop="name"
+          prop="title"
           label="职务"
           align="center">
         </el-table-column>
@@ -147,11 +147,10 @@
           align="center">
         </el-table-column>
         <el-table-column
-          prop="name"
           label="是否首选"
           align="center">
           <template slot-scope="scope">
-            <div>{{scope.row.gender ? '首选' : '否'}}</div>
+            <div>{{scope.row.firstChoice ? '首选' : '否'}}</div>
           </template>
         </el-table-column>
       </el-table>
@@ -162,26 +161,22 @@
         <i class="el-icon-s-operation"></i>数据列表
       </div>
       <el-table
-        :data="info.contact"
+        :data="list"
+        key="some"
         border
         style="width: 100%">
         <el-table-column
-          prop="name"
+          prop="goodsName"
           label="产品名称"
           align="center">
         </el-table-column>
         <el-table-column
-          prop="gender"
+          prop="goodsSKU"
           label="SKU"
           align="center">
         </el-table-column>
         <el-table-column
-          prop="mobile"
-          label="交期"
-          align="center">
-        </el-table-column>
-        <el-table-column
-          prop="name"
+          prop="purchasePrice"
           label="采购价（元）"
           align="center">
         </el-table-column>
@@ -205,16 +200,50 @@ export default {
         path: ''
       }],
       active: 0,
-      info: {}
+      companySize: ['0～20人', '20～25人', '50～100人', '100～500人', '500～1000人', '1000人以上'],
+      typeList: [], // 产品分类
+      settleSel: [], // 结算方式
+      info: {},
+      list: []
     };
   },
-  mounted () {
+  async mounted () {
+    await this.getType();
+    await this.getSettle();
     this.getInfo(this.$route.params.id);
+    this.getPdt();
   },
   methods: {
+    async getType () { // 获取产品分类
+      let data = await window.axios.post('/product/queryAllCategory', {
+        pageNum: 1,
+        pageSize: 999999
+      });
+      this.typeList = data.data.list;
+    },
+    async getSettle () { // 获取结算方式
+      let data = await window.axios.get(`/settletype/simpList`);
+      this.settleSel = data.data;
+    },
     async getInfo (id) { // 获取信息
       let data = await window.axios.get(`/supplier/detail/${id}`);
+      for (let i = 0, len = this.typeList.length; i < len; i++) {
+        for (let j = 0, jLen = this.typeList[i].listChildCategory.length; j < jLen; j++) {
+          let curr = this.typeList[i].listChildCategory[j];
+          if (curr.id === data.data.goodsCategoryId) {
+            data.data.firstName = this.typeList[i].goodsCategoryName;
+            data.data.seconedName = curr.goodsCategoryName;
+            break;
+          }
+        }
+      }
+      data.data.settleType = this.settleSel[data.data.settleType].name;
+      data.data.companySize = this.companySize[data.data.companySize];
       this.info = data.data;
+    },
+    async getPdt () { // 获取供应产品信息
+      let data = await window.axios.get(`/supplyrel/querybysupplier?pageSize=99999&pageNum=1&supplierId=${this.$route.params.id}`);
+      this.list = data.data.list;
     },
     changeTab (idx) { // 改变tab
       this.active = idx;

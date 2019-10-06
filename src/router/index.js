@@ -56,6 +56,10 @@ const routes = [{
 		name: 'supplierDetail',
 		component: () => import(/* webpackChunkName: "supplierDetail" */ '../views/purchaseManagement/supplierDetail.vue'),
 	}, {
+		path: '/supplierPdt/:id', //采购-供应商管理-供应商管理-供应中产品
+		name: 'supplierPdt',
+		component: () => import(/* webpackChunkName: "supplierPdt" */ '../views/purchaseManagement/supplierPdt.vue'),
+	}, {
 		path: '/F0302/F030202', //采购-供应商管理-结算方式
 		name: 'settleStyle',
 		component: () => import(/* webpackChunkName: "settleStyle" */ '../views/purchaseManagement/settleStyle.vue'),
