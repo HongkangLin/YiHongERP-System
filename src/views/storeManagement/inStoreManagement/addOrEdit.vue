@@ -349,6 +349,7 @@ export default {
 
     handleCurrentChange(pageNum) {
       this.dialog.pageNum = pageNum;
+      this.queryProductInfoList(true);
     },
     
     // 移除产品信息列表的产品

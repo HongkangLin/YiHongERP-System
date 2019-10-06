@@ -5,20 +5,23 @@
   <div class="inStoreList_wrap">
 		<div class="search">
       <div class="head">
-        <div class="label">入库管理</div>
-        <el-button type="primary" @click="addInStore">新增入库</el-button>
+        <div class="label">出库管理</div>
+        <el-button type="primary" @click="addInStore">新增出库</el-button>
       </div>
       <div class="content">
         <div class="inputDiv">
-          <el-input class="nameKeyword" v-model="snOrNameKeyword" placeholder="入库单号/供应商名称"></el-input>
+          <el-input class="nameKeyword" v-model="snKeyword" placeholder="出库单号"></el-input>
           <el-select v-model="warehouseId" placeholder="仓库">
             <el-option v-for="(item, index) in storeList" :key="index" :label="item.name" :value="item.id"></el-option>
           </el-select>
-          <el-select v-model="status" placeholder="入库状态">
-            <el-option label="待入库" value=0></el-option>
-            <el-option label="已入库" value=1></el-option>
+          <el-select v-model="type" placeholder="出库类型">
+            <el-option label="正常出库" value=0></el-option>
+            <el-option label="退换货" value=1></el-option>
           </el-select>
-          <el-date-picker v-model="arriveDateRange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+          <el-select v-model="status" placeholder="出库状态">
+            <el-option label="待出库" value=0></el-option>
+            <el-option label="已出库" value=1></el-option>
+          </el-select>
         </div>
         <div class="sel" @click="search">查询</div>
       </div>
@@ -26,20 +29,18 @@
     <!-- 列表区 -->
     <section class="tableArea">
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="sn" label="入库单号" align="center" min-width="130"></el-table-column>
-        <el-table-column prop="supplierName" label="供应商名称" align="center" min-width="170"></el-table-column>
+        <el-table-column prop="sn" label="出库单号" align="center" min-width="130"></el-table-column>
+        <el-table-column prop="totalQuantity" label="出库数量（件）" align="center" min-width="170"></el-table-column>
         <el-table-column prop="warehouseName" label="仓库" align="center" min-width="120"></el-table-column>
-        <el-table-column prop="type" label="入库类型" align="center" min-width="135"></el-table-column>
-        <el-table-column prop="status" label="入库状态" align="center" min-width="110"></el-table-column>
-        <el-table-column prop="warehouseChargePersonName" label="仓管" align="center" min-width="75"></el-table-column>
-        <el-table-column prop="arriveTime" label="到货日期" align="center" min-width="200"></el-table-column>
+        <el-table-column prop="type" label="出库类型" align="center" min-width="135"></el-table-column>
+        <el-table-column prop="status" label="出库状态" align="center" min-width="110"></el-table-column>
         <el-table-column align="center" fixed="right" label="操作" width="160">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="handleView(scope.row.id, scope.row.type)">查看</el-button>
-            <el-divider v-if="scope.row.type === '外贸入库' && scope.row.status === '待入库'" direction="vertical"></el-divider>
-            <el-button v-if="scope.row.type === '外贸入库' && scope.row.status === '待入库'" type="text" size="small" @click="handleEdit(scope.row.id)">编辑</el-button>
-            <el-divider v-if="scope.row.status === '待入库'" direction="vertical"></el-divider>
-            <el-button v-if="scope.row.status === '待入库'" type="text" size="small" @click="handleInStore(scope.row.id)">入库</el-button>
+            <el-button type="text" size="small" @click="handleView(scope.row.id)">查看</el-button>
+            <el-divider v-if="scope.row.status === '待出库'" direction="vertical"></el-divider>
+            <el-button v-if="scope.row.status === '待出库'" type="text" size="small" @click="handleEdit(scope.row.id)">编辑</el-button>
+            <el-divider v-if="scope.row.status === '待出库'" direction="vertical"></el-divider>
+            <el-button v-if="scope.row.status === '待出库'" type="text" size="small" @click="handleInStore(scope.row.id)">出库</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -61,21 +62,21 @@ export default {
     return {
       crumbList: [{ // 面包屑
         name: '库存管理',
-        path: '/F0401/F040102'
+        path: '/F0401/F040103'
       }, {
-        name: '入库管理',
+        name: '出库管理',
         path: ''
       }],
-      snOrNameKeyword: "", //搜索的关键字
+      snKeyword: "", //搜索的关键字
       warehouseId: null, //仓库id
-      status: null, //入库单状态
-      arriveDateRange: [], //查询到货时间
+      status: null, //出库单状态
+      type: null, //出库单类型
 
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
 
-      tableData: [],
+      tableData: [{}],
       storeList: [], //仓库下拉
       
     }
@@ -95,20 +96,19 @@ export default {
 
     async queryList () { 
       let params = {
-        snOrNameKeyword: this.snOrNameKeyword,
+        snKeyword: this.snKeyword,
         warehouseId: this.warehouseId,
         status: this.status,
-        arriveStartDate: this.arriveDateRange[0],
-        arriveEndDate: this.arriveDateRange[1],
+        type: this.type,
         pageNum: this.pageNum,
         pageSize: this.pageSize
       }
-      let data = await window.axios.get('/checkinorder/listAll', {params});
+      let data = await window.axios.get('/stockoutorder/listAll', {params});
       if (data.code !== 0) return
       let arr = data.data.list;
       arr.map((item) => {
-        item.status = item.status ? "已入库" : "待入库";
-        item.type = item.type ? "采购入库" : "外贸入库";
+        item.status = item.status ? "已出库" : "待出库";
+        item.type = item.type ? "退换货" : "正常出库";
       })
       this.tableData = arr;
       this.total = data.data.total;
@@ -118,13 +118,6 @@ export default {
     search () { 
       this.pageNum = 1;
       this.queryList();
-    },
-
-    // 新增入库
-    addInStore() {
-      this.$router.push({
-        path: '/F0401/inStoreAddOrEdit'
-      })
     },
 
     // 改变页码
@@ -141,24 +134,31 @@ export default {
     },
 
     // 查看
-    handleView(inId, type) {
+    handleView(outId) {
       this.$router.push({
-        path: `/F0401/F040102/${inId}?type=${type === "外贸入库"? "0" : "1"}`
+        path: `/F0401/F040103/${outId}`
       })
+    },
+
+    // 新增入库
+    addInStore() {
+      // this.$router.push({
+      //   path: '/F0401/inStoreAddOrEdit'
+      // })
     },
 
     // 编辑
     handleEdit(inId) {
-      this.$router.push({
-        path: '/F0401/inStoreAddOrEdit?inId=' + inId
-      })
+      // this.$router.push({
+      //   path: '/F0401/inStoreAddOrEdit?inId=' + inId
+      // })
     },
 
     // 入库
     handleInStore(inId) {
-      this.$router.push({
-        path: '/F0401/inStore?inId=' + inId
-      })
+      // this.$router.push({
+      //   path: '/F0401/inStore?inId=' + inId
+      // })
     }
   },
 
