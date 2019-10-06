@@ -310,7 +310,7 @@ import { regionData } from 'element-china-area-data';
 export default {
   data () {
     var validatePass = (rule, value, callback) => {
-      if (!(/[a-z]+/.test(value) && value.length === 3)) {
+      if (!(/[a-zA-Z]+/.test(value) && value.length === 3)) {
         callback(new Error('请输入3位字母的供应商简称'));
       } else {
         callback();

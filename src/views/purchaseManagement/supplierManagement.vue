@@ -46,7 +46,7 @@
               <el-button
                 size="mini"
                 type="text"
-                @click="handleEdit(scope.row.id)">{{scope.row.productCount + '种'}}</el-button>
+                @click="handlePdt(scope.row.id)">{{scope.row.productCount + '种'}}</el-button>
             </template>
           </el-table-column>
           <el-table-column
@@ -133,6 +133,9 @@ export default {
     search () { // 查询按钮
       this.pageNum = 1;
       this.queryList();
+    },
+    handlePdt (id) { // 供应商产品
+      this.$router.push(`/supplierPdt/${id}`);
     },
     handleEdit (id) { // 编辑供应商
       this.$router.push({path: '/addSupplier', query: {id}});
