@@ -87,6 +87,14 @@ const routes = [{
 		path: '/F0401/inStore', //库存管理 > 入库管理 > 入库
 		name: 'inStore',
 		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/inStoreManagement/inStore.vue'),
+	}, {
+		path: '/F0401/F040103', //库存管理 > 出库管理
+		name: 'outStoreManagement',
+		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/outStoreManagement/index.vue'),
+	}, {
+		path: '/F0401/F040103/:outId', //库存管理 > 出库管理 > 出库单
+		name: 'outStoreView',
+		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/outStoreManagement/viewOutStoreDetail.vue'),
 	}]
 }, {
 	path: '/login', //登录页
