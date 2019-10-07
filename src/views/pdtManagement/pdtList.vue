@@ -18,14 +18,14 @@
                 :value="item.value">
               </el-option>
             </el-select>
-            <el-select class="selList" v-model="type" placeholder="产品分类">
-              <el-option
-                v-for="item in prdType"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
+            <el-cascader
+              v-model="type"
+              :options="prdType"
+              class="selList"
+              placeholder="产品分类"
+              :props="{ expandTrigger: 'hover' }"
+              @change="handleChange">
+            </el-cascader>
             <el-select class="selList" v-model="brand" placeholder="品牌">
               <el-option
                 v-for="item in brandList"
@@ -60,7 +60,7 @@
             label="产品图片"
             align="center">
             <template slot-scope="scope">
-              <img :src="scope.row.fnskuPicUrl" alt="">
+              <img class="img" :src="scope.row.mainPicUrl" alt="">
             </template>
           </el-table-column>
           <el-table-column
@@ -79,17 +79,28 @@
             label="海关编码">
           </el-table-column>
           <el-table-column
-            prop="status"
             align="center"
             label="产品状态">
             <template slot-scope="scope">
-              <div>{{scope.row.status ? scope.row.status === 1 ? '停售' : '删除' : '在售'}}</div>
+              <el-switch
+                v-model="scope.row.status"
+                active-color="#1ABC9C"
+                active-text="在售"
+                inactive-text="停售"
+                @change="changeStatus(scope.$index, scope.row.skuId, scope.row.status)"
+                inactive-color="#ccc">
+              </el-switch>
             </template>
           </el-table-column>
           <el-table-column
-            prop="supplierCount"
             align="center"
             label="供应商">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleSupplier(scope.row.id)">{{scope.row.supplierCount + '家'}}</el-button>
+            </template>
           </el-table-column>
           <el-table-column
             prop="purchaserName"
@@ -106,12 +117,12 @@
               <el-button
                 size="mini"
                 type="text"
-                @click="handleLook(scope.row.id)">查看</el-button>
+                @click="handleLook(scope.row.id, scope.row.skuId)">查看</el-button>
               <el-divider direction="vertical"></el-divider>
               <el-button
                 size="mini"
                 type="text"
-                @click="handleDelete(scope.row.id)">删除</el-button>
+                @click="handleDelete(scope.row.skuId)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -149,7 +160,12 @@ export default {
         value: '2'
       }],
       type: '', // 产品分类
-      prdType: [], // 产品分类
+      categoryParentId: '', // 一级分类
+      categoryId: '', // 二级分类
+      prdType: [{ // 产品分类
+        label: '全部',
+        value: ''
+      }],
       brand: '', // 品牌,
       brandList: [{ // 品牌列表
         label: '全部',
@@ -193,20 +209,16 @@ export default {
         pageSize: 999999,
         pageNum: 1
       });
-      data = data.data;
-      this.total = data.total;
-      this.tableData = data.list;
-      let buf = [{
-        label: '全部',
-        value: ''
-      }];
-      data.list.forEach(item => {
-        buf.push({
-          label: item.goodsCategoryName,
-          value: item.id
+      data.data.list.forEach(item => {
+        item.label = item.goodsCategoryName;
+        item.value = item.id;
+        item.listChildCategory.forEach(sub => {
+          sub.label = sub.goodsCategoryName;
+          sub.value = sub.id;
         });
+        item.children = item.listChildCategory;
       });
-      this.prdType = buf; // 初始化新增分类页面可选分类
+      this.prdType.push(...data.data.list); // 初始化新增分类页面可选分类
     },
     async getPeople () { // 获取采购人
       let data = await window.axios.get('/user/queryUserList4Select/purchase');
@@ -220,21 +232,41 @@ export default {
       let data = await window.axios.post('/product/queryProductInfoList', {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
-        skuIdOrGoodsNameOrCustomId: this.name
+        skuIdOrGoodsNameOrCustomId: this.name,
+        status: this.status,
+        categoryParentId: this.categoryParentId,
+        categoryId: this.categoryId,
+        brandId: this.brand,
+        purchaserId: this.people
       });
       data = data.data;
       this.total = data.total;
+      data.list.forEach(item => {
+        item.status = item.status === 0;
+      });
       this.tableData = data.list;
+    },
+    handleChange (value) { // 修改产品类型
+      this.categoryParentId = value[0];
+      this.categoryId = value[1];
     },
     search () { // 查询按钮
       this.pageNum = 1;
       this.queryList();
     },
-    handleEdit (index) { // 编辑角色
-      this.$router.push({path: '/addRole', query: {id: this.tableData[index].roleId}});
+    handleLook (id, skuid) { // 查看详情
+      this.$router.push({path: '/pdtDetail', query: {id, skuid}});
     },
-    async handleDelete (index) { // 删除角色
-      let data = await window.axios.get(`/role/deleteRole/${this.tableData[index].roleId}`);
+    handleSupplier (id) { // 产品供应商
+      this.$router.push(`/pdtSupplier/${id}`);
+    },
+    handleEdit (id) { // 编辑角色
+      this.$router.push({path: '/addPdt', query: {id}});
+    },
+    async handleDelete (id) { // 删除产品
+      let data = await window.axios.post('/product/deleteProductInfo', {
+        skuId: id
+      });
       this.$message({
         message: data.message,
         type: 'success'
@@ -243,6 +275,28 @@ export default {
         this.pageNum = (this.pageNum - 1) || 1;
       }
       this.queryList(); // 重新获取数据
+    },
+    changeStatus (idx, id, status) { // 修改销售状态
+      if (!status) {
+        this.$confirm('确定要停售此产品吗？停售后将不可进行采购下单', '停售产品', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.submitStatus(id, status);
+        }).catch(() => {
+          this.tableData[idx].status = true;
+        });
+      } else {
+        this.submitStatus(id, status);
+      }
+    },
+    async submitStatus (id, status) { // 提交修改的状态
+      let data = await window.axios.post('/product/addOrUpdateProductInfo', {
+        skuId: id,
+        status: ~~!status
+      });
+      data.code === 0 ? this.$message.success(data.message) : this.$message.error(data.message);
     },
     changeNum (num) { // 改变页码
       this.pageNum = num;
@@ -260,15 +314,6 @@ export default {
 }
 </script>
 
-<style lang="less">
-.pdtList {
-  .el-input--small .el-input__inner {
-    height: 35px;
-    line-height: 35px;
-  }
-}
-</style>
-
 <style lang="less" scoped>
 .pdtList {
   box-sizing: border-box;
@@ -277,6 +322,22 @@ export default {
   height: calc(100% - 50px);
   overflow: auto;
   font-size: 12px;
+  .inputDiv {
+    /deep/.el-input--small .el-input__inner {
+      height: 35px;
+      line-height: 35px;
+    }
+  }
+  /deep/.el-switch__label--left {
+    color: #ccc;
+  }
+  /deep/.el-switch__label--right {
+    color: #1ABC9C;
+  }
+  .img {
+    width: 100px;
+    height: 100px;
+  }
   .search {
     width: 100%;
     border: 1px solid rgb(228, 228, 228);

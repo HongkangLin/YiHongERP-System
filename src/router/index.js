@@ -24,9 +24,17 @@ const routes = [{
 		name: 'pdtList',
 		component: () => import(/* webpackChunkName: "pdtList" */ '../views/pdtManagement/pdtList.vue'),
 	}, {
-		path: '/addPdt', //产品管理-产品管理-产品列表
+		path: '/addPdt', //产品管理-产品管理-产品列表-新增产品
 		name: 'addPdt',
 		component: () => import(/* webpackChunkName: "addPdt" */ '../views/pdtManagement/addPdt.vue'),
+	}, {
+		path: '/pdtDetail', //产品管理-产品管理-产品列表-产品详情
+		name: 'pdtDetail',
+		component: () => import(/* webpackChunkName: "pdtDetail" */ '../views/pdtManagement/pdtDetail.vue'),
+	}, {
+		path: '/pdtSupplier/:id', //产品管理-产品管理-产品列表-已关联供应商
+		name: 'pdtSupplier',
+		component: () => import(/* webpackChunkName: "pdtSupplier" */ '../views/pdtManagement/pdtSupplier.vue'),
 	}, {
 		path: '/F0201/F020102', //产品管理-产品管理-产品分类
 		name: 'pdtType',

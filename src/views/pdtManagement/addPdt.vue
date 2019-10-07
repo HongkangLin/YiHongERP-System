@@ -283,7 +283,7 @@
               align="center"
               label="采购价（元）">
               <template slot-scope="scope">
-                <div>{{scope.row.name ? '首选' : '否'}}</div>
+                <el-input v-model="scope.row.price" placeholder="输入采购价"></el-input>
               </template>
             </el-table-column>
             <el-table-column label="操作" align="center">
@@ -666,6 +666,7 @@ export default {
       param.categoryId = this.currSecond !== '' ? this.seconedList[this.currSecond].id : ''; // 二级分类id
       param.clearStocksFlag = ~~param.clearStocksFlag; // 是否清货
       param.fnskuFileUrl = param.fnskuFileUrl[0].url; // fnsku文件
+      param.fnskuFileName = param.fnskuFileUrl[0].name; // fnsku文件名称
       param.fnskuPicUrl = param.fnskuPicUrl[0].url; // 防跟卖标签
       param.mainPicUrl = this.pdtPhoto[0].url; // 商品主图
       param.picUrl1 = this.pdtPhoto[1] && this.pdtPhoto[1].url; // 商品图片
@@ -678,6 +679,18 @@ export default {
           type: 'success'
         });
         history.go(-1);
+        // let params = JSON.parse(JSON.stringify(this.form.contact));
+        // params.forEach(item => {
+        //   item.goodsId = this.form.skuId,
+        //   item.supplierId = item.id,
+        //   item.price = item.price || 0
+        // });
+        // let list = await window.axios.post('/supplyrel/create', params); // 绑定供应关系
+        // if (data.code === 0) {
+        //   history.go(-1);
+        // } else {
+        //   this.$message.warning(data.message);
+        // }
       } else {
         this.$message({
           message: data.message,

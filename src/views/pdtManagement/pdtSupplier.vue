@@ -4,11 +4,11 @@
     <div class="userRoleMgmt">
       <div class="search">
         <div class="head">
-          <div class="label">供应中产品</div>
+          <div class="label">已关联供应商</div>
         </div>
       </div>
       <div class="addDiv">
-        <div class="add" @click="addPdt">+添加产品</div>
+        <div class="add" @click="addPdt">+添加供应商</div>
       </div>
       <div class="table">
         <el-table
@@ -16,14 +16,20 @@
           border
           style="width: 100%">
           <el-table-column
-            prop="goodsName"
-            label="产品名称"
+            prop="supplierSN"
+            label="供应商编号"
             align="center"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="goodsSKU"
-            label="SKU"
+            prop="supplierName"
+            label="供应商名称"
+            align="center"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="supplierDeliverDay"
+            label="交期"
             align="center"
             width="180">
           </el-table-column>
@@ -46,28 +52,28 @@
       </div>
       <div class="addSome" v-if="show">
         <div class="title">
-          <span>添加产品</span>
+          <span>添加供应商</span>
           <i class="el-icon-close" @click="closePdt"></i>
         </div>
         <div class="content">
           <div class="search1">
-            <el-input placeholder="商品名称/SKU" v-model="pdtName" class="input-with-select">
+            <el-input placeholder="供应商名称" v-model="pdtName" class="input-with-select">
               <el-button slot="append" icon="el-icon-search" @click="searchPdt"></el-button>
             </el-input>
           </div>
           <el-table
-            :data="pdtList"
+            :data="supplierList"
             key="add"
             border
             style="width: 100%">
             <el-table-column
-              prop="goodsName"
-              label="产品名称"
+              prop="sn"
+              label="供应商编号"
               align="center">
             </el-table-column>
             <el-table-column
-              prop="skuId"
-              label="SKU"
+              prop="name"
+              label="供应商名称"
               align="center">
             </el-table-column>
             <el-table-column label="操作" align="center">
@@ -95,13 +101,13 @@ export default {
   data () {
     return {
       crumbList: [{ // 面包屑
-        name: '供应商管理',
+        name: '产品管理',
         path: '/F0302/F030201'
       }, {
-        name: '供应商管理',
+        name: '产品列表',
         path: '/F0302/F030201'
       }, {
-        name: '供应中产品',
+        name: '已关联供应商',
         path: ''
       }],
       total: 0, // 总数
@@ -109,51 +115,47 @@ export default {
       pageSize: 10, // pageSize
       show: false, // 是否显示添加产品
       pdtName: '', // 产品名称
-      pdtList: [], // 产品列表
+      supplierList: [], // 产品列表
       list: [] // 表格数据
     };
   },
   mounted () {
     this.getPdt();
-    this.getPdtList('');
+    this.getSupplierList('');
   },
   methods: {
-    async getPdt () { // 获取供应产品信息
-      let data = await window.axios.get(`/supplyrel/querybysupplier?pageSize=99999&pageNum=1&supplierId=${this.$route.params.id}`);
+    async getPdt () { // 获取产品供应商信息
+      let data = await window.axios.get(`/supplyrel/querybygoods?pageSize=99999&pageNum=1&goodsId=${this.$route.params.id}`);
       this.list = data.data.list;
     },
-    async getPdtList (key) { // 获取产品列表
-      let data = await window.axios.post('/product/queryProductInfoList', {
-        pageSize: this.pageSize,
-        pageNum: this.pageNum,
-        skuIdOrGoodsNameOrCustomId: key
-      });
+    async getSupplierList (key) { // 获取供应商列表
+      let data = await window.axios.get(`/supplier/listAll?pageSize=${this.pageSize}&pageNum=${this.pageNum}&snOrNameKeyword=${key}`);
       this.total = data.data.total;
       data.data.list.forEach(item => {
         for (let i = 0, len = this.list.length; i < len; i++) {
-          if (item.id === this.list[i].goodsId) {
+          if (item.id === this.list[i].supplierId) {
             item.sel = true;
             break;
           }
         }
       });
-      this.pdtList = data.data.list;
+      this.supplierList = data.data.list;
     },
     async handleAdd (idx) { // 添加/移除产品
-      if (this.pdtList[idx].sel) { // 删除
+      if (this.supplierList[idx].sel) { // 删除
         for (let i = 0, len = this.list.length; i < len; i++) {
-          if (this.list[i].goodsId === this.pdtList[idx].id) {
+          if (this.list[i].supplierId === this.supplierList[idx].id) {
             this.handleDelete(i);
             break;
           }
         }
       } else { // 添加
-        this.$set(this.pdtList[idx], 'sel', true);
+        this.$set(this.supplierList[idx], 'sel', true);
         let data = await window.axios.post('/supplyrel/create', {
           list: [{
-            goodsId: this.pdtList[idx].id,
-            supplierId: this.$route.params.id,
-            price: this.pdtList[idx].goodsGoalPrice
+            goodsId: this.$route.params.id,
+            supplierId: this.supplierList[idx].id,
+            price: this.supplierList[idx].goodsGoalPrice || 0
           }]
         });
         if (data.code === 0) {
@@ -167,14 +169,13 @@ export default {
     async handleDelete (idx) { // 删除数据
       let data = await window.axios.post('/supplyrel/delete', {
         id: this.list[idx].relationId,
-        goodsId: this.list[idx].goodsId,
-        supplierId: this.$route.params.id,
-        price: this.list[idx].purchasePrice
+        goodsId: this.$route.params.id,
+        supplierId: this.list[idx].supplierId
       });
       if (data.code === 0) {
-        for (let i = 0, len = this.pdtList.length; i < len; i++) {
-          if (this.pdtList[i].id === this.list[idx].goodsId) {
-            this.pdtList[i].sel = false;
+        for (let i = 0, len = this.supplierList.length; i < len; i++) {
+          if (this.supplierList[i].id === this.list[idx].supplierId) {
+            this.supplierList[i].sel = false;
             break;
           }
         }
@@ -191,8 +192,8 @@ export default {
       }
       let data = await window.axios.post('/supplyrel/update', {
         id: this.list[idx].relationId,
-        goodsId: this.list[idx].goodsId,
-        supplierId: this.$route.params.id,
+        goodsId: this.$route.params.id,
+        supplierId: this.list[idx].supplierId,
         price: this.list[idx].purchasePrice || 0
       });
       if (data.code === 0) {
@@ -209,16 +210,16 @@ export default {
     },
     changeNum (num) { // 改变页码
       this.pageNum = num;
-      this.getPdtList('');
+      this.getSupplierList('');
     },
     changePageSize (size) { // 改变每页条数
       this.pageNum = 1;
       this.pageSize = size;
-      this.getPdtList('');
+      this.getSupplierList('');
     },
     searchPdt () { // 搜索
       this.pageNum = 1;
-      this.getPdtList(this.pdtName);
+      this.getSupplierList(this.pdtName);
     }
   }
 }
