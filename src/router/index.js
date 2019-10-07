@@ -99,6 +99,10 @@ const routes = [{
 		path: '/F0401/F040103/:outId', //库存管理 > 出库管理 > 出库单
 		name: 'outStoreView',
 		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/outStoreManagement/viewOutStoreDetail.vue'),
+	}, {
+		path: '/F0401/outStoreAddOrEdit', //库存管理 > 入库管理 > 新增/编辑出库
+		name: 'outStoreAddOrEdit',
+		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/outStoreManagement/outStoreAddOrEdit.vue'),
 	}]
 }, {
 	path: '/login', //登录页
