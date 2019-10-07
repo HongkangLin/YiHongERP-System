@@ -429,28 +429,28 @@ export default {
   },
   computed: {
     goodsLengthIn () { // 包装尺寸英寸长
-      return this.form.goodsLength ? this.form.goodsLength * 0.3937 : '-';
+      return this.form.goodsLength ? (this.form.goodsLength * 0.3937).toFixed(2) : '-';
     },
     goodsWideIn () { // 包装尺寸英寸宽
-      return this.form.goodsWide ? this.form.goodsWide * 0.3937 : '-';
+      return this.form.goodsWide ? (this.form.goodsWide * 0.3937).toFixed(2) : '-';
     },
     goodsHighIn () { // 包装尺寸英寸高
-      return this.form.goodsHigh ? this.form.goodsHigh * 0.3937 : '-';
+      return this.form.goodsHigh ? (this.form.goodsHigh * 0.3937).toFixed(2) : '-';
     },
     goodsWeightLb () { // 单个产品重量磅
-      return this.form.goodsWeight ? this.form.goodsWeight * 2.2046226 : '-';
+      return this.form.goodsWeight ? (this.form.goodsWeight * 2.2046226).toFixed(2) : '-';
     },
     packingWeightLb () { // 整箱重量磅
-      return this.form.packingWeight ? this.form.packingWeight * 2.2046226 : '-';
+      return this.form.packingWeight ? (this.form.packingWeight * 2.2046226).toFixed(2) : '-';
     },
     packingLengthIn () { // 外箱尺寸英寸长
-      return this.form.packingLength ? this.form.packingLength * 0.3937 : '-';
+      return this.form.packingLength ? (this.form.packingLength * 0.3937).toFixed(2) : '-';
     },
     packingWideIn () { // 外箱尺寸英寸宽
-      return this.form.packingWide ? this.form.packingWide * 0.3937 : '-';
+      return this.form.packingWide ? (this.form.packingWide * 0.3937).toFixed(2) : '-';
     },
     packingHighIn () { // 外箱尺寸英寸高
-      return this.form.packingHigh ? this.form.packingHigh * 0.3937 : '-';
+      return this.form.packingHigh ? (this.form.packingHigh * 0.3937).toFixed(2) : '-';
     },
   },
   mounted () {

@@ -34,48 +34,48 @@
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">产品链接</div></el-col>
-          <el-col :span="8"><div class="td">{{info.source}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td"><a>{{info.goodsUrl}}</a>&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">是否清货</div></el-col>
-          <el-col :span="8"><div class="td">{{info.purchaserName}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.clearStocksFlag ? '清' : '不清'}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">FNSKU编号</div></el-col>
           <el-col :span="8"><div class="td">{{info.fnskuId}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">FNSKU文件</div></el-col>
-          <el-col :span="8"><div class="td">&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td"><a target="_black" :href="info.fnskuFileUrl">点击下载</a>&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">防跟卖标签</div></el-col>
-          <el-col :span="8"><div class="td">{{info.deliverDay}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td"><a target="_black" :href="info.fnskuPicUrl">点击查看</a>&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">&nbsp;</div></el-col>
           <el-col :span="8"><div class="td">&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">产品描述</div></el-col>
-          <el-col :span="20"><div class="td">{{info.deliverDay}}&nbsp;</div></el-col>
+          <el-col :span="20"><div class="td">{{info.goodsDescribe}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">合同描述</div></el-col>
-          <el-col :span="20"><div class="td">{{info.deliverDay}}&nbsp;</div></el-col>
+          <el-col :span="20"><div class="td">{{info.contractDescribe}}&nbsp;</div></el-col>
         </el-row>
       </div>
       <div class="title"><i class="el-icon-collection-tag"></i><span>报关信息</span></div>
       <div class="info">
         <el-row>
           <el-col :span="4"><div class="td label">海关编码</div></el-col>
-          <el-col :span="8"><div class="td">{{info.priAccountName}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.customId}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">申报价值（元）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.priAccountNo}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.claimPrice}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">中文报关名</div></el-col>
-          <el-col :span="8"><div class="td">{{info.priAccountBankname}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.chineseName}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">英文报关名</div></el-col>
-          <el-col :span="8"><div class="td">{{info.taxRate}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.englishName}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">美国进口关税（元）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.settleType}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.tariffs}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">&nbsp;</div></el-col>
           <el-col :span="8"><div class="td">&nbsp;</div></el-col>
         </el-row>
@@ -84,31 +84,31 @@
       <div class="info">
         <el-row>
           <el-col :span="4"><div class="td label">产品包装尺寸（cm）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.addrProvince + info.addrCity + info.addrArea}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.goodsLength + ' * ' + info.goodsWide + ' * ' + info.goodsHigh}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">产品包装尺寸（in）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.addrDetail}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{(info.goodsLength * 0.3937).toFixed(2) + ' * ' + (info.goodsWide * 0.3937).toFixed(2) + ' * ' + (info.goodsHigh * 0.3937).toFixed(2)}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">每个产品重量（kg）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.socialCreditCode}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.goodsWeight}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">单个产品重量（lb）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.companySize}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{(info.goodsWeight * 2.2046226).toFixed(2)}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">整箱重量（kg）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.legalPersonName}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.packingWeight}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">整箱重量（lb）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.website}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{(info.packingWeight * 2.2046226).toFixed(2)}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">外箱尺寸（cm）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.description}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.packingLength + ' * ' + info.packingWide + ' * ' + info.packingHigh}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">外箱尺寸（in）</div></el-col>
-          <el-col :span="8"><div class="td">&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{(info.packingLength * 0.3937).toFixed(2) + ' * ' + (info.packingWide * 0.3937).toFixed(2) + ' * ' + (info.packingHigh * 0.3937).toFixed(2)}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">装箱数（套）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.description}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.packingQuantity}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">&nbsp;</div></el-col>
           <el-col :span="8"><div class="td">&nbsp;</div></el-col>
         </el-row>
@@ -120,7 +120,9 @@
         <i class="el-icon-s-operation"></i>数据列表
       </div>
       <div class="imgDiv">
-        11
+        <img :src="info.mainPicUrl" alt="">
+        <img :src="info.picUrl1" alt="">
+        <img :src="info.picUrl2" alt="">
       </div>
     </div>
     <div class="pdt" v-if="active === 2">
@@ -313,6 +315,12 @@ export default {
     width: 100%;
     border: 1px solid rgb(228, 228, 228);
     padding: 20px;
+    img {
+      display: inline-block;
+      margin-right: 10px;
+      width: 100px;
+      height: 100px;
+    }
   }
 }
 </style>
