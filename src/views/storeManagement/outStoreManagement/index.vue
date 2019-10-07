@@ -140,18 +140,18 @@ export default {
       })
     },
 
-    // 新增入库
+    // 新增出库
     addInStore() {
-      // this.$router.push({
-      //   path: '/F0401/inStoreAddOrEdit'
-      // })
+      this.$router.push({
+        path: '/F0401/outStoreAddOrEdit'
+      })
     },
 
-    // 编辑
-    handleEdit(inId) {
-      // this.$router.push({
-      //   path: '/F0401/inStoreAddOrEdit?inId=' + inId
-      // })
+    // 编辑出库
+    handleEdit(outId) {
+      this.$router.push({
+        path: '/F0401/outStoreAddOrEdit?outId=' + outId
+      })
     },
 
     // 入库
