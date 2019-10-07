@@ -78,43 +78,47 @@ const routes = [{
 	}, {
 		path: '/F0401/F040104', //库存管理 > 仓库设置 
 		name: 'storeSetting',
-		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/storeSetting/storeSetting.vue'),
+		component: () => import(/* webpackChunkName: "storeSetting" */ '../views/storeManagement/storeSetting/storeSetting.vue'),
 	}, {
 		path: '/F0401/F040104/:storeId', //库存管理 > 仓库设置 > 仓库详情
 		name: 'storeInfo',
-		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/storeSetting/storeInfo.vue'),
+		component: () => import(/* webpackChunkName: "storeInfo" */ '../views/storeManagement/storeSetting/storeInfo.vue'),
 	}, {
 		path: '/F0401/F040101', //库存管理 > 库存清单
 		name: 'inventoryList',
-		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/inventoryList/index.vue'),
+		component: () => import(/* webpackChunkName: "inventoryList" */ '../views/storeManagement/inventoryList/index.vue'),
 	}, {
 		path: '/F0401/F040102', //库存管理 > 入库管理
 		name: 'inStoreManagement',
-		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/inStoreManagement/index.vue'),
+		component: () => import(/* webpackChunkName: "inStoreManagement" */ '../views/storeManagement/inStoreManagement/index.vue'),
 	}, {
 		path: '/F0401/F040102/:inId', //库存管理 > 入库管理 > 入库单
 		name: 'inStoreView',
-		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/inStoreManagement/viewStore.vue'),
+		component: () => import(/* webpackChunkName: "inStoreView" */ '../views/storeManagement/inStoreManagement/viewStore.vue'),
 	}, {
 		path: '/F0401/inStoreAddOrEdit', //库存管理 > 入库管理 > 新增/编辑入库
 		name: 'inStoreAddOrEdit',
-		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/inStoreManagement/addOrEdit.vue'),
+		component: () => import(/* webpackChunkName: "inStoreAddOrEdit" */ '../views/storeManagement/inStoreManagement/addOrEdit.vue'),
 	}, {
 		path: '/F0401/inStore', //库存管理 > 入库管理 > 入库
 		name: 'inStore',
-		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/inStoreManagement/inStore.vue'),
+		component: () => import(/* webpackChunkName: "inStore" */ '../views/storeManagement/inStoreManagement/inStore.vue'),
 	}, {
 		path: '/F0401/F040103', //库存管理 > 出库管理
 		name: 'outStoreManagement',
-		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/outStoreManagement/index.vue'),
+		component: () => import(/* webpackChunkName: "outStoreManagement" */ '../views/storeManagement/outStoreManagement/index.vue'),
 	}, {
 		path: '/F0401/F040103/:outId', //库存管理 > 出库管理 > 出库单
 		name: 'outStoreView',
-		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/outStoreManagement/viewOutStoreDetail.vue'),
+		component: () => import(/* webpackChunkName: "outStoreView" */ '../views/storeManagement/outStoreManagement/viewOutStoreDetail.vue'),
 	}, {
-		path: '/F0401/outStoreAddOrEdit', //库存管理 > 入库管理 > 新增/编辑出库
+		path: '/F0401/outStoreAddOrEdit', //库存管理 > 出库管理 > 新增/编辑出库
 		name: 'outStoreAddOrEdit',
-		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/storeManagement/outStoreManagement/outStoreAddOrEdit.vue'),
+		component: () => import(/* webpackChunkName: "outStoreAddOrEdit" */ '../views/storeManagement/outStoreManagement/outStoreAddOrEdit.vue'),
+	}, {
+		path: '/F0401/outStore', //库存管理 > 出库管理 > 出库
+		name: 'outStore',
+		component: () => import(/* webpackChunkName: "outStore" */ '../views/storeManagement/outStoreManagement/outStore.vue'),
 	}]
 }, {
 	path: '/login', //登录页

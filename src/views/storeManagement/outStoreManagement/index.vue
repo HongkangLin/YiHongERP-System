@@ -154,11 +154,11 @@ export default {
       })
     },
 
-    // 入库
-    handleInStore(inId) {
-      // this.$router.push({
-      //   path: '/F0401/inStore?inId=' + inId
-      // })
+    // 出库
+    handleInStore(outId) {
+      this.$router.push({
+        path: '/F0401/outStore?outId=' + outId
+      })
     }
   },
 
