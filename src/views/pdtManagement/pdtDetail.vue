@@ -120,9 +120,12 @@
         <i class="el-icon-s-operation"></i>数据列表
       </div>
       <div class="imgDiv">
-        <img :src="info.mainPicUrl" alt="">
-        <img :src="info.picUrl1" alt="">
-        <img :src="info.picUrl2" alt="">
+        <img @click="showImg(info.mainPicUrl)" :src="info.mainPicUrl" alt="">
+        <img @click="showImg(info.picUrl1)" :src="info.picUrl1" alt="">
+        <img @click="showImg(info.picUrl2)" :src="info.picUrl2" alt="">
+        <el-dialog :visible.sync="dialogVisible">
+          <img width="100%" :src="dialogImageUrl" alt="">
+        </el-dialog>
       </div>
     </div>
     <div class="pdt" v-if="active === 2">
@@ -176,7 +179,9 @@ export default {
       active: 0,
       typeList: [], // 产品分类
       info: {},
-      list: []
+      list: [],
+      dialogVisible: false,
+      dialogImageUrl: ''
     };
   },
   async mounted () {
@@ -185,6 +190,10 @@ export default {
     this.getSupplier();
   },
   methods: {
+    showImg (src) {
+      this.dialogVisible = true;
+      this.dialogImageUrl = src.replace('_80x80', '');
+    },
     async getType () { // 获取产品分类
       let data = await window.axios.post('/product/queryAllCategory', {
         pageNum: 1,
@@ -315,11 +324,12 @@ export default {
     width: 100%;
     border: 1px solid rgb(228, 228, 228);
     padding: 20px;
-    img {
+    > img {
       display: inline-block;
       margin-right: 10px;
       width: 100px;
       height: 100px;
+      cursor: pointer;
     }
   }
 }

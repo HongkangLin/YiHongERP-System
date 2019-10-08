@@ -60,7 +60,7 @@
             label="产品图片"
             align="center">
             <template slot-scope="scope">
-              <img class="img" :src="scope.row.mainPicUrl" alt="">
+              <img class="img" :src="scope.row.fnskuPicUrl" alt="">
             </template>
           </el-table-column>
           <el-table-column
