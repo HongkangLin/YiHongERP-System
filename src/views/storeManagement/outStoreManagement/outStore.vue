@@ -43,15 +43,7 @@
             <el-table-column prop="fullLoadQuantity" label="装箱数(套/箱)" align="center" min-width="90"></el-table-column>
             <el-table-column prop="quantity" label="件数" align="center" min-width="80"></el-table-column>
             <el-table-column prop="stockAvailCount" label="可用库存" align="center" min-width="80"></el-table-column>
-            <el-table-column prop="count" align="center" min-width="80">
-              <template slot="header">
-                <span class="star">*</span>
-                <span class="tableHeader">本次出库</span>
-              </template>
-              <template slot-scope="scope">
-                <el-input-number v-model="scope.row.count" :min="0" :controls="false" placeholder="请输入"></el-input-number>
-              </template>
-            </el-table-column>
+            <el-table-column prop="count" label="本次出库" align="center" min-width="80"></el-table-column>
             <el-table-column prop="totalSpace" label="总体积(m³)" align="center" min-width="80"></el-table-column>
             <el-table-column prop="totalWeight" label="总重量(kg)" align="center" min-width="80"></el-table-column>
           </el-table>
@@ -158,7 +150,7 @@ export default {
         // 总重量(kg)
         item.totalWeight = (item.fullLoadWeight * item.quantity).toFixed(4);
         // 本次出库
-        item.count = item.count ? item.count : undefined;
+        // item.count = item.count ? item.count : undefined;
       });
     },
 
@@ -244,12 +236,6 @@ export default {
     .productTable {
       padding: 30px;
       .el-table {
-        .el-table__header-wrapper {
-          .star {
-            color: red;
-            margin-right: 3px;
-          }
-        }
         /deep/.el-table__body-wrapper {
           .el-input-number {
             width: 100%;

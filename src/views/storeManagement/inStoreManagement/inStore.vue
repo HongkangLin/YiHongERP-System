@@ -236,6 +236,9 @@ export default {
           }
         }
         /deep/.el-table__body-wrapper {
+          .img {
+            width: 100%;
+          }
           .el-input__inner {
             border: none;
           }

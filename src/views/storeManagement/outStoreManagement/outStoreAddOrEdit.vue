@@ -61,7 +61,7 @@
                 <span class="tableHeader">本次出库</span>
               </template>
               <template slot-scope="scope">
-                <el-input-number v-model="scope.row.count" :min="0" :controls="false" placeholder="请输入"></el-input-number>
+                <el-input-number v-model="scope.row.count" :min="0" :controls="false" placeholder="请输入" @change="inputCount(scope.row)"></el-input-number>
               </template>
             </el-table-column>
             <el-table-column prop="totalSpace" label="总体积(m³)" align="center" min-width="80"></el-table-column>
@@ -80,7 +80,7 @@
       </div>
     </div>
     <!-- 添加产品弹窗 -->
-    <el-dialog title="添加产品" :visible.sync="dialogTableVisible" width="45%" class="pdtDialog" @open="checkIfAdded" :destroy-on-close="true">
+    <el-dialog title="添加产品" :visible.sync="dialogTableVisible" width="45%" class="pdtDialog" @open="checkIfAdded">
       <el-input v-model="dialog.skuIdOrGoodsNameOrCustomId" placeholder="商品名称/SKU" class="searchPdt">
         <el-button slot="append" icon="el-icon-search" @click="searchDialogPdt"></el-button>
       </el-input>
@@ -94,7 +94,7 @@
         </el-table-column>
       </el-table>
       <div class="page">
-        <el-pagination background layout="prev, pager, next" :total="dialogTotal" @current-change="handleCurrentChange"></el-pagination>
+        <el-pagination background layout="prev, pager, next" :page-size="5" :total="dialogTotal" @current-change="handleCurrentChange"></el-pagination>
       </div>
     </el-dialog>
 	</div>
@@ -136,7 +136,7 @@ export default {
       dialogTableVisible: false,
       dialog: {
         skuIdOrGoodsNameOrCustomId: "",
-        pageSize: 10,
+        pageSize: 5,
         pageNum: 1
       },
       dialogPdtList: [],
@@ -248,6 +248,8 @@ export default {
         item.totalWeight = (item.fullLoadWeight * item.quantity).toFixed(4);
         // 本次出库
         item.count = item.count ? item.count : undefined;
+        // 件数
+        item.quantity = item.count/item.fullLoadQuantity;
       })
       this.productList = obj.goods;
     },
@@ -411,6 +413,11 @@ export default {
         // 移除产品信息列表对应的产品
         this.removePdt(id);
       } else { //添加操作
+        let houseId = typeof(this.ruleForm.warehouseName) === "number" ? this.ruleForm.warehouseName : this.ruleForm.warehouseId; 
+        if (!houseId) {
+          this.$message.warning("请先选择仓库");
+          return;
+        }
         // 变更状态
         this.dialogPdtList.forEach((element, index) => {
           if (element.id === id) {
@@ -420,27 +427,43 @@ export default {
           }
         });
         // 产品信息列表添加对应的产品
-        window.axios.post("/product/queryProductInfoDetail", {skuId}).then((data) => {
-          if (data.code !== 0) return
-          let pdtDetail = data.data;
+        axios.all([
+          axios.post("/product/queryProductInfoDetail", {skuId}),
+          axios.get("/stocklist/avail", {params: {goodsId: id, warehouseId: houseId}})
+        ])
+        .then(axios.spread(function (pdtDetailData, stockAvailData) {
+          let pdtDetail = pdtDetailData.data;
           let obj = {
             goodsId: pdtDetail.id,
             goodsPicUrl: pdtDetail.fnskuPicUrl,
             goodsSku: pdtDetail.skuId,
             goodsName: pdtDetail.goodsName,
-
             dimentions: pdtDetail.packingLength + " * " + pdtDetail.packingWide + " * " + pdtDetail.packingHigh,
             fullLoadWeight: pdtDetail.packingWeight,
-            fullLoadQuantity: 0, //待修改
-            quantity: 0, //待修改
-            stockAvailCount: 0, //待修改
-            count: undefined, //待修改
-            totalSpace: ((pdtDetail.packingLength * pdtDetail.packingWide * pdtDetail.packingHigh * pdtDetail.quantity)/1000000).toFixed(4),
-            totalWeight: (pdtDetail.packingWeight * pdtDetail.quantity).toFixed(4)
+            fullLoadQuantity: pdtDetail.packingQuantity, //装箱数
+            quantity: "--", //件数
+            stockAvailCount: stockAvailData.data.availCount, //可用库存
+            count: undefined, 
+            cartonLength: pdtDetail.packingLength,
+            cartonWidth: pdtDetail.packingWide,
+            cartonHeight: pdtDetail.packingHigh,
+            totalSpace: "--", //总体积
+            totalWeight: "--" //总重量
           }
           _this.productList.push(obj);
-        })
+        
+        }));
       }
+    },
+
+    // 输入本次出库
+    inputCount(obj) {
+      //件数
+      obj.quantity = obj.count / obj.fullLoadQuantity; 
+      // 总体积(m³)
+      obj.totalSpace = ((obj.cartonLength * obj.cartonWidth * obj.cartonHeight * obj.quantity)/1000000).toFixed(4);
+      // 总重量(kg)
+      obj.totalWeight = (obj.fullLoadWeight * obj.quantity).toFixed(4);
     }
   },
 };
@@ -505,6 +528,9 @@ export default {
           }
         }
         /deep/.el-table__body-wrapper {
+          .img {
+            width: 100%;
+          }
           .el-input-number {
             width: 100%;
             .el-input__inner {
