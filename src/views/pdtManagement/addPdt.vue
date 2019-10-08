@@ -336,7 +336,9 @@
               </template>
             </el-table-column>
           </el-table>
-          <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
+          <div class="pagin">
+            <el-pagination background layout="prev, pager, next" :pageSize="pageSize" :total="total" @current-change="changeNum"></el-pagination>
+          </div>
         </div>
       </div>
     </div>
@@ -344,11 +346,7 @@
 </template>
 
 <script>
-import pageination from '#/pagination/pagination.vue';
 export default {
-  components: {
-    'pageination': pageination
-  },
   data () {
     return {
       token: localStorage.getItem('token'),
@@ -692,11 +690,6 @@ export default {
       this.pageNum = num;
       this.getSupplier('');
     },
-    changePageSize (size) { // 改变每页条数
-      this.pageNum = 1;
-      this.pageSize = size;
-      this.getSupplier('');
-    },
     handleAdd (idx) { // 添加/移除
       if (this.supplierList[idx].sel) { // 移除
         this.$set(this.supplierList[idx], 'sel', false);
@@ -952,6 +945,15 @@ export default {
     -moz-box-shadow:0px 0px 7px rgb(228, 228, 228);
     -webkit-box-shadow:0px 0px 7px rgb(228, 228, 228);
     box-shadow:0px 0px 7px rgb(228, 228, 228);
+    .pagin {
+      height: 60px;
+      position: relative;
+      .el-pagination {
+        position: absolute;
+        top: 20px;
+        right: 0;
+      }
+    }
     .title {
       display: flex;
       justify-content: space-between;
