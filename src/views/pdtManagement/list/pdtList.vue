@@ -112,7 +112,7 @@
               <el-button
                 size="mini"
                 type="text"
-                @click="handleEdit(scope.row.skuId)">编辑</el-button>
+                @click="handleEdit(scope.row.id, scope.row.skuId)">编辑</el-button>
               <el-divider direction="vertical"></el-divider>
               <el-button
                 size="mini"
@@ -260,8 +260,8 @@ export default {
     handleSupplier (id) { // 产品供应商
       this.$router.push(`/pdtSupplier/${id}`);
     },
-    handleEdit (id) { // 编辑角色
-      this.$router.push({path: '/addPdt', query: {id}});
+    handleEdit (id, skuid) { // 编辑角色
+      this.$router.push({path: '/addPdt', query: {id, skuid}});
     },
     async handleDelete (id) { // 删除产品
       let data = await window.axios.post('/product/deleteProductInfo', {

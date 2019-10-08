@@ -262,7 +262,7 @@
         <div class="right">
           <div class="add" @click="addSupplier">+添加供应商</div>
           <el-table border
-            :data="form.contact"
+            :data="form.list"
             style="width: 100%">
             <el-table-column
               align="center"
@@ -283,7 +283,7 @@
               align="center"
               label="采购价（元）">
               <template slot-scope="scope">
-                <el-input v-model="scope.row.price" placeholder="输入采购价"></el-input>
+                <el-input @change="changeInput(scope.$index)" v-model="scope.row.price" placeholder="输入采购价"></el-input>
               </template>
             </el-table-column>
             <el-table-column label="操作" align="center">
@@ -393,7 +393,7 @@ export default {
         packingLength: '', // 外箱尺寸-长
         packingWide: '', // 外箱尺寸-宽
         packingHigh: '', // 外箱尺寸-高
-        contact: [] // 供应商列表
+        list: [] // 供应商列表
       },
       pdtPhoto: [], // 产品图片
       supplierList: [], // 供应商列表
@@ -456,7 +456,7 @@ export default {
     await this.getType();
     await this.getBrand();
     await this.getSupplier('');
-    this.id = this.$route.query.id;
+    this.id = this.$route.query.skuid;
     if (this.id) { // 编辑时
       this.crumbList.push({
         name: '编辑产品',
@@ -486,6 +486,28 @@ export default {
           this.active = 2;
           break;
       }
+    },
+    async getPdt () { // 获取产品供应商信息
+      let data = await window.axios.get(`/supplyrel/querybygoods?pageSize=99999&pageNum=1&goodsId=${this.$route.query.id}`);
+      data.data.list.forEach(item => {
+        item.sn = item.supplierSN;
+        item.name = item.supplierName;
+        item.deliverDay = item.supplierDeliverDay;
+        item.price = item.purchasePrice;
+      });
+      this.$set(this.form, 'list', data.data.list);
+      this.$nextTick(() => {
+        for (let i = 0, len = this.supplierList.length; i < len; i++) {
+          for (let j = 0 , jlen = this.form.list.length; j < jlen; j++) {
+            if (this.form.list[j].supplierId === this.supplierList[i].id) {
+              this.$set(this.supplierList[i], 'sel', true);
+              break;
+            } else {
+              this.$set(this.supplierList[i], 'sel', false);
+            }
+          }
+        }
+      });
     },
     async getDetail () { // 获取详情
       let data = await window.axios.post(`/product/queryProductInfoDetail`, {
@@ -524,6 +546,7 @@ export default {
         url: data.data.picUrl2
       });
       this.form = data.data;
+      this.getPdt();
     },
     async getType () { // 获取产品分类
       let data = await window.axios.post('/product/queryAllCategory', {
@@ -548,8 +571,8 @@ export default {
       let data = await window.axios.get(`/supplier/listAll?pageSize=${this.pageSize}&pageNum=${this.pageNum}&snOrNameKeyword=${key}`);
       this.total = data.data.total;
       data.data.list.forEach(item => {
-        for (let i = 0, len = this.form.contact.length; i < len; i++) {
-          if (item.id === this.form.contact[i].id) {
+        for (let i = 0, len = this.form.list.length; i < len; i++) {
+          if (item.id === this.form.list[i].id) {
             item.sel = true;
             break;
           }
@@ -668,13 +691,30 @@ export default {
         url: response.data.thumbUrl
       });
     },
-    handleDelete (idx) { // 移除供应商
-      for (let i = 0, len = this.supplierList.length; i < len; i++) {
-        if (this.form.contact[idx].id === this.supplierList[i].id) {
-          this.$set(this.supplierList[i], 'sel', false);
+    async changeInput (idx) { // 修改输入框中的值
+      if (this.id) { // 编辑时
+        let data = await window.axios.post('/supplyrel/update', {
+          id: this.form.list[idx].relationId,
+          goodsId: this.$route.query.id,
+          supplierId: this.form.list[idx].supplierId,
+          price: this.form.list[idx].price
+        });
+        if (data.code === 0) {
+          this.$message.success(data.message);
         }
       }
-      this.form.contact.splice(idx, 1);
+    },
+    handleDelete (idx) { // 移除供应商
+      if (!this.id) { // 新增时
+        for (let i = 0, len = this.supplierList.length; i < len; i++) {
+          if ((this.form.list[idx].id === this.supplierList[i].id)) {
+            this.$set(this.supplierList[i], 'sel', false);
+          }
+        }
+        this.form.list.splice(idx, 1);
+      } else { // 编辑时
+        this.delSupplier(idx);
+      }
     },
     addSupplier () { // 添加供应商
       this.show = true;
@@ -690,22 +730,58 @@ export default {
       this.pageNum = num;
       this.getSupplier('');
     },
-    handleAdd (idx) { // 添加/移除
+    async delSupplier (pos) { // 删除供应关系
+      let data = await window.axios.post('/supplyrel/delete', {
+        id: this.form.list[pos].relationId,
+        goodsId: this.$route.query.id,
+        supplierId: this.form.list[pos].supplierId
+      });
+      if (data.code === 0) {
+        this.$message.success(data.message);
+        this.getPdt();
+      }
+    },
+    async handleAdd (idx) { // 添加/移除
       if (this.supplierList[idx].sel) { // 移除
         this.$set(this.supplierList[idx], 'sel', false);
         let pos = 0;
-        for (let i = 0, len = this.form.contact.length; i < len; i++) {
-          if (this.supplierList[idx].id === this.form.contact[i].id) {
-            pos = i;
+        if (!this.id) { // 新增时逻辑
+          for (let i = 0, len = this.form.list.length; i < len; i++) {
+            if (this.supplierList[idx].id === this.form.list[i].id) {
+              pos = i;
+            }
+          }
+          this.form.list.splice(pos, 1);
+        } else { // 编辑时逻辑
+          for (let i = 0, len = this.form.list.length; i < len; i++) {
+            if (this.supplierList[idx].id === this.form.list[i].supplierId) {
+              pos = i;
+            }
+          }
+          this.delSupplier(pos);
+        }
+      } else { // 添加
+        if (!this.id) { // 新增时逻辑
+          this.$set(this.supplierList[idx], 'sel', true);
+          this.form.list.push(this.supplierList[idx]);
+        } else { // 编辑时逻辑
+          let data = await window.axios.post('/supplyrel/create', {list: [{
+            goodsId: this.$route.query.id,
+            supplierId: this.supplierList[idx].id,
+            price: this.supplierList[idx].price || 0
+          }]});
+          if (data.code === 0) {
+            this.$message.success(data.message);
+            this.getPdt();
           }
         }
-        this.form.contact.splice(pos, 1);
-      } else { // 添加
-        this.$set(this.supplierList[idx], 'sel', true);
-        this.form.contact.push(this.supplierList[idx]);
       }
     },
     async submit () { // 提交
+      if (!this.id && !this.form.list.length) {
+        this.$message.warning('清先关联供应商');
+        return;
+      }
       let param = JSON.parse(JSON.stringify(this.form));
       param.categoryParentId = this.typeList[this.currFirst].id; // 一级分类id
       param.categoryId = this.currSecond !== '' ? this.seconedList[this.currSecond].id : ''; // 二级分类id
@@ -716,23 +792,18 @@ export default {
       param.mainPicUrl = this.pdtPhoto[0].url; // 商品主图
       param.picUrl1 = this.pdtPhoto[1] && this.pdtPhoto[1].url; // 商品图片
       param.picUrl2 = this.pdtPhoto[2] && this.pdtPhoto[2].url; // 商品图片
-      console.log(param);
+      if (!this.id) { // 新增时传入供应关系
+        param.list.forEach(item => {
+          item.supplierId = item.id;
+          item.price = item.price || 0;
+        });
+      } else { // 编辑时不处理供应关系
+        delete param.list;
+      }
       let data = await window.axios.post('/product/addOrUpdateProductInfo', param);
       if (data.code === 0) {
         this.$message.success(data.message);
         history.go(-1);
-        // let params = JSON.parse(JSON.stringify(this.form.contact));
-        // params.forEach(item => {
-        //   item.goodsId = this.form.skuId,
-        //   item.supplierId = item.id,
-        //   item.price = item.price || 0
-        // });
-        // console.log(params);
-        // let list = await window.axios.post('/supplyrel/create', params); // 绑定供应关系
-        // if (list.code === 0) {
-        //   this.$message.success(list.message);
-        //   history.go(-1);
-        // }
       }
     }
   }

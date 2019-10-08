@@ -27,7 +27,7 @@
           </el-table-column>
           <el-table-column
             prop="supplierDeliverDay"
-            label="交期"
+            label="交期（天）"
             align="center">
           </el-table-column>
           <el-table-column
