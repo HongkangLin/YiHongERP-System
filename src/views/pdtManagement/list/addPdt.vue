@@ -13,7 +13,7 @@
           <div class="lable">
             <i class="el-icon-collection-tag"></i>
             选择分类
-            <img class="hexagon" src="../../assets/image/svg/hexagon.svg" alt="">
+            <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
         </div>
         <div class="right">
@@ -49,17 +49,17 @@
           <div class="lable">
             <i class="el-icon-collection-tag"></i>
             基础信息
-            <img class="hexagon" src="../../assets/image/svg/hexagon.svg" alt="">
+            <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
           <div class="lable moneyLabel">
             <i class="el-icon-collection-tag"></i>
             报关信息
-            <img class="hexagon" src="../../assets/image/svg/hexagon.svg" alt="">
+            <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
           <div class="lable compLabel">
             <i class="el-icon-collection-tag"></i>
             规格信息
-            <img class="hexagon" src="../../assets/image/svg/hexagon.svg" alt="">
+            <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
         </div>
         <div class="right">
@@ -68,8 +68,8 @@
               {{firstName}}&nbsp;<i v-if="seconedName" class="el-icon-arrow-right"></i>&nbsp;{{seconedName}}
             </el-form-item>
             <el-form-item label="产品状态：">
-              <el-radio v-model="form.status" label="1">在售</el-radio>
-              <el-radio v-model="form.status" label="0">停售</el-radio>
+              <el-radio v-model="form.status" label="0">在售</el-radio>
+              <el-radio v-model="form.status" label="1">停售</el-radio>
             </el-form-item>
             <el-form-item label="产品品牌：" prop="brandId">
               <el-select v-model="form.brandId" placeholder="请选择产品品牌">
@@ -85,7 +85,7 @@
               <el-input v-model="form.goodsName" placeholder="请输入产品名称"></el-input>
             </el-form-item>
             <el-form-item label="SKU编码：" prop="skuId">
-              <el-input v-model="form.skuId" placeholder="请输入SKU编码"></el-input>
+              <el-input :disabled="disabled" v-model="form.skuId" placeholder="请输入SKU编码"></el-input>
             </el-form-item>
             <el-form-item label="销售目标价：">
               <el-input type="number" v-model="form.goodsGoalPrice" placeholder="请输入销售目标价"></el-input>
@@ -103,7 +103,7 @@
               </el-switch>
             </el-form-item>
             <el-form-item label="FNSKU编号：" prop="fnskuId">
-              <el-input v-model="form.fnskuId" placeholder="请输入FNSKU编号"></el-input>
+              <el-input :disabled="disabled" v-model="form.fnskuId" placeholder="请输入FNSKU编号"></el-input>
             </el-form-item>
             <el-form-item label="FNSKU文件：" prop="fnskuFileUrl">
               <el-upload
@@ -223,7 +223,7 @@
           <div class="lable">
             <i class="el-icon-collection-tag"></i>
             产品图片
-            <img class="hexagon" src="../../assets/image/svg/hexagon.svg" alt="">
+            <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
         </div>
         <div class="right">
@@ -256,7 +256,7 @@
           <div class="lable">
             <i class="el-icon-collection-tag"></i>
             关联供应商
-            <img class="hexagon" src="../../assets/image/svg/hexagon.svg" alt="">
+            <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
         </div>
         <div class="right">
@@ -276,8 +276,8 @@
             </el-table-column>
             <el-table-column
               align="center"
-              label="交期"
-              prop="name">
+              label="交期（天）"
+              prop="deliverDay">
             </el-table-column>
             <el-table-column
               align="center"
@@ -336,7 +336,9 @@
               </template>
             </el-table-column>
           </el-table>
-          <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
+          <div class="pagin">
+            <el-pagination background layout="prev, pager, next" :pageSize="pageSize" :total="total" @current-change="changeNum"></el-pagination>
+          </div>
         </div>
       </div>
     </div>
@@ -344,11 +346,7 @@
 </template>
 
 <script>
-import pageination from '#/pagination/pagination.vue';
 export default {
-  components: {
-    'pageination': pageination
-  },
   data () {
     return {
       token: localStorage.getItem('token'),
@@ -359,9 +357,6 @@ export default {
       }, {
         name: '产品列表',
         path: '/F0201/F020101'
-      }, {
-        name: '新增产品',
-        path: ''
       }],
       typeList: [], // 分类数据
       currFirst: '', // 当前一级
@@ -372,7 +367,7 @@ export default {
       show: false, // 是否显示添加界面
       brandList: [], // 品牌列表
       form: { // form表单
-        status: '1', // 状态
+        status: '0', // 状态
         brandId: '', // 品牌
         goodsName: '', // 名称
         skuId: '', // sku
@@ -422,6 +417,7 @@ export default {
           {required: true, message: '请上传FNSKU文件', trigger: 'blur'}
         ]
       },
+      id: '',
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10 // pageSize
@@ -452,11 +448,27 @@ export default {
     packingHighIn () { // 外箱尺寸英寸高
       return this.form.packingHigh ? (this.form.packingHigh * 0.3937).toFixed(2) : '-';
     },
+    disabled () {
+      return !!this.id;
+    }
   },
-  mounted () {
-    this.getType();
-    this.getBrand();
-    this.getSupplier('');
+  async mounted () {
+    await this.getType();
+    await this.getBrand();
+    await this.getSupplier('');
+    this.id = this.$route.query.id;
+    if (this.id) { // 编辑时
+      this.crumbList.push({
+        name: '编辑产品',
+        path: ''
+      });
+      this.getDetail();
+    } else {
+      this.crumbList.push({
+        name: '新增产品',
+        path: ''
+      });
+    }
   },
   methods: {
     goBack () { // 返回
@@ -474,6 +486,44 @@ export default {
           this.active = 2;
           break;
       }
+    },
+    async getDetail () { // 获取详情
+      let data = await window.axios.post(`/product/queryProductInfoDetail`, {
+        skuId: this.id
+      });
+      for (let i = 0, len = this.typeList.length; i < len; i++) {
+        for (let j = 0, jLen = this.typeList[i].listChildCategory.length; j < jLen; j++) {
+          let curr = this.typeList[i].listChildCategory[j];
+          if (curr.id === data.data.categoryId) {
+            this.firstName = this.typeList[i].goodsCategoryName;
+            this.currFirst = i;
+            this.seconedList = this.typeList[i].listChildCategory;
+            this.seconedName = curr.goodsCategoryName;
+            this.currSecond = j;
+            break;
+          }
+        }
+      }
+      data.data.status = data.data.status + '';
+      data.data.clearStocksFlag = !!data.data.clearStocksFlag;
+      data.data.fnskuFileUrl = [{
+        name: data.data.fnskuFileName,
+        url: data.data.fnskuFileUrl
+      }];
+      data.data.fnskuPicUrl = [{url: data.data.fnskuPicUrl}];
+      data.data.mainPicUrl && this.pdtPhoto.push({
+        name: '商品主图',
+        url: data.data.mainPicUrl
+      });
+      data.data.picUrl1 && this.pdtPhoto.push({
+        name: '设为主图',
+        url: data.data.picUrl1
+      });
+      data.data.picUrl2 && this.pdtPhoto.push({
+        name: '设为主图',
+        url: data.data.picUrl2
+      });
+      this.form = data.data;
     },
     async getType () { // 获取产品分类
       let data = await window.axios.post('/product/queryAllCategory', {
@@ -640,11 +690,6 @@ export default {
       this.pageNum = num;
       this.getSupplier('');
     },
-    changePageSize (size) { // 改变每页条数
-      this.pageNum = 1;
-      this.pageSize = size;
-      this.getSupplier('');
-    },
     handleAdd (idx) { // 添加/移除
       if (this.supplierList[idx].sel) { // 移除
         this.$set(this.supplierList[idx], 'sel', false);
@@ -665,8 +710,8 @@ export default {
       param.categoryParentId = this.typeList[this.currFirst].id; // 一级分类id
       param.categoryId = this.currSecond !== '' ? this.seconedList[this.currSecond].id : ''; // 二级分类id
       param.clearStocksFlag = ~~param.clearStocksFlag; // 是否清货
-      param.fnskuFileUrl = param.fnskuFileUrl[0].url; // fnsku文件
       param.fnskuFileName = param.fnskuFileUrl[0].name; // fnsku文件名称
+      param.fnskuFileUrl = param.fnskuFileUrl[0].url; // fnsku文件
       param.fnskuPicUrl = param.fnskuPicUrl[0].url; // 防跟卖标签
       param.mainPicUrl = this.pdtPhoto[0].url; // 商品主图
       param.picUrl1 = this.pdtPhoto[1] && this.pdtPhoto[1].url; // 商品图片
@@ -674,10 +719,7 @@ export default {
       console.log(param);
       let data = await window.axios.post('/product/addOrUpdateProductInfo', param);
       if (data.code === 0) {
-        this.$message({
-          message: data.message,
-          type: 'success'
-        });
+        this.$message.success(data.message);
         history.go(-1);
         // let params = JSON.parse(JSON.stringify(this.form.contact));
         // params.forEach(item => {
@@ -685,17 +727,12 @@ export default {
         //   item.supplierId = item.id,
         //   item.price = item.price || 0
         // });
+        // console.log(params);
         // let list = await window.axios.post('/supplyrel/create', params); // 绑定供应关系
-        // if (data.code === 0) {
+        // if (list.code === 0) {
+        //   this.$message.success(list.message);
         //   history.go(-1);
-        // } else {
-        //   this.$message.warning(data.message);
         // }
-      } else {
-        this.$message({
-          message: data.message,
-          type: 'warning'
-        });
       }
     }
   }
@@ -908,6 +945,15 @@ export default {
     -moz-box-shadow:0px 0px 7px rgb(228, 228, 228);
     -webkit-box-shadow:0px 0px 7px rgb(228, 228, 228);
     box-shadow:0px 0px 7px rgb(228, 228, 228);
+    .pagin {
+      height: 60px;
+      position: relative;
+      .el-pagination {
+        position: absolute;
+        top: 20px;
+        right: 0;
+      }
+    }
     .title {
       display: flex;
       justify-content: space-between;

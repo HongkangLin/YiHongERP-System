@@ -18,23 +18,21 @@
           <el-table-column
             prop="supplierSN"
             label="供应商编号"
-            align="center"
-            width="180">
+            align="center">
           </el-table-column>
           <el-table-column
             prop="supplierName"
             label="供应商名称"
-            align="center"
-            width="180">
+            align="center">
           </el-table-column>
           <el-table-column
             prop="supplierDeliverDay"
             label="交期"
-            align="center"
-            width="180">
+            align="center">
           </el-table-column>
           <el-table-column
             align="center"
+            width="220"
             label="采购价（元）">
             <template slot-scope="scope">
               <el-input @change="changeData(scope.$index)" v-model="scope.row.purchasePrice" placeholder="输入采购价"></el-input>
@@ -85,7 +83,9 @@
               </template>
             </el-table-column>
           </el-table>
-          <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
+          <div class="page">
+            <el-pagination background layout="prev, pager, next" :pageSize="pageSize" :total="total" @current-change="changeNum"></el-pagination>
+          </div>
         </div>
       </div>
     </div>
@@ -93,11 +93,7 @@
 </template>
 
 <script>
-import pageination from '#/pagination/pagination.vue';
 export default {
-  components: {
-    'pageination': pageination
-  },
   data () {
     return {
       crumbList: [{ // 面包屑
@@ -115,7 +111,7 @@ export default {
       pageSize: 10, // pageSize
       show: false, // 是否显示添加产品
       pdtName: '', // 产品名称
-      supplierList: [], // 产品列表
+      supplierList: [], // 供应商列表
       list: [] // 表格数据
     };
   },
@@ -155,7 +151,7 @@ export default {
           list: [{
             goodsId: this.$route.params.id,
             supplierId: this.supplierList[idx].id,
-            price: this.supplierList[idx].goodsGoalPrice || 0
+            price: this.supplierList[idx].deliverDay || 0
           }]
         });
         if (data.code === 0) {
@@ -210,11 +206,6 @@ export default {
     },
     changeNum (num) { // 改变页码
       this.pageNum = num;
-      this.getSupplierList('');
-    },
-    changePageSize (size) { // 改变每页条数
-      this.pageNum = 1;
-      this.pageSize = size;
       this.getSupplierList('');
     },
     searchPdt () { // 搜索
@@ -275,7 +266,10 @@ export default {
     border-right: 1px solid rgb(228, 228, 228);
     border-bottom: 1px solid rgb(228, 228, 228);
     /deep/.el-input--small {
-      width: 300px;
+      width: 150px;
+      .el-input__inner {
+        text-align: center;
+      }
     }
   }
   .addSome {
@@ -302,6 +296,15 @@ export default {
       color: #777;
       i {
         cursor: pointer;
+      }
+    }
+    .page {
+      height: 60px;
+      position: relative;
+      .el-pagination {
+        position: absolute;
+        top: 20px;
+        right: 0;
       }
     }
     .content {

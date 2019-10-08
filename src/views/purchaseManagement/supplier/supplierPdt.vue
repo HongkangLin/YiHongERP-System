@@ -18,17 +18,16 @@
           <el-table-column
             prop="goodsName"
             label="产品名称"
-            align="center"
-            width="180">
+            align="center">
           </el-table-column>
           <el-table-column
             prop="goodsSKU"
             label="SKU"
-            align="center"
-            width="180">
+            align="center">
           </el-table-column>
           <el-table-column
             align="center"
+            width="220"
             label="采购价（元）">
             <template slot-scope="scope">
               <el-input @change="changeData(scope.$index)" v-model="scope.row.purchasePrice" placeholder="输入采购价"></el-input>
@@ -79,7 +78,9 @@
               </template>
             </el-table-column>
           </el-table>
-          <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
+          <div class="page">
+            <el-pagination background layout="prev, pager, next" :pageSize="pageSize" :total="total" @current-change="changeNum"></el-pagination>
+          </div>
         </div>
       </div>
     </div>
@@ -87,11 +88,7 @@
 </template>
 
 <script>
-import pageination from '#/pagination/pagination.vue';
 export default {
-  components: {
-    'pageination': pageination
-  },
   data () {
     return {
       crumbList: [{ // 面包屑
@@ -211,11 +208,6 @@ export default {
       this.pageNum = num;
       this.getPdtList('');
     },
-    changePageSize (size) { // 改变每页条数
-      this.pageNum = 1;
-      this.pageSize = size;
-      this.getPdtList('');
-    },
     searchPdt () { // 搜索
       this.pageNum = 1;
       this.getPdtList(this.pdtName);
@@ -274,7 +266,10 @@ export default {
     border-right: 1px solid rgb(228, 228, 228);
     border-bottom: 1px solid rgb(228, 228, 228);
     /deep/.el-input--small {
-      width: 300px;
+      width: 150px;
+      .el-input__inner {
+        text-align: center;
+      }
     }
   }
   .addSome {
@@ -289,6 +284,15 @@ export default {
     -moz-box-shadow:0px 0px 7px rgb(228, 228, 228);
     -webkit-box-shadow:0px 0px 7px rgb(228, 228, 228);
     box-shadow:0px 0px 7px rgb(228, 228, 228);
+    .page {
+      height: 60px;
+      position: relative;
+      .el-pagination {
+        position: absolute;
+        top: 20px;
+        right: 0;
+      }
+    }
     .title {
       display: flex;
       justify-content: space-between;

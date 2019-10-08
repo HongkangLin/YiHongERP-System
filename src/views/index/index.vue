@@ -13,7 +13,7 @@
     <el-container class="navAndMain">
       <!-- 左侧二级菜单 -->
       <el-aside>
-        <el-menu default-active="F0101-F010101" class="classTwoMenu" :collapse="true" background-color="#474c5a">
+        <el-menu :default-active="activeMenu" class="classTwoMenu" :collapse="true" background-color="#474c5a">
           <el-submenu :index="item.menuPath" v-for="(item, index) in menuList" :key="index">
             <template slot="title">
               <i class="classTwoMenuName" :class="classList[item.menuName]">{{item.menuName}}</i>
@@ -42,11 +42,20 @@ export default {
         '财务': 'el-icon-s-data',
         '系统': 'el-icon-setting'
       },
+      activeMenu: 'F0201-F020101', // active菜单
       menuList: [] // 菜单列表
     }
   },
   mounted () {
     this.getMenu();
+    let param = this.$route.path.substring(1);
+    this.activeMenu = param.replace(/\//g, '-');
+  },
+  watch: {
+    "$route.path" (param) {
+      param = param.substring(1);
+      this.activeMenu = param.replace(/\//g, '-');
+    }
   },
   methods: {
     // 跳转到对应页面
