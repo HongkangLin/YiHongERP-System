@@ -14,67 +14,71 @@ const routes = [{
 	}, {
 		path: '/F0101/F010102', //系统管理-权限-用户角色管理
 		name: 'userRoleMgmt',
-		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/systemManagement/userRoleMgmt.vue'),
+		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/systemManagement/role/userRoleMgmt.vue'),
 	}, {
 		path: '/addRole', //系统管理-权限-用户角色管理-新增角色
 		name: 'addRole',
-		component: () => import(/* webpackChunkName: "addRole" */ '../views/systemManagement/addRole.vue'),
+		component: () => import(/* webpackChunkName: "addRole" */ '../views/systemManagement/role/addRole.vue'),
 	}, {
 		path: '/F0201/F020101', //产品管理-产品管理-产品列表
 		name: 'pdtList',
-		component: () => import(/* webpackChunkName: "pdtList" */ '../views/pdtManagement/pdtList.vue'),
+		component: () => import(/* webpackChunkName: "pdtList" */ '../views/pdtManagement/list/pdtList.vue'),
 	}, {
 		path: '/addPdt', //产品管理-产品管理-产品列表-新增产品
 		name: 'addPdt',
-		component: () => import(/* webpackChunkName: "addPdt" */ '../views/pdtManagement/addPdt.vue'),
+		component: () => import(/* webpackChunkName: "addPdt" */ '../views/pdtManagement/list/addPdt.vue'),
 	}, {
 		path: '/pdtDetail', //产品管理-产品管理-产品列表-产品详情
 		name: 'pdtDetail',
-		component: () => import(/* webpackChunkName: "pdtDetail" */ '../views/pdtManagement/pdtDetail.vue'),
+		component: () => import(/* webpackChunkName: "pdtDetail" */ '../views/pdtManagement/list/pdtDetail.vue'),
 	}, {
 		path: '/pdtSupplier/:id', //产品管理-产品管理-产品列表-已关联供应商
 		name: 'pdtSupplier',
-		component: () => import(/* webpackChunkName: "pdtSupplier" */ '../views/pdtManagement/pdtSupplier.vue'),
+		component: () => import(/* webpackChunkName: "pdtSupplier" */ '../views/pdtManagement/list/pdtSupplier.vue'),
 	}, {
 		path: '/F0201/F020102', //产品管理-产品管理-产品分类
 		name: 'pdtType',
-		component: () => import(/* webpackChunkName: "pdtType" */ '../views/pdtManagement/pdtType.vue'),
+		component: () => import(/* webpackChunkName: "pdtType" */ '../views/pdtManagement/type/pdtType.vue'),
 	}, {
 		path: '/addType', //产品管理-产品管理-产品分类-新增分类
 		name: 'addType',
-		component: () => import(/* webpackChunkName: "addType" */ '../views/pdtManagement/addType.vue'),
+		component: () => import(/* webpackChunkName: "addType" */ '../views/pdtManagement/type/addType.vue'),
 	}, {
 		path: '/F0201/F020103', //产品管理-产品管理-品牌管理
 		name: 'brandManagement',
-		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/pdtManagement/brandManagement.vue'),
+		component: () => import(/* webpackChunkName: "brandManagement" */ '../views/pdtManagement/brand/brandManagement.vue'),
 	}, {
 		path: '/addBrand', //产品管理-产品管理-品牌管理-新增品牌
 		name: 'addBrand',
-		component: () => import(/* webpackChunkName: "addBrand" */ '../views/pdtManagement/addBrand.vue'),
+		component: () => import(/* webpackChunkName: "addBrand" */ '../views/pdtManagement/brand/addBrand.vue'),
+	}, {
+		path: '/F0301/F030101', //采购-采购管理-采购单
+		name: 'purchaseOrder',
+		component: () => import(/* webpackChunkName: "purchaseOrder" */ '../views/purchaseManagement/purchase/purchaseOrder.vue'),
 	}, {
 		path: '/F0302/F030201', //采购-供应商管理-供应商管理
 		name: 'supplierManagement',
-		component: () => import(/* webpackChunkName: "supplierManagement" */ '../views/purchaseManagement/supplierManagement.vue'),
+		component: () => import(/* webpackChunkName: "supplierManagement" */ '../views/purchaseManagement/supplier/supplierManagement.vue'),
 	}, {
 		path: '/addSupplier', //采购-供应商管理-供应商管理-新增供应商
 		name: 'addSupplier',
-		component: () => import(/* webpackChunkName: "addSupplier" */ '../views/purchaseManagement/addSupplier.vue'),
+		component: () => import(/* webpackChunkName: "addSupplier" */ '../views/purchaseManagement/supplier/addSupplier.vue'),
 	}, {
 		path: '/supplierDetail/:id', //采购-供应商管理-供应商管理-供应商信息
 		name: 'supplierDetail',
-		component: () => import(/* webpackChunkName: "supplierDetail" */ '../views/purchaseManagement/supplierDetail.vue'),
+		component: () => import(/* webpackChunkName: "supplierDetail" */ '../views/purchaseManagement/supplier/supplierDetail.vue'),
 	}, {
 		path: '/supplierPdt/:id', //采购-供应商管理-供应商管理-供应中产品
 		name: 'supplierPdt',
-		component: () => import(/* webpackChunkName: "supplierPdt" */ '../views/purchaseManagement/supplierPdt.vue'),
+		component: () => import(/* webpackChunkName: "supplierPdt" */ '../views/purchaseManagement/supplier/supplierPdt.vue'),
 	}, {
 		path: '/F0302/F030202', //采购-供应商管理-结算方式
 		name: 'settleStyle',
-		component: () => import(/* webpackChunkName: "settleStyle" */ '../views/purchaseManagement/settleStyle.vue'),
+		component: () => import(/* webpackChunkName: "settleStyle" */ '../views/purchaseManagement/settle/settleStyle.vue'),
 	}, {
 		path: '/addSettle', //采购-供应商管理-结算方式-新增结算方式
 		name: 'addSettle',
-		component: () => import(/* webpackChunkName: "addSettle" */ '../views/purchaseManagement/addSettle.vue'),
+		component: () => import(/* webpackChunkName: "addSettle" */ '../views/purchaseManagement/settle/addSettle.vue'),
 	}, {
 		path: '/F0401/F040104', //库存管理 > 仓库设置 
 		name: 'storeSetting',

@@ -12,7 +12,7 @@
           <div class="lable">
             <i class="el-icon-collection-tag"></i>
             选择分类
-            <img class="hexagon" src="../../assets/image/svg/hexagon.svg" alt="">
+            <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
         </div>
         <div class="right">
@@ -48,17 +48,17 @@
           <div class="lable">
             <i class="el-icon-collection-tag"></i>
             基础信息
-            <img class="hexagon" src="../../assets/image/svg/hexagon.svg" alt="">
+            <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
           <div class="lable moneyLabel">
             <i class="el-icon-collection-tag"></i>
             财务信息
-            <img class="hexagon" src="../../assets/image/svg/hexagon.svg" alt="">
+            <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
           <div class="lable compLabel">
             <i class="el-icon-collection-tag"></i>
             企业信息
-            <img class="hexagon" src="../../assets/image/svg/hexagon.svg" alt="">
+            <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
         </div>
         <div class="right">
@@ -204,7 +204,7 @@
           <div class="lable">
             <i class="el-icon-collection-tag"></i>
             添加联系人
-            <img class="hexagon" src="../../assets/image/svg/hexagon.svg" alt="">
+            <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
         </div>
         <div class="right">
