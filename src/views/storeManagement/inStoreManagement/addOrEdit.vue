@@ -86,7 +86,7 @@
         </el-table-column>
       </el-table>
       <div class="page">
-        <el-pagination background layout="prev, pager, next" :total="dialogTotal" @current-change="handleCurrentChange"></el-pagination>
+        <el-pagination background layout="prev, pager, next" :page-size="5" :total="dialogTotal" @current-change="handleCurrentChange"></el-pagination>
       </div>
     </el-dialog>
 	</div>
@@ -128,7 +128,7 @@ export default {
       dialogTableVisible: false,
       dialog: {
         skuIdOrGoodsNameOrCustomId: "",
-        pageSize: 10,
+        pageSize: 5,
         pageNum: 1
       },
       dialogPdtList: [],
