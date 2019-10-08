@@ -60,7 +60,7 @@
             label="产品图片"
             align="center">
             <template slot-scope="scope">
-              <img class="img" :src="scope.row.fnskuPicUrl" alt="">
+              <img class="img" :src="scope.row.mainPicUrl" alt="">
             </template>
           </el-table-column>
           <el-table-column
@@ -112,7 +112,7 @@
               <el-button
                 size="mini"
                 type="text"
-                @click="handleEdit(scope.row.id)">编辑</el-button>
+                @click="handleEdit(scope.row.skuId)">编辑</el-button>
               <el-divider direction="vertical"></el-divider>
               <el-button
                 size="mini"
@@ -154,10 +154,10 @@ export default {
         value: ''
       }, {
         label: '在售',
-        value: '1'
+        value: '0'
       }, {
         label: '停售',
-        value: '2'
+        value: '1'
       }],
       type: '', // 产品分类
       categoryParentId: '', // 一级分类

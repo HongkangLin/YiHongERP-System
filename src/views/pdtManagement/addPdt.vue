@@ -359,9 +359,6 @@ export default {
       }, {
         name: '产品列表',
         path: '/F0201/F020101'
-      }, {
-        name: '新增产品',
-        path: ''
       }],
       typeList: [], // 分类数据
       currFirst: '', // 当前一级
@@ -422,6 +419,7 @@ export default {
           {required: true, message: '请上传FNSKU文件', trigger: 'blur'}
         ]
       },
+      id: '',
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10 // pageSize
@@ -453,10 +451,23 @@ export default {
       return this.form.packingHigh ? (this.form.packingHigh * 0.3937).toFixed(2) : '-';
     },
   },
-  mounted () {
-    this.getType();
-    this.getBrand();
-    this.getSupplier('');
+  async mounted () {
+    await this.getType();
+    await this.getBrand();
+    await this.getSupplier('');
+    this.id = this.$route.query.id;
+    if (this.id) { // 编辑时
+      this.crumbList.push({
+        name: '编辑产品',
+        path: ''
+      });
+      this.getDetail();
+    } else {
+      this.crumbList.push({
+        name: '新增产品',
+        path: ''
+      });
+    }
   },
   methods: {
     goBack () { // 返回
@@ -474,6 +485,44 @@ export default {
           this.active = 2;
           break;
       }
+    },
+    async getDetail () { // 获取详情
+      let data = await window.axios.post(`/product/queryProductInfoDetail`, {
+        skuId: this.id
+      });
+      for (let i = 0, len = this.typeList.length; i < len; i++) {
+        for (let j = 0, jLen = this.typeList[i].listChildCategory.length; j < jLen; j++) {
+          let curr = this.typeList[i].listChildCategory[j];
+          if (curr.id === data.data.categoryId) {
+            this.firstName = this.typeList[i].goodsCategoryName;
+            this.currFirst = i;
+            this.seconedList = this.typeList[i].listChildCategory;
+            this.seconedName = curr.goodsCategoryName;
+            this.currSecond = j;
+            break;
+          }
+        }
+      }
+      data.data.status = data.data.status + '';
+      data.data.clearStocksFlag = !!data.data.clearStocksFlag;
+      data.data.fnskuFileUrl = [{
+        name: data.data.fnskuFileName,
+        url: data.data.fnskuFileUrl
+      }];
+      data.data.fnskuPicUrl = [{url: data.data.fnskuPicUrl}];
+      data.data.mainPicUrl && this.pdtPhoto.push({
+        name: '商品主图',
+        url: data.data.mainPicUrl
+      });
+      data.data.picUrl1 && this.pdtPhoto.push({
+        name: '设为主图',
+        url: data.data.picUrl1
+      });
+      data.data.picUrl2 && this.pdtPhoto.push({
+        name: '设为主图',
+        url: data.data.picUrl2
+      });
+      this.form = data.data;
     },
     async getType () { // 获取产品分类
       let data = await window.axios.post('/product/queryAllCategory', {
@@ -665,8 +714,8 @@ export default {
       param.categoryParentId = this.typeList[this.currFirst].id; // 一级分类id
       param.categoryId = this.currSecond !== '' ? this.seconedList[this.currSecond].id : ''; // 二级分类id
       param.clearStocksFlag = ~~param.clearStocksFlag; // 是否清货
-      param.fnskuFileUrl = param.fnskuFileUrl[0].url; // fnsku文件
       param.fnskuFileName = param.fnskuFileUrl[0].name; // fnsku文件名称
+      param.fnskuFileUrl = param.fnskuFileUrl[0].url; // fnsku文件
       param.fnskuPicUrl = param.fnskuPicUrl[0].url; // 防跟卖标签
       param.mainPicUrl = this.pdtPhoto[0].url; // 商品主图
       param.picUrl1 = this.pdtPhoto[1] && this.pdtPhoto[1].url; // 商品图片
