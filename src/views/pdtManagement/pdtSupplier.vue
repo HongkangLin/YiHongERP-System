@@ -115,7 +115,7 @@ export default {
       pageSize: 10, // pageSize
       show: false, // 是否显示添加产品
       pdtName: '', // 产品名称
-      supplierList: [], // 产品列表
+      supplierList: [], // 供应商列表
       list: [] // 表格数据
     };
   },
@@ -155,7 +155,7 @@ export default {
           list: [{
             goodsId: this.$route.params.id,
             supplierId: this.supplierList[idx].id,
-            price: this.supplierList[idx].goodsGoalPrice || 0
+            price: this.supplierList[idx].deliverDay || 0
           }]
         });
         if (data.code === 0) {

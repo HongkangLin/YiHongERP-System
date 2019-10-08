@@ -85,7 +85,7 @@
               <el-input v-model="form.goodsName" placeholder="请输入产品名称"></el-input>
             </el-form-item>
             <el-form-item label="SKU编码：" prop="skuId">
-              <el-input v-model="form.skuId" placeholder="请输入SKU编码"></el-input>
+              <el-input :disabled="disabled" v-model="form.skuId" placeholder="请输入SKU编码"></el-input>
             </el-form-item>
             <el-form-item label="销售目标价：">
               <el-input type="number" v-model="form.goodsGoalPrice" placeholder="请输入销售目标价"></el-input>
@@ -103,7 +103,7 @@
               </el-switch>
             </el-form-item>
             <el-form-item label="FNSKU编号：" prop="fnskuId">
-              <el-input v-model="form.fnskuId" placeholder="请输入FNSKU编号"></el-input>
+              <el-input :disabled="disabled" v-model="form.fnskuId" placeholder="请输入FNSKU编号"></el-input>
             </el-form-item>
             <el-form-item label="FNSKU文件：" prop="fnskuFileUrl">
               <el-upload
@@ -276,8 +276,8 @@
             </el-table-column>
             <el-table-column
               align="center"
-              label="交期"
-              prop="name">
+              label="交期（天）"
+              prop="deliverDay">
             </el-table-column>
             <el-table-column
               align="center"
@@ -450,6 +450,9 @@ export default {
     packingHighIn () { // 外箱尺寸英寸高
       return this.form.packingHigh ? (this.form.packingHigh * 0.3937).toFixed(2) : '-';
     },
+    disabled () {
+      return !!this.id;
+    }
   },
   async mounted () {
     await this.getType();
@@ -723,10 +726,7 @@ export default {
       console.log(param);
       let data = await window.axios.post('/product/addOrUpdateProductInfo', param);
       if (data.code === 0) {
-        this.$message({
-          message: data.message,
-          type: 'success'
-        });
+        this.$message.success(data.message);
         history.go(-1);
         // let params = JSON.parse(JSON.stringify(this.form.contact));
         // params.forEach(item => {
@@ -734,17 +734,12 @@ export default {
         //   item.supplierId = item.id,
         //   item.price = item.price || 0
         // });
+        // console.log(params);
         // let list = await window.axios.post('/supplyrel/create', params); // 绑定供应关系
-        // if (data.code === 0) {
+        // if (list.code === 0) {
+        //   this.$message.success(list.message);
         //   history.go(-1);
-        // } else {
-        //   this.$message.warning(data.message);
         // }
-      } else {
-        this.$message({
-          message: data.message,
-          type: 'warning'
-        });
       }
     }
   }
