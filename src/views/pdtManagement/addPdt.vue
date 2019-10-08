@@ -68,8 +68,8 @@
               {{firstName}}&nbsp;<i v-if="seconedName" class="el-icon-arrow-right"></i>&nbsp;{{seconedName}}
             </el-form-item>
             <el-form-item label="产品状态：">
-              <el-radio v-model="form.status" label="1">在售</el-radio>
-              <el-radio v-model="form.status" label="0">停售</el-radio>
+              <el-radio v-model="form.status" label="0">在售</el-radio>
+              <el-radio v-model="form.status" label="1">停售</el-radio>
             </el-form-item>
             <el-form-item label="产品品牌：" prop="brandId">
               <el-select v-model="form.brandId" placeholder="请选择产品品牌">
@@ -372,7 +372,7 @@ export default {
       show: false, // 是否显示添加界面
       brandList: [], // 品牌列表
       form: { // form表单
-        status: '1', // 状态
+        status: '0', // 状态
         brandId: '', // 品牌
         goodsName: '', // 名称
         skuId: '', // sku
