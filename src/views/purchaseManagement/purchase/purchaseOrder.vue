@@ -58,7 +58,7 @@
               <el-divider v-if="scope.row.purchaseStatus === '进行中'" direction="vertical"></el-divider>
               <el-button v-if="scope.row.purchaseStatus === '进行中'" type="text" size="small" @click="toArrivePage(scope.row.purchaseId)">到货</el-button>
               <el-divider v-if="scope.row.purchaseStatus === '进行中'" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.purchaseStatus === '进行中'" type="text" size="small" >关闭</el-button>
+              <el-button v-if="scope.row.purchaseStatus === '进行中'" type="text" size="small" @click="showCloseOrderDialog(scope.row.purchaseId)">关闭</el-button>
               <el-divider v-if="scope.row.approveShowFlag" direction="vertical"></el-divider>
               <el-button v-if="scope.row.approveShowFlag" type="text" size="small">审批</el-button>
             </template>
@@ -77,6 +77,19 @@
         <el-table-column property="approveResult" label="审核结果" min-width="100"></el-table-column>
         <el-table-column property="feedbackReason" label="反馈详情" min-width="200"></el-table-column>
       </el-table>
+    </el-dialog>
+    <!-- 申请关闭采购单弹窗 -->
+    <el-dialog title="申请关闭采购单" :visible.sync="closeOrderVisible" width="35%">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
+        <el-form-item label="关闭原因：" prop="reason">
+          <el-input v-model="ruleForm.reason" type="textarea" :rows="4" placeholder="请输入原因"></el-input>
+        </el-form-item>
+      </el-form>
+      <div class="hint">发起申请后您将无权操作此订单，解除异常后才能操作。请联系主管尽快处理！</div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="closeOrderVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmApplyForClose">发起申请</el-button>
+      </div>
     </el-dialog>
 	</div>
 </template>
@@ -120,7 +133,19 @@ export default {
       },
 
       dialogTableVisible: false, //审核详情弹窗
-      reviewDetailData: []
+      reviewDetailData: [],
+
+      closeOrderVisible: false, //申请关闭采购单弹窗
+      closeOrderId: "",
+      ruleForm: {
+        reason: ""
+      },
+      rules: {
+        reason: [
+          { required: true, message: '请输入关闭原因', trigger: 'blur' }
+        ]
+      }
+      
     }
   },
   created() {
@@ -245,6 +270,37 @@ export default {
         this.reviewDetailData = data.data;
       })
     },
+
+    // 显示申请关闭采购单弹窗
+    showCloseOrderDialog(purchaseId) {
+      this.closeOrderId = purchaseId;
+      this.ruleForm.reason = "";
+      this.closeOrderVisible = true;
+    }, 
+
+    // 申请关闭采购单
+    confirmApplyForClose() {
+      let _this = this;
+      this.$refs["ruleForm"].validate((valid) => {
+        if (valid) {
+          console.log('submit!');
+          let params = {
+            purchaseId: _this.closeOrderId,
+            reason: _this.ruleForm.reason
+          }
+          window.axios.post("/apply/applyClose", params).then((data) => {
+            if (data.code !== 0) return
+            _this.$message.success("操作成功");
+            _this.closeOrderVisible = false;
+            _this.queryList();
+            _this.queryStatusTotal();
+          })
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    }
   },
 };
 </script>
@@ -330,6 +386,16 @@ export default {
       .bottom {
         border: 1px solid #ebeef4;
         border-top: none;
+      }
+    }
+  }
+  .el-dialog__wrapper {
+    /deep/.el-dialog {
+      .hint {
+        font-size: 12px;
+        color: #999999;
+        margin-left: 100px;
+        line-height: 16px;
       }
     }
   }
