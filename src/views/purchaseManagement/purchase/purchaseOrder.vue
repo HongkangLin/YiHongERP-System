@@ -47,7 +47,7 @@
           <el-table-column align="center" label="状态" width="80">
             <template slot-scope="scope">
               <div class="status">{{scope.row.purchaseStatus}}</div>
-              <el-button type="text" size="small" v-if="scope.row.purchaseStatus==='关闭中' || scope.row.purchaseStatus==='已关闭'">审核详情</el-button>
+              <el-button type="text" size="small" v-if="scope.row.purchaseStatus==='关闭中' || scope.row.purchaseStatus==='已关闭'" @click="viewReviewDetail(scope.row.purchaseId)">审核详情</el-button>
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建日期" align="center" min-width="110"></el-table-column>
@@ -69,6 +69,15 @@
         </div>
       </section>
     </div>
+    <!-- 审核详情弹窗 -->
+    <el-dialog title="审核详情" :visible.sync="dialogTableVisible" border width="45%">
+      <el-table :data="reviewDetailData">
+        <el-table-column property="approveTime" label="审核时间" min-width="150"></el-table-column>
+        <el-table-column property="approveUserName" label="审核人员" min-width="100"></el-table-column>
+        <el-table-column property="approveResult" label="审核结果" min-width="100"></el-table-column>
+        <el-table-column property="feedbackReason" label="反馈详情" min-width="200"></el-table-column>
+      </el-table>
+    </el-dialog>
 	</div>
 </template>
 
@@ -108,7 +117,10 @@ export default {
         closing: 0, //关闭中
         closed: 0, //已关闭
         all: 0 //全部
-      }
+      },
+
+      dialogTableVisible: false, //审核详情弹窗
+      reviewDetailData: []
     }
   },
   created() {
@@ -218,6 +230,19 @@ export default {
     toArrivePage(purchaseId) {
       this.$router.push({
         path: `/F0301/arrivePage?purchaseId=${purchaseId}`
+      })
+    },
+
+    // 查看审核详情
+    viewReviewDetail(purchaseId) {
+      this.reviewDetailData = [];
+      this.dialogTableVisible = true;
+      window.axios.get(`/approve/queryApproveDetail/${purchaseId}`).then((data) => {
+        if (data.code !== 0) return
+        data.data.map((item) => {
+          item.approveResult = item.approveResult === "agree" ? "同意" : "拒绝";
+        })
+        this.reviewDetailData = data.data;
       })
     },
   },
