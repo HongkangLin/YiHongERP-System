@@ -56,6 +56,14 @@ const routes = [{
 		name: 'purchaseOrder',
 		component: () => import(/* webpackChunkName: "purchaseOrder" */ '../views/purchaseManagement/purchase/purchaseOrder.vue'),
 	}, {
+		path: '/F0301/purchaseOrderDetail', //采购-采购管理-采购单详情
+		name: 'purchaseOrderDetail',
+		component: () => import(/* webpackChunkName: "purchaseOrderDetail" */ '../views/purchaseManagement/purchase/purchaseOrderDetail.vue'),
+	}, {
+		path: '/F0301/arrivePage', //采购-采购管理-采购单-到货
+		name: 'arrivePage',
+		component: () => import(/* webpackChunkName: "arrivePage" */ '../views/purchaseManagement/purchase/arrivePage.vue'),
+	}, {
 		path: '/F0302/F030201', //采购-供应商管理-供应商管理
 		name: 'supplierManagement',
 		component: () => import(/* webpackChunkName: "supplierManagement" */ '../views/purchaseManagement/supplier/supplierManagement.vue'),

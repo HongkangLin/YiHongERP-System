@@ -7,11 +7,11 @@
       <div class="search">
         <div class="head">
           <el-tabs v-model="activeName" class="statusTabs">
-            <el-tab-pane label="全部/" name="0"></el-tab-pane>
-            <el-tab-pane label="进行中/" name="1"></el-tab-pane>
-            <el-tab-pane label="已完成/" name="2"></el-tab-pane>
-            <el-tab-pane label="关闭中/" name="3"></el-tab-pane>
-            <el-tab-pane label="已关闭/" name="4"></el-tab-pane>
+            <el-tab-pane :label="'全部/'+statusTotal.all" name="0"></el-tab-pane>
+            <el-tab-pane :label="'进行中/'+statusTotal.underway" name="1"></el-tab-pane>
+            <el-tab-pane :label="'已完成/'+statusTotal.completed" name="2"></el-tab-pane>
+            <el-tab-pane :label="'关闭中/'+statusTotal.closing" name="3"></el-tab-pane>
+            <el-tab-pane :label="'已关闭/'+statusTotal.closed" name="4"></el-tab-pane>
           </el-tabs>
           <div class="btns">
             <el-button>申请付款</el-button>
@@ -22,12 +22,12 @@
           <div class="inputDiv">
             <el-input class="searchValue" v-model="searchValue" placeholder="采购单/供应商/sku/产品名称"></el-input>
             <el-select v-model="payStatus" placeholder="付款状态" clearable>
-              <el-option label="未完成" value=1></el-option>
-              <el-option label="已完成" value=2></el-option>
+              <el-option label="未完成" :value="1"></el-option>
+              <el-option label="已完成" :value="2"></el-option>
             </el-select>
             <el-select v-model="arrivalStatus" placeholder="到货状态" clearable>
-              <el-option label="未完成" value=1></el-option>
-              <el-option label="已完成" value=2></el-option>
+              <el-option label="未完成" :value="1"></el-option>
+              <el-option label="已完成" :value="2"></el-option>
             </el-select>
             <el-date-picker v-model="createTimeRange" value-format="yyyy-MM-dd" type="daterange" range-separator="" start-placeholder="采购单创建日期"></el-date-picker>
             <el-date-picker v-model="arriveTimeRange" value-format="yyyy-MM-dd" type="daterange" range-separator="" start-placeholder="到货日期"></el-date-picker>
@@ -39,28 +39,28 @@
       <section class="tableArea">
         <el-table :data="tableData" @selection-change="handleSelectionChange" border style="width: 100%">
           <el-table-column align="center" type="selection" width="55"></el-table-column>
-          <el-table-column prop="" label="采购单号" align="center" min-width="100"></el-table-column>
-          <el-table-column prop="" label="供应商名称" align="center" min-width="150"></el-table-column>
-          <el-table-column prop="" label="SKU数量" align="center" min-width="130"></el-table-column>
-          <el-table-column prop="" label="货款总金额（元）" align="center" min-width="140"></el-table-column>
-          <el-table-column prop="" label="已支付货款（元）" align="center" min-width="120"></el-table-column>
+          <el-table-column prop="purchaseId" label="采购单号" align="center" min-width="100"></el-table-column>
+          <el-table-column prop="supplierName" label="供应商名称" align="center" min-width="150"></el-table-column>
+          <el-table-column prop="skuCount" label="SKU数量" align="center" min-width="130"></el-table-column>
+          <el-table-column prop="goodsAmount" label="货款总金额（元）" align="center" min-width="140"></el-table-column>
+          <el-table-column prop="paidAmount" label="已支付货款（元）" align="center" min-width="120"></el-table-column>
           <el-table-column align="center" label="状态" width="80">
             <template slot-scope="scope">
               <div class="status">{{scope.row.purchaseStatus}}</div>
               <el-button type="text" size="small" v-if="scope.row.purchaseStatus==='关闭中' || scope.row.purchaseStatus==='已关闭'">审核详情</el-button>
             </template>
           </el-table-column>
-          <el-table-column prop="" label="创建日期" align="center" min-width="110"></el-table-column>
-          <el-table-column prop="" label="采购员" align="center" min-width="85"></el-table-column>
-          <el-table-column align="center" fixed="right" label="操作" width="130">
+          <el-table-column prop="createTime" label="创建日期" align="center" min-width="110"></el-table-column>
+          <el-table-column prop="purchaseUserName" label="采购员" align="center" min-width="85"></el-table-column>
+          <el-table-column align="center" fixed="right" label="操作" width="150">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="handleView(scope.row.id, scope.row.type)">详情</el-button>
+              <el-button type="text" size="small" @click="toDetailPage(scope.row.purchaseId)">详情</el-button>
               <el-divider v-if="scope.row.purchaseStatus === '进行中'" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.purchaseStatus === '进行中'" type="text" size="small">到货</el-button>
+              <el-button v-if="scope.row.purchaseStatus === '进行中'" type="text" size="small" @click="toArrivePage(scope.row.purchaseId)">到货</el-button>
               <el-divider v-if="scope.row.purchaseStatus === '进行中'" direction="vertical"></el-divider>
               <el-button v-if="scope.row.purchaseStatus === '进行中'" type="text" size="small" >关闭</el-button>
-              <el-divider v-if="scope.row.purchaseStatus === '关闭中'" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.purchaseStatus === '关闭中'" type="text" size="small">审批</el-button>
+              <el-divider v-if="scope.row.approveShowFlag" direction="vertical"></el-divider>
+              <el-button v-if="scope.row.approveShowFlag" type="text" size="small">审批</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -90,8 +90,8 @@ export default {
 
       activeName: "0", //采购单状态Tab
       searchValue: "", //购单、供应商、sku、产品名称
-      payStatus: "", //付款状态
-      arrivalStatus: "", //到货状态
+      payStatus: null, //付款状态
+      arrivalStatus: null, //到货状态
       createTimeRange: [], //采购单创建日期
       arriveTimeRange: [], //到货日期
 
@@ -101,27 +101,87 @@ export default {
 
       tableData: [],
       multipleSelection: [], //批量选中的项
+
+      statusTotal: {
+        underway: 0, //进行中
+        completed: 0, //已完成
+        closing: 0, //关闭中
+        closed: 0, //已关闭
+        all: 0 //全部
+      }
+    }
+  },
+  created() {
+    this.queryList();
+    this.queryStatusTotal();
+  },
+  watch: {
+    activeName(v) {
+      this.searchValue = ""; 
+      this.payStatus = null; 
+      this.arrivalStatus = null; 
+      this.createTimeRange = []; 
+      this.arriveTimeRange = [];
+      this.pageNum = 1;
+      this.queryList();
     }
   },
   methods: {
     async queryList () { 
       let params = {
-        
-        
-        arriveStartDate: this.arriveDateRange[0],
-        arriveEndDate: this.arriveDateRange[1],
+        searchValue: this.searchValue,
+        purchaseStatus: Number(this.activeName) ? Number(this.activeName) : null,
+        payStatus: this.payStatus,
+        arrivalStatus: this.arrivalStatus,
+        createTimeBegin: this.createTimeRange[0],
+        createTimeEnd: this.createTimeRange[1],
+        arriveTimeBegin: this.arriveTimeRange[0],
+        arriveTimeEnd: this.arriveTimeRange[1],
         pageNum: this.pageNum,
         pageSize: this.pageSize
       }
-      let data = await window.axios.get('', {params});
+      let data = await window.axios.post('/purchase/queryPurchaseInfoByPage', params);
       if (data.code !== 0) return
       let arr = data.data.list;
       arr.map((item) => {
-        item.status = item.status ? "已入库" : "待入库";
-        item.type = item.type ? "采购入库" : "外贸入库";
+        // 采购单状态
+        switch (item.purchaseStatus) {
+          case 1:
+            item.purchaseStatus = "进行中";
+            break;
+          case 2:
+            item.purchaseStatus = "已完成";
+            break;
+          case 3:
+            item.purchaseStatus = "关闭中";
+            break;
+          case 4:
+            item.purchaseStatus = "已关闭";
+            break;
+        }
+
       })
       this.tableData = arr;
       this.total = data.data.total;
+    },
+
+    // 采购单列表-查询汇总数据
+    async queryStatusTotal() {
+      let data = await window.axios.get('/purchase/queryCountGroupByPurchaseStatus');
+      if (data.code !== 0) return
+      data.data.map((item) => {
+        if (item.purchaseStatus === 1) { //进行中
+          this.statusTotal.underway = item.count;
+        } else if (item.purchaseStatus === 2) { //已完成
+          this.statusTotal.completed = item.count;
+        } else if (item.purchaseStatus === 3) { //关闭中
+          this.statusTotal.closing = item.count;
+        } else if (item.purchaseStatus === 4) { //已关闭
+          this.statusTotal.closed = item.count;
+        } else { //全部
+          this.statusTotal.all = item.count;
+        }
+      })
     },
 
     // 查询按钮
@@ -146,6 +206,20 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
+
+    // 查看详情
+    toDetailPage(purchaseId) {
+      this.$router.push({
+        path: `/F0301/purchaseOrderDetail?purchaseId=${purchaseId}`
+      })
+    },
+
+    // 到货
+    toArrivePage(purchaseId) {
+      this.$router.push({
+        path: `/F0301/arrivePage?purchaseId=${purchaseId}`
+      })
+    },
   },
 };
 </script>
@@ -168,8 +242,25 @@ export default {
         background-color: #f3f3f3;
         box-sizing: border-box;
         padding: 9px 20px;
-        .statusTabs {}
-        .btns {}
+        .el-tabs {
+          /deep/.el-tabs__header {
+            .el-tabs__nav-wrap::after {
+              display: none!important;
+            }
+            .el-tabs__nav {
+              margin-left: 20px;
+              .el-tabs__item {
+                padding: 0 40px;
+                &:nth-child(2) {
+                  padding-left: 16px;
+                }
+                &:last-child {
+                  padding-right: 16px;
+                }
+              }
+            }
+          }
+        }
       }
       .content {
         background-color: #fff;
@@ -211,7 +302,6 @@ export default {
     .tableArea {
       background-color: #fff;
       margin-top: 25px;
-
       .bottom {
         border: 1px solid #ebeef4;
         border-top: none;
