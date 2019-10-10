@@ -14,7 +14,7 @@
             <el-tab-pane :label="'已关闭/'+statusTotal.closed" name="4"></el-tab-pane>
           </el-tabs>
           <div class="btns">
-            <el-button>申请付款</el-button>
+            <el-button @click="applyForPay">申请付款</el-button>
             <el-button type="primary">新建采购单</el-button>
           </div>
         </div>
@@ -41,7 +41,11 @@
           <el-table-column align="center" type="selection" width="55"></el-table-column>
           <el-table-column prop="purchaseId" label="采购单号" align="center" min-width="100"></el-table-column>
           <el-table-column prop="supplierName" label="供应商名称" align="center" min-width="150"></el-table-column>
-          <el-table-column prop="skuCount" label="SKU数量" align="center" min-width="130"></el-table-column>
+          <el-table-column label="SKU数量" align="center" min-width="130">
+            <template slot-scope="scope">
+              <el-button type="text" size="small" @click="toDetailPage(scope.row.purchaseId)">{{scope.row.skuCount}}</el-button>
+            </template>
+          </el-table-column>
           <el-table-column prop="goodsAmount" label="货款总金额（元）" align="center" min-width="140"></el-table-column>
           <el-table-column prop="paidAmount" label="已支付货款（元）" align="center" min-width="120"></el-table-column>
           <el-table-column align="center" label="状态" width="80">
@@ -307,6 +311,38 @@ export default {
       this.$router.push({
         path: `/F0301/approvalPage?purchaseId=${purchaseId}&skuCount=${skuCount}`
       })
+    },
+
+    // 申请付款
+    applyForPay() {
+      if (!this.multipleSelection.length) {
+        return this.$message.warning("请选择采购单");
+      }
+      
+      let flag = true;
+      let firstSupplierName = this.multipleSelection[0].supplierName;
+      this.multipleSelection.map((item) => {
+        if (item.purchaseStatus !== "进行中") {
+          this.$message.warning("只能对进行中的采购单申请付款");
+          flag = false;
+          return;
+        } else if (item.supplierName !== firstSupplierName) {
+          this.$message.warning("请选择同一家供应商");
+          flag = false;
+          return;
+        }
+      })
+      if (flag) {
+        let arr = [];
+        this.multipleSelection.map((item) => {
+          arr.push(item.purchaseId);
+        })
+        let ids = encodeURI(JSON.stringify(arr));
+        let name = encodeURI(firstSupplierName);
+        this.$router.push({
+          path: `/F0301/applyForPay?purchaseIds=${ids}&supplierName=${name}`
+        })
+      }
     }
   },
 };

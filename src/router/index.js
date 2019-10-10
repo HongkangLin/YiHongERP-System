@@ -68,6 +68,10 @@ const routes = [{
 		name: 'approvalPage',
 		component: () => import(/* webpackChunkName: "approvalPage" */ '../views/purchaseManagement/purchase/approvalPage.vue'),
 	}, {
+		path: '/F0301/applyForPay', //采购-采购管理-采购单-申请付款
+		name: 'applyForPay',
+		component: () => import(/* webpackChunkName: "applyForPay" */ '../views/purchaseManagement/purchase/applyForPay.vue'),
+	}, {
 		path: '/F0302/F030201', //采购-供应商管理-供应商管理
 		name: 'supplierManagement',
 		component: () => import(/* webpackChunkName: "supplierManagement" */ '../views/purchaseManagement/supplier/supplierManagement.vue'),
