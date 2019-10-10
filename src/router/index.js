@@ -64,6 +64,10 @@ const routes = [{
 		name: 'arrivePage',
 		component: () => import(/* webpackChunkName: "arrivePage" */ '../views/purchaseManagement/purchase/arrivePage.vue'),
 	}, {
+		path: '/F0301/approvalPage', //采购-采购管理-采购单-审批
+		name: 'approvalPage',
+		component: () => import(/* webpackChunkName: "approvalPage" */ '../views/purchaseManagement/purchase/approvalPage.vue'),
+	}, {
 		path: '/F0302/F030201', //采购-供应商管理-供应商管理
 		name: 'supplierManagement',
 		component: () => import(/* webpackChunkName: "supplierManagement" */ '../views/purchaseManagement/supplier/supplierManagement.vue'),

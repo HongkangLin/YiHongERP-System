@@ -60,7 +60,7 @@
               <el-divider v-if="scope.row.purchaseStatus === '进行中'" direction="vertical"></el-divider>
               <el-button v-if="scope.row.purchaseStatus === '进行中'" type="text" size="small" @click="showCloseOrderDialog(scope.row.purchaseId)">关闭</el-button>
               <el-divider v-if="scope.row.approveShowFlag" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.approveShowFlag" type="text" size="small">审批</el-button>
+              <el-button v-if="scope.row.approveShowFlag" type="text" size="small" @click="toApprovalPage(scope.row.purchaseId, scope.row.skuCount)">审批</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -300,6 +300,13 @@ export default {
           return false;
         }
       });
+    },
+    
+    // 审批
+    toApprovalPage(purchaseId, skuCount) {
+      this.$router.push({
+        path: `/F0301/approvalPage?purchaseId=${purchaseId}&skuCount=${skuCount}`
+      })
     }
   },
 };
