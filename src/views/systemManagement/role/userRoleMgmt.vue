@@ -131,16 +131,25 @@ export default {
     handleEdit (index) { // 编辑角色
       this.$router.push({path: '/addRole', query: {id: this.tableData[index].roleId}});
     },
-    async handleDelete (index) { // 删除角色
-      let data = await window.axios.get(`/role/deleteRole/${this.tableData[index].roleId}`);
-      this.$message({
-        message: data.message,
-        type: 'success'
+    handleDelete (index) { // 删除角色
+      this.$confirm('确定删除权限?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        window.axios.get(`/role/deleteRole/${this.tableData[index].roleId}`).then(data => {
+          if (data.code === 0) {
+            this.$message({
+              message: data.message,
+              type: 'success'
+            });
+            if (this.tableData.length === 1) { // 当前页最后一条数据
+              this.pageNum = (this.pageNum - 1) || 1;
+            }
+            this.queryList(); // 重新获取数据
+          }
+        });
       });
-      if (this.tableData.length === 1) { // 当前页最后一条数据
-        this.pageNum = (this.pageNum - 1) || 1;
-      }
-      this.queryList(); // 重新获取数据
     },
     changeNum (num) { // 改变页码
       this.pageNum = num;

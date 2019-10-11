@@ -30,8 +30,7 @@
       <el-dialog
         title="退出确认"
         :visible.sync="dialogVisible"
-        width="30%"
-        :before-close="handleClose">
+        width="30%">
         <span>确认要退出登陆吗？</span>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>

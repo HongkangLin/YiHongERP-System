@@ -127,18 +127,27 @@ export default {
       let data = sub !== '' ? this.tableData[top].listChildCategory[sub] : this.tableData[top];
       this.$router.push({path: '/addType', query: {list: this.typeList, id: id, data: data}});
     },
-    async handleDelete (id) { // 删除分类
-      let data = await window.axios.post('/product/deleteCategory', {
-        id: id
+    handleDelete (id) { // 删除分类
+      this.$confirm('确定删除此分类?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        window.axios.post('/product/deleteCategory', {
+          id: id
+        }).then(data => {
+          if (data.code === 0) {
+            this.$message({
+              message: data.message,
+              type: 'success'
+            });
+            if (this.tableData.length === 1) { // 当前页最后一条数据
+              this.pageNum = (this.pageNum - 1) || 1;
+            }
+            this.queryList(); // 重新获取数据
+          }
+        });
       });
-      this.$message({
-        message: data.message,
-        type: 'success'
-      });
-      if (this.tableData.length === 1) { // 当前页最后一条数据
-        this.pageNum = (this.pageNum - 1) || 1;
-      }
-      this.queryList(); // 重新获取数据
     },
     changeNum (num) { // 改变页码
       this.pageNum = num;

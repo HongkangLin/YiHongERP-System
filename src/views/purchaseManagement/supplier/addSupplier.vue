@@ -703,11 +703,6 @@ export default {
           type: 'success'
         });
         history.go(-1);
-      } else {
-        this.$message({
-          message: data.message,
-          type: 'warning'
-        });
       }
     }
   }

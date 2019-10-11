@@ -104,18 +104,27 @@ export default {
     handleEdit (index) { // 编辑品牌
       this.$router.push({path: '/addBrand', query: {...this.tableData[index]}});
     },
-    async handleDelete (index) { // 删除品牌
-      let data = await window.axios.post('/product/deleteProductBrand', {
-        id: this.tableData[index].id
+    handleDelete (index) { // 删除品牌
+      this.$confirm('确定删除此品牌?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        window.axios.post('/product/deleteProductBrand', {
+          id: this.tableData[index].id
+        }).then(data => {
+          if (data.code === 0) {
+            this.$message({
+              message: data.message,
+              type: 'success'
+            });
+            if (this.tableData.length === 1) { // 当前页最后一条数据
+              this.pageNum = (this.pageNum - 1) || 1;
+            }
+            this.queryList(); // 重新获取数据
+          }
+        });
       });
-      this.$message({
-        message: data.message,
-        type: 'success'
-      });
-      if (this.tableData.length === 1) { // 当前页最后一条数据
-        this.pageNum = (this.pageNum - 1) || 1;
-      }
-      this.queryList(); // 重新获取数据
     },
     changeNum (num) { // 改变页码
       this.pageNum = num;

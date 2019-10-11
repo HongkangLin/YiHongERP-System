@@ -83,6 +83,7 @@ export default {
       });
     } else { // 编辑
       let data = query.data;
+      this.disable = true;
       if (data.goodsCategoryName) { // 存在名称时表示当前处于编辑状态
         this.title = '编辑分类';
         this.formData = data;
@@ -96,7 +97,6 @@ export default {
           name: '新增下级',
           path: ''
         });
-        this.disable = true;
         this.formData.parentId = this.id;
       }
     }
