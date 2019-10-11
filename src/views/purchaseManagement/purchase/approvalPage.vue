@@ -36,7 +36,7 @@
         <!-- 按键区 -->
         <div class="submit">
           <el-button type="primary" @click="dialogVisible = true" class="submitBtn">立即审批</el-button>
-          <el-button class="cancelBtn">取 消</el-button>
+          <el-button class="cancelBtn" @click="backToList">取 消</el-button>
         </div>
       </div>
     </div>
@@ -162,6 +162,12 @@ export default {
         this.$router.push({
           path: "/F0301/F030101"
         })
+      })
+    },
+
+    backToList() {
+      this.$router.push({
+        path: "/F0301/F030101"
       })
     }
   },
