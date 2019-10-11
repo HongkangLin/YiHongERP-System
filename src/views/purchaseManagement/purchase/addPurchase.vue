@@ -294,7 +294,6 @@ export default {
     this.getSupplier();
     this.getRole();
     this.getStore();
-    this.getPdt();
   },
   methods: {
     goBack () { // 返回
@@ -350,6 +349,7 @@ export default {
           this.$refs['form'].validate((valid) => {
             if (valid) {
               this.active = idx;
+              this.getPdt();
             } else {
               return false;
             }
