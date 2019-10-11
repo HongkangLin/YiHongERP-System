@@ -321,6 +321,7 @@ export default {
       
       let flag = true;
       let firstSupplierName = this.multipleSelection[0].supplierName;
+      let firstSupplierId = this.multipleSelection[0].supplierId;
       this.multipleSelection.map((item) => {
         if (item.purchaseStatus !== "进行中") {
           this.$message.warning("只能对进行中的采购单申请付款");
@@ -340,7 +341,7 @@ export default {
         let ids = encodeURI(JSON.stringify(arr));
         let name = encodeURI(firstSupplierName);
         this.$router.push({
-          path: `/F0301/applyForPay?purchaseIds=${ids}&supplierName=${name}`
+          path: `/F0301/applyForPay?purchaseIds=${ids}&supplierName=${name}&supplierId=${firstSupplierId}`
         })
       }
     }

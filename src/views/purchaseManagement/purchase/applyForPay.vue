@@ -12,9 +12,9 @@
           <el-form-item label="供应商：" prop="supplierName">
             <el-input v-model="ruleForm.supplierName" disabled></el-input>
           </el-form-item>
-          <el-form-item label="收款账号：" prop="accountNo">
-            <el-select v-model="ruleForm.accountNo" placeholder="请选择收款账号">
-              <el-option v-for="(item, index) in accountList" :key="index" :label="item.accountBankname" :value="item.accountNo"></el-option>
+          <el-form-item label="收款账号：" prop="accountInfo">
+            <el-select v-model="ruleForm.accountInfo" placeholder="请选择收款账号">
+              <el-option v-for="(item, index) in accountList" :key="index" :label="item.accountBankname" :value="`${item.accountNo},${item.accountBankname},${item.accountName}`"></el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -22,7 +22,7 @@
           <span class="name">备注：</span>
           <el-input v-model="bak" class="bak" placeholder="请输入付款备注"></el-input>
         </div>
-        <el-table :data="orderList" border show-summary sum-text="汇总" style="width: 100%">
+        <el-table :data="orderList" border show-summary :summary-method="getSummaries" style="width: 100%">
           <el-table-column prop="purchaseId" label="采购单号" min-width="125"></el-table-column>
           <el-table-column prop="goodsAmount" label="货款总金额（元）" min-width="90"></el-table-column>
           <el-table-column prop="paidAmount" label="已支付货款（元）" min-width="90"></el-table-column>
@@ -86,7 +86,7 @@ export default {
       ruleForm: {
         payNum: "提交后自动生成", //付款单号
         supplierName: "", //供应商
-        accountNo: "", //收款账号
+        accountInfo: "", //收款账号
       },
       bak: "", //备注
 
@@ -97,7 +97,7 @@ export default {
         supplierName: [
           { required: true, message: '请输入供应商', trigger: 'blur' }
         ],
-        accountNo: [
+        accountInfo: [
           { required: true, message: '请选择收款账号', trigger: 'change' }
         ]
       },
@@ -114,24 +114,25 @@ export default {
   methods: {
     init() {
       this.ruleForm.supplierName = decodeURI(this.$route.query.supplierName);
+      this.supplierId = this.$route.query.supplierId;
       this.getTableData();
-      this.getSupplierId();
-      // this.getAccountList();
+      // this.getSupplierId();
+      this.getAccountList();
     },
 
     // 匹配供应商id
-    getSupplierId() {
-      window.axios.get("/supplier/listAll?pageSize=999&pageNum=1").then((data) => {
-        if (data.code !== 0) return
-        data.data.list.map((item) => {
-          if (item.name === this.ruleForm.supplierName) {
-            this.supplierId = item.id;
-            this.getAccountList();
-            return;
-          }
-        })
-      })
-    },
+    // getSupplierId() {
+    //   window.axios.get("/supplier/listAll?pageSize=999&pageNum=1").then((data) => {
+    //     if (data.code !== 0) return
+    //     data.data.list.map((item) => {
+    //       if (item.name === this.ruleForm.supplierName) {
+    //         this.supplierId = item.id;
+    //         this.getAccountList();
+    //         return;
+    //       }
+    //     })
+    //   })
+    // },
 
     // 收款账号下拉
     getAccountList() {
@@ -148,6 +149,38 @@ export default {
         if (data.code !== 0) return
         this.orderList = data.data;
       })
+    },
+
+    // 表格汇总计算
+    getSummaries(param) {
+      // console.log("param: ", param);
+      
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '汇总';
+          return;
+        }
+        const values = data.map(item => Number(item[column.property]));
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          sums[index] = sums[index].toFixed(2); 
+        } else {
+          sums[index] = '';
+        }
+      });
+      // console.log("sums: ", sums);
+      let calc = Number(sums[5]) + Number(sums[6]) + Number(sums[7]);
+      sums[sums.length - 1] = '本次申请金额汇总：' + calc.toFixed(2);
+      return sums;
     },
 
     // 打开弹窗
@@ -170,9 +203,12 @@ export default {
     },
 
     confirmSubmit() {
+      let accountInfoArr = this.ruleForm.accountInfo.split(",");
       let params = {
         supplierId: this.supplierId,
-        accountNo: this.ruleForm.accountNo,
+        accountNo: accountInfoArr[0].trim(),
+        accountBankName: accountInfoArr[1].trim(),
+        accountName: accountInfoArr[2].trim(),
         bak: this.bak,
         purchaseList: []
       }
