@@ -21,7 +21,7 @@
               <el-input disabled placeholder="提交后自动生成"></el-input>
             </el-form-item>
             <el-form-item label="供应商：" prop="supplierId">
-              <el-select v-model="form.supplierId" @change="chanSupplier" placeholder="请选择采购员">
+              <el-select v-model="form.supplierId" @change="chanSupplier" placeholder="请选择供应商">
                 <el-option
                   v-for="item in supplierList"
                   :key="item.id"
@@ -94,7 +94,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="skuId"
+              prop="sku"
               align="center"
               label="SKU">
             </el-table-column>
@@ -105,12 +105,13 @@
             </el-table-column>
             <el-table-column
               align="center"
-              prop="goodsGoalPrice"
-              label="采购价（员）">
+              prop="purchasePrice"
+              label="采购价（元）">
             </el-table-column>
             <el-table-column
               align="center"
               sortable
+              width="160px"
               label="采购数量（套）">
               <template slot-scope="scope">
                 <el-input-number :min="1" :controls="false" v-model="scope.row.purchaseAmount" placeholder="输入套数"></el-input-number>
@@ -121,7 +122,7 @@
               sortable
               label="货款（套）">
               <template slot-scope="scope">
-                <div>{{(scope.row.purchaseAmount * scope.row.goodsGoalPrice) || 0}}</div>
+                <div>{{(scope.row.purchaseAmount * scope.row.purchasePrice).toFixed(2) || 0}}</div>
               </template>
             </el-table-column>
             <el-table-column label="操作" align="center">
@@ -148,7 +149,7 @@
         <div class="content">
           <div class="search">
             <el-input placeholder="商品名称/SKU" v-model="pdtName" class="input-with-select">
-              <el-button slot="append" icon="el-icon-search" @click="closePdt"></el-button>
+              <el-button slot="append" icon="el-icon-search" @click="searchPdt"></el-button>
             </el-input>
           </div>
           <el-table
@@ -161,7 +162,7 @@
               align="center">
             </el-table-column>
             <el-table-column
-              prop="skuId"
+              prop="sku"
               label="SKU"
               align="center">
             </el-table-column>
@@ -206,7 +207,7 @@
               <el-input type="textarea" :rows="7" v-model="info.payBak" placeholder="示例：自双方签订合同起付乙方30%定金27702元，剩余货款64638元出货前付清；"></el-input>
             </el-form-item>
             <div class="spanDiv"></div>
-            <el-form-item v-for="(item, index) in form.productOfPurchaseDTOList" :key="index" :label="item.skuId + '：'">
+            <el-form-item v-for="(item, index) in form.productOfPurchaseDTOList" :key="index" :label="item.sku + '：'">
               <el-input type="textarea" :rows="7" v-model="form.productOfPurchaseDTOList[index].contractDescribe" placeholder="示例：1、哑面黑色PVC板+1.8cm磨边玻璃+相纸
 2、背板用E1原色背板和支架，支架摆件在框内，背面为4个弹片，弹片位置不能居中，要不然会影响挂件
 3、15个/套（配件：S挂钩和无痕钉各18个,每个相框四个护角然后过塑，2层气泡袋入黑底白字彩盒,包装时要放产品说明书（甲方提供）；"></el-input>
@@ -321,19 +322,31 @@ export default {
       let data = await window.axios.get(`/warehouse/simpList`);
       this.store = data.data;
     },
+    searchPdt () { // 搜索
+      this.pageNum = 1;
+      this.getPdt();
+    },
     async getPdt () { // 获取产品列表
-      let data = await window.axios.post('/product/queryProductInfoList', {
+      let data = await window.axios.post('/supplyrel/queryProductInfoBySupplierId', {
+        supplierId: this.form.supplierId,
         pageSize: this.pageSize,
         pageNum: this.pageNum,
-        skuIdOrGoodsNameOrCustomId: this.pdtName
+        searchValue: this.pdtName
       });
       data.data.list.forEach(item => {
         item.purchaseAmount = 1;
+        for (let i = 0, len = this.form.productOfPurchaseDTOList.length; i < len; i++) {
+          if (item.goodsId === this.form.productOfPurchaseDTOList[i].goodsId) {
+            item.sel = true;
+            break;
+          }
+        }
       });
       this.pdtList = data.data.list;
     },
     chanSupplier () { // 修改供应商编号
       this.form.sn = this.form.supplierId;
+      this.form.productOfPurchaseDTOList = [];
     },
     disabledDate (data) { // 设置可选日期
       return data < new Date().getTime();
@@ -348,8 +361,8 @@ export default {
         } else if (idx === 1) { // 往第二页跳转
           this.$refs['form'].validate((valid) => {
             if (valid) {
-              this.active = idx;
               this.getPdt();
+              this.active = idx;
             } else {
               return false;
             }
@@ -388,10 +401,11 @@ export default {
         if (index === 5) {
           let sum = 0;
           for (let j = 0, len = data.length; j < len; j++) {
-            if (data[j].purchaseAmount && data[j].goodsGoalPrice) {
-              sum += parseInt(data[j].purchaseAmount) * parseInt(data[j].goodsGoalPrice);
+            if (data[j].purchaseAmount && data[j].purchasePrice) {
+              sum += data[j].purchaseAmount * data[j].purchasePrice;
             }
           }
+          sum = sum.toFixed(2);
           sums[index] = sum || 0;
           return;
         }
@@ -408,7 +422,7 @@ export default {
         this.$set(this.pdtList[idx], 'sel', false);
         let pos = 0;
         for (let i = 0, len = this.form.productOfPurchaseDTOList.length; i < len; i++) {
-          if (this.form.productOfPurchaseDTOList[i].id === this.pdtList[idx].id) {
+          if (this.form.productOfPurchaseDTOList[i].goodsId === this.pdtList[idx].goodsId) {
             pos = i;
             break;
           }
@@ -421,7 +435,7 @@ export default {
     },
     handleDelete (idx) { // 删除产品
       for (let i = 0, len = this.pdtList.length; i < len; i++) {
-        if (this.pdtList[i].id === this.form.productOfPurchaseDTOList[idx].id) {
+        if (this.pdtList[i].goodsId === this.form.productOfPurchaseDTOList[idx].goodsId) {
           this.$set(this.pdtList[i], 'sel', false);
           break;
         }
@@ -439,11 +453,6 @@ export default {
         if (valid) {
           let curr = {...this.form, ...this.info};
           let param = JSON.parse(JSON.stringify(curr));
-          param.productOfPurchaseDTOList.forEach(item => {
-            item.goodsId = item.id;
-            item.purchasePrice = (item.purchaseAmount || 0) * item.goodsGoalPrice;
-            item.contractDescribe = item.contractDescribe || '';
-          });
           let time = new Date(param.expectDueTime);
           param.expectDueTime = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate();
           window.axios.post('/purchase/addPurchaseInfo', param).then(data => {
