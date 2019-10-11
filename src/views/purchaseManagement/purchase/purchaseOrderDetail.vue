@@ -16,7 +16,7 @@
       <div class="info">
         <el-row>
           <el-col :span="4"><div class="td label">采购单号</div></el-col>
-          <el-col :span="8"><div class="td">{{info.firstName}}&nbsp;>&nbsp;{{info.seconedName}}</div></el-col>
+          <el-col :span="8"><div class="td">{{id}}</div></el-col>
           <el-col :span="4"><div class="td label">供应商</div></el-col>
           <el-col :span="8"><div class="td">{{info.supplierName}}&nbsp;</div></el-col>
         </el-row>
@@ -43,12 +43,14 @@
       <el-table
         :data="info.productList"
         border
+        show-summary
+        :summary-method="getSummaries"
         style="width: 100%">
         <el-table-column
           label="图片"
           align="center">
           <template slot-scope="scope">
-            <img :src="scope.row.img" alt="">
+            <img :src="scope.row.mainPicUrl" alt="">
           </template>
         </el-table-column>
         <el-table-column
@@ -82,9 +84,9 @@
           align="center">
         </el-table-column>
         <el-table-column
-          prop="goodsAmount"
           label="未支付货款（元）"
           align="center">
+          --
         </el-table-column>
       </el-table>
       <div class="spanDiv"></div>
@@ -234,6 +236,59 @@ export default {
       this.checkinPageNum = 1;
       this.checkinPageSize = num;
       this.getCheckin();
+    },
+    getSummaries (param) { // 计算汇总
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '汇总';
+          return;
+        }
+        if (index === 1) {
+          sums[index] = '共' + data.length + '类SKU';
+          return;
+        }
+        if (index === 2 || index === 3) {
+          sums[index] = '';
+          return;
+        }
+        if (index === 4) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].purchaseAmount) {
+              sum += parseInt(data[i].purchaseAmount);
+            }
+          }
+          sums[index] = sum || 0;
+          return;
+        }
+        if (index === 5) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].goodsAmount) {
+              sum += data[i].goodsAmount;
+            }
+          }
+          sums[index] = sum || 0;
+          return;
+        }
+        if (index === 6) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].remainArrivalAmount) {
+              sum += data[i].remainArrivalAmount;
+            }
+          }
+          sums[index] = sum || 0;
+          return;
+        }
+        if (index === 7) {
+          sums[index] = this.info.unpaidAmount;
+        }
+      });
+
+      return sums;
     },
     changeCheckinNum (num) { // 改变页码
       this.checkinPageNum = num;
