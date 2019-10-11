@@ -143,6 +143,14 @@ const routes = [{
 		path: '/F0401/outStore', //库存管理 > 出库管理 > 出库
 		name: 'outStore',
 		component: () => import(/* webpackChunkName: "outStore" */ '../views/storeManagement/outStoreManagement/outStore.vue'),
+	}, {
+		path: '/F0501/F050101', //财务管理 > 应付费管理
+		name: 'paymentManagement',
+		component: () => import(/* webpackChunkName: "paymentManagement" */ '../views/financeManagement/paymentManagement/index.vue'),
+	}, {
+		path: '/F0501/viewPrint', //财务管理 > 应付费管理 > 付款单打印页
+		name: 'viewPrint',
+		component: () => import(/* webpackChunkName: "viewPrint" */ '../views/financeManagement/paymentManagement/viewPrint.vue'),
 	}]
 }, {
 	path: '/login', //登录页

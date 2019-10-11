@@ -18,6 +18,10 @@ window.axios = axios;
 
 import './assets/css/base.css'
 
+// 打印print.js
+// import Print from 'vue-print-nb'
+// Vue.use(Print); //注册
+
 Vue.config.productionTip = false
 
 window.vm = new Vue({
