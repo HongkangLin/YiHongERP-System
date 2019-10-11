@@ -60,10 +60,6 @@ const routes = [{
 		name: 'addPurchase',
 		component: () => import(/* webpackChunkName: "addPurchase" */ '../views/purchaseManagement/purchase/addPurchase.vue'),
 	}, {
-		path: '/purchaseDetail', //采购-采购管理-采购单-采购详情
-		name: 'purchaseDetail',
-		component: () => import(/* webpackChunkName: "purchaseDetail" */ '../views/purchaseManagement/purchase/purchaseDetail.vue'),
-	}, {
 		path: '/F0302/F030201', //采购-供应商管理-供应商管理
 		name: 'supplierManagement',
 		component: () => import(/* webpackChunkName: "supplierManagement" */ '../views/purchaseManagement/supplier/supplierManagement.vue'),
