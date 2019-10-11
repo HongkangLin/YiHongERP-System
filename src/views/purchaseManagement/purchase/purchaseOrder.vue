@@ -15,7 +15,7 @@
           </el-tabs>
           <div class="btns">
             <el-button @click="applyForPay">申请付款</el-button>
-            <el-button type="primary">新建采购单</el-button>
+            <el-button @click="addPurchase" type="primary">新建采购单</el-button>
           </div>
         </div>
         <div class="content">
@@ -344,6 +344,10 @@ export default {
           path: `/F0301/applyForPay?purchaseIds=${ids}&supplierName=${name}&supplierId=${firstSupplierId}`
         })
       }
+    },
+
+    addPurchase () {
+      this.$router.push('/addPurchase');
     }
   },
 };
