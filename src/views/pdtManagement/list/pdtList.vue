@@ -263,18 +263,27 @@ export default {
     handleEdit (id, skuid) { // 编辑角色
       this.$router.push({path: '/addPdt', query: {id, skuid}});
     },
-    async handleDelete (id) { // 删除产品
-      let data = await window.axios.post('/product/deleteProductInfo', {
-        skuId: id
+    handleDelete (id) { // 删除产品
+      this.$confirm('确定删除此产品?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        window.axios.post('/product/deleteProductInfo', {
+          skuId: id
+        }).then(data => {
+          if (data.code === 0) {
+            this.$message({
+              message: data.message,
+              type: 'success'
+            });
+            if (this.tableData.length === 1) { // 当前页最后一条数据
+              this.pageNum = (this.pageNum - 1) || 1;
+            }
+            this.queryList(); // 重新获取数据
+          }
+        });
       });
-      this.$message({
-        message: data.message,
-        type: 'success'
-      });
-      if (this.tableData.length === 1) { // 当前页最后一条数据
-        this.pageNum = (this.pageNum - 1) || 1;
-      }
-      this.queryList(); // 重新获取数据
     },
     changeStatus (idx, id, status) { // 修改销售状态
       if (!status) {

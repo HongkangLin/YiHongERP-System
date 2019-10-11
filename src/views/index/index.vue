@@ -27,6 +27,16 @@
       </el-aside>
       <!-- 主体区域 -->
       <router-view class="mainView"></router-view>
+      <el-dialog
+        title="退出确认"
+        :visible.sync="dialogVisible"
+        width="30%">
+        <span>确认要退出登陆吗？</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="out">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-container>
   </el-container>
 </template>
@@ -42,6 +52,7 @@ export default {
         '财务': 'el-icon-s-data',
         '系统': 'el-icon-setting'
       },
+      dialogVisible: false,
       activeMenu: 'F0201-F020101', // active菜单
       menuList: [] // 菜单列表
     }
@@ -67,8 +78,12 @@ export default {
       let data = await window.axios.get('/menu/menu');
       this.menuList = data.data;
     },
-    // 退出登陆
+    // 退出登陆事件
     loginOut () {
+      this.dialogVisible = true;
+    },
+    // 退出
+    out () {
       localStorage.removeItem('token');
       this.$router.replace('/login');
     }
