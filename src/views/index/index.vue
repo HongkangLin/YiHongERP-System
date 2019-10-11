@@ -26,7 +26,7 @@
         </el-menu>
       </el-aside>
       <!-- 主体区域 -->
-      <router-view class="mainView"></router-view>
+      <router-view v-if="menuList.length" class="mainView"></router-view>
       <el-dialog
         title="退出确认"
         :visible.sync="dialogVisible"
@@ -76,6 +76,7 @@ export default {
     // 获取菜单列表
     async getMenu () {
       let data = await window.axios.get('/menu/menu');
+      this.$store.commit('setMenu', data.data);
       this.menuList = data.data;
     },
     // 退出登陆事件

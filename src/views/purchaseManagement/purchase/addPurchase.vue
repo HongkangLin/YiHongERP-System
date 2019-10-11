@@ -295,6 +295,7 @@ export default {
     this.getSupplier();
     this.getRole();
     this.getStore();
+    this.getContract();
   },
   methods: {
     goBack () { // 返回
@@ -309,6 +310,10 @@ export default {
           this.active = 1;
           break;
       }
+    },
+    async getContract () { // 获取合同条款
+      let data = await window.axios.get('/purchase/queryContractTerms/con.purchase');
+      this.info.contractTerms = data.data.contractTerms;
     },
     async getSupplier () { // 获取供应商
       let data = await window.axios.get(`/supplier/listAll?pageSize=99999&pageNum=1`);

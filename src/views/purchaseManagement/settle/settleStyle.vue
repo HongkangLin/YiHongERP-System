@@ -5,7 +5,7 @@
       <div class="search">
         <div class="head">
           <div class="label">结算方式</div>
-          <div class="new" @click="addSettle">新增结算方式</div>
+          <div class="new" v-if="funcList[1]" @click="addSettle">新增结算方式</div>
         </div>
         <div class="content">
           <div class="inputDiv">
@@ -36,7 +36,7 @@
             align="center"
             label="备注">
           </el-table-column>
-          <el-table-column label="操作" align="center">
+          <el-table-column label="操作" align="center" v-if="funcList[1]">
             <template slot-scope="scope">
               <el-button
                 size="mini"
@@ -53,6 +53,7 @@
 
 <script>
 import pageination from '#/pagination/pagination.vue';
+import { mapGetters } from 'vuex';
 export default {
   components: {
     'pageination': pageination
@@ -66,6 +67,7 @@ export default {
         name: '结算方式',
         path: ''
       }],
+      funcList: [], // 功能权限列表
       name: '', // 品牌名/品牌缩写
       total: 0, // 总数
       pageNum: 1, // pageNumber
@@ -74,12 +76,30 @@ export default {
     };
   },
   mounted () {
-    this.queryList();
-  },
-  activated () {
+    this.initFuncList();
     this.queryList();
   },
   methods: {
+    ...mapGetters(['getMenu']),
+    initFuncList () { // 初始化可用功能
+      let list = this.getMenu()[1].childNodeList[1].childNodeList[1].funcList;
+      let curr = [];
+      for (let i = 0, len = list.length; i < len; i++) {
+        let hasRole = !!list[i].ownFlag;
+        switch(list[i].funcTag) {
+          case 'settletype_query': // 查看权限
+            curr[0] = hasRole;
+            break;
+          case 'settletype_add': // 新增权限
+            curr[1] = hasRole;
+            break;
+          case 'settletype_update': // 编辑权限
+            curr[2] = hasRole;
+            break;
+        }
+      }
+      this.funcList = curr;
+    },
     async queryList () { // 查询品牌列表
       let data = await window.axios.get(`/settletype/listAll?pageNum=${this.pageNum}&pageSize=${this.pageSize}&nameKeyword=${this.name}`);
       data = data.data;

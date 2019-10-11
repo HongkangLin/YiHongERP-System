@@ -5,7 +5,7 @@
       <div class="search">
         <div class="head">
           <div class="label">角色权限管理</div>
-          <div class="new" @click="addRole">新增角色</div>
+          <div class="new" v-if="funcList[1]" @click="addRole">新增角色</div>
         </div>
         <div class="content">
           <div class="inputDiv">
@@ -44,17 +44,18 @@
             align="center"
             label="描述">
           </el-table-column>
-          <el-table-column label="操作" align="center">
+          <el-table-column label="操作" align="center" v-if="funcList[2] || funcList[3]">
             <template slot-scope="scope">
               <el-button
                 type="text"
                 size="mini"
+                v-if="funcList[2]"
                 @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-divider direction="vertical" v-if="scope.row.roleType !== '超级管理员'"></el-divider>
+              <el-divider direction="vertical" v-if="scope.row.roleType !== '超级管理员' && funcList[2] && funcList[3]"></el-divider>
               <el-button
                 size="mini"
                 type="text"
-                v-if="scope.row.roleType !== '超级管理员'"
+                v-if="scope.row.roleType !== '超级管理员' && funcList[3]"
                 @click="handleDelete(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
@@ -67,6 +68,7 @@
 
 <script>
 import pageination from '#/pagination/pagination.vue';
+import { mapGetters } from 'vuex';
 export default {
   components: {
     'pageination': pageination
@@ -97,6 +99,7 @@ export default {
         label: '员工',
         value: '3'
       }],
+      funcList: [], // 功能权限列表
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
@@ -104,12 +107,33 @@ export default {
     };
   },
   mounted () {
-    this.queryList();
-  },
-  activated () {
+    this.initFuncList();
     this.queryList();
   },
   methods: {
+    ...mapGetters(['getMenu']),
+    initFuncList () { // 初始化可用功能
+      let list = this.getMenu()[4].childNodeList[0].childNodeList[1].funcList;
+      let curr = [];
+      for (let i = 0, len = list.length; i < len; i++) {
+        let hasRole = !!list[i].ownFlag;
+        switch(list[i].funcTag) {
+          case 'role_query': // 查看权限
+            curr[0] = hasRole;
+            break;
+          case 'role_add': // 新增权限
+            curr[1] = hasRole;
+            break;
+          case 'role_update': // 编辑权限
+            curr[2] = hasRole;
+            break;
+          case 'role_delete': // 删除权限
+            curr[3] = hasRole;
+            break;
+        }
+      }
+      this.funcList = curr;
+    },
     async queryList () { // 查询列表
       let data = await window.axios.post('/role/queryAllRoleList', {
         roleType: this.type,
