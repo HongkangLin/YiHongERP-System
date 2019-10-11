@@ -153,7 +153,7 @@ export default {
         applyId: this.tableData.applyInfo.applyId,
         approveResult: this.ruleForm.approveResult,
         nextApproveUserId: this.ruleForm.nextApproveUserId,
-        feedbackReason: this.ruleForm.feedbackReason,
+        feedbackReason: this.ruleForm.approveResult === "agree" && this.ruleForm.feedbackReason === "" ? "同意" : this.ruleForm.feedbackReason,
         recordFlag: this.tableData.approveList.length > 0 ? "yes" : "no"
       }
       window.axios.post("/approve/doApprove", params).then((data) => {
