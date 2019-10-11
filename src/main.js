@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import crumbs from '#/crumbs/crumbs'
+import store from './store'
 
 Vue.component('crumbs', crumbs);
 
@@ -22,5 +23,6 @@ Vue.config.productionTip = false
 
 window.vm = new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app');

@@ -800,7 +800,8 @@ export default {
       } else { // 编辑时不处理供应关系
         delete param.list;
       }
-      let data = await window.axios.post('/product/addOrUpdateProductInfo', param);
+      let url = this.id ? '/product/updateProductInfo' : '/product/addOrUpdateProductInfo'; // 编辑或新增
+      let data = await window.axios.post(url, param);
       if (data.code === 0) {
         this.$message.success(data.message);
         history.go(-1);

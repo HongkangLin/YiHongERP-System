@@ -5,7 +5,7 @@
       <div class="search">
         <div class="head">
           <div class="label">供应商管理</div>
-          <div class="new" @click="addSupplier">新增供应商</div>
+          <div class="new" v-if="funcList[1]" @click="addSupplier">新增供应商</div>
         </div>
         <div class="content">
           <div class="inputDiv">
@@ -59,6 +59,7 @@
                 active-color="#1ABC9C"
                 active-text="启用"
                 inactive-text="禁用"
+                :disabled="!funcList[4]"
                 @change="changeStatus(scope.$index, scope.row.id, scope.row.status)"
                 inactive-color="#ccc">
               </el-switch>
@@ -75,16 +76,19 @@
               <el-button
                 size="mini"
                 type="text"
+                v-if="funcList[2]"
                 @click="handleEdit(scope.row.id)">编辑</el-button>
-              <el-divider direction="vertical"></el-divider>
+              <el-divider direction="vertical" v-if="funcList[0] && funcList[2]"></el-divider>
               <el-button
                 size="mini"
                 type="text"
+                v-if="funcList[0]"
                 @click="handleLook(scope.row.id)">查看</el-button>
-              <el-divider direction="vertical"></el-divider>
+              <el-divider direction="vertical" v-if="funcList[0] && funcList[3]"></el-divider>
               <el-button
                 size="mini"
                 type="text"
+                v-if="funcList[3]"
                 @click="handleDelete(scope.row.id)">删除</el-button>
             </template>
           </el-table-column>
@@ -97,6 +101,7 @@
 
 <script>
 import pageination from '#/pagination/pagination.vue';
+import { mapGetters } from 'vuex';
 export default {
   components: {
     'pageination': pageination
@@ -110,6 +115,7 @@ export default {
         name: '供应商管理',
         path: ''
       }],
+      funcList: [], // 功能权限列表
       name: '', // 品牌名/品牌缩写
       total: 0, // 总数
       pageNum: 1, // pageNumber
@@ -118,12 +124,48 @@ export default {
     };
   },
   mounted () {
-    this.queryList();
-  },
-  activated () {
+    this.initFuncList();
     this.queryList();
   },
   methods: {
+    ...mapGetters(['getMenu']),
+    initFuncList () { // 初始化可用功能
+      let list = this.getMenu()[1].childNodeList[1].childNodeList[0].funcList;
+      let curr = [];
+      for (let i = 0, len = list.length; i < len; i++) {
+        let hasRole = !!list[i].ownFlag;
+        switch(list[i].funcTag) {
+          case 'supplier_detail': // 查看权限
+            curr[0] = hasRole;
+            break;
+          case 'supplier_add': // 新增权限
+            curr[1] = hasRole;
+            break;
+          case 'supplier_update': // 编辑权限
+            curr[2] = hasRole;
+            break;
+          case 'supplier_delete': // 删除权限
+            curr[3] = hasRole;
+            break;
+          case 'supplier_enable': // 启用禁用
+            curr[4] = hasRole;
+            break;
+          case 'supplier_query': // 获取列表
+            curr[5] = hasRole;
+            break;
+          case 'supplyrel_add': // 添加供应产品
+            curr[6] = hasRole;
+            break;
+          case 'supplyrel_delete': // 删除供应产品
+            curr[7] = hasRole;
+            break;
+          case 'supplyrel_update': // 修改报价
+            curr[8] = hasRole;
+            break;
+        }
+      }
+      this.funcList = curr;
+    },
     async queryList () { // 获取供应商列表
       let data = await window.axios.get(`/supplier/listAll?pageNum=${this.pageNum}&pageSize=${this.pageSize}&snOrNameKeyword=${this.name}`);
       data = data.data;

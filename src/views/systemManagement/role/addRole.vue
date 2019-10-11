@@ -182,6 +182,9 @@ export default {
               message: data.message,
               type: 'success'
             });
+            window.axios.get('/menu/menu').then(data => { // 更新store权限数据
+              this.$store.commit('setMenu', data.data);
+            });
             this.$router.back();
           });
         } else {
