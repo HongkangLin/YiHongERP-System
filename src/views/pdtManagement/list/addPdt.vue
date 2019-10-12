@@ -532,7 +532,7 @@ export default {
         name: data.data.fnskuFileName,
         url: data.data.fnskuFileUrl
       }];
-      data.data.fnskuPicUrl = [{url: data.data.fnskuPicUrl}];
+      data.data.fnskuPicUrl = data.data.fnskuPicUrl ? [{url: data.data.fnskuPicUrl}] : [];
       data.data.mainPicUrl && this.pdtPhoto.push({
         name: '商品主图',
         url: data.data.mainPicUrl
