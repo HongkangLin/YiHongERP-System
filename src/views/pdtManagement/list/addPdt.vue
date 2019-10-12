@@ -88,7 +88,7 @@
               <el-input :disabled="disabled" v-model="form.skuId" placeholder="请输入SKU编码"></el-input>
             </el-form-item>
             <el-form-item label="销售目标价：">
-              <el-input type="number" v-model="form.goodsGoalPrice" placeholder="请输入销售目标价"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.goodsGoalPrice < 0) {this.form.goodsGoalPrice = 0}}" v-model="form.goodsGoalPrice" placeholder="请输入销售目标价"></el-input>
             </el-form-item>
             <el-form-item label="产品链接：">
               <el-input v-model="form.goodsUrl" placeholder="请输入产品链接"></el-input>
@@ -157,7 +157,7 @@
               <el-input v-model="form.customId" placeholder="请输入海关编码"></el-input>
             </el-form-item>
             <el-form-item label="申报价值：">
-              <el-input v-model="form.claimPrice" type="number" placeholder="请输入申报价值"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.claimPrice < 0) {this.form.claimPrice = 0}}" v-model="form.claimPrice" placeholder="请输入申报价值"></el-input>
             </el-form-item>
             <el-form-item label="中文报关名：">
               <el-input v-model="form.chineseName" placeholder="请输入中文报关名"></el-input>
@@ -170,9 +170,9 @@
             </el-form-item>
             <div class="spanDiv"></div>
             <el-form-item label="产品包装尺寸（cm）：" class="inline">
-              <el-input v-model="form.goodsLength" type="number" placeholder="长"></el-input>
-              <el-input v-model="form.goodsWide" type="number" class="leftSpan" placeholder="宽"></el-input>
-              <el-input v-model="form.goodsHigh" type="number" class="leftSpan" placeholder="高"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.goodsLength < 0) {this.form.goodsLength = 0}}" v-model="form.goodsLength" placeholder="长"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.goodsWide < 0) {this.form.goodsWide = 0}}" v-model="form.goodsWide" class="leftSpan" placeholder="宽"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.goodsHigh < 0) {this.form.goodsHigh = 0}}" v-model="form.goodsHigh" class="leftSpan" placeholder="高"></el-input>
             </el-form-item>
             <el-form-item label="产品包装尺寸（in）：" class="inline">
               <el-input disabled v-model="goodsLengthIn" placeholder="-"></el-input>
@@ -180,7 +180,7 @@
               <el-input disabled v-model="goodsHighIn" class="leftSpan" placeholder="-"></el-input>
             </el-form-item>
             <el-form-item label="每个产品重量：" class="inline">
-              <el-input v-model="form.goodsWeight" type="number" placeholder="">
+              <el-input min="0" type="number" @blur="() => {if (this.form.goodsWeight < 0) {this.form.goodsWeight = 0}}" v-model="form.goodsWeight" placeholder="">
                 <template slot="append">kg</template>
               </el-input>
               <el-input disabled v-model="goodsWeightLb" type="number" class="leftSpan" placeholder="-">
@@ -188,7 +188,7 @@
               </el-input>
             </el-form-item>
             <el-form-item label="整箱重量：" class="inline">
-              <el-input v-model="form.packingWeight" type="number" placeholder="">
+              <el-input min="0" type="number" @blur="() => {if (this.form.packingWeight < 0) {this.form.packingWeight = 0}}" v-model="form.packingWeight" placeholder="">
                 <template slot="append">kg</template>
               </el-input>
               <el-input disabled v-model="packingWeightLb" class="leftSpan" placeholder="">
@@ -196,14 +196,14 @@
               </el-input>
             </el-form-item>
             <el-form-item class="append" label="装箱数：">
-              <el-input v-model="form.packingQuantity" type="number" placeholder="">
+              <el-input min="0" type="number" @blur="() => {if (this.form.packingQuantity < 0) {this.form.packingQuantity = 0}}" v-model="form.packingQuantity" placeholder="">
                 <template slot="append">套</template>
               </el-input>
             </el-form-item>
             <el-form-item label="外箱尺寸（cm）：" class="inline">
-              <el-input v-model="form.packingLength" type="number" placeholder="长"></el-input>
-              <el-input v-model="form.packingWide" type="number" class="leftSpan" placeholder="宽"></el-input>
-              <el-input v-model="form.packingHigh" type="number" class="leftSpan" placeholder="高"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.packingLength < 0) {this.form.packingLength = 0}}" v-model="form.packingLength" placeholder="长"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.packingWide < 0) {this.form.packingWide = 0}}" v-model="form.packingWide" class="leftSpan" placeholder="宽"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.packingHigh < 0) {this.form.packingHigh = 0}}" v-model="form.packingHigh" class="leftSpan" placeholder="高"></el-input>
             </el-form-item>
             <el-form-item label="外箱尺寸（in）：" class="inline">
               <el-input disabled v-model="packingLengthIn" placeholder="-"></el-input>
@@ -283,7 +283,7 @@
               align="center"
               label="采购价（元）">
               <template slot-scope="scope">
-                <el-input @change="changeInput(scope.$index)" v-model="scope.row.price" placeholder="输入采购价"></el-input>
+                <el-input-number :min="0" :controls="false" @change="changeInput(scope.$index)" v-model="scope.row.price" placeholder="输入采购价"></el-input-number>
               </template>
             </el-table-column>
             <el-table-column label="操作" align="center">
@@ -788,7 +788,7 @@ export default {
       param.clearStocksFlag = ~~param.clearStocksFlag; // 是否清货
       param.fnskuFileName = param.fnskuFileUrl[0].name; // fnsku文件名称
       param.fnskuFileUrl = param.fnskuFileUrl[0].url; // fnsku文件
-      param.fnskuPicUrl = param.fnskuPicUrl[0].url; // 防跟卖标签
+      param.fnskuPicUrl = param.fnskuPicUrl[0] && param.fnskuPicUrl[0].url; // 防跟卖标签
       param.mainPicUrl = this.pdtPhoto[0].url; // 商品主图
       param.picUrl1 = this.pdtPhoto[1] && this.pdtPhoto[1].url; // 商品图片
       param.picUrl2 = this.pdtPhoto[2] && this.pdtPhoto[2].url; // 商品图片
@@ -800,7 +800,7 @@ export default {
       } else { // 编辑时不处理供应关系
         delete param.list;
       }
-      let url = this.id ? '/product/updateProductInfo' : '/product/addOrUpdateProductInfo'; // 编辑或新增
+      let url = this.id ? '/product/updateProductInfo' : '/product/addProductInfo'; // 编辑或新增
       let data = await window.axios.post(url, param);
       if (data.code === 0) {
         this.$message.success(data.message);
