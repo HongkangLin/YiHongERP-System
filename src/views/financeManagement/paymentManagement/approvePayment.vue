@@ -137,7 +137,11 @@ export default {
         obj.calTotal = obj.applyAmount + obj.transportFee + obj.otherFee;
         // 审核结果
         obj.purPayApproveRecordList.map((item) => {
-          item.approveStatus = item.approveStatus === 1 ? "同意" : "驳回";
+          if (item.approveStatus === 1) {
+            item.approveStatus = "同意"
+          } else if (item.approveStatus === 2) {
+            item.approveStatus = "驳回"
+          }
         })
         this.tableData = obj;
       })

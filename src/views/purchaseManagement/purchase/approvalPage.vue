@@ -132,7 +132,11 @@ export default {
         obj.purchaseInfo.skuCount = this.$route.query.skuCount;
         // 审核详情-审核结果
         obj.approveList.map((item) => {
-          item.approveResult = item.approveResult === "agree" ? "通过" : "驳回";
+          if (item.approveResult === "agree") {
+            item.approveResult = "通过"
+          } else if (item.approveResult === "disagree") {
+            item.approveResult = "驳回"
+          }
         })
         this.tableData = obj;
       })
