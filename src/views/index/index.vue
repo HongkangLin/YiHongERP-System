@@ -4,8 +4,22 @@
     <el-header>
       <div class="systemName"><a href="/">毅宏ERP管理系统</a></div>
       <div class="iconPanel">
-        <el-avatar icon="el-icon-user-solid"></el-avatar>
-        <span class="userName">Admin</span>
+        <el-popover
+          placement="bottom-start"
+          width="360"
+          trigger="click">
+            <div class="userInfo">
+              <div class="header">账户信息</div>
+              <div class="span"></div>
+              <div class="content"><span>·所在部门：</span>{{roleName}}</div>
+              <div class="content"><span>·联系方式：</span>{{mobile}}</div>
+              <div class="content"><span>·电子邮箱：</span>{{email}}</div>
+            </div>
+            <div slot="reference" class="userInfoClick">
+              <el-avatar icon="el-icon-user-solid"></el-avatar>
+              <span class="userName">{{userName}}</span>
+            </div>
+        </el-popover>
         <el-divider direction="vertical"></el-divider>
         <i @click="loginOut" class="el-icon-switch-button"></i>
       </div>
@@ -52,6 +66,10 @@ export default {
         '财务': 'el-icon-s-data',
         '系统': 'el-icon-setting'
       },
+      userName: localStorage.getItem('userName'),
+      roleName: localStorage.getItem('roleName'),
+      mobile: localStorage.getItem('mobile'),
+      email: localStorage.getItem('email'),
       dialogVisible: false,
       activeMenu: 'F0201-F020101', // active菜单
       menuList: [] // 菜单列表
@@ -93,6 +111,36 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.userInfo {
+  font-size: 12px;
+  box-sizing: border-box;
+  padding: 0 10px;
+  color: #666;
+  .header {
+    color: #999;
+    line-height: 30px;
+    text-indent: 10px;
+  }
+  .span {
+    width: 100%;
+    border-bottom: 1px solid #eee;
+  }
+  .content {
+    margin-top: 10px;
+    line-height: 20px;
+    span {
+      text-indent: 10px;
+      display: inline-block;
+      margin-right: 5px;
+      color: #999;
+    }
+  }
+}
+.userInfoClick {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .index_wrap {
   // 顶部一级菜单
   .el-header {
@@ -111,6 +159,7 @@ export default {
       display: flex;
       align-items: center;
       color: #fff;
+      cursor: pointer;
       .el-avatar {
         width: 30px;
         height: 30px;

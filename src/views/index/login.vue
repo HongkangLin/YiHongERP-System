@@ -59,6 +59,10 @@ export default {
                 type: 'success'
               });
               localStorage.setItem('token', e.data.token);
+              localStorage.setItem('userName', e.data.userName);
+              localStorage.setItem('email', e.data.email);
+              localStorage.setItem('mobile', e.data.mobile);
+              localStorage.setItem('roleName', e.data.roleName);
               this.$router.replace('/F0201/F020101'); // 登陆成功
             }
           });
