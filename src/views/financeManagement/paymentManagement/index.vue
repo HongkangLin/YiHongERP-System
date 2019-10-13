@@ -39,13 +39,13 @@
           <el-table-column prop="createTime" label="申请时间" align="center" min-width="140"></el-table-column>
           <el-table-column prop="createName" label="申请人" align="center" min-width="100"></el-table-column>
           <el-table-column prop="payTime" label="付款时间" align="center" min-width="100"></el-table-column>
-          <el-table-column align="center" fixed="right" label="操作" width="160">
+          <el-table-column align="center" fixed="right" label="操作" width="160" v-if="roleCtl.finance_detail || roleCtl.finance_pay || roleCtl.finance_cancel">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="toPrintPage(scope.row.payId)">查看</el-button>
+              <el-button type="text" size="small" @click="toPrintPage(scope.row.payId)" v-if="roleCtl.finance_detail">查看</el-button>
+              <el-divider v-if="scope.row.payStatus === '待付款' && roleCtl.finance_detail" direction="vertical"></el-divider>
+              <el-button v-if="scope.row.payStatus === '待付款' && roleCtl.finance_pay" type="text" size="small" @click="payAct(scope.row.payId)">付款</el-button>
               <el-divider v-if="scope.row.payStatus === '待付款'" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.payStatus === '待付款'" type="text" size="small" @click="payAct(scope.row.payId)">付款</el-button>
-              <el-divider v-if="scope.row.payStatus === '待付款'" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.payStatus === '待付款'" type="text" size="small" @click="showCancelBox(scope.row.payId)">取消</el-button>
+              <el-button v-if="scope.row.payStatus === '待付款' && roleCtl.finance_cancel" type="text" size="small" @click="showCancelBox(scope.row.payId)">取消</el-button>
               <el-divider v-if="scope.row.payStatus === '审核中' && scope.row.approveShowFlag" direction="vertical"></el-divider>
               <el-button v-if="scope.row.payStatus === '审核中' && scope.row.approveShowFlag" type="text" size="small" @click="toApprovalPage(scope.row.payId)">审批</el-button>
             </template>
@@ -97,6 +97,7 @@ export default {
   },
   data() {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       crumbList: [{ // 面包屑
         name: '财务管理',
         path: '/F0501/F050101'

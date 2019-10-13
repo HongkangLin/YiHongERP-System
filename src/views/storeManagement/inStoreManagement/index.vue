@@ -6,7 +6,7 @@
 		<div class="search">
       <div class="head">
         <div class="label">入库管理</div>
-        <el-button type="primary" @click="addInStore">新增入库</el-button>
+        <el-button type="primary" @click="addInStore" v-if="roleCtl.checkinorder_add">新增入库</el-button>
       </div>
       <div class="content">
         <div class="inputDiv">
@@ -33,13 +33,13 @@
         <el-table-column prop="status" label="入库状态" align="center" min-width="110"></el-table-column>
         <el-table-column prop="warehouseChargePersonName" label="仓管" align="center" min-width="75"></el-table-column>
         <el-table-column prop="arriveTime" label="到货日期" align="center" min-width="200"></el-table-column>
-        <el-table-column align="center" fixed="right" label="操作" width="160">
+        <el-table-column align="center" fixed="right" label="操作" width="160" v-if="roleCtl.checkinorder_detail || roleCtl.checkinorder_update ||roleCtl.checkinorder_checkin">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="handleView(scope.row.id, scope.row.type)">查看</el-button>
-            <el-divider v-if="scope.row.type === '外贸入库' && scope.row.status === '待入库'" direction="vertical"></el-divider>
-            <el-button v-if="scope.row.type === '外贸入库' && scope.row.status === '待入库'" type="text" size="small" @click="handleEdit(scope.row.id)">编辑</el-button>
+            <el-button type="text" size="small" @click="handleView(scope.row.id, scope.row.type)" v-if="roleCtl.checkinorder_detail">查看</el-button>
+            <el-divider v-if="scope.row.type === '外贸入库' && scope.row.status === '待入库' && roleCtl.checkinorder_detail" direction="vertical"></el-divider>
+            <el-button v-if="scope.row.type === '外贸入库' && scope.row.status === '待入库' && roleCtl.checkinorder_update" type="text" size="small" @click="handleEdit(scope.row.id)">编辑</el-button>
             <el-divider v-if="scope.row.status === '待入库'" direction="vertical"></el-divider>
-            <el-button v-if="scope.row.status === '待入库'" type="text" size="small" @click="handleInStore(scope.row.id)">入库</el-button>
+            <el-button v-if="scope.row.status === '待入库' && roleCtl.checkinorder_checkin" type="text" size="small" @click="handleInStore(scope.row.id)">入库</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -59,6 +59,7 @@ export default {
   },
   data() {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       crumbList: [{ // 面包屑
         name: '库存管理',
         path: '/F0401/F040102'

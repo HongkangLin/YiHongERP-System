@@ -18,7 +18,7 @@
       <div class="header"> <i class="el-icon-collection-tag"></i> 产品信息</div>
       <!-- 产品信息-外贸入库 -->
       <el-table v-if="$route.query.type === '0'" :data="tableData.goods" border style="width: 100%">
-        <el-table-column label="图片" align="center" min-width="130">
+        <el-table-column label="图片" align="center" width="101">
           <template slot-scope="scope">
             <img class="img" :src="scope.row.goodsPicUrl">
           </template>
@@ -30,7 +30,7 @@
       </el-table>
       <!-- 产品信息-采购入库 -->
       <el-table v-else :data="tableData.goods" border style="width: 100%">
-        <el-table-column label="图片" align="center" min-width="90">
+        <el-table-column label="图片" align="center" width="101">
           <template slot-scope="scope">
             <img class="img" :src="scope.row.goodsPicUrl">
           </template>
@@ -148,6 +148,12 @@ export default {
         .content {
           padding-left: 10px;
         }
+      }
+    }
+    .el-table {
+      /deep/.img {
+        width: 80px;
+        height: 80px;
       }
     }
   }

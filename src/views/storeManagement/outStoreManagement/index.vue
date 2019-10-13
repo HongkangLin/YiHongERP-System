@@ -6,7 +6,7 @@
 		<div class="search">
       <div class="head">
         <div class="label">出库管理</div>
-        <el-button type="primary" @click="addInStore">新增出库</el-button>
+        <el-button type="primary" @click="addInStore" v-if="roleCtl.stockoutorder_add">新增出库</el-button>
       </div>
       <div class="content">
         <div class="inputDiv">
@@ -34,13 +34,13 @@
         <el-table-column prop="warehouseName" label="仓库" align="center" min-width="120"></el-table-column>
         <el-table-column prop="type" label="出库类型" align="center" min-width="135"></el-table-column>
         <el-table-column prop="status" label="出库状态" align="center" min-width="110"></el-table-column>
-        <el-table-column align="center" fixed="right" label="操作" width="160">
+        <el-table-column align="center" fixed="right" label="操作" width="160" v-if="roleCtl.stockoutorder_detail || roleCtl.stockoutorder_update || roleCtl.stockoutorder_stockout">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="handleView(scope.row.id)">查看</el-button>
+            <el-button type="text" size="small" @click="handleView(scope.row.id)" v-if="roleCtl.stockoutorder_detail">查看</el-button>
+            <el-divider v-if="scope.row.status === '待出库' && roleCtl.stockoutorder_detail" direction="vertical"></el-divider>
+            <el-button v-if="scope.row.status === '待出库' && roleCtl.stockoutorder_update" type="text" size="small" @click="handleEdit(scope.row.id)">编辑</el-button>
             <el-divider v-if="scope.row.status === '待出库'" direction="vertical"></el-divider>
-            <el-button v-if="scope.row.status === '待出库'" type="text" size="small" @click="handleEdit(scope.row.id)">编辑</el-button>
-            <el-divider v-if="scope.row.status === '待出库'" direction="vertical"></el-divider>
-            <el-button v-if="scope.row.status === '待出库'" type="text" size="small" @click="handleInStore(scope.row.id)">出库</el-button>
+            <el-button v-if="scope.row.status === '待出库' && roleCtl.stockoutorder_stockout" type="text" size="small" @click="handleInStore(scope.row.id)">出库</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -60,6 +60,7 @@ export default {
   },
   data() {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       crumbList: [{ // 面包屑
         name: '库存管理',
         path: '/F0401/F040103'

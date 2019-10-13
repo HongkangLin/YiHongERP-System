@@ -21,7 +21,7 @@
     <section class="tableArea">
       <el-table :data="tableData" border style="width: 100%">
         <el-table-column prop="goodsSku" label="SKU" align="center" min-width="120"></el-table-column>
-        <el-table-column label="产品图片" align="center" min-width="120">
+        <el-table-column label="产品图片" align="center" width="101">
           <template slot-scope="scope">
             <img class="img" :src="scope.row.goodsPicUrl">
           </template>
@@ -181,6 +181,12 @@ export default {
   .tableArea {
     background-color: #fff;
     margin-top: 25px;
+    .el-table {
+      /deep/.img {
+        width: 80px;
+        height: 80px;
+      }
+    }
 
     .bottom {
       border: 1px solid #ebeef4;
