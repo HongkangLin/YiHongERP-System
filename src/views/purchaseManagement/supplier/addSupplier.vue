@@ -103,20 +103,20 @@
               </el-select>
             </el-form-item>
             <el-form-item label="交期（天）：" prop="deliverDay">
-              <el-input type="number" v-model="form.deliverDay" placeholder="请输入交期（天）"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.deliverDay < 0) {this.form.deliverDay = 0}}" v-model="form.deliverDay" placeholder="请输入交期（天）"></el-input>
             </el-form-item>
             <div class="spanDiv"></div>
             <el-form-item label="收款人（私账）：" prop="priAccountName">
               <el-input v-model="form.priAccountName" placeholder="请输入私账收款人"></el-input>
             </el-form-item>
             <el-form-item label="银行卡号（私账）：" prop="priAccountNo">
-              <el-input type="number" v-model="form.priAccountNo" placeholder="请输入私账银行卡号"></el-input>
+              <el-input v-model="form.priAccountNo" placeholder="请输入私账银行卡号"></el-input>
             </el-form-item>
             <el-form-item label="开户行：" prop="priAccountBankname">
               <el-input v-model="form.priAccountBankname" placeholder="请输入私账开户行"></el-input>
             </el-form-item>
             <el-form-item label="税率：">
-              <el-input type="number" v-model="form.taxRate" placeholder="请输入税率"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.taxRate < 0) {this.form.taxRate = 0}}" v-model="form.taxRate" placeholder="请输入税率"></el-input>
             </el-form-item>
             <el-form-item label="结算方式：">
               <el-select v-model="form.settleType" placeholder="请选择结算方式">
@@ -132,7 +132,7 @@
               <el-input v-model="form.pubAccountCompanyName" placeholder="请输入公司全称"></el-input>
             </el-form-item>
             <el-form-item label="银行对公账号：">
-              <el-input type="number" v-model="form.pubAccountNo" placeholder="请输入银行对公账号"></el-input>
+              <el-input v-model="form.pubAccountNo" placeholder="请输入银行对公账号"></el-input>
             </el-form-item>
             <el-form-item label="对公账号开户行：">
               <el-input v-model="form.pubAccountBankname" placeholder="请输入对公账号开户行"></el-input>
@@ -149,7 +149,7 @@
               <el-input v-model="form.addrDetail" placeholder="请输入详细地址"></el-input>
             </el-form-item>
             <el-form-item label="统一社会信用代码：">
-              <el-input type="number" v-model="form.socialCreditCode" placeholder="请输入统一社会信用代码"></el-input>
+              <el-input v-model="form.socialCreditCode" placeholder="请输入统一社会信用代码"></el-input>
             </el-form-item>
             <el-form-item label="公司规模：">
               <el-select v-model="form.companySize" placeholder="请选择公司规模">

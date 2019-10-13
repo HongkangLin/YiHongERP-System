@@ -30,7 +30,7 @@
             width="220"
             label="采购价（元）">
             <template slot-scope="scope">
-              <el-input :disabled="!funcList[2]" @change="changeData(scope.$index)" v-model="scope.row.purchasePrice" placeholder="输入采购价"></el-input>
+              <el-input-number :min="0" :controls="false" :disabled="!funcList[2]" @change="changeData(scope.$index)" v-model="scope.row.purchasePrice" placeholder="输入采购价"></el-input-number>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center" v-if="funcList[1]">

@@ -11,9 +11,9 @@
             <div class="userInfo">
               <div class="header">账户信息</div>
               <div class="span"></div>
-              <div class="content"><span>·所在部门：</span>{{roleName}}</div>
-              <div class="content"><span>·联系方式：</span>{{mobile}}</div>
-              <div class="content"><span>·电子邮箱：</span>{{email}}</div>
+              <div class="content"><span>·&nbsp;所在部门：</span>{{roleName}}</div>
+              <div class="content"><span>·&nbsp;联系方式：</span>{{mobile}}</div>
+              <div class="content"><span>·&nbsp;电子邮箱：</span>{{email}}</div>
             </div>
             <div slot="reference" class="userInfoClick">
               <el-avatar icon="el-icon-user-solid"></el-avatar>
@@ -131,7 +131,7 @@ export default {
     span {
       text-indent: 10px;
       display: inline-block;
-      margin-right: 5px;
+      margin-right: 4px;
       color: #999;
     }
   }
