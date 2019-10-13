@@ -157,7 +157,7 @@ export default {
     this.queryStatusTotal();
   },
   watch: {
-    activeName(v) {
+    activeName() {
       this.searchValue = ""; 
       this.payStatus = null; 
       this.arrivalStatus = null; 
