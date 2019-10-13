@@ -27,7 +27,7 @@
             <span class="custom-tree-node" slot-scope="{ node, data }">
               <span @click="clickTreeQueryTable(data.id)">{{ node.label + "  (" + data.userCount + ")"}}</span>
               <!-- 一级 -->
-              <span v-if="node.level === 1">
+              <span v-if="node.level === 1 && roleCtl.dept_add">
                 <i class="el-icon-plus"></i>
                 <el-button
                   type="text"
@@ -192,10 +192,10 @@
 import DialogContent from './dialogContent';
 import AddOrEditPerson from './addOrEditPerson';
 import Pagination from '../../components/pagination/pagination';
-
 export default {
   data() {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       dptTreeData: [], //架构树
 
       filterText: "",
