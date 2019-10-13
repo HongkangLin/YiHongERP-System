@@ -15,7 +15,7 @@
           <el-table-column align="center" prop="paidAmount" label="已支付货款（元）" min-width="130"></el-table-column>
           <el-table-column align="center" prop="purchaseStatus" label="状态" min-width="100"></el-table-column>
           <el-table-column align="center" prop="createTime" label="创建日期" min-width="130"></el-table-column>
-          <el-table-column align="center" prop="1" label="采购员" min-width="100"></el-table-column>
+          <el-table-column align="center" prop="purchaseName" label="采购员" min-width="100"></el-table-column>
         </el-table>
         <!-- 付款单信息 -->
         <div class="content-header"> <i class="el-icon-collection-tag"></i> 付款单信息</div>

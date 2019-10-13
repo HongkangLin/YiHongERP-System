@@ -241,7 +241,7 @@ export default {
     // 查看详情
     toPrintPage(payId) {
       this.$router.push({
-        path: `/F0501/viewPrint`
+        path: `/F0501/viewPrint?payId=${payId}`
       })
     },
 
