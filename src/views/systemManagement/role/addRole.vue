@@ -183,7 +183,20 @@ export default {
               type: 'success'
             });
             window.axios.get('/menu/menu').then(data => { // 更新store权限数据
-              this.$store.commit('setMenu', data.data);
+              this.$store.commit('role/setMenu', data.data);
+              let fn = (array, obj) => {
+                for (let index = 0; index < array.length; index++) {
+                  let item = array[index];
+                  if (item.childNodeList && item.childNodeList.length > 0) item.childNodeList = fn(item.childNodeList, obj)
+                  item.funcList.map((i) => {
+                    obj[i.funcTag] = i.ownFlag ? true : false;
+                  })
+                }
+                return array;
+              }
+              let controlObj = {};
+              fn(this.$store.state.role.menu, controlObj);
+              this.$store.commit('role/getRoleCtl', controlObj);
             });
             this.$router.back();
           });

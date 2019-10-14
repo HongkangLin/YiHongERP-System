@@ -5,7 +5,7 @@
       <div class="search">
         <div class="head">
           <div class="label">产品列表</div>
-          <div class="new" v-if="funcList[1]" @click="addPdt">新增产品</div>
+          <div class="new" v-if="roleCtl.product_add" @click="addPdt">新增产品</div>
         </div>
         <div class="content">
           <div class="inputDiv">
@@ -107,24 +107,23 @@
             align="center"
             label="采购员">
           </el-table-column>
-          <el-table-column label="操作" align="center" v-if="funcList[0] || funcList[2] || funcList[3]">
+          <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button
                 size="mini"
                 type="text"
-                v-if="funcList[2]"
+                v-if="roleCtl.product_update"
                 @click="handleEdit(scope.row.id, scope.row.skuId)">编辑</el-button>
-              <el-divider direction="vertical" v-if="funcList[2] && funcList[0]"></el-divider>
+              <el-divider direction="vertical" v-if="roleCtl.product_update"></el-divider>
               <el-button
                 size="mini"
                 type="text"
-                v-if="funcList[0]"
                 @click="handleLook(scope.row.id, scope.row.skuId)">查看</el-button>
-              <el-divider direction="vertical" v-if="funcList[0] && funcList[3]"></el-divider>
+              <el-divider direction="vertical" v-if="roleCtl.product_delete"></el-divider>
               <el-button
                 size="mini"
                 type="text"
-                v-if="funcList[3]"
+                v-if="roleCtl.product_delete"
                 @click="handleDelete(scope.row.skuId)">删除</el-button>
             </template>
           </el-table-column>
@@ -137,14 +136,13 @@
 
 <script>
 import pageination from '#/pagination/pagination.vue';
-import { mapGetters } from 'vuex';
 export default {
   components: {
     'pageination': pageination
   },
   data () {
     return {
-      funcList: [], // 功能权限列表
+      roleCtl: this.$store.state.role.roleCtl,
       crumbList: [{ // 面包屑
         name: '产品管理',
         path: '/F0201/F020101'
@@ -188,36 +186,12 @@ export default {
     };
   },
   mounted () {
-    this.initFuncList();
     this.getPrdType();
     this.getBrand();
     this.getPeople();
     this.queryList();
   },
   methods: {
-    ...mapGetters(['getMenu']),
-    initFuncList () { // 初始化可用功能
-      let list = this.getMenu()[0].childNodeList[0].childNodeList[0].funcList; // 产品列表功能权限
-      let curr = [];
-      for (let i = 0, len = list.length; i < len; i++) {
-        let hasRole = !!list[i].ownFlag;
-        switch(list[i].funcTag) {
-          case 'product_query': // 查看权限
-            curr[0] = hasRole;
-            break;
-          case 'product_add': // 新增权限
-            curr[1] = hasRole;
-            break;
-          case 'product_update': // 编辑权限
-            curr[2] = hasRole;
-            break;
-          case 'product_delete': // 删除权限
-            curr[3] = hasRole;
-            break;
-        }
-      }
-      this.funcList = curr;
-    },
     async getBrand () { // 获取品牌
       let data = await window.axios.post('/product/queryProductBrandList', {
         goodsBrandNameOrLetter: '',
@@ -370,8 +344,8 @@ export default {
     color: #1ABC9C;
   }
   .img {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
   }
   .search {
     width: 100%;

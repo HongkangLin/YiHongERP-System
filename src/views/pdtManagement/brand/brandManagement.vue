@@ -5,7 +5,7 @@
       <div class="search">
         <div class="head">
           <div class="label">品牌列表</div>
-          <div class="new" v-if="funcList[1]" @click="addBrand">新增品牌</div>
+          <div class="new" v-if="roleCtl.brand_add" @click="addBrand">新增品牌</div>
         </div>
         <div class="content">
           <div class="inputDiv">
@@ -36,18 +36,18 @@
             align="center"
             label="品牌缩写">
           </el-table-column>
-          <el-table-column label="操作" align="center" v-if="funcList[2] || funcList[3]">
+          <el-table-column label="操作" align="center" v-if="roleCtl.brand_update || roleCtl.brand_delete">
             <template slot-scope="scope">
               <el-button
                 size="mini"
                 type="text"
-                v-if="funcList[2]"
+                v-if="roleCtl.brand_update"
                 @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-divider direction="vertical" v-if="funcList[2] && funcList[3]"></el-divider>
+              <el-divider direction="vertical" v-if="roleCtl.brand_update && roleCtl.brand_delete"></el-divider>
               <el-button
                 size="mini"
                 type="text"
-                v-if="funcList[3]"
+                v-if="roleCtl.brand_delete"
                 @click="handleDelete(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
@@ -60,13 +60,13 @@
 
 <script>
 import pageination from '#/pagination/pagination.vue';
-import { mapGetters } from 'vuex';
 export default {
   components: {
     'pageination': pageination
   },
   data () {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       crumbList: [{ // 面包屑
         name: '产品管理',
         path: '/F0201/F020103'
@@ -74,7 +74,6 @@ export default {
         name: '品牌管理',
         path: ''
       }],
-      funcList: [], // 功能权限列表
       name: '', // 品牌名/品牌缩写
       total: 0, // 总数
       pageNum: 1, // pageNumber
@@ -83,33 +82,9 @@ export default {
     };
   },
   mounted () {
-    this.initFuncList();
     this.queryList();
   },
   methods: {
-    ...mapGetters(['getMenu']),
-    initFuncList () { // 初始化可用功能
-      let list = this.getMenu()[0].childNodeList[0].childNodeList[2].funcList; // 品牌管理功能权限
-      let curr = [];
-      for (let i = 0, len = list.length; i < len; i++) {
-        let hasRole = !!list[i].ownFlag;
-        switch(list[i].funcTag) {
-          case 'brand_query': // 查看权限
-            curr[0] = hasRole;
-            break;
-          case 'brand_add': // 新增品牌权限
-            curr[1] = hasRole;
-            break;
-          case 'brand_update': // 编辑品牌权限
-            curr[2] = hasRole;
-            break;
-          case 'brand_delete': // 删除品牌权限
-            curr[3] = hasRole;
-            break;
-        }
-      }
-      this.funcList = curr;
-    },
     async queryList () { // 查询品牌列表
       let data = await window.axios.post('/product/queryProductBrandList', {
         goodsBrandNameOrLetter: this.name.toUpperCase(),
@@ -180,8 +155,8 @@ export default {
   overflow: auto;
   font-size: 12px;
   .img {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
   }
   .search {
     width: 100%;
