@@ -39,15 +39,15 @@
           <el-table-column prop="createTime" label="申请时间" align="center" min-width="140"></el-table-column>
           <el-table-column prop="createName" label="申请人" align="center" min-width="100"></el-table-column>
           <el-table-column prop="payTime" label="付款时间" align="center" min-width="100"></el-table-column>
-          <el-table-column align="center" fixed="right" label="操作" width="160">
+          <el-table-column align="center" fixed="right" label="操作" width="160" v-if="roleCtl.finance_detail || roleCtl.finance_pay || roleCtl.finance_cancel">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="toPrintPage(scope.row.payId)">查看</el-button>
+              <el-button type="text" size="small" @click="toPrintPage(scope.row.payId)" v-if="roleCtl.finance_detail">查看</el-button>
+              <el-divider v-if="scope.row.payStatus === '待付款' && roleCtl.finance_detail" direction="vertical"></el-divider>
+              <el-button v-if="scope.row.payStatus === '待付款' && roleCtl.finance_pay" type="text" size="small" @click="payAct(scope.row.payId)">付款</el-button>
               <el-divider v-if="scope.row.payStatus === '待付款'" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.payStatus === '待付款'" type="text" size="small" @click="toArrivePage(scope.row.payId)">付款</el-button>
-              <el-divider v-if="scope.row.payStatus === '待付款'" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.payStatus === '待付款'" type="text" size="small" @click="showCloseOrderDialog(scope.row.payId)">取消</el-button>
+              <el-button v-if="scope.row.payStatus === '待付款' && roleCtl.finance_cancel" type="text" size="small" @click="showCancelBox(scope.row.payId)">取消</el-button>
               <el-divider v-if="scope.row.payStatus === '审核中' && scope.row.approveShowFlag" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.payStatus === '审核中' && scope.row.approveShowFlag" type="text" size="small" @click="toApprovalPage(scope.row.payId, scope.row.skuCount)">审批</el-button>
+              <el-button v-if="scope.row.payStatus === '审核中' && scope.row.approveShowFlag" type="text" size="small" @click="toApprovalPage(scope.row.payId)">审批</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -65,19 +65,27 @@
         <el-table-column property="feedbackReason" label="反馈详情" min-width="200"></el-table-column>
       </el-table>
     </el-dialog>
-    <!-- 申请关闭采购单弹窗 -->
-    <!-- <el-dialog title="申请关闭采购单" :visible.sync="closeOrderVisible" width="35%">
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
-        <el-form-item label="关闭原因：" prop="reason">
-          <el-input v-model="ruleForm.reason" type="textarea" :rows="4" placeholder="请输入原因"></el-input>
+    <!-- 确定付款弹窗 -->
+    <el-dialog title="确定付款" :visible.sync="showPayDialog" width="35%">
+      <el-form :model="payRuleForm" :rules="payRules" ref="payRuleForm" label-width="100px" class="payRuleForm">
+        <el-form-item label="关闭原因：" prop="payTime">
+          <el-date-picker v-model="payRuleForm.payTime" type="date" placeholder="选择付款日期" value-format="yyyy-MM-dd"></el-date-picker>
         </el-form-item>
       </el-form>
-      <div class="hint">发起申请后您将无权操作此订单，解除异常后才能操作。请联系主管尽快处理！</div>
+      <div class="hint">标记付款后当前付款单将变更为付款完成，所选择的付款日记将在报表中体现数据；</div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="closeOrderVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmApplyForClose">发起申请</el-button>
+        <el-button @click="showPayDialog = false">取 消</el-button>
+        <el-button type="primary" @click="confirmPayment">确 定</el-button>
       </div>
-    </el-dialog> -->
+    </el-dialog>
+    <!-- 取消付款弹窗 -->
+    <el-dialog title="取消付款" :visible.sync="showCancelDialog" width="35%">
+      <div>确定要取消付款吗？取消之后将释放冻结的申请金额，采购员可重新申请</div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="showCancelDialog = false">取 消</el-button>
+        <el-button type="primary" @click="cancelPayment">确 定</el-button>
+      </div>
+    </el-dialog>
 	</div>
 </template>
 
@@ -89,6 +97,7 @@ export default {
   },
   data() {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       crumbList: [{ // 面包屑
         name: '财务管理',
         path: '/F0501/F050101'
@@ -120,17 +129,19 @@ export default {
       dialogTableVisible: false, //审核详情弹窗
       reviewDetailData: [],
 
-      closeOrderVisible: false, //申请关闭采购单弹窗
-      closeOrderId: "",
-      ruleForm: {
-        reason: ""
+      showPayDialog: false, //确定付款弹窗
+      payIdForPayment: "", //付款单号
+      payRuleForm: {
+        payTime: ""
       },
-      rules: {
-        reason: [
-          { required: true, message: '请输入关闭原因', trigger: 'blur' }
+      payRules: {
+        payTime: [
+          { required: true, message: '选择付款日期', trigger: 'change' }
         ]
-      }
-      
+      },
+
+      showCancelDialog: false, //取消付款弹窗
+      cancelPayId: "",
     }
   },
   created() {
@@ -231,16 +242,56 @@ export default {
     // 查看详情
     toPrintPage(payId) {
       this.$router.push({
-        path: `/F0501/viewPrint`
+        path: `/F0501/viewPrint?payId=${payId}`
       })
     },
 
-    // 到货
-    // toArrivePage(purchaseId) {
-    //   this.$router.push({
-    //     path: `/F0301/arrivePage?purchaseId=${purchaseId}`
-    //   })
-    // },
+    // 显示付款弹窗
+    payAct(payId) {
+      this.payIdForPayment = payId;
+      this.showPayDialog = true;
+    },
+
+    // 确定付款
+    confirmPayment() {
+      let _this = this;
+      this.$refs["payRuleForm"].validate((valid) => {
+        if (valid) {
+          console.log('submit!');
+          let params = {
+            payId: _this.payIdForPayment,
+            payTime: _this.payRuleForm.payTime
+          }
+          window.axios.post("/finance/doPay", params).then((data) => {
+            if (data.code !== 0) return
+            _this.$message.success("操作成功");
+            _this.showPayDialog = false;
+            _this.queryList();
+            _this.queryStatusTotal();
+          })
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+
+    // 显示取消弹窗
+    showCancelBox(payId) {
+      this.cancelPayId = payId;
+      this.showCancelDialog = true;
+    },
+
+    // 确认取消付款
+    cancelPayment() {
+      window.axios.get(`/finance/cancelPay/${this.cancelPayId}`).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("取消付款成功");
+        this.showCancelDialog = false;
+        this.queryList();
+        this.queryStatusTotal();
+      })
+    },
 
     // 查看审核详情
     viewReviewDetail(payId) {
@@ -255,81 +306,13 @@ export default {
         this.reviewDetailData = data.data;
       })
     },
-
-    // 显示申请关闭采购单弹窗
-    // showCloseOrderDialog(purchaseId) {
-    //   this.closeOrderId = purchaseId;
-    //   this.ruleForm.reason = "";
-    //   this.closeOrderVisible = true;
-    // }, 
-
-    // 申请关闭采购单
-    // confirmApplyForClose() {
-    //   let _this = this;
-    //   this.$refs["ruleForm"].validate((valid) => {
-    //     if (valid) {
-    //       console.log('submit!');
-    //       let params = {
-    //         purchaseId: _this.closeOrderId,
-    //         reason: _this.ruleForm.reason
-    //       }
-    //       window.axios.post("/apply/applyClose", params).then((data) => {
-    //         if (data.code !== 0) return
-    //         _this.$message.success("操作成功");
-    //         _this.closeOrderVisible = false;
-    //         _this.queryList();
-    //         _this.queryStatusTotal();
-    //       })
-    //     } else {
-    //       console.log('error submit!!');
-    //       return false;
-    //     }
-    //   });
-    // },
     
     // 审批
-    // toApprovalPage(purchaseId, skuCount) {
-    //   this.$router.push({
-    //     path: `/F0301/approvalPage?purchaseId=${purchaseId}&skuCount=${skuCount}`
-    //   })
-    // },
-
-    // 申请付款
-    // applyForPay() {
-    //   if (!this.multipleSelection.length) {
-    //     return this.$message.warning("请选择采购单");
-    //   }
-      
-    //   let flag = true;
-    //   let firstSupplierName = this.multipleSelection[0].supplierName;
-    //   let firstSupplierId = this.multipleSelection[0].supplierId;
-    //   this.multipleSelection.map((item) => {
-    //     if (item.purchaseStatus !== "进行中") {
-    //       this.$message.warning("只能对进行中的采购单申请付款");
-    //       flag = false;
-    //       return;
-    //     } else if (item.supplierName !== firstSupplierName) {
-    //       this.$message.warning("请选择同一家供应商");
-    //       flag = false;
-    //       return;
-    //     }
-    //   })
-    //   if (flag) {
-    //     let arr = [];
-    //     this.multipleSelection.map((item) => {
-    //       arr.push(item.purchaseId);
-    //     })
-    //     let ids = encodeURI(JSON.stringify(arr));
-    //     let name = encodeURI(firstSupplierName);
-    //     this.$router.push({
-    //       path: `/F0301/applyForPay?purchaseIds=${ids}&supplierName=${name}&supplierId=${firstSupplierId}`
-    //     })
-    //   }
-    // },
-
-    // addPurchase () {
-    //   this.$router.push('/addPurchase');
-    // }
+    toApprovalPage(payId) {
+      this.$router.push({
+        path: `/F0501/approvePayment?payId=${payId}`
+      })
+    }
   },
 };
 </script>

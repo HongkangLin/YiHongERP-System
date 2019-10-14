@@ -43,7 +43,7 @@
         <el-button type="primary" icon="el-icon-plus" class="addPdtBtn" @click="dialogTableVisible = true">选择产品</el-button>
         <div class="productTable">
           <el-table :data="productList" border show-summary sum-text="汇总" style="width: 100%">
-            <el-table-column label="图片" align="center" min-width="50">
+            <el-table-column label="图片" align="center" width="101">
               <template slot-scope="scope">
                 <img class="img" :src="scope.row.goodsPicUrl">
               </template>
@@ -521,6 +521,12 @@ export default {
     .productTable {
       padding: 30px;
       .el-table {
+        .el-table {
+          /deep/.img {
+            width: 80px;
+            height: 80px;
+          }
+        }
         .el-table__header-wrapper {
           .star {
             color: red;

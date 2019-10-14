@@ -14,8 +14,8 @@
             <el-tab-pane :label="'已关闭/'+statusTotal.closed" name="4"></el-tab-pane>
           </el-tabs>
           <div class="btns">
-            <el-button @click="applyForPay">申请付款</el-button>
-            <el-button @click="addPurchase" type="primary">新建采购单</el-button>
+            <el-button @click="applyForPay" v-if="roleCtl.purchase_apply">申请付款</el-button>
+            <el-button @click="addPurchase" type="primary" v-if="roleCtl.purchase_add">新建采购单</el-button>
           </div>
         </div>
         <div class="content">
@@ -56,13 +56,13 @@
           </el-table-column>
           <el-table-column prop="createTime" label="创建日期" align="center" min-width="110"></el-table-column>
           <el-table-column prop="purchaseUserName" label="采购员" align="center" min-width="85"></el-table-column>
-          <el-table-column align="center" fixed="right" label="操作" width="150">
+          <el-table-column align="center" fixed="right" label="操作" width="150" v-if="roleCtl.purchase_query || roleCtl.purchase_arrive || roleCtl.purchase_close">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="toDetailPage(scope.row.purchaseId)">详情</el-button>
+              <el-button type="text" size="small" @click="toDetailPage(scope.row.purchaseId)" v-if="roleCtl.purchase_query">详情</el-button>
+              <el-divider v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_query" direction="vertical"></el-divider>
+              <el-button v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_arrive" type="text" size="small" @click="toArrivePage(scope.row.purchaseId)">到货</el-button>
               <el-divider v-if="scope.row.purchaseStatus === '进行中'" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.purchaseStatus === '进行中'" type="text" size="small" @click="toArrivePage(scope.row.purchaseId)">到货</el-button>
-              <el-divider v-if="scope.row.purchaseStatus === '进行中'" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.purchaseStatus === '进行中'" type="text" size="small" @click="showCloseOrderDialog(scope.row.purchaseId)">关闭</el-button>
+              <el-button v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_close" type="text" size="small" @click="showCloseOrderDialog(scope.row.purchaseId)">关闭</el-button>
               <el-divider v-if="scope.row.approveShowFlag" direction="vertical"></el-divider>
               <el-button v-if="scope.row.approveShowFlag" type="text" size="small" @click="toApprovalPage(scope.row.purchaseId, scope.row.skuCount)">审批</el-button>
             </template>
@@ -106,6 +106,7 @@ export default {
   },
   data() {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       crumbList: [{ // 面包屑
         name: '采购管理',
         path: '/F0301/F030101'
@@ -157,7 +158,7 @@ export default {
     this.queryStatusTotal();
   },
   watch: {
-    activeName(v) {
+    activeName() {
       this.searchValue = ""; 
       this.payStatus = null; 
       this.arrivalStatus = null; 

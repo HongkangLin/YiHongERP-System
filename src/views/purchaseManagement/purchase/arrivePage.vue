@@ -21,7 +21,7 @@
         </div>
         <div class="purchaseOrderTable">
           <el-table :data="productInfo.purchaseProductList" border style="width: 100%">
-            <el-table-column label="图片" align="center" min-width="80">
+            <el-table-column label="图片" align="center" width="101">
               <template slot-scope="scope">
                 <img class="img" :src="scope.row.goodsUrl">
               </template>
@@ -149,6 +149,12 @@ export default {
     .purchaseOrderTable {
       padding: 30px;
       .el-table {
+        .el-table {
+          /deep/.img {
+            width: 80px;
+            height: 80px;
+          }
+        }
         .el-table__header-wrapper {
           .star {
             color: red;

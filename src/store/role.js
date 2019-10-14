@@ -1,10 +1,14 @@
 export default {
   state: {
-    menu: {}
+    menu: [],
+    roleCtl: {}
   },
   mutations: {
     setMenu (state, data) {
       state.menu = data;
+    },
+    getRoleCtl (state, data) {
+      state.roleCtl = data;
     }
   },
   getters: {

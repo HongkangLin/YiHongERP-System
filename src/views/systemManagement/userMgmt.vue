@@ -27,7 +27,7 @@
             <span class="custom-tree-node" slot-scope="{ node, data }">
               <span @click="clickTreeQueryTable(data.id)">{{ node.label + "  (" + data.userCount + ")"}}</span>
               <!-- 一级 -->
-              <span v-if="node.level === 1">
+              <span v-if="node.level === 1 && roleCtl.dept_add">
                 <i class="el-icon-plus"></i>
                 <el-button
                   type="text"
@@ -41,19 +41,21 @@
               <!-- 大于等于三级 -->
               <span v-if="node.level > 2">
                 <el-button
+                  v-if="roleCtl.dept_add"
                   type="text"
                   size="mini"
                   @click="() => showDialog({type: '2', myId: data.id, parentId: data.parentId})">
                   新增
                 </el-button>
                 <el-button
+                  v-if="roleCtl.dept_update"
                   type="text"
                   size="mini"
                   @click="() => showDialog({type: '3', dptId: data.id})">
                   编辑
                 </el-button>
                 <el-button
-                  v-if="data.userCount === 0"
+                  v-if="data.userCount === 0 && roleCtl.dept_delete"
                   type="text"
                   size="mini"
                   @click="() => showDialog({type: '4', dptId: data.id, deptName: data.label})">
@@ -94,7 +96,7 @@
               </el-option>
             </el-select>
           </div>
-          <el-button type="primary" @click="showAddOrEditPage = true">新增用户</el-button>
+          <el-button type="primary" @click="showAddOrEditPage = true" v-if="roleCtl.user_add">新增用户</el-button>
         </div>
         <!-- 列表区 -->
         <div class="tableArea">
@@ -159,9 +161,9 @@
               label="操作"
               width="120">
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="editUser(scope.row)">编辑</el-button>
-                <el-divider direction="vertical"></el-divider>
-                <el-button type="text" size="small" @click="showDialog({type: '7', userId: scope.row.id})">删除</el-button>
+                <el-button type="text" size="small" @click="editUser(scope.row)" v-if="roleCtl.user_update">编辑</el-button>
+                <el-divider direction="vertical" v-if="roleCtl.user_update && roleCtl.user_delete"></el-divider>
+                <el-button type="text" size="small" @click="showDialog({type: '7', userId: scope.row.id})" v-if="roleCtl.user_delete">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -192,10 +194,10 @@
 import DialogContent from './dialogContent';
 import AddOrEditPerson from './addOrEditPerson';
 import Pagination from '../../components/pagination/pagination';
-
 export default {
   data() {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       dptTreeData: [], //架构树
 
       filterText: "",

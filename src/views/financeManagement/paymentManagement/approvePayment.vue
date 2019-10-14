@@ -3,35 +3,37 @@
 		<!-- 顶部面包屑 -->
     <crumbs :list="crumbList"></crumbs>
     <div class="approvalPage_wrap">
-      <div class="header">关闭采购单审批</div>
+      <div class="header">付款审批</div>
       <div class="contentArea">
         <!-- 采购单信息 -->
         <div class="content-header"> <i class="el-icon-collection-tag"></i> 采购单信息</div>
-        <section class="table">
+         <el-table :data="tableData.financePurchaseDetailList" border style="width: 100%">
+          <el-table-column align="center" prop="id" label="采购单号" min-width="120"></el-table-column>
+          <el-table-column align="center" prop="supplierName" label="供应商名称" min-width="170"></el-table-column>
+          <el-table-column align="center" prop="skucount" label="SKU数量" min-width="150"></el-table-column>
+          <el-table-column align="center" prop="goodsAmount" label="货款总金额（元）" min-width="160"></el-table-column>
+          <el-table-column align="center" prop="paidAmount" label="已支付货款（元）" min-width="130"></el-table-column>
+          <el-table-column align="center" prop="purchaseStatus" label="状态" min-width="100"></el-table-column>
+          <el-table-column align="center" prop="createTime" label="创建日期" min-width="130"></el-table-column>
+          <el-table-column align="center" prop="purchaseName" label="采购员" min-width="100"></el-table-column>
+        </el-table>
+        <!-- 付款单信息 -->
+        <div class="content-header"> <i class="el-icon-collection-tag"></i> 付款单信息</div>
+         <section class="table">
           <el-row v-for="(item, index) in table1List" :key="index">
             <el-col :span="4" class="bg-grey">{{item.col1}}</el-col>
-            <el-col :span="8" class="content">{{tableData.purchaseInfo[item.col2]}}</el-col>
+            <el-col :span="8" class="content">{{tableData[item.col2]}}</el-col>
             <el-col :span="4" class="bg-grey">{{item.col3}}</el-col>
-            <el-col :span="8" class="content">{{tableData.purchaseInfo[item.col4]}}</el-col>
-          </el-row>
-        </section>
-        <!-- 关闭申请信息 -->
-        <div class="content-header"> <i class="el-icon-collection-tag"></i> 关闭申请信息</div>
-        <section class="table">
-          <el-row>
-            <el-col :span="4" class="bg-grey">申请人</el-col>
-            <el-col :span="8" class="content">{{tableData.applyInfo.applyUserName}}</el-col>
-            <el-col :span="4" class="bg-grey">关闭原因</el-col>
-            <el-col :span="8" class="content">{{tableData.applyInfo.reason}}</el-col>
+            <el-col :span="8" class="content">{{tableData[item.col4]}}</el-col>
           </el-row>
         </section>
         <!-- 审核详情 -->
         <div class="content-header"> <i class="el-icon-collection-tag"></i> 审核详情</div>
-        <el-table :data="tableData.approveList" border style="width: 100%">
+        <el-table :data="tableData.purPayApproveRecordList" border style="width: 100%">
           <el-table-column align="center" prop="approveTime" label="审核时间" min-width="230"></el-table-column>
-          <el-table-column align="center" prop="approveUserName" label="审核人员" min-width="130"></el-table-column>
-          <el-table-column align="center" prop="approveResult" label="审核结果" min-width="130"></el-table-column>
-          <el-table-column align="center" prop="feedbackReason" label="反馈详情" min-width="540"></el-table-column>
+          <el-table-column align="center" prop="approverName" label="审核人员" min-width="130"></el-table-column>
+          <el-table-column align="center" prop="approveStatus" label="审核结果" min-width="130"></el-table-column>
+          <el-table-column align="center" prop="feedback" label="反馈详情" min-width="540"></el-table-column>
         </el-table>
         <!-- 按键区 -->
         <div class="submit">
@@ -72,26 +74,27 @@ export default {
   data() {
     return {
       crumbList: [{ // 面包屑
-        name: '采购管理',
-        path: '/F0301/F030101'
+        name: '财务管理',
+        path: '/F0501/F050101'
       }, {
-        name: '采购单',
-        path: '/F0301/F030101'
+        name: '应付费管理',
+        path: '/F0501/F050101'
       }, {
-        name: '审批',
+        name: '付款审批',
         path: ''
       }],
     
       tableData: {
-        purchaseInfo: {},
-        applyInfo: {},
-        approveList: []
-      }, //采购单信息
+        financePurchaseDetailList: [],
+        purPayApproveRecordList: []
+      }, 
+      
+      //付款单信息
       table1List: [
-        {col1: "采购单号", col2: "purchaseId", col3: "供应商名称", col4: "supplierName"},
-        {col1: "SKU数量", col2: "skuCount", col3: "应付总金额", col4: "goodsAmount"},
-        {col1: "已付总金额", col2: "paidAmount", col3: "状态", col4: "purchaseStatus"},
-        {col1: "创建日期", col2: "createTime", col3: "采购员", col4: "userName"},
+        {col1: "付款单号", col2: "id", col3: "供应商名称", col4: "supplierName"},
+        {col1: "收款账号", col2: "accountNo", col3: "备注", col4: "bak"},
+        {col1: "本次申请货款（元）", col2: "applyAmount", col3: "运费（元）", col4: "transportFee"},
+        {col1: "其它（元）", col2: "otherFee", col3: "总计", col4: "calTotal"},
       ],
 
       dialogVisible: false,
@@ -109,33 +112,35 @@ export default {
   },
   methods: {
     getApprovalInfo() {
-      let purchaseId = this.$route.query.purchaseId;
-      window.axios.get(`/apply/queryApproveInfo4CloseApply/${purchaseId}`).then((data) => {
+      let payId = this.$route.query.payId;
+      window.axios.get(`/finance/queryPayApproveDetail/${payId}`).then((data) => {
         if (data.code !== 0) return
+
         let obj = data.data;
-        // 采购单信息-状态
-        switch (obj.purchaseInfo.purchaseStatus) {
-          case 1:
-            obj.purchaseInfo.purchaseStatus = "进行中";
-            break;
-          case 2:
-            obj.purchaseInfo.purchaseStatus = "已完成";
-            break;
-          case 3:
-            obj.purchaseInfo.purchaseStatus = "关闭中";
-            break;
-          case 4:
-            obj.purchaseInfo.purchaseStatus = "已关闭";
-            break;
-        }
-        // 采购单信息-SKU数量
-        obj.purchaseInfo.skuCount = this.$route.query.skuCount;
-        // 审核详情-审核结果
-        obj.approveList.map((item) => {
-          if (item.approveResult === "agree") {
-            item.approveResult = "通过"
-          } else if (item.approveResult === "disagree") {
-            item.approveResult = "驳回"
+        obj.financePurchaseDetailList.map((item) => {
+          // 采购状态
+          switch (item.purchaseStatus) {
+            case 1:
+              item.purchaseStatus = "进行中";
+              break;
+            case 2:
+              item.purchaseStatus = "已完成";
+              break;
+            case 3:
+              item.purchaseStatus = "关闭中";
+              break;
+            case 4:
+              item.purchaseStatus = "已关闭";
+              break;
+          }
+        })
+        obj.calTotal = obj.applyAmount + obj.transportFee + obj.otherFee;
+        // 审核结果
+        obj.purPayApproveRecordList.map((item) => {
+          if (item.approveStatus === 1) {
+            item.approveStatus = "同意"
+          } else if (item.approveStatus === 2) {
+            item.approveStatus = "驳回"
           }
         })
         this.tableData = obj;
@@ -153,25 +158,24 @@ export default {
     // 确认审核
     confirmApprove() {
       let params = {
-        purchaseId: this.tableData.purchaseInfo.purchaseId,
-        applyId: this.tableData.applyInfo.applyId,
+        payId: this.tableData.id,
         approveResult: this.ruleForm.approveResult,
         nextApproveUserId: this.ruleForm.nextApproveUserId,
         feedbackReason: this.ruleForm.approveResult === "agree" && this.ruleForm.feedbackReason === "" ? "同意" : this.ruleForm.feedbackReason,
-        recordFlag: this.tableData.approveList.length > 0 ? "yes" : "no"
+        recordFlag: this.tableData.purPayApproveRecordList.length > 0 ? "yes" : "no"
       }
-      window.axios.post("/approve/doApprove", params).then((data) => {
+      window.axios.post("/finance/doPayApprove", params).then((data) => {
         if (data.code !== 0) return
         this.$message.success("已提交");
         this.$router.push({
-          path: "/F0301/F030101"
+          path: "/F0501/F050101"
         })
       })
     },
 
     backToList() {
       this.$router.push({
-        path: "/F0301/F030101"
+        path: "/F0501/F050101"
       })
     }
   },

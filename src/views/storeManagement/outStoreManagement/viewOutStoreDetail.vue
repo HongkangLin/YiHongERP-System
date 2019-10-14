@@ -18,7 +18,7 @@
       <div class="header"> <i class="el-icon-collection-tag"></i> 产品信息</div>
       <!-- 产品信息 -->
       <el-table :data="tableData.goods" border style="width: 100%" show-summary sum-text="汇总">
-        <el-table-column label="图片" align="center" min-width="130">
+        <el-table-column label="图片" align="center" width="101">
           <template slot-scope="scope">
             <img class="img" :src="scope.row.goodsPicUrl">
           </template>
@@ -153,6 +153,12 @@ export default {
         .content {
           padding-left: 10px;
         }
+      }
+    }
+    .el-table {
+      /deep/.img {
+        width: 80px;
+        height: 80px;
       }
     }
   }

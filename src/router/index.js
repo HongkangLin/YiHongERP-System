@@ -151,6 +151,10 @@ const routes = [{
 		path: '/F0501/viewPrint', //财务管理 > 应付费管理 > 付款单打印页
 		name: 'viewPrint',
 		component: () => import(/* webpackChunkName: "viewPrint" */ '../views/financeManagement/paymentManagement/viewPrint.vue'),
+	}, {
+		path: '/F0501/approvePayment', //财务管理 > 应付费管理 > 付款单打印页
+		name: 'approvePayment',
+		component: () => import(/* webpackChunkName: "approvePayment" */ '../views/financeManagement/paymentManagement/approvePayment.vue'),
 	}]
 }, {
 	path: '/login', //登录页

@@ -8,7 +8,7 @@
       <div class="search">
         <div class="head">
           <div class="label">仓库设置</div>
-          <div class="new" @click="addStore">添加仓库</div>
+          <div class="new" @click="addStore" v-if="roleCtl.warehouse_add">添加仓库</div>
         </div>
         <div class="content">
           <div class="inputDiv">
@@ -47,6 +47,7 @@
             min-width="180">
           </el-table-column>
           <el-table-column
+            v-if="roleCtl.warehouse_enable"
             align="center"
             label="仓库状态"
             min-width="180">
@@ -54,14 +55,16 @@
               <el-switch v-model="scope.row.status" @change="changeStatus({status: scope.row.status, id: scope.row.id})"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center" fixed="right" min-width="120">
+          <el-table-column label="操作" align="center" fixed="right" min-width="120" v-if="roleCtl.warehouse_detail || roleCtl.warehouse_update">
             <template slot-scope="scope">
               <el-button
+                v-if="roleCtl.warehouse_detail"
                 size="mini"
                 type="text"
                 @click="handleView(scope.row.id)">查看</el-button>
-              <el-divider direction="vertical"></el-divider>
+              <el-divider direction="vertical" v-if="roleCtl.warehouse_detail && roleCtl.warehouse_update"></el-divider>
               <el-button
+                v-if="roleCtl.warehouse_update"
                 size="mini"
                 type="text"
                 @click="handleEdit(scope.row.id)">编辑</el-button>
@@ -89,6 +92,7 @@ export default {
   },
   data() {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       nameKeyword: '', //搜索内容
       total: 0, // 总数
       pageNum: 1, // pageNumber

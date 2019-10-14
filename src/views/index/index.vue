@@ -95,8 +95,29 @@ export default {
     async getMenu () {
       let data = await window.axios.get('/menu/menu');
       this.$store.commit('setMenu', data.data);
+      this.roleCtl();
       this.menuList = data.data;
     },
+
+    // 获取按键权限控制字段
+    roleCtl() {
+      // console.log(this.$store.state.role.menu);
+      let fn = (array, obj) => {
+        for (let index = 0; index < array.length; index++) {
+          let item = array[index];
+          if (item.childNodeList && item.childNodeList.length > 0) item.childNodeList = fn(item.childNodeList, obj)
+          item.funcList.map((i) => {
+            obj[i.funcTag] = i.ownFlag ? true : false;
+          })
+        }
+        return array;
+      }
+      let controlObj = {};
+      fn(this.$store.state.role.menu, controlObj);
+      console.log(controlObj);
+      this.$store.commit('getRoleCtl', controlObj);
+    },
+
     // 退出登陆事件
     loginOut () {
       this.dialogVisible = true;
