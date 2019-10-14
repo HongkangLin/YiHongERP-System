@@ -105,9 +105,12 @@ export default {
         // console.log(imgBlob);
         this.imgSrc = imgBlob;
         this.showHtml = false;
-        this.$nextTick(() => {
+        // this.$nextTick(() => {
+          
+        // })
+        setTimeout(() => {
           window.print();
-        })
+        }, 100);
       })
     },
 
