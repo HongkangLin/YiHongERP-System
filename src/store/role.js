@@ -1,4 +1,5 @@
 export default {
+  namespaced: true,
   state: {
     menu: [],
     roleCtl: {}
@@ -9,11 +10,6 @@ export default {
     },
     getRoleCtl (state, data) {
       state.roleCtl = data;
-    }
-  },
-  getters: {
-    getMenu (state) {
-      return state.menu;
     }
   }
 };

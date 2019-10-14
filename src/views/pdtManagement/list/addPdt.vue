@@ -108,7 +108,7 @@
             <el-form-item label="FNSKU文件：" prop="fnskuFileUrl">
               <el-upload
                 class="upload-demo"
-                accept=".jpg, .png, .pdf"
+                accept=".jpg, .png"
                 drag
                 action="/erp/file/upload"
                 :limit="1"
@@ -122,7 +122,7 @@
                 multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">只能上传jpg/png/pdf格式文件，文件不能超过2M，仅允许上传1份</div>
+                <div class="el-upload__tip" slot="tip">只能上传jpg/png格式文件，文件不能超过2M，仅允许上传1份</div>
               </el-upload>
             </el-form-item>
             <el-form-item label="防跟卖标签：">
@@ -779,7 +779,7 @@ export default {
     },
     async submit () { // 提交
       if (!this.id && !this.form.list.length) {
-        this.$message.warning('清先关联供应商');
+        this.$message.warning('请先关联供应商');
         return;
       }
       let param = JSON.parse(JSON.stringify(this.form));

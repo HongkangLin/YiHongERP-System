@@ -7,7 +7,7 @@
           <div class="label">供应中产品</div>
         </div>
       </div>
-      <div class="addDiv" v-if="funcList[0]">
+      <div class="addDiv" v-if="roleCtl.supplyrel_add">
         <div class="add" @click="addPdt">+添加产品</div>
       </div>
       <div class="table">
@@ -30,10 +30,10 @@
             width="220"
             label="采购价（元）">
             <template slot-scope="scope">
-              <el-input-number :min="0" :controls="false" :disabled="!funcList[2]" @change="changeData(scope.$index)" v-model="scope.row.purchasePrice" placeholder="输入采购价"></el-input-number>
+              <el-input-number :min="0" :controls="false" :disabled="!roleCtl.roleCtlsupplyrel_update" @change="changeData(scope.$index)" v-model="scope.row.purchasePrice" placeholder="输入采购价"></el-input-number>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center" v-if="funcList[1]">
+          <el-table-column label="操作" align="center" v-if="roleCtl.supplyrel_delete">
             <template slot-scope="scope">
               <el-button
                 size="mini"
@@ -69,12 +69,12 @@
               label="SKU"
               align="center">
             </el-table-column>
-            <el-table-column label="操作" align="center" v-if="funcList[0] || funcList[1]">
+            <el-table-column label="操作" align="center" v-if="roleCtl.supplyrel_add || roleCtl.supplyrel_delete">
               <template slot-scope="scope">
                 <el-button
                   size="mini"
                   type="text"
-                  v-if="(scope.row.sel && funcList[1]) || (!scope.row.sel && funcList[0])"
+                  v-if="(scope.row.sel && roleCtl.supplyrel_delete) || (!scope.row.sel && roleCtl.supplyrel_add)"
                   @click="handleAdd(scope.$index)">{{scope.row.sel ? '移除' : '添加'}}</el-button>
               </template>
             </el-table-column>
@@ -89,10 +89,10 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 export default {
   data () {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       crumbList: [{ // 面包屑
         name: '供应商管理',
         path: '/F0302/F030201'
@@ -103,7 +103,6 @@ export default {
         name: '供应中产品',
         path: ''
       }],
-      funcList: [], // 功能权限列表
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
@@ -114,31 +113,10 @@ export default {
     };
   },
   mounted () {
-    this.initFuncList();
     this.getPdt();
     this.getPdtList('');
   },
   methods: {
-    ...mapGetters(['getMenu']),
-    initFuncList () { // 初始化可用功能
-      let list = this.getMenu()[1].childNodeList[1].childNodeList[0].funcList;
-      let curr = [];
-      for (let i = 0, len = list.length; i < len; i++) {
-        let hasRole = !!list[i].ownFlag;
-        switch(list[i].funcTag) {
-          case 'supplyrel_add': // 添加供应产品
-            curr[0] = hasRole;
-            break;
-          case 'supplyrel_delete': // 删除供应产品
-            curr[1] = hasRole;
-            break;
-          case 'supplyrel_update': // 修改报价
-            curr[2] = hasRole;
-            break;
-        }
-      }
-      this.funcList = curr;
-    },
     async getPdt () { // 获取供应产品信息
       let data = await window.axios.get(`/supplyrel/querybysupplier?pageSize=99999&pageNum=1&supplierId=${this.$route.params.id}`);
       this.list = data.data.list;

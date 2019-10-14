@@ -71,8 +71,12 @@ export default {
       mobile: localStorage.getItem('mobile'),
       email: localStorage.getItem('email'),
       dialogVisible: false,
-      activeMenu: 'F0201-F020101', // active菜单
-      menuList: [] // 菜单列表
+      activeMenu: 'F0201-F020101' // active菜单
+    }
+  },
+  computed: {
+    menuList () {
+      return this.$store.state.role.menu;
     }
   },
   mounted () {
@@ -94,14 +98,11 @@ export default {
     // 获取菜单列表
     async getMenu () {
       let data = await window.axios.get('/menu/menu');
-      this.$store.commit('setMenu', data.data);
+      this.$store.commit('role/setMenu', data.data);
       this.roleCtl();
-      this.menuList = data.data;
     },
-
     // 获取按键权限控制字段
     roleCtl() {
-      // console.log(this.$store.state.role.menu);
       let fn = (array, obj) => {
         for (let index = 0; index < array.length; index++) {
           let item = array[index];
@@ -114,8 +115,7 @@ export default {
       }
       let controlObj = {};
       fn(this.$store.state.role.menu, controlObj);
-      console.log(controlObj);
-      this.$store.commit('getRoleCtl', controlObj);
+      this.$store.commit('role/getRoleCtl', controlObj);
     },
 
     // 退出登陆事件

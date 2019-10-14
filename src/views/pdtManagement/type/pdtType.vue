@@ -5,7 +5,7 @@
       <div class="search">
         <div class="head">
           <div class="label">产品分类</div>
-          <div class="new" v-if="funcList[1]" @click="addType">+添加分类</div>
+          <div class="new" v-if="roleCtl.product_category_add" @click="addType">+添加分类</div>
         </div>
       </div>
       <el-table
@@ -23,11 +23,11 @@
                   <el-button
                     size="mini"
                     type="text"
-                    v-if="funcList[2]"
+                    v-if="roleCtl.product_category_update"
                     @click="handleEdit(props.$index, scope.$index, scope.row.id)">编辑分类</el-button>
-                  <el-divider direction="vertical" v-if="funcList[2] && funcList[3]"></el-divider>
+                  <el-divider direction="vertical" v-if="roleCtl.product_category_update && roleCtl.product_category_delete"></el-divider>
                   <el-button
-                    v-if="funcList[3]"
+                    v-if="roleCtl.product_category_delete"
                     size="mini"
                     type="text"
                     @click="handleDelete(scope.row.id)">删除分类</el-button>
@@ -58,17 +58,17 @@
               size="mini"
               type="text"
               @click="handleAdd(scope.$index)">新增下级</el-button>
-            <el-divider direction="vertical" v-if="funcList[2]"></el-divider>
+            <el-divider direction="vertical" v-if="roleCtl.product_category_update"></el-divider>
             <el-button
-              v-if="funcList[2]"
+              v-if="roleCtl.product_category_update"
               size="mini"
               type="text"
               @click="handleEdit(scope.$index, '', scope.row.id)">编辑分类</el-button>
-            <el-divider direction="vertical" v-if="funcList[3]"></el-divider>
+            <el-divider direction="vertical" v-if="roleCtl.product_category_delete"></el-divider>
             <el-button
               size="mini"
               type="text"
-              @click="handleDelete(scope.row.id)" v-if="funcList[3]">删除分类</el-button>
+              @click="handleDelete(scope.row.id)" v-if="roleCtl.product_category_delete">删除分类</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -79,13 +79,13 @@
 
 <script>
 import pageination from '#/pagination/pagination.vue';
-import { mapGetters } from 'vuex';
 export default {
   components: {
     'pageination': pageination
   },
   data () {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       crumbList: [{ // 面包屑
         name: '产品管理',
         path: '/F0201/F020102'
@@ -93,7 +93,6 @@ export default {
         name: '产品分类',
         path: ''
       }],
-      funcList: [], // 功能权限列表
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
@@ -102,33 +101,9 @@ export default {
     };
   },
   mounted () {
-    this.initFuncList();
     this.queryList();
   },
   methods: {
-    ...mapGetters(['getMenu']),
-    initFuncList () { // 初始化可用功能
-      let list = this.getMenu()[0].childNodeList[0].childNodeList[1].funcList; // 产品分类功能权限
-      let curr = [];
-      for (let i = 0, len = list.length; i < len; i++) {
-        let hasRole = !!list[i].ownFlag;
-        switch(list[i].funcTag) {
-          case 'product_category_query': // 查看权限
-            curr[0] = hasRole;
-            break;
-          case 'product_category_add': // 添加分类权限
-            curr[1] = hasRole;
-            break;
-          case 'product_category_update': // 编辑分类权限
-            curr[2] = hasRole;
-            break;
-          case 'product_category_delete': // 删除分类权限
-            curr[3] = hasRole;
-            break;
-        }
-      }
-      this.funcList = curr;
-    },
     async queryList () { // 查询列表
       let data = await window.axios.post('/product/queryAllCategory', {
         pageSize: this.pageSize,
