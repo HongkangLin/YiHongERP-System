@@ -108,7 +108,7 @@
             <el-form-item label="FNSKU文件：" prop="fnskuFileUrl">
               <el-upload
                 class="upload-demo"
-                accept=".jpg, .png, .pdf"
+                accept=".jpg, .png"
                 drag
                 action="/erp/file/upload"
                 :limit="1"
