@@ -71,6 +71,10 @@
         </div>
       </div>
     </div>
+    <!-- 打印预览弹窗 -->
+    <el-dialog :visible.sync="showPrintPreview" width="90%" top="5vh">
+      <iframe :src="`/#/F0501/printPreviewPage?payId=${this.$route.query.payId}`" class="myIframe" v-if="showPrintPreview"></iframe>
+    </el-dialog>
 	</div>
 </template>
 
@@ -82,7 +86,9 @@ export default {
         financePurchaseDetailList: []
       },
       amount_num: 0,
-      amount_word: ""
+      amount_word: "",
+
+      showPrintPreview: false
     }
   },
   created() {
@@ -174,7 +180,10 @@ export default {
 
     // 打印
     print() {
-      window.print()
+      // window.print()
+      // let win = window.open("");
+      // win.location.href = `/#/F0501/printPreviewPage?payId=${this.$route.query.payId}`
+      this.showPrintPreview = true;
     },
    
     // 面包屑关闭
@@ -265,6 +274,19 @@ export default {
       .content {
         padding-left: 10px;
       }
+    }
+  }
+}
+.el-dialog__wrapper {
+  /deep/.el-dialog__header {
+    height: 54px;
+  }
+  /deep/.el-dialog__body {
+    padding: 0;
+    height: calc(90vh - 54px);
+    .myIframe {
+      width: 100%;
+      height: 100%;
     }
   }
 }
