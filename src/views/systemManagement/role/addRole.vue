@@ -23,13 +23,13 @@
         <div class="label">权限配置</div>
         <div class="roleConfig">
           <div class="selArea">
-            <div class="selTitle"><el-checkbox v-model="checkAll" @change="selAll">选择全部</el-checkbox></div>
+            <div class="selTitle"><el-checkbox v-model="checkAll" @change="selAll" key="main">选择全部</el-checkbox></div>
           </div>
-          <div class="selArea" v-for="(items, idx) in roleList" :key="idx">
+          <div class="selArea" v-for="(items, idx) in roleList" :key="'list' + idx">
             <div class="selTitle"><el-checkbox :disabled="items.disable" v-model="items.check" @change="selArr(idx)">{{items.menuName}}</el-checkbox></div>
             <div class="selContent">
-              <div v-for="(item, index) in items.funcList" :key="index">
-                <el-checkbox :disabled="item.disable" v-model="item.check" @change="selSome(idx)">{{item.funcName.replace(items.menuName + '-', '')}}</el-checkbox>
+              <div v-for="(item, index) in items.funcList" :key="'item' + index">
+                <el-checkbox :disabled="item.disable" v-model="item.check" @change="selSome(idx, index)">{{item.funcName.replace(items.menuName + '-', '')}}</el-checkbox>
               </div>
               <div v-for="(empty, i) in (6 - items.funcList.length % 6)" :key="'empty' + i"></div>
             </div>
@@ -122,9 +122,12 @@ export default {
     selAll () { // 全选
       this.roleList.forEach(item => {
         if (!item.disable) { // 设置勾选时过滤掉不可操作模块
-          item.check = this.checkAll;
+          this.$set(item, 'check', this.checkAll);
           item.funcList.forEach(key => {
-            key.check = this.checkAll;
+            this.$set(key, 'check', this.checkAll);
+            if (key.funcName.split('-')[1] === '查看') {
+              this.$set(key, 'disable', this.checkAll);
+            }
           });
         }
       });
@@ -132,14 +135,36 @@ export default {
     selArr (idx) { // 选择某组
       let curr = this.roleList[idx].check;
       this.roleList[idx].funcList.forEach(item => {
-        item.check = curr;
+        this.$set(item, 'check', curr);
+        if (item.funcName.split('-')[1] === '查看') {
+          this.$set(item, 'disable', curr);
+        }
       });
       let list = this.roleList.filter(item => item.check || item.disable); // 计算全选时将不可选和已选中认为已选择
       this.checkAll = list.length === this.roleList.length;
     },
-    selSome (idx) { // 选择某个
-      let list = this.roleList[idx].funcList.filter(item => item.check);
-      this.roleList[idx].check = list.length === this.roleList[idx].funcList.length;
+    selSome (idx, index) { // 选择某个
+      let funcList = this.roleList[idx].funcList;
+      if (funcList[index].funcName.split('-')[1] !== '查看') { // 当前操作非查看
+        let pos = 0;
+        for (let i = 0, len = funcList.length; i < len; i++) {
+          if (funcList[i].funcName.split('-')[1] === '查看') { // 查看勾选上
+            pos = i;
+            break;
+          }
+        }
+        if (funcList[index].check) { // 选择时
+          this.$set(funcList[pos], 'check', true);
+          this.$set(funcList[pos], 'disable', true);
+        } else { // 取消勾选且当前只有查看被选择时
+          let arr = funcList.filter(item => item.check);
+          if (arr.length === 1) {
+            this.$set(funcList[pos], 'disable', false);
+          }
+        }
+      }
+      let list = funcList.filter(item => item.check);
+      this.$set(this.roleList[idx], 'check', list.length === funcList.length);
       let slist = this.roleList.filter(item => item.check || item.disable);
       this.checkAll = slist.length === this.roleList.length;
     },
