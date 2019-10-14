@@ -174,7 +174,9 @@ export default {
 
     // 打印
     print() {
-      window.print()
+      // window.print()
+      let win = window.open("");
+      win.location.href = `/#/F0501/printPreviewPage?payId=${this.$route.query.payId}`
     },
    
     // 面包屑关闭

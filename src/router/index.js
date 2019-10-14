@@ -157,6 +157,10 @@ const routes = [{
 		component: () => import(/* webpackChunkName: "approvePayment" */ '../views/financeManagement/paymentManagement/approvePayment.vue'),
 	}]
 }, {
+	path: '/F0501/printPreviewPage', //采购付款单打印预览
+	name: 'printPreviewPage',
+	component: () => import(/* webpackChunkName: "printPreviewPage" */ '../views/financeManagement/paymentManagement/printPreviewPage.vue'),
+}, {
 	path: '/login', //登录页
 	name: 'login',
 	component: () => import(/* webpackChunkName: "login" */ '../views/index/login.vue'),
