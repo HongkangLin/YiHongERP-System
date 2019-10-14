@@ -50,7 +50,7 @@
           label="图片"
           align="center">
           <template slot-scope="scope">
-            <img :src="scope.row.mainPicUrl" alt="">
+            <img class="img" :src="scope.row.mainPicUrl" alt="">
           </template>
         </el-table-column>
         <el-table-column
@@ -326,6 +326,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.img {
+  width: 100px;
+  height: 100px;
+}
 .crumbsDiv {
   position: fixed;
   z-index: 10;
