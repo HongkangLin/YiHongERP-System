@@ -99,9 +99,12 @@ export default {
         if (data.roleType === 1 && item.menuId === 4) { // 超级管理员不允许编辑角色权限管理模块
           item.disable = true;
         }
-        let curr = 0;
-        item.funcList.forEach(key => {
-          if (data.roleType === 1 && item.menuId === 4) {
+        let curr = 0, pos = 0;
+        item.funcList.forEach((key, idx) => {
+          if (key.funcName.split('-')[1] === '查看') { // 找到查看位置
+            pos = idx;
+          }
+          if (data.roleType === 1 && item.menuId === 4) { // 超级管理员不允许编辑角色权限管理模块
             key.disable = true;
           }
           if (key.ownFlag) {
@@ -109,6 +112,9 @@ export default {
           }
           key.check = !!key.ownFlag;
         });
+        if (curr > 1) { // 有其他项目选择时查看不可操作
+          item.funcList[pos].disable = true;
+        }
         if (curr === item.funcList.length) {
           item.check = true;
           all++;
