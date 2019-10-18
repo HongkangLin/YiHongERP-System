@@ -11,7 +11,7 @@
             <div class="userInfo">
               <div class="header">账户信息</div>
               <div class="span"></div>
-              <div class="content"><span>·&nbsp;所在部门：</span>{{roleName}}</div>
+              <div class="content"><span>·&nbsp;角&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;色：</span>{{roleName}}</div>
               <div class="content"><span>·&nbsp;联系方式：</span>{{mobile}}</div>
               <div class="content"><span>·&nbsp;电子邮箱：</span>{{email}}</div>
             </div>

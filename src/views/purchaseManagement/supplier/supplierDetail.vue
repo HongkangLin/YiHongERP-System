@@ -237,8 +237,8 @@ export default {
           }
         }
       }
-      data.data.settleType = this.settleSel[data.data.settleType].name;
-      data.data.companySize = this.companySize[data.data.companySize];
+      data.data.settleType = data.data.settleType && this.settleSel[data.data.settleType].name;
+      data.data.companySize = data.data.companySize && this.companySize[data.data.companySize];
       this.info = data.data;
     },
     async getPdt () { // 获取供应产品信息

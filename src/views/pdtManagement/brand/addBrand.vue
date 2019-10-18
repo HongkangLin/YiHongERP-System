@@ -10,7 +10,7 @@
               <el-input v-model="formData.goodsBrandName" placeholder="请输入品牌名称"></el-input>
             </el-form-item>
             <el-form-item label="品牌缩写：" prop="goodsBrandLetter">
-              <el-input v-model="formData.goodsBrandLetter" @change="changeInput" placeholder="请输入品牌缩写"></el-input>
+              <el-input v-model="formData.goodsBrandLetter" maxlength="100" placeholder="请输入品牌缩写"></el-input>
             </el-form-item>
             <el-form-item label="logo：" prop="goodsBrandPicUrl">
               <el-upload
@@ -49,13 +49,6 @@
 <script>
 export default {
   data () {
-    let chekStr = (rule, value, callback) => {
-      if (/[A-Z]+/.test(value)) {
-        callback();
-      } else {
-        callback(new Error('缩写必须为英文大写'));
-      }
-    };
     return {
       token: localStorage.getItem('token'),
       crumbList: [{ // 面包屑
@@ -77,8 +70,7 @@ export default {
           { required: true, message: '请输入品牌名称', trigger: 'blur' }
         ],
         goodsBrandLetter: [
-          { required: true, message: '请输入品牌缩写', trigger: 'blur' },
-          { validator: chekStr, trigger: 'blur' }
+          { required: true, message: '请输入品牌缩写', trigger: 'blur' }
         ],
         goodsBrandPicUrl: [
           { required: true, message: '请上传文件', trigger: 'blur' }
@@ -114,9 +106,6 @@ export default {
     }
   },
   methods: {
-    changeInput () {
-      this.formData.goodsBrandLetter = this.formData.goodsBrandLetter.toUpperCase();
-    },
     checkSize (file) { // 文件上传前检查文件大小(小于2M)
       if (file.size >= 2 * 1024 * 1024) {
         this.$message({

@@ -7,7 +7,7 @@
         <div class="base">
           <el-form ref="formData" :model="formData" :rules="rules" label-width="110px">
             <el-form-item label="分类名称：" prop="goodsCategoryName">
-              <el-input v-model="formData.goodsCategoryName" placeholder="请输入分类名称"></el-input>
+              <el-input maxlength="100" v-model="formData.goodsCategoryName" placeholder="请输入分类名称"></el-input>
             </el-form-item>
             <el-form-item label="上级分类：">
               <el-select class="selList" :disabled="disable" v-model="formData.parentId" placeholder="请选择分类">
@@ -21,10 +21,10 @@
               <div class="desc">不选择上级分类默认为顶级分类</div>
             </el-form-item>
             <el-form-item label="排序：" prop="goodsBrandPicUrl">
-              <el-input type="number" v-model="formData.goodsCategorySortId" placeholder="请输入分类排序"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.formData.goodsCategorySortId < 0) {this.formData.goodsCategorySortId = 0} else if (this.formData.goodsCategorySortId > 999) {this.formData.goodsCategorySortId = 999}}" v-model="formData.goodsCategorySortId" placeholder="请输入分类排序"></el-input>
             </el-form-item>
             <el-form-item label="分类描述：">
-              <el-input type="textarea" :rows="7" v-model="formData.goodDescribe" placeholder="请输入内容"></el-input>
+              <el-input type="textarea" maxlength="100" :rows="7" v-model="formData.goodDescribe" placeholder="请输入内容"></el-input>
             </el-form-item>
             <el-form-item>
               <div class="submit" @click="submit('formData')">提交</div>

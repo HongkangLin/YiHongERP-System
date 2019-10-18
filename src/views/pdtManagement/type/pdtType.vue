@@ -68,7 +68,7 @@
             <el-button
               size="mini"
               type="text"
-              @click="handleDelete(scope.row.id)" v-if="roleCtl.product_category_delete">删除分类</el-button>
+              @click="handleDelete(scope.row.id, scope.$index)" v-if="roleCtl.product_category_delete">删除分类</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -128,12 +128,16 @@ export default {
       let data = sub !== '' ? this.tableData[top].listChildCategory[sub] : this.tableData[top];
       this.$router.push({path: '/addType', query: {list: this.typeList, id: id, data: data}});
     },
-    handleDelete (id) { // 删除分类
+    handleDelete (id, idx) { // 删除分类
       this.$confirm('确定删除此分类?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        if (idx && this.tableData[idx].listChildCategory.length) {
+          this.$message.warning('该分类下有二级分类，删除失败');
+          return;
+        }
         window.axios.post('/product/deleteCategory', {
           id: id
         }).then(data => {

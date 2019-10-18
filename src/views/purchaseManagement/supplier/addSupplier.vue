@@ -67,13 +67,13 @@
               {{firstName}}&nbsp;<i v-if="seconedName" class="el-icon-arrow-right"></i>&nbsp;{{seconedName}}
             </el-form-item>
             <el-form-item label="供应商名称：" prop="name">
-              <el-input v-model="form.name" placeholder="请输入供应商企业全称"></el-input>
+              <el-input v-model="form.name" maxlength="100" placeholder="请输入供应商企业全称"></el-input>
             </el-form-item>
             <el-form-item label="供应商编号：" prop="sn">
-              <el-input v-model="form.sn" type="number" placeholder="请输入10位供应商编号"></el-input>
+              <el-input v-model="form.sn" maxlength="100" type="number" placeholder="请输入10位供应商编号"></el-input>
             </el-form-item>
             <el-form-item label="供应商简称：" prop="shortname">
-              <el-input v-model="form.shortname" placeholder="请输入3位字母的供应商简称"></el-input>
+              <el-input v-model="form.shortname" @change="changeInput" maxlength="100" placeholder="请输入3位字母的供应商简称"></el-input>
             </el-form-item>
             <el-form-item label="是否启用：">
               <el-radio v-model="form.status" label="1">是</el-radio>
@@ -90,7 +90,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="供应商来源：">
-              <el-input v-model="form.source" placeholder="请输入供应商来源"></el-input>
+              <el-input v-model="form.source" maxlength="100" placeholder="请输入供应商来源"></el-input>
             </el-form-item>
             <el-form-item label="采购员：" prop="purchaserId">
               <el-select v-model="form.purchaserId" placeholder="请选择采购员">
@@ -107,13 +107,13 @@
             </el-form-item>
             <div class="spanDiv"></div>
             <el-form-item label="收款人（私账）：" prop="priAccountName">
-              <el-input v-model="form.priAccountName" placeholder="请输入私账收款人"></el-input>
+              <el-input maxlength="100" v-model="form.priAccountName" placeholder="请输入私账收款人"></el-input>
             </el-form-item>
             <el-form-item label="银行卡号（私账）：" prop="priAccountNo">
-              <el-input v-model="form.priAccountNo" placeholder="请输入私账银行卡号"></el-input>
+              <el-input maxlength="100" v-model="form.priAccountNo" placeholder="请输入私账银行卡号"></el-input>
             </el-form-item>
             <el-form-item label="开户行：" prop="priAccountBankname">
-              <el-input v-model="form.priAccountBankname" placeholder="请输入私账开户行"></el-input>
+              <el-input maxlength="100" v-model="form.priAccountBankname" placeholder="请输入私账开户行"></el-input>
             </el-form-item>
             <el-form-item label="税率：">
               <el-input min="0" type="number" @blur="() => {if (this.form.taxRate < 0) {this.form.taxRate = 0}}" v-model="form.taxRate" placeholder="请输入税率"></el-input>
@@ -129,16 +129,16 @@
               </el-select>
             </el-form-item>
             <el-form-item label="公司全称：">
-              <el-input v-model="form.pubAccountCompanyName" placeholder="请输入公司全称"></el-input>
+              <el-input maxlength="100" v-model="form.pubAccountCompanyName" placeholder="请输入公司全称"></el-input>
             </el-form-item>
             <el-form-item label="银行对公账号：">
-              <el-input v-model="form.pubAccountNo" placeholder="请输入银行对公账号"></el-input>
+              <el-input maxlength="100" v-model="form.pubAccountNo" placeholder="请输入银行对公账号"></el-input>
             </el-form-item>
             <el-form-item label="对公账号开户行：">
-              <el-input v-model="form.pubAccountBankname" placeholder="请输入对公账号开户行"></el-input>
+              <el-input maxlength="100" v-model="form.pubAccountBankname" placeholder="请输入对公账号开户行"></el-input>
             </el-form-item>
             <div class="spanDiv"></div>
-            <el-form-item label="所在地：" prop="addrDetail">
+            <el-form-item label="所在地：" prop="selectedOptions">
               <el-cascader
                 size="large"
                 :options="options"
@@ -146,10 +146,10 @@
               </el-cascader>
             </el-form-item>
             <el-form-item label="详细地址：" prop="addrDetail">
-              <el-input v-model="form.addrDetail" placeholder="请输入详细地址"></el-input>
+              <el-input maxlength="100" v-model="form.addrDetail" placeholder="请输入详细地址"></el-input>
             </el-form-item>
             <el-form-item label="统一社会信用代码：">
-              <el-input v-model="form.socialCreditCode" placeholder="请输入统一社会信用代码"></el-input>
+              <el-input maxlength="100" v-model="form.socialCreditCode" placeholder="请输入统一社会信用代码"></el-input>
             </el-form-item>
             <el-form-item label="公司规模：">
               <el-select v-model="form.companySize" placeholder="请选择公司规模">
@@ -162,10 +162,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label="法人姓名：">
-              <el-input v-model="form.legalPersonName" placeholder="请输入法人姓名"></el-input>
+              <el-input maxlength="100" v-model="form.legalPersonName" placeholder="请输入法人姓名"></el-input>
             </el-form-item>
             <el-form-item label="企业网站：">
-              <el-input v-model="form.website" placeholder="请输入企业网站"></el-input>
+              <el-input maxlength="100" v-model="form.website" placeholder="请输入企业网站"></el-input>
             </el-form-item>
             <el-form-item label="营业执照照片：" prop="busLicensePicUrl">
               <el-upload
@@ -189,7 +189,7 @@
               </el-dialog>
             </el-form-item>
             <el-form-item label="供应商描述：">
-              <el-input type="textarea" :rows="7" v-model="form.description" placeholder="请输入供应商描述"></el-input>
+              <el-input maxlength="100" type="textarea" :rows="7" v-model="form.description" placeholder="请输入供应商描述"></el-input>
             </el-form-item>
           </el-form>
           <el-divider></el-divider>
@@ -271,7 +271,7 @@
         </div>
         <el-form ref="peopleForm" class="peopleForm" :model="peopleForm" :rules="peopleRule" label-width="170px">
           <el-form-item label="联系人姓名：" prop="name">
-            <el-input v-model="peopleForm.name" placeholder="请输入联系人姓名"></el-input>
+            <el-input maxlength="100" v-model="peopleForm.name" placeholder="请输入联系人姓名"></el-input>
           </el-form-item>
           <el-form-item label="性别：" prop="gender">
             <el-radio v-model="peopleForm.gender" label="1">男</el-radio>
@@ -281,19 +281,19 @@
             <el-input v-model="peopleForm.mobile" placeholder="请输入联系人电话"></el-input>
           </el-form-item>
           <el-form-item label="职务：">
-            <el-input v-model="peopleForm.title" placeholder="请输入职务"></el-input>
+            <el-input maxlength="100" v-model="peopleForm.title" placeholder="请输入职务"></el-input>
           </el-form-item>
           <el-form-item label="微信：">
-            <el-input v-model="peopleForm.wechat" placeholder="请输入微信"></el-input>
+            <el-input maxlength="100" v-model="peopleForm.wechat" placeholder="请输入微信"></el-input>
           </el-form-item>
           <el-form-item label="QQ：">
-            <el-input v-model="peopleForm.qq" placeholder="请输入QQ"></el-input>
+            <el-input maxlength="100" v-model="peopleForm.qq" placeholder="请输入QQ"></el-input>
           </el-form-item>
           <el-form-item label="邮箱：">
-            <el-input v-model="peopleForm.email" placeholder="请输入邮箱"></el-input>
+            <el-input maxlength="100" v-model="peopleForm.email" placeholder="请输入邮箱"></el-input>
           </el-form-item>
           <el-form-item label="备注：">
-            <el-input type="textarea" :rows="5" v-model="peopleForm.remark" placeholder="请输入备注"></el-input>
+            <el-input maxlength="100" type="textarea" :rows="5" v-model="peopleForm.remark" placeholder="请输入备注"></el-input>
           </el-form-item>
         </el-form>
         <div class="btn">
@@ -310,10 +310,10 @@ import { regionData } from 'element-china-area-data';
 export default {
   data () {
     var validatePass = (rule, value, callback) => {
-      if (!(/[a-zA-Z]+/.test(value) && value.length === 3)) {
-        callback(new Error('请输入3位字母的供应商简称'));
-      } else {
+      if (/[A-Z]+/.test(value) && value.length === 3) {
         callback();
+      } else {
+        callback(new Error('请输入3位字母的供应商简称'));
       }
     };
     var validateTel = (rule, value, callback) => {
@@ -424,10 +424,10 @@ export default {
           { validator: validatePass, trigger: 'blur' }
         ],
         level: [
-          {required: true, message: '请选择供应商等级', trigger: 'blur'}
+          {required: true, message: '请选择供应商等级', trigger: 'change'}
         ],
         purchaserId: [
-          {required: true, message: '请选择采购员', trigger: 'blur'}
+          {required: true, message: '请选择采购员', trigger: 'change'}
         ],
         deliverDay: [
           {required: true, message: '请输入交期', trigger: 'blur'}
@@ -440,6 +440,9 @@ export default {
         ],
         priAccountBankname: [
           {required: true, message: '请输入私账开户行', trigger: 'blur'}
+        ],
+        selectedOptions: [
+          {required: true, message: '请选择所在地', trigger: 'change'}
         ],
         addrDetail: [
           {required: true, message: '请输入详细地址', trigger: 'blur'}
@@ -493,17 +496,10 @@ export default {
   },
   methods: {
     goBack () { // 返回
-      switch (this.active) {
-        case 0:
-          history.go(-1);
-          break;
-        case 1:
-          this.active = 0;
-          break;
-        case 2:
-          this.active = 1;
-          break;
-      }
+      history.go(-1);
+    },
+    changeInput () {
+      this.form.shortname = this.form.shortname.toUpperCase();
     },
     async getDetail () { // 获取详情
       let data = await window.axios.get(`/supplier/detail/${this.id}`);
@@ -627,6 +623,7 @@ export default {
     handleSet (idx) { // 设为首选
       this.form.contact[0].firstChoice = 0;
       this.form.contact.unshift(...this.form.contact.splice(idx, 1));
+      this.form.contact[0].firstChoice = 1;
     },
     handleDelete (idx) { // 删除联系人
       this.form.contact.splice(idx, 1);
@@ -639,6 +636,17 @@ export default {
     },
     addPeople () { // 添加联系人
       this.mode = 0;
+      this.peopleForm = { // 新增时清空数据
+        name: '',
+        gender: '1',
+        mobile: '',
+        title: '',
+        wechat: '',
+        qq: '',
+        firstChoice: 0,
+        email: '',
+        remark: ''
+      }
       this.show = true;
     },
     closePeople () { // 关闭联系人
@@ -647,11 +655,11 @@ export default {
     addOne (formName) { // 添加联系人
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          if (!this.mode) {
+          if (!this.mode) { // 新增
             this.peopleForm.firstChoice = this.form.contact.length ? 0 : 1;
             this.form.contact.push(JSON.parse(JSON.stringify(this.peopleForm)));
-          } else {
-            this.form.contact[this.curr] = JSON.parse(JSON.stringify(this.peopleForm));
+          } else { // 编辑
+            this.form.contact.splice(this.curr, 1, JSON.parse(JSON.stringify(this.peopleForm)));
           }
           this.show = false;
         } else {

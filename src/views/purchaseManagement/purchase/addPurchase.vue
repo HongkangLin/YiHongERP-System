@@ -114,7 +114,7 @@
               width="160px"
               label="采购数量（套）">
               <template slot-scope="scope">
-                <el-input-number :min="1" :controls="false" v-model="scope.row.purchaseAmount" placeholder="输入套数"></el-input-number>
+                <el-input-number :min="1" :max="99999999" :controls="false" v-model="scope.row.purchaseAmount" placeholder="输入套数"></el-input-number>
               </template>
             </el-table-column>
             <el-table-column
@@ -201,10 +201,10 @@
         <div class="right">
           <el-form ref="info" class="form" :model="info" :rules="infoRule" label-width="210px">
             <el-form-item label="交货日期：" prop="dueTime">
-              <el-input v-model="info.dueTime" placeholder="请输入交货日期"></el-input>
+              <el-input v-model="info.dueTime" maxlength="100" placeholder="请输入交货日期"></el-input>
             </el-form-item>
             <el-form-item label="放款方式备注：" prop="payBak">
-              <el-input type="textarea" :rows="7" v-model="info.payBak" placeholder="示例：自双方签订合同起付乙方30%定金27702元，剩余货款64638元出货前付清；"></el-input>
+              <el-input type="textarea" maxlength="100" :rows="7" v-model="info.payBak" placeholder="示例：自双方签订合同起付乙方30%定金27702元，剩余货款64638元出货前付清；"></el-input>
             </el-form-item>
             <div class="spanDiv"></div>
             <el-form-item v-for="(item, index) in form.productOfPurchaseDTOList" :key="index" :label="item.sku + '：'">
@@ -258,13 +258,13 @@ export default {
       },
       rules: {
         supplierId: [
-          {required: true, message: '请选择供应商', trigger: 'blur'}
+          {required: true, message: '请选择供应商', trigger: 'change'}
         ],
         purchaseUserId: [
-          {required: true, message: '请选择采购员', trigger: 'blur'}
+          {required: true, message: '请选择采购员', trigger: 'change'}
         ],
         warehouseId: [
-          {required: true, message: '请选择仓库', trigger: 'blur'}
+          {required: true, message: '请选择仓库', trigger: 'change'}
         ]
       },
       pdtList: [], // 产品列表
@@ -299,17 +299,7 @@ export default {
   },
   methods: {
     goBack () { // 返回
-      switch (this.active) {
-        case 0:
-          history.go(-1);
-          break;
-        case 1:
-          this.active = 0;
-          break;
-        case 2:
-          this.active = 1;
-          break;
-      }
+      history.go(-1);
     },
     async getContract () { // 获取合同条款
       let data = await window.axios.get('/purchase/queryContractTerms/con.purchase');
@@ -317,7 +307,7 @@ export default {
     },
     async getSupplier () { // 获取供应商
       let data = await window.axios.get(`/supplier/listAll?pageSize=99999&pageNum=1`);
-      this.supplierList = data.data.list;
+      this.supplierList = data.data.list.filter(item => item.status);
     },
     async getRole () { // 获取采购员列表
       let data = await window.axios.get('/user/queryUserList4Select/purchase');

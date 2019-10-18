@@ -37,10 +37,10 @@
               </div>
             </div>
           </div>
-          <div class="curr">您当前选择的商品类别是：<span class="red">{{firstName}}&nbsp;<i v-if="seconedName" class="el-icon-arrow-right"></i>&nbsp;{{seconedName}}</span></div>
+          <div class="curr">您当前选择的产品类别是：<span class="red">{{firstName}}&nbsp;<i v-if="seconedName" class="el-icon-arrow-right"></i>&nbsp;{{seconedName}}</span></div>
           <el-divider></el-divider>
           <div class="next">
-            <div @click="next(0, 1)">下一步，填写供应商信息</div>
+            <div @click="next(0, 1)">下一步，填写产品信息</div>
           </div>
         </div>
       </div>
@@ -82,16 +82,16 @@
               </el-select>
             </el-form-item>
             <el-form-item label="产品名称：" prop="goodsName">
-              <el-input v-model="form.goodsName" placeholder="请输入产品名称"></el-input>
+              <el-input maxlength="100" v-model="form.goodsName" placeholder="请输入产品名称"></el-input>
             </el-form-item>
             <el-form-item label="SKU编码：" prop="skuId">
-              <el-input :disabled="disabled" v-model="form.skuId" placeholder="请输入SKU编码"></el-input>
+              <el-input maxlength="100" :disabled="disabled" v-model="form.skuId" placeholder="请输入SKU编码"></el-input>
             </el-form-item>
             <el-form-item label="销售目标价：">
               <el-input min="0" type="number" @blur="() => {if (this.form.goodsGoalPrice < 0) {this.form.goodsGoalPrice = 0}}" v-model="form.goodsGoalPrice" placeholder="请输入销售目标价"></el-input>
             </el-form-item>
             <el-form-item label="产品链接：">
-              <el-input v-model="form.goodsUrl" placeholder="请输入产品链接"></el-input>
+              <el-input maxlength="100" v-model="form.goodsUrl" placeholder="请输入产品链接"></el-input>
             </el-form-item>
             <el-form-item label="是否清货：">
               <el-switch
@@ -103,7 +103,7 @@
               </el-switch>
             </el-form-item>
             <el-form-item label="FNSKU编号：" prop="fnskuId">
-              <el-input :disabled="disabled" v-model="form.fnskuId" placeholder="请输入FNSKU编号"></el-input>
+              <el-input maxlength="100" :disabled="disabled" v-model="form.fnskuId" placeholder="请输入FNSKU编号"></el-input>
             </el-form-item>
             <el-form-item label="FNSKU文件：" prop="fnskuFileUrl">
               <el-upload
@@ -118,6 +118,7 @@
                 :on-error="() => {this.$message.error('上传失败')}"
                 :headers="{'x-token': token}"
                 :on-success="up2"
+                :on-preview="openFile"
                 :on-remove="handleRemove2"
                 multiple>
                 <i class="el-icon-upload"></i>
@@ -147,26 +148,26 @@
               </el-dialog>
             </el-form-item>
             <el-form-item label="合同描述：">
-              <el-input type="textarea" :rows="5" v-model="form.contractDescribe" placeholder="请输入合同描述，合同描述将会在生成合同时使用"></el-input>
+              <el-input type="textarea" :rows="5" maxlength="100" v-model="form.contractDescribe" placeholder="请输入合同描述，合同描述将会在生成合同时使用"></el-input>
             </el-form-item>
             <el-form-item label="产品描述：">
               <el-input type="textarea" maxlength="500" :rows="5" v-model="form.goodsDescribe" placeholder="请输入产品描述内容，500字以内"></el-input>
             </el-form-item>
             <div class="spanDiv"></div>
             <el-form-item label="海关编码：">
-              <el-input v-model="form.customId" placeholder="请输入海关编码"></el-input>
+              <el-input v-model="form.customId" maxlength="100" placeholder="请输入海关编码"></el-input>
             </el-form-item>
             <el-form-item label="申报价值：">
               <el-input min="0" type="number" @blur="() => {if (this.form.claimPrice < 0) {this.form.claimPrice = 0}}" v-model="form.claimPrice" placeholder="请输入申报价值"></el-input>
             </el-form-item>
             <el-form-item label="中文报关名：">
-              <el-input v-model="form.chineseName" placeholder="请输入中文报关名"></el-input>
+              <el-input maxlength="100" v-model="form.chineseName" placeholder="请输入中文报关名"></el-input>
             </el-form-item>
             <el-form-item label="英文报关名：">
-              <el-input v-model="form.englishName" placeholder="请输入英文报关名"></el-input>
+              <el-input maxlength="100" v-model="form.englishName" placeholder="请输入英文报关名"></el-input>
             </el-form-item>
             <el-form-item label="美国进口关税：">
-              <el-input v-model="form.tariffs" placeholder="请输入美国进口关税"></el-input>
+              <el-input maxlength="100" v-model="form.tariffs" placeholder="请输入美国进口关税"></el-input>
             </el-form-item>
             <div class="spanDiv"></div>
             <el-form-item label="产品包装尺寸（cm）：" class="inline">
@@ -230,7 +231,7 @@
           <el-upload
             class="upload-demo"
             action="/erp/file/upload"
-            accept=".jpg, .png"
+            accept=".jpg, .png, .pdf"
             :headers="{'x-token': token}"
             :on-exceed="() => {this.$message.warning('上传失败，只能上传3张图片哦～')}"
             :on-error="() => {this.$message.error('上传失败')}"
@@ -472,20 +473,7 @@ export default {
   },
   methods: {
     goBack () { // 返回
-      switch (this.active) {
-        case 0:
-          history.go(-1);
-          break;
-        case 1:
-          this.active = 0;
-          break;
-        case 2:
-          this.active = 1;
-          break;
-        case 3:
-          this.active = 2;
-          break;
-      }
+      history.go(-1);
     },
     async getPdt () { // 获取产品供应商信息
       let data = await window.axios.get(`/supplyrel/querybygoods?pageSize=99999&pageNum=1&goodsId=${this.$route.query.id}`);
@@ -620,6 +608,9 @@ export default {
         }
       }
     },
+    openFile () { // 打开fnsku文件
+      window.open(this.form.fnskuFileUrl[0].url.replace('_80x80', ''));
+    },
     checkSize (file) { // 文件上传前检查文件大小(小于2M)
       if (file.size >= 2 * 1024 * 1024) {
         this.$message({
@@ -628,21 +619,22 @@ export default {
         });
         return false;
       }
-      return true;
     },
     handleRemove3 (file) { // 删除图片
-      let arr = JSON.parse(JSON.stringify(this.pdtPhoto));
-      let idx = 0;
-      for (let i = 0, len = arr.length; i < len; i++) {
-        if (file.url === arr[i].url) {
-          idx = i;
-          break;
+      if (file.status === "success") {
+        let arr = JSON.parse(JSON.stringify(this.pdtPhoto));
+        let idx = 0;
+        for (let i = 0, len = arr.length; i < len; i++) {
+          if (file.url === arr[i].url) {
+            idx = i;
+            break;
+          }
         }
+        if (idx === 0 && this.pdtPhoto.length > 1) {
+          this.pdtPhoto[1].name = '商品主图';
+        }
+        this.pdtPhoto.splice(idx, 1);
       }
-      if (idx === 0 && this.pdtPhoto.length > 1) {
-        this.pdtPhoto[1].name = '商品主图';
-      }
-      this.pdtPhoto.splice(idx, 1);
     },
     changeMain (file) { // 修改主辅
       if (file.name === '商品主图') {
@@ -713,7 +705,7 @@ export default {
         }
         this.form.list.splice(idx, 1);
       } else { // 编辑时
-        this.delSupplier(idx);
+        this.form.list.length === 1 ? this.$message.warning('请至少保留一个供应商') : this.delSupplier(idx);
       }
     },
     addSupplier () { // 添加供应商

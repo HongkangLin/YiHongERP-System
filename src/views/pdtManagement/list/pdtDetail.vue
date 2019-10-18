@@ -34,7 +34,7 @@
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">产品链接</div></el-col>
-          <el-col :span="8"><div class="td"><a>{{info.goodsUrl}}</a>&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td"><a target="_black" :href="info.goodsUrl">点击查看</a>&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">是否清货</div></el-col>
           <el-col :span="8"><div class="td">{{info.clearStocksFlag ? '清' : '不清'}}&nbsp;</div></el-col>
         </el-row>

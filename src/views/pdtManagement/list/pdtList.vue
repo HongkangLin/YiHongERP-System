@@ -154,7 +154,7 @@ export default {
       status: '', // 产品状态
       prdStatus: [{ // 产品状态选项
         label: '全部',
-        value: ''
+        value: '-1'
       }, {
         label: '在售',
         value: '0'
@@ -172,12 +172,12 @@ export default {
       brand: '', // 品牌,
       brandList: [{ // 品牌列表
         label: '全部',
-        value: ''
+        value: '-1'
       }],
       people: '', // 采购人
       peopleList: [{ // 采购人列表
         label: '全部',
-        value: ''
+        value: '-1'
       }],
       total: 0, // 总数
       pageNum: 1, // pageNumber
@@ -233,11 +233,11 @@ export default {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
         skuIdOrGoodsNameOrCustomId: this.name,
-        status: this.status,
+        status: parseInt(this.status) < 0 ? '' : this.status,
         categoryParentId: this.categoryParentId,
         categoryId: this.categoryId,
-        brandId: this.brand,
-        purchaserId: this.people
+        brandId: parseInt(this.brand) < 0 ? '' : this.brand,
+        purchaserId: parseInt(this.people) < 0 ? '' : this.people
       });
       data = data.data;
       this.total = data.total;

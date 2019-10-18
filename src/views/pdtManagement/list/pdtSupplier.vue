@@ -163,6 +163,10 @@ export default {
       }
     },
     async handleDelete (idx) { // 删除数据
+      if (this.list.length === 1) {
+        this.$message.warning('请至少保留一个供应商');
+        return;
+      }
       let data = await window.axios.post('/supplyrel/delete', {
         id: this.list[idx].relationId,
         goodsId: this.$route.params.id,

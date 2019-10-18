@@ -7,10 +7,10 @@
         <div class="base">
           <el-form ref="formData" :model="formData" :rules="rules" label-width="110px">
             <el-form-item label="结算方式：" prop="name">
-              <el-input v-model="formData.name" placeholder="请输入结算方式"></el-input>
+              <el-input v-model="formData.name" maxlength="100" placeholder="请输入结算方式"></el-input>
             </el-form-item>
             <el-form-item label="备注：">
-              <el-input type="textarea" :rows="7" v-model="formData.remark" placeholder="请输入备注"></el-input>
+              <el-input type="textarea" maxlength="100" :rows="7" v-model="formData.remark" placeholder="请输入备注"></el-input>
             </el-form-item>
             <el-form-item>
               <div class="submit" @click="submit('formData')">提交</div>
