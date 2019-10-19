@@ -164,10 +164,10 @@ export default {
       let params = {
         searchValue: this.searchValue,
         payStatus: Number(this.activeName) ? Number(this.activeName) : null,
-        createTimeStart: this.createTimeRange[0],
-        createTimeEnd: this.createTimeRange[1],
-        payTimeStart: this.payTimeRange[0],
-        payTimeEnd: this.payTimeRange[1],
+        createTimeStart: this.createTimeRange ? this.createTimeRange[0] : null,
+        createTimeEnd: this.createTimeRange ? this.createTimeRange[1] : null,
+        payTimeStart: this.payTimeRange ? this.payTimeRange[0] : null,
+        payTimeEnd: this.payTimeRange ? this.payTimeRange[1] : null,
         pageNum: this.pageNum,
         pageSize: this.pageSize
       }
