@@ -56,7 +56,7 @@
           <div class="hint">不选下一审批人流程将终止并结束审批流程</div>
         </el-form-item>
         <el-form-item label="反馈原因：" prop="feedbackReason">
-          <el-input v-model="ruleForm.feedbackReason" type="textarea" :rows="4" placeholder="请输入反馈原因"></el-input>
+          <el-input v-model="ruleForm.feedbackReason" type="textarea" :rows="4" placeholder="请输入反馈原因" maxlength="100" show-word-limit></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -85,7 +85,8 @@ export default {
       tableData: {
         purchaseInfo: {},
         applyInfo: {},
-        approveList: []
+        approveList: [],
+        recordFlag: null
       }, //采购单信息
       table1List: [
         {col1: "采购单号", col2: "purchaseId", col3: "供应商名称", col4: "supplierName"},
@@ -138,13 +139,16 @@ export default {
             item.approveResult = "驳回"
           }
         })
+        obj.approveList = obj.approveList.filter((item) => {
+          return item.approveResult !== null;
+        })
         this.tableData = obj;
       })
     },
 
     // 下一审批人下拉
     getPeopleList() {
-      window.axios.get("/user/queryAllUserList").then((data) => {
+      window.axios.get("/user/queryOtherUserList").then((data) => {
         if (data.code !== 0) return
         this.peopleList = data.data;
       })
@@ -158,7 +162,7 @@ export default {
         approveResult: this.ruleForm.approveResult,
         nextApproveUserId: this.ruleForm.nextApproveUserId,
         feedbackReason: this.ruleForm.approveResult === "agree" && this.ruleForm.feedbackReason === "" ? "同意" : this.ruleForm.feedbackReason,
-        recordFlag: this.tableData.approveList.length > 0 ? "yes" : "no"
+        recordFlag: this.tableData.recordFlag
       }
       window.axios.post("/approve/doApprove", params).then((data) => {
         if (data.code !== 0) return

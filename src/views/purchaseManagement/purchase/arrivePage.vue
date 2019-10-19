@@ -35,7 +35,7 @@
             <el-table-column prop="arrivaledAmount" label="已到货数量（套）" align="center" min-width="100"></el-table-column>
             <el-table-column prop="arriveCount" label="本次到货数量（套）" align="center" min-width="130">
               <template slot-scope="scope">
-                <el-input-number v-model="scope.row.arriveCount" :min="0" :controls="false" placeholder="请输入"></el-input-number>
+                <el-input-number v-model="scope.row.arriveCount" :min="0" :controls="false" placeholder="请输入" :step="1" step-strictly></el-input-number>
               </template>
             </el-table-column>
           </el-table>
@@ -99,11 +99,16 @@ export default {
         remark: '',
         goods: []
       }
-      this.productInfo.purchaseProductList.map((item) => {
+      for (let index = 0; index < this.productInfo.purchaseProductList.length; index++) {
+        const item = this.productInfo.purchaseProductList[index];
+        if (item.arriveCount === undefined || item.arriveCount === null) return this.$message.warning("请输入本次到货数量");
         params.goods.push({
           goodsId: item.goodsId,
-          arriveCount: item.arriveCount
+          arriveCount: item.arriveCount || 0
         })
+      }
+      this.productInfo.purchaseProductList.map((item) => {
+        
       })
       window.axios.post("/checkinorder/createp", params).then((data) => {
         if (data.code !== 0) return

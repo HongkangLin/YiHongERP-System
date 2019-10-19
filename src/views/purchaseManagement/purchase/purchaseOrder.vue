@@ -175,10 +175,10 @@ export default {
         purchaseStatus: Number(this.activeName) ? Number(this.activeName) : null,
         payStatus: this.payStatus,
         arrivalStatus: this.arrivalStatus,
-        createTimeBegin: this.createTimeRange[0],
-        createTimeEnd: this.createTimeRange[1],
-        arriveTimeBegin: this.arriveTimeRange[0],
-        arriveTimeEnd: this.arriveTimeRange[1],
+        createTimeBegin: this.createTimeRange ? this.createTimeRange[0] : null,
+        createTimeEnd: this.createTimeRange ? this.createTimeRange[1] : null,
+        arriveTimeBegin: this.arriveTimeRange ? this.arriveTimeRange[0] : null,
+        arriveTimeEnd: this.arriveTimeRange ? this.arriveTimeRange[1] : null,
         pageNum: this.pageNum,
         pageSize: this.pageSize
       }
@@ -270,7 +270,14 @@ export default {
       window.axios.get(`/approve/queryApproveDetail/${purchaseId}`).then((data) => {
         if (data.code !== 0) return
         data.data.map((item) => {
-          item.approveResult = item.approveResult === "agree" ? "同意" : "拒绝";
+          if (item.approveResult === "agree") {
+            item.approveResult = "同意"
+          } else if (item.approveResult === "disagree") {
+            item.approveResult = "驳回"
+          }
+        })
+        data.data = data.data.filter((item) => {
+          return item.approveResult !== null;
         })
         this.reviewDetailData = data.data;
       })

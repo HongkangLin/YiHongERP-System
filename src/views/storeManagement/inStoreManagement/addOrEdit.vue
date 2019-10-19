@@ -41,7 +41,7 @@
         <div class="secTitle">产品信息</div>
         <el-button type="primary" icon="el-icon-plus" class="addPdtBtn" @click="dialogTableVisible = true">选择产品</el-button>
         <div class="productTable">
-          <el-table :data="productList" border show-summary sum-text="汇总" style="width: 100%">
+          <el-table :data="productList" border show-summary style="width: 100%" :summary-method="getSummaries">
             <el-table-column label="图片" align="center" width="101">
               <template slot-scope="scope">
                 <img class="img" :src="scope.row.goodsPicUrl">
@@ -403,6 +403,35 @@ export default {
         this.ruleForm.purchaserId = data.data.purchaserId;
         this.ruleForm.purchaserName = data.data.purchaserName;
       })
+    },
+
+    getSummaries(param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '汇总';
+          return;
+        }
+        const values = data.map(item => Number(item[column.property]));
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          sums[index] = sums[index].toFixed(2); 
+        } else {
+          sums[index] = '';
+        }
+      });
+      sums[1] = "";
+      sums[2] = "";
+      // console.log("sums: ", sums);
+      return sums;
     }
   },
 };

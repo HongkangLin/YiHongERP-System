@@ -61,7 +61,7 @@
                 <span class="tableHeader">本次出库</span>
               </template>
               <template slot-scope="scope">
-                <el-input-number v-model="scope.row.count" :min="0" :controls="false" placeholder="请输入" @change="inputCount(scope.row)"></el-input-number>
+                <el-input-number v-model="scope.row.count" :min="0" :max="scope.row.stockAvailCount" :controls="false" placeholder="请输入" @change="inputCount(scope.row)"></el-input-number>
               </template>
             </el-table-column>
             <el-table-column prop="totalSpace" label="总体积(m³)" align="center" min-width="80"></el-table-column>
@@ -290,7 +290,12 @@ export default {
             flag = false;
             return this.$message.warning("请添加商品");
           } else {
-            this.productList.forEach(item => {
+            for (let index = 0; index < this.productList.length; index++) {
+              const item = this.productList[index];
+              if (item.quantity === "--") {
+                flag = false;
+                return this.$message.warning("输入有问题,无法提交");
+              }
               if (!item.count) {
                 flag = false;
                 return this.$message.warning("请填写本次出库");
@@ -299,7 +304,7 @@ export default {
                 flag = false;
                 return this.$message.warning("出库数量须为装箱数的倍数");
               }
-            });
+            }
           }
           if (!flag) return
 
@@ -459,11 +464,11 @@ export default {
     // 输入本次出库
     inputCount(obj) {
       //件数
-      obj.quantity = obj.count / obj.fullLoadQuantity; 
+      obj.quantity = obj.fullLoadQuantity ? Math.ceil(obj.count / obj.fullLoadQuantity) : "--"; 
       // 总体积(m³)
-      obj.totalSpace = ((obj.cartonLength * obj.cartonWidth * obj.cartonHeight * obj.quantity)/1000000).toFixed(4);
+      obj.totalSpace = obj.quantity === "--" ? "--" : ((obj.cartonLength * obj.cartonWidth * obj.cartonHeight * obj.quantity)/1000000).toFixed(4);
       // 总重量(kg)
-      obj.totalWeight = (obj.fullLoadWeight * obj.quantity).toFixed(4);
+      obj.totalWeight = obj.quantity === "--" ? "--" : (obj.fullLoadWeight * obj.quantity).toFixed(4);
     }
   },
 };

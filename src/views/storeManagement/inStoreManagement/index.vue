@@ -18,7 +18,7 @@
             <el-option label="待入库" value=0></el-option>
             <el-option label="已入库" value=1></el-option>
           </el-select>
-          <el-date-picker v-model="arriveDateRange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+          <el-date-picker v-model="arriveDateRange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="到货开始日期" end-placeholder="到货结束日期"></el-date-picker>
         </div>
         <div class="sel" @click="search">查询</div>
       </div>
@@ -99,8 +99,8 @@ export default {
         snOrNameKeyword: this.snOrNameKeyword,
         warehouseId: this.warehouseId,
         status: this.status,
-        arriveStartDate: this.arriveDateRange[0],
-        arriveEndDate: this.arriveDateRange[1],
+        arriveStartDate: this.arriveDateRange ? this.arriveDateRange[0] : null,
+        arriveEndDate: this.arriveDateRange ? this.arriveDateRange[1] : null,
         pageNum: this.pageNum,
         pageSize: this.pageSize
       }

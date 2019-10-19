@@ -37,9 +37,24 @@
                 </el-button>
               </span>
               <!-- 二级 -->
-              <span v-if="node.level === 2" class="noBtn"></span>
+              <span v-if="node.level === 2" class="btns noBtn">
+                <el-button
+                  v-if="roleCtl.dept_update"
+                  type="text"
+                  size="mini"
+                  @click="() => showDialog({type: '3', dptId: data.id})">
+                  编辑
+                </el-button>
+                <el-button
+                  v-if="data.userCount === 0 && roleCtl.dept_delete"
+                  type="text"
+                  size="mini"
+                  @click="() => showDialog({type: '4', dptId: data.id, deptName: data.label})">
+                  删除
+                </el-button>
+              </span>
               <!-- 大于等于三级 -->
-              <span v-if="node.level > 2">
+              <span v-if="node.level > 2" class="btns">
                 <el-button
                   v-if="roleCtl.dept_add"
                   type="text"
@@ -668,7 +683,15 @@ export default {
               .noBtn {
                 display: block;
                 width: 100%;
-                height: 10px;
+                // height: 10px;
+              }
+              .btns {
+                visibility: hidden;
+              }
+              &:hover {
+                .btns {
+                  visibility: visible;
+                }
               }
             }
           }
