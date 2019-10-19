@@ -39,6 +39,13 @@
               <!-- 二级 -->
               <span v-if="node.level === 2" class="btns noBtn">
                 <el-button
+                  v-if="roleCtl.dept_add"
+                  type="text"
+                  size="mini"
+                  @click="() => showDialog({type: '2', myId: data.id, parentId: data.parentId})">
+                  新增
+                </el-button>
+                <el-button
                   v-if="roleCtl.dept_update"
                   type="text"
                   size="mini"
