@@ -37,7 +37,7 @@
           <el-col :span="20" class="content">这里是备注内容</el-col>
         </el-row>
       </div>
-      <el-table :data="printPageData.financePurchaseDetailList" border  show-summary :summary-method="getSummaries">
+      <el-table :data="printPageData.financePurchaseDetailList" border  show-summary :summary-method="getSummaries" :header-cell-style="{color:'#000', borderColor: '#333'}" :cell-style="{borderColor: '#333'}">
         <el-table-column prop="id" label="采购单号" align="center" ></el-table-column>
         <el-table-column prop="goodsAmount" label="货款总金额（元）" align="center" ></el-table-column>
         <el-table-column prop="paidAmount" label="已支付货款（元）" align="center" ></el-table-column>
@@ -203,12 +203,12 @@ export default {
     font-weight: bold;
     line-height: 80PX;
     text-align: center;
-    border: 1px solid #e4e4e4;
+    border: 1px solid #333;
     border-bottom: none;
   }
   .table {
     &.row2 {
-      border-top: 1px solid #e4e4e4;
+      border-top: 1px solid #333;
     }
     &.row6 {
       .el-row .el-col {
@@ -216,13 +216,13 @@ export default {
       }
     }
     font-size: 14px;
-    border-left: 1px solid #e4e4e4;
+    border-left: 1px solid #333;
     .el-row {
       line-height: 45px;
       .el-col {
         height: 45px;
-        border-bottom: 1px solid #e4e4e4;
-        border-right: 1px solid #e4e4e4;
+        border-bottom: 1px solid #333;
+        border-right: 1px solid #333;
       }
       .bg-grey {
         text-align: right;
@@ -233,6 +233,9 @@ export default {
         padding-left: 10px;
       }
     }
+  }
+  .el-table--border {
+    border: 1px solid #333;
   }
 }
 </style>
