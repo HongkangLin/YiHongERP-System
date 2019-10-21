@@ -68,7 +68,7 @@
     <!-- 确定付款弹窗 -->
     <el-dialog title="确定付款" :visible.sync="showPayDialog" width="35%">
       <el-form :model="payRuleForm" :rules="payRules" ref="payRuleForm" label-width="100px" class="payRuleForm">
-        <el-form-item label="关闭原因：" prop="payTime">
+        <el-form-item label="标记付款日期：" prop="payTime">
           <el-date-picker v-model="payRuleForm.payTime" type="date" placeholder="选择付款日期" value-format="yyyy-MM-dd"></el-date-picker>
         </el-form-item>
       </el-form>
@@ -300,7 +300,13 @@ export default {
       window.axios.get(`/finance/queryApproveRecord/${payId}`).then((data) => {
         if (data.code !== 0) return
         data.data.map((item) => {
-          item.approveResult = item.approveResult === 1 ? "同意" : "驳回";
+          if (item.approveResult === 1) {
+            item.approveResult = "同意"
+          } else if (item.approveResult === 2) {
+            item.approveResult = "驳回"
+          } else {
+            item.approveResult = "--"
+          }
           item.feedbackReason = item.feedbackReason ? item.feedbackReason : "--";
         })
         this.reviewDetailData = data.data;
