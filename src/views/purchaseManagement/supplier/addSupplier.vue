@@ -70,7 +70,7 @@
               <el-input v-model="form.name" maxlength="100" placeholder="请输入供应商企业全称"></el-input>
             </el-form-item>
             <el-form-item label="供应商编号：" prop="sn">
-              <el-input v-model="form.sn" maxlength="100" type="number" placeholder="请输入10位供应商编号"></el-input>
+              <el-input v-model="form.sn" maxlength="100" placeholder="请输入10位供应商编号"></el-input>
             </el-form-item>
             <el-form-item label="供应商简称：" prop="shortname">
               <el-input v-model="form.shortname" @change="changeInput" maxlength="100" placeholder="请输入3位字母的供应商简称"></el-input>
