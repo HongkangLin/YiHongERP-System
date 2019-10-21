@@ -9,7 +9,7 @@
         </div>
         <div class="content">
           <div class="inputDiv">
-            <el-input class="name" v-model="name" placeholder="请输入角色名"></el-input>
+            <el-input maxlength="100" class="name" v-model="name" placeholder="请输入角色名"></el-input>
             <el-select class="selList" v-model="type" placeholder="请选择角色类型">
               <el-option
                 v-for="item in typeOptions"

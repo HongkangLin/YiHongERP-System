@@ -6,12 +6,12 @@
       <div class="input">
         <el-form :model="form" :rules="rules" ref="ruleForm">
           <el-form-item prop="email">
-            <el-input v-model="form.email" placeholder="请输入邮箱">
+            <el-input maxlength="100" v-model="form.email" placeholder="请输入邮箱">
               <i class="el-icon-s-custom el-input__icon" slot="prefix"></i>
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input type="password" v-model="form.password" placeholder="请输入密码">
+            <el-input maxlength="100" type="password" v-model="form.password" placeholder="请输入密码">
               <i class="el-icon-edit el-input__icon" slot="prefix"></i>
             </el-input>
           </el-form-item>

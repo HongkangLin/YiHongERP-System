@@ -7,7 +7,7 @@
         <div class="base">
           <el-form ref="formData" :model="formData" :rules="rules" label-width="110px">
             <el-form-item label="品牌名称：" prop="goodsBrandName">
-              <el-input v-model="formData.goodsBrandName" placeholder="请输入品牌名称"></el-input>
+              <el-input maxlength="100" v-model="formData.goodsBrandName" placeholder="请输入品牌名称"></el-input>
             </el-form-item>
             <el-form-item label="品牌缩写：" prop="goodsBrandLetter">
               <el-input v-model="formData.goodsBrandLetter" maxlength="100" placeholder="请输入品牌缩写"></el-input>
@@ -34,7 +34,7 @@
               </el-dialog>
             </el-form-item>
             <el-form-item label="备注：">
-              <el-input type="textarea" :rows="7" v-model="formData.goodsBrandDecription" placeholder="请输入备注"></el-input>
+              <el-input maxlength="100" type="textarea" :rows="7" v-model="formData.goodsBrandDecription" placeholder="请输入备注"></el-input>
             </el-form-item>
             <el-form-item>
               <div class="submit" @click="submit('formData')">提交</div>

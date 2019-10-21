@@ -13,7 +13,7 @@
               <el-radio v-model="formData.roleType" v-if="formData.roleType !== '1'" label="3">员工</el-radio>
             </el-form-item>
             <el-form-item label="角色名：" maxlength="100" prop="roleName" :rules="{ required: true, message: '角色名不能为空', trigger: 'blur'}">
-              <el-input v-model="formData.roleName" placeholder="请输入角色名"></el-input>
+              <el-input maxlength="100" v-model="formData.roleName" placeholder="请输入角色名"></el-input>
             </el-form-item>
             <el-form-item label="角色描述：">
               <el-input type="textarea" maxlength="100" :rows="7" v-model="formData.roleDesc" placeholder="请输入角色描述"></el-input>

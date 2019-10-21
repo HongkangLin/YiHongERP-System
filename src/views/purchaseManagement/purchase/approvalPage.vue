@@ -139,9 +139,10 @@ export default {
             item.approveResult = "驳回"
           }
         })
-        obj.approveList = obj.approveList.filter((item) => {
-          return item.approveResult !== null;
-        })
+        console.log(obj.approveList);
+        // obj.approveList = obj.approveList.filter((item) => {
+        //   return item.approveResult !== null;
+        // })
         this.tableData = obj;
       })
     },

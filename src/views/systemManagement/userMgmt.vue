@@ -12,6 +12,7 @@
         <div class="top">架构管理</div>
         <div class="dptTree">
           <el-input
+            maxlength="100"
             class="searchDpt"
             placeholder="请输入部门名称"
             v-model="filterText">
@@ -95,6 +96,7 @@
           <div class="leftArea">
             <el-input
               size="mini"
+              maxlength="100"
               class="searchMatch"
               placeholder="输入员工姓名/邮箱/手机号"
               v-model="searchOpts.searchValue">

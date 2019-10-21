@@ -17,7 +17,7 @@
         </div>
         <div class="content">
           <div class="inputDiv">
-            <el-input class="searchValue" v-model="searchValue" placeholder="付款单号" clearable></el-input>
+            <el-input maxlength="100" class="searchValue" v-model="searchValue" placeholder="付款单号" clearable></el-input>
             <el-date-picker v-model="createTimeRange" value-format="yyyy-MM-dd" type="daterange" range-separator="" start-placeholder="请选择申请时间"></el-date-picker>
             <el-date-picker v-model="payTimeRange" value-format="yyyy-MM-dd" type="daterange" range-separator="" start-placeholder="请选择付款时间"></el-date-picker>
           </div>

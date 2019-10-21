@@ -58,7 +58,7 @@
           <div class="hint">不选下一审批人流程将终止并结束审批流程</div>
         </el-form-item>
         <el-form-item label="反馈原因：" prop="feedbackReason">
-          <el-input v-model="ruleForm.feedbackReason" type="textarea" :rows="4" placeholder="请输入反馈原因"></el-input>
+          <el-input maxlength="100" v-model="ruleForm.feedbackReason" type="textarea" :rows="4" placeholder="请输入反馈原因"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

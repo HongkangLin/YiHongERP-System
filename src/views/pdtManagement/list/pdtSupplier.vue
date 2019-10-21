@@ -55,7 +55,7 @@
         </div>
         <div class="content">
           <div class="search1">
-            <el-input placeholder="供应商名称" v-model="pdtName" class="input-with-select">
+            <el-input maxlength="100" placeholder="供应商名称" v-model="pdtName" class="input-with-select">
               <el-button slot="append" icon="el-icon-search" @click="searchPdt"></el-button>
             </el-input>
           </div>

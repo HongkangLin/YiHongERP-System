@@ -9,7 +9,7 @@
         </div>
         <div class="content">
           <div class="inputDiv">
-            <el-input class="name" v-model="name" placeholder="结算方式"></el-input>
+            <el-input maxlength="100" class="name" v-model="name" placeholder="结算方式"></el-input>
           </div>
           <div class="sel" @click="search">查询</div>
         </div>

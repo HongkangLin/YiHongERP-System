@@ -7,10 +7,10 @@
       <div class="contentArea">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
           <el-form-item label="付款单号：" prop="payNum">
-            <el-input v-model="ruleForm.payNum" disabled></el-input>
+            <el-input maxlength="100" v-model="ruleForm.payNum" disabled></el-input>
           </el-form-item>
           <el-form-item label="供应商：" prop="supplierName">
-            <el-input v-model="ruleForm.supplierName" disabled></el-input>
+            <el-input maxlength="100" v-model="ruleForm.supplierName" disabled></el-input>
           </el-form-item>
           <el-form-item label="收款账号：" prop="accountInfo">
             <el-select v-model="ruleForm.accountInfo" placeholder="请选择收款账号">
@@ -20,7 +20,7 @@
         </el-form>
         <div class="note">
           <span class="name">备注：</span>
-          <el-input v-model="bak" class="bak" placeholder="请输入付款备注"></el-input>
+          <el-input maxlength="100" v-model="bak" class="bak" placeholder="请输入付款备注"></el-input>
         </div>
         <el-table :data="orderList" border show-summary :summary-method="getSummaries" style="width: 100%">
           <el-table-column prop="purchaseId" label="采购单号" min-width="125"></el-table-column>
@@ -49,7 +49,7 @@
           </el-table-column>
           <el-table-column prop="bak" label="备注" min-width="240">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.bak" placeholder="请输入"></el-input>
+              <el-input maxlength="100" v-model="scope.row.bak" placeholder="请输入"></el-input>
             </template>
           </el-table-column>
         </el-table>

@@ -9,7 +9,7 @@
       </div>
       <div class="content">
         <div class="inputDiv">
-          <el-input class="nameKeyword" v-model="gnameOrSkuKeyword" placeholder="产品名称/SKU"></el-input>
+          <el-input maxlength="100" class="nameKeyword" v-model="gnameOrSkuKeyword" placeholder="产品名称/SKU"></el-input>
           <el-select v-model="warehouseId" placeholder="仓库">
             <el-option v-for="(item, index) in storeList" :key="index" :label="item.name" :value="item.id"></el-option>
           </el-select>

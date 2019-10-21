@@ -9,7 +9,7 @@
         </div>
         <div class="content">
           <div class="inputDiv">
-            <el-input class="name" v-model="name" placeholder="供应商名称/编号"></el-input>
+            <el-input maxlength="100" class="name" v-model="name" placeholder="供应商名称/编号"></el-input>
           </div>
           <div class="sel" @click="search">查询</div>
         </div>

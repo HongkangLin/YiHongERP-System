@@ -612,6 +612,7 @@ export default {
       window.open(this.form.fnskuFileUrl[0].url.replace('_80x80', ''));
     },
     checkSize (file) { // 文件上传前检查文件大小(小于2M)
+      console.log('fileType:' + file.type);
       if (file.type !== 'image/png' && file.type !== 'image/jpg') {
         this.$message({
           message: '文件格式错误',

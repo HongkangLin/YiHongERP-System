@@ -4,10 +4,10 @@
     <div class="formArea">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="140px" class="ruleForm">
         <el-form-item label="仓库编号：" prop="id">
-          <el-input v-model="ruleForm.id" placeholder="提交后自动生成" disabled></el-input>
+          <el-input maxlength="100" v-model="ruleForm.id" placeholder="提交后自动生成" disabled></el-input>
         </el-form-item>
         <el-form-item label="仓库名称：" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="请输入仓库名称"></el-input>
+          <el-input maxlength="100" v-model="ruleForm.name" placeholder="请输入仓库名称"></el-input>
         </el-form-item>
         <el-form-item label="负责人：" prop="chargePersonId">
           <el-select v-model="ruleForm.chargePersonId" placeholder="选择负责人">
@@ -27,16 +27,16 @@
           </el-select>
         </el-form-item>
         <el-form-item label="揽收联系人：" prop="collectorName">
-          <el-input v-model="ruleForm.collectorName" placeholder="请输入揽收联系人姓名"></el-input>
+          <el-input maxlength="100" v-model="ruleForm.collectorName" placeholder="请输入揽收联系人姓名"></el-input>
         </el-form-item>
         <el-form-item label="揽收联系人电话：" prop="collectorMobile">
-          <el-input v-model="ruleForm.collectorMobile" placeholder="请输入揽收联系人电话"></el-input>
+          <el-input maxlength="100" v-model="ruleForm.collectorMobile" placeholder="请输入揽收联系人电话"></el-input>
         </el-form-item>
         <el-form-item label="公司名称：" prop="companyName">
-          <el-input v-model="ruleForm.companyName" placeholder="请输入公司名称"></el-input>
+          <el-input maxlength="100" v-model="ruleForm.companyName" placeholder="请输入公司名称"></el-input>
         </el-form-item>
         <el-form-item label="邮编：" prop="postCode">
-          <el-input v-model="ruleForm.postCode" placeholder="请输入邮编"></el-input>
+          <el-input maxlength="100" v-model="ruleForm.postCode" placeholder="请输入邮编"></el-input>
         </el-form-item>
         <el-form-item label="所在地：" prop="addrProvince">
           <div class="wrap">
@@ -52,13 +52,13 @@
           </div>
         </el-form-item>
         <el-form-item label="详细地址：" prop="addrDetail">
-          <el-input v-model="ruleForm.addrDetail" placeholder="示例:某某街某某路"></el-input>
+          <el-input maxlength="100" v-model="ruleForm.addrDetail" placeholder="示例:某某街某某路"></el-input>
         </el-form-item>
         <el-form-item label="固定电话：" prop="fixedPhone">
-          <el-input v-model="ruleForm.fixedPhone" placeholder="请输入固定电话"></el-input>
+          <el-input maxlength="100" v-model="ruleForm.fixedPhone" placeholder="请输入固定电话"></el-input>
         </el-form-item>
         <el-form-item label="邮箱地址：" prop="email">
-          <el-input v-model="ruleForm.email" placeholder="请输入邮箱地址"></el-input>
+          <el-input maxlength="100" v-model="ruleForm.email" placeholder="请输入邮箱地址"></el-input>
         </el-form-item>
         <el-button type="primary" size="medium" @click="submitForm('ruleForm')" class="submitBtn">提交</el-button>
       </el-form>

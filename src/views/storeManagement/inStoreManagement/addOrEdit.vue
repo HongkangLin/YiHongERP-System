@@ -9,13 +9,13 @@
         <div class="secTitle">基础信息</div>
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="140px" class="ruleForm">
           <el-form-item label="入库单号：" prop="sn">
-            <el-input v-model="ruleForm.sn" placeholder="提交后自动生成" disabled></el-input>
+            <el-input maxlength="100" v-model="ruleForm.sn" placeholder="提交后自动生成" disabled></el-input>
           </el-form-item>
           <el-form-item label="入库状态：" prop="status">
-            <el-input v-model="ruleForm.status" placeholder="待入库" disabled></el-input>
+            <el-input maxlength="100" v-model="ruleForm.status" placeholder="待入库" disabled></el-input>
           </el-form-item>
           <el-form-item label="入库类型：" prop="type">
-            <el-input v-model="ruleForm.type" placeholder="外贸入库" disabled></el-input>
+            <el-input maxlength="100" v-model="ruleForm.type" placeholder="外贸入库" disabled></el-input>
           </el-form-item>
           <el-form-item label="入库仓库：" prop="warehouseName">
             <el-select v-model="ruleForm.warehouseName" placeholder="请选择入库仓库">
@@ -28,13 +28,13 @@
             </el-select>
           </el-form-item>
           <el-form-item label="采购员：" prop="purchaserId">
-            <el-input v-model="ruleForm.purchaserName" placeholder="请输入采购员" disabled></el-input>
+            <el-input maxlength="100" v-model="ruleForm.purchaserName" placeholder="请输入采购员" disabled></el-input>
           </el-form-item>
           <el-form-item label="运单号：" prop="deliverSn">
-            <el-input v-model="ruleForm.deliverSn" placeholder="请输入运单号"></el-input>
+            <el-input maxlength="100" v-model="ruleForm.deliverSn" placeholder="请输入运单号"></el-input>
           </el-form-item>
           <el-form-item label="备注：" prop="remark">
-            <el-input type="textarea" :rows="4" placeholder="输入备注" v-model="ruleForm.remark"></el-input>
+            <el-input maxlength="100" type="textarea" :rows="4" placeholder="输入备注" v-model="ruleForm.remark"></el-input>
           </el-form-item>
         </el-form>
         <!-- 产品信息 -->
@@ -73,7 +73,7 @@
     </div>
     <!-- 添加产品弹窗 -->
     <el-dialog title="添加产品" :visible.sync="dialogTableVisible" width="45%" class="pdtDialog" @open="checkIfAdded" :destroy-on-close="true">
-      <el-input v-model="dialog.skuIdOrGoodsNameOrCustomId" placeholder="商品名称/SKU" class="searchPdt">
+      <el-input maxlength="100" v-model="dialog.skuIdOrGoodsNameOrCustomId" placeholder="商品名称/SKU" class="searchPdt">
         <el-button slot="append" icon="el-icon-search" @click="searchDialogPdt"></el-button>
       </el-input>
       <el-table :data="dialogPdtList" border style="width: 100%" :key="dialogTableKey">

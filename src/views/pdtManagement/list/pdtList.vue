@@ -9,7 +9,7 @@
         </div>
         <div class="content">
           <div class="inputDiv">
-            <el-input class="name" v-model="name" placeholder="产品名称/SKU/海关编码"></el-input>
+            <el-input maxlength="100" class="name" v-model="name" placeholder="产品名称/SKU/海关编码"></el-input>
             <el-select class="selList" v-model="status" placeholder="产品状态">
               <el-option
                 v-for="item in prdStatus"

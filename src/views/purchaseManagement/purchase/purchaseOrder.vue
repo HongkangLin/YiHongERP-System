@@ -20,7 +20,7 @@
         </div>
         <div class="content">
           <div class="inputDiv">
-            <el-input class="searchValue" v-model="searchValue" placeholder="采购单/供应商/sku/产品名称"></el-input>
+            <el-input maxlength="100" class="searchValue" v-model="searchValue" placeholder="采购单/供应商/sku/产品名称"></el-input>
             <el-select v-model="payStatus" placeholder="付款状态" clearable>
               <el-option label="未完成" :value="1"></el-option>
               <el-option label="已完成" :value="2"></el-option>
@@ -86,7 +86,7 @@
     <el-dialog title="申请关闭采购单" :visible.sync="closeOrderVisible" width="35%">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
         <el-form-item label="关闭原因：" prop="reason">
-          <el-input v-model="ruleForm.reason" type="textarea" :rows="4" placeholder="请输入原因"></el-input>
+          <el-input maxlength="100" v-model="ruleForm.reason" type="textarea" :rows="4" placeholder="请输入原因"></el-input>
         </el-form-item>
       </el-form>
       <div class="hint">发起申请后您将无权操作此订单，解除异常后才能操作。请联系主管尽快处理！</div>
@@ -276,9 +276,9 @@ export default {
             item.approveResult = "驳回"
           }
         })
-        data.data = data.data.filter((item) => {
-          return item.approveResult !== null;
-        })
+        // data.data = data.data.filter((item) => {
+        //   return item.approveResult !== null;
+        // })
         this.reviewDetailData = data.data;
       })
     },

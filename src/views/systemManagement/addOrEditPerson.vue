@@ -5,16 +5,16 @@
       <div class="addOrEdit_main">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
           <el-form-item label="姓名" prop="userName">
-            <el-input v-model="ruleForm.userName" placeholder="请输入姓名"></el-input>
+            <el-input maxlength="100" v-model="ruleForm.userName" placeholder="请输入姓名"></el-input>
           </el-form-item>
           <el-form-item label="手机号" prop="mobile">
-            <el-input v-model="ruleForm.mobile" placeholder="请输入手机号"></el-input>
+            <el-input maxlength="100" v-model="ruleForm.mobile" placeholder="请输入手机号"></el-input>
           </el-form-item>
           <el-form-item label="邮箱" prop="email">
-            <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
+            <el-input maxlength="100" v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
           </el-form-item>
           <el-form-item label="密码" prop="password">
-            <el-input v-model="ruleForm.password" placeholder="6到20位数字与字母组合" type="password"></el-input>
+            <el-input maxlength="100" v-model="ruleForm.password" placeholder="6到20位数字与字母组合" type="password"></el-input>
           </el-form-item>
           <el-form-item label="角色" prop="roleId">
             <el-select v-model="ruleForm.roleId" placeholder="选择角色">
