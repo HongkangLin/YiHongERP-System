@@ -190,6 +190,9 @@ export default {
         if (valid) {
           for (let index = 0; index < this.orderList.length; index++) {
             const element = this.orderList[index];
+            if (element.unpaidAmount === 0) {
+              return _this.$message.warning("未支付货款为0")
+            }
             if (element.applyAmount === undefined) {
               return _this.$message.warning("请输入本次申请货款")
             }
