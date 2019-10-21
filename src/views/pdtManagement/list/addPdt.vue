@@ -612,6 +612,13 @@ export default {
       window.open(this.form.fnskuFileUrl[0].url.replace('_80x80', ''));
     },
     checkSize (file) { // 文件上传前检查文件大小(小于2M)
+      if (file.type !== 'image/png' && file.type !== 'image/jpg') {
+        this.$message({
+          message: '文件格式错误',
+          type: 'warning'
+        });
+        return false;
+      }
       if (file.size >= 2 * 1024 * 1024) {
         this.$message({
           message: '文件超过限制大小',
