@@ -220,7 +220,7 @@
           <el-divider></el-divider>
           <div class="next">
             <div @click="next(2, 1)" class="pre">上一步，选择产品</div>
-            <div @click="submit">完成，提交采购单</div>
+            <el-button @click="submit" type="primary" :loading="loading">完成，提交采购单</el-button>
           </div>
         </div>
       </div>
@@ -233,7 +233,8 @@ export default {
   data () {
     return {
       token: localStorage.getItem('token'),
-      active: 0, // 进度控制
+      active: 2, // 进度控制
+      loading: false,
       crumbList: [{ // 面包屑
         name: '采购管理',
         path: '/F0301/F030101'
@@ -464,6 +465,7 @@ export default {
       this.show = false;
     },
     submit () { // 提交
+      this.loading = true;
       this.$refs['info'].validate((valid) => {
         if (valid) {
           let curr = {...this.form, ...this.info};
@@ -471,6 +473,7 @@ export default {
           let time = new Date(param.expectDueTime);
           param.expectDueTime = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate();
           window.axios.post('/purchase/addPurchaseInfo', param).then(data => {
+            this.loading = false;
             if (data.code === 0) {
               this.$message({
                 message: data.message,
@@ -480,6 +483,7 @@ export default {
             }
           });
         } else {
+          this.loading = false;
           return false;
         }
       });
@@ -508,6 +512,11 @@ export default {
   }
   /deep/.el-step__title.is-process,/deep/.el-step__title.is-wait {
     color: rgb(153, 153, 153);
+  }
+  /deep/.el-button--small {
+    background-color: #1ABC9C;
+    border-color: #1ABC9C;
+    width: 180px;
   }
   .page {
     display: flex;

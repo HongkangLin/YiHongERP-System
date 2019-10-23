@@ -794,6 +794,18 @@ export default {
       param.mainPicUrl = this.pdtPhoto[0].url; // 商品主图
       param.picUrl1 = this.pdtPhoto[1] && this.pdtPhoto[1].url; // 商品图片
       param.picUrl2 = this.pdtPhoto[2] && this.pdtPhoto[2].url; // 商品图片
+      param.goodsGoalPrice = param.goodsGoalPrice || 0; // 销售目标价
+      param.claimPrice = param.claimPrice || 0; // 申报价值
+      param.tariffs = param.tariffs || 0; // 进口关税
+      param.goodsLength = param.goodsLength || 0; // 包装尺寸-长
+      param.goodsWide = param.goodsWide || 0; // 包装尺寸-宽
+      param.goodsHigh = param.goodsHigh || 0; // 包装尺寸-高
+      param.goodsWeight = param.goodsWeight || 0; // 产品重量
+      param.packingWeight = param.packingWeight || 0; // 整箱重量
+      param.packingQuantity = param.packingQuantity || 0; // 装箱数
+      param.packingLength = param.packingLength || 0; // 外箱尺寸-长
+      param.packingWide = param.packingWide || 0; // 外箱尺寸-宽
+      param.packingHigh = param.packingHigh || 0; // 外箱尺寸-高
       if (!this.id) { // 新增时传入供应关系
         param.list.forEach(item => {
           item.supplierId = item.id;
