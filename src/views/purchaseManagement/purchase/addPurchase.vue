@@ -233,7 +233,7 @@ export default {
   data () {
     return {
       token: localStorage.getItem('token'),
-      active: 2, // 进度控制
+      active: 0, // 进度控制
       loading: false,
       crumbList: [{ // 面包屑
         name: '采购管理',
