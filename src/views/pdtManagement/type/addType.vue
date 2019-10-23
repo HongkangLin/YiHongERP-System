@@ -65,6 +65,7 @@ export default {
         ]
       },
       id: '',
+      flag: false,
       disable: false
     };
   },
@@ -85,6 +86,7 @@ export default {
       let data = query.data;
       this.disable = true;
       if (data.goodsCategoryName) { // 存在名称时表示当前处于编辑状态
+        this.flag = true;
         this.title = '编辑分类';
         this.formData = data;
         this.crumbList.push({
@@ -105,7 +107,7 @@ export default {
     submit (formName) { // 提交
       this.$refs[formName].validate((valid) => { // 提交
         if (valid) {
-          let url = this.id && !this.disable ? '/product/updateCategory' : '/product/addCategory'; // 存在id时表示是修改
+          let url = this.flag ? '/product/updateCategory' : '/product/addCategory'; // 存在id时表示是修改
           let buf = JSON.parse(JSON.stringify(this.formData));
           if (!buf.parentId) {
             buf.parentId = 0; // 未选择分类时设置为顶级分类
@@ -116,7 +118,7 @@ export default {
           if (!buf.goodsCategorySortId) {
             buf.goodsCategorySortId = 255; // 排序id为设置时默认255
           }
-          let param = this.id && !this.disable ? {
+          let param = this.flag ? {
             id: this.id,
             ...buf
           } : {

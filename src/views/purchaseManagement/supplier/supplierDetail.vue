@@ -237,7 +237,12 @@ export default {
           }
         }
       }
-      data.data.settleType = data.data.settleType && this.settleSel[data.data.settleType].name;
+      for (let k = 0, klen = this.settleSel.length; k < klen; k++) {
+        if (this.settleSel[k].id === data.data.settleType) {
+          data.data.settleType = this.settleSel[k].name;
+          break;
+        }
+      }
       data.data.companySize = data.data.companySize && this.companySize[data.data.companySize];
       this.info = data.data;
     },

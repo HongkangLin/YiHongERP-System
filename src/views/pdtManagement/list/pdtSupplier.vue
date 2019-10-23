@@ -146,19 +146,17 @@ export default {
           }
         }
       } else { // 添加
-        this.$set(this.supplierList[idx], 'sel', true);
         let data = await window.axios.post('/supplyrel/create', {
           list: [{
             goodsId: this.$route.params.id,
             supplierId: this.supplierList[idx].id,
-            price: this.supplierList[idx].deliverDay || 0
+            price: ''
           }]
         });
         if (data.code === 0) {
+          this.$set(this.supplierList[idx], 'sel', true);
           this.$message.success(data.message);
           this.getPdt();
-        } else {
-          this.$message.warning(data.message);
         }
       }
     },

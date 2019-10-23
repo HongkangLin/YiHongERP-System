@@ -34,7 +34,7 @@
               <el-input disabled v-model="form.sn" placeholder="选择供应商自动带入"></el-input>
             </el-form-item>
             <el-form-item label="采购员：" prop="purchaseUserId">
-              <el-select v-model="form.purchaseUserId" placeholder="请选择采购员">
+              <el-select :disabled="disabled" v-model="form.purchaseUserId" placeholder="请选择采购员">
                 <el-option
                   v-for="item in peopleSel"
                   :key="item.id"
@@ -273,6 +273,7 @@ export default {
       pageNum: 1, // 当前页
       total: 0, // 总条数
       show: false, // 是否显示添加界面
+      disabled: false,
       info: { // 合同信息
         dueTime: '', // 交货日期
         payBak: '', // 放款方式备注
@@ -312,6 +313,10 @@ export default {
     async getRole () { // 获取采购员列表
       let data = await window.axios.get('/user/queryUserList4Select/purchase');
       this.peopleSel = data.data;
+      if (this.peopleSel.length === 1) {
+        this.form.purchaseUserId = this.peopleSel[0].id;
+        this.disabled = true;
+      }
     },
     async getStore () { // 获取仓库
       let data = await window.axios.get(`/warehouse/simpList`);
@@ -350,10 +355,25 @@ export default {
       if (curr > idx) { // 上一页
         this.active = idx;
       } else { // 下一页
-        if (idx === 2 && !this.form.productOfPurchaseDTOList.length) {
-          this.$message.warning('请先选择产品');
-          return;
-        } else if (idx === 1) { // 往第二页跳转
+        if (idx === 2) {
+          if (!this.form.productOfPurchaseDTOList.length) {
+            this.$message.warning('请先选择产品');
+            return;
+          } else {
+            let flag = false;
+            for (let i = 0, len = this.form.productOfPurchaseDTOList.length; i < len; i++) {
+              if (!this.form.productOfPurchaseDTOList[i].purchaseAmount) {
+                flag = true;
+                break;
+              }
+            }
+            if (flag) {
+              this.$message.warning('请先输入采购数量');
+              return;
+            }
+          }
+        }
+        if (idx === 1) { // 往第二页跳转
           this.$refs['form'].validate((valid) => {
             if (valid) {
               this.getPdt();

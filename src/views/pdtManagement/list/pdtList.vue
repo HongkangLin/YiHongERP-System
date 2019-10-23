@@ -64,9 +64,13 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="goodsName"
-            align="center"
+            align="left"
             label="产品信息">
+            <template slot-scope="scope">
+              <div>名称：{{scope.row.goodsName}}</div>
+              <div>产品分类：{{scope.row.pdtTypeName}}</div>
+              <div>品牌：{{scope.row.brandName}}</div>
+            </template>
           </el-table-column>
           <el-table-column
             prop="fnskuId"
@@ -185,9 +189,9 @@ export default {
       tableData: [] // 表格数据
     };
   },
-  mounted () {
-    this.getPrdType();
-    this.getBrand();
+  async mounted () {
+    await this.getPrdType();
+    await this.getBrand();
     this.getPeople();
     this.queryList();
   },
@@ -243,6 +247,23 @@ export default {
       this.total = data.total;
       data.list.forEach(item => {
         item.status = item.status === 0;
+        for (let i = 0, len = this.brandList.length; i < len; i++) {
+          if (this.brandList[i].value === item.brandId) {
+            item.brandName = this.brandList[i].label;
+          }
+        }
+        let name = '';
+        for (let j = 0, jlen = this.prdType.length; j < jlen; j++) {
+          if (this.prdType[j].value === item.categoryParentId) {
+            name += this.prdType[j].label + '/';
+            for (let k = 0, klen = this.prdType[j].listChildCategory.length; k < klen; k++) {
+              if (this.prdType[j].listChildCategory[k].value === item.categoryId) {
+                name += this.prdType[j].listChildCategory[k].label;
+              }
+            }
+          }
+        }
+        item.pdtTypeName = name;
       });
       this.tableData = data.list;
     },
