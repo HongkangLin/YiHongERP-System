@@ -306,7 +306,7 @@
 </template>
 
 <script>
-import { regionData } from 'element-china-area-data';
+import { provinceAndCityData } from 'element-china-area-data';
 export default {
   data () {
     var validatePass = (rule, value, callback) => {
@@ -353,7 +353,7 @@ export default {
           value: 'C'
         }
       ],
-      options: regionData, // 省市区选择
+      options: provinceAndCityData, // 省市区选择
       peopleSel: [], // 采购员
       settleSel: [], // 结算方式
       compSel: [ // 公司规模
@@ -526,19 +526,22 @@ export default {
       this.form.status = this.form.status + '';
       this.form.busLicensePicUrl = this.form.busLicensePicUrl ? [{url: this.form.busLicensePicUrl.replace('80*80', '')}] : [];
       let arr = [];
-      for (let i = 0, len = regionData.length; i < len; i++) {
-        if (data.addrProvince === regionData[i].label) {
-          arr.push(regionData[i].value); // 省编号
-          for (let j = 0, jLen = regionData[i].children.length; j < jLen; j++) {
-            let curr = regionData[i].children;
+      for (let i = 0, len = provinceAndCityData.length; i < len; i++) {
+        if (data.addrProvince === provinceAndCityData[i].label) {
+          arr.push(provinceAndCityData[i].value); // 省编号
+          if (!data.addrCity) { // 不存在市跳出
+            break;
+          }
+          for (let j = 0, jLen = provinceAndCityData[i].children.length; j < jLen; j++) {
+            let curr = provinceAndCityData[i].children;
             if (curr[j].label === data.addrCity) {
               arr.push(curr[j].value); // 市编号
-              for (let k = 0, kLen = curr[j].children.length; k < kLen; k++) {
-                let kCurr = curr[j].children;
-                if (kCurr[k].label === data.addrArea) {
-                  arr.push(kCurr[k].value); // 区编号
-                }
-              }
+              // for (let k = 0, kLen = curr[j].children.length; k < kLen; k++) {
+              //   let kCurr = curr[j].children;
+              //   if (kCurr[k].label === data.addrArea) {
+              //     arr.push(kCurr[k].value); // 区编号
+              //   }
+              // }
             }
           }
         }
@@ -685,24 +688,27 @@ export default {
         return;
       }
       let param = JSON.parse(JSON.stringify(this.form));
-      for (let i = 0, len = regionData.length; i < len; i++) {
-        if (param.selectedOptions[0] === regionData[i].value) {
-          param.addrProvince = regionData[i].label; // 省
-          for (let j = 0, jLen = regionData[i].children.length; j < jLen; j++) {
-            let curr = regionData[i].children;
+      for (let i = 0, len = provinceAndCityData.length; i < len; i++) {
+        if (param.selectedOptions[0] === provinceAndCityData[i].value) {
+          param.addrProvince = provinceAndCityData[i].label; // 省
+          if (!param.selectedOptions[1]) { // 不存在市，跳过
+            break;
+          }
+          for (let j = 0, jLen = provinceAndCityData[i].children.length; j < jLen; j++) {
+            let curr = provinceAndCityData[i].children;
             if (curr[j].value === param.selectedOptions[1]) {
               param.addrCity = curr[j].label; // 市
-              for (let k = 0, kLen = curr[j].children.length; k < kLen; k++) {
-                let kCurr = curr[j].children;
-                if (kCurr[k].value === param.selectedOptions[2]) {
-                  param.addrArea = kCurr[k].label; // 区
-                }
-              }
+              // for (let k = 0, kLen = curr[j].children.length; k < kLen; k++) {
+              //   let kCurr = curr[j].children;
+              //   if (kCurr[k].value === param.selectedOptions[2]) {
+              //     param.addrArea = kCurr[k].label; // 区
+              //   }
+              // }
             }
           }
         }
       }
-      param.addrRegionCode = param.selectedOptions[2]; // 地区编号
+      param.addrRegionCode = param.selectedOptions[1] || param.selectedOptions[0]; // 地区编号
       delete param.selectedOptions;
       param.busLicensePicUrl = param.busLicensePicUrl[0] && param.busLicensePicUrl[0].url; // 图片url
       param.goodsCategoryId = this.seconedList[this.currSecond].id; // 商品目录
