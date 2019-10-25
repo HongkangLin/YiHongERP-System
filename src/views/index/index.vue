@@ -2,7 +2,7 @@
   <el-container class="index_wrap">
     <!-- 顶部一级菜单 -->
     <el-header>
-      <div class="systemName"><a href="/">毅宏ERP管理系统</a></div>
+      <div class="systemName"><a href="/">毅弘ERP管理系统</a></div>
       <div class="iconPanel">
         <el-popover
           placement="bottom-start"

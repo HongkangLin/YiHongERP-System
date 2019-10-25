@@ -2,7 +2,7 @@
   <div class="login_wrap">
     <img src="../../assets/image/svg/hexagons.svg" alt="">
     <div class="login">
-      <div class="title">毅宏ERP管理系统</div>
+      <div class="title">毅弘ERP管理系统</div>
       <div class="input">
         <el-form :model="form" :rules="rules" ref="ruleForm">
           <el-form-item prop="email">
@@ -17,7 +17,7 @@
           </el-form-item>
         </el-form>
       </div>
-      <div class="submit" @click="login('ruleForm')">登陆</div>
+      <div class="submit" @click="login('ruleForm')">登录</div>
     </div>
   </div>
 </template>
