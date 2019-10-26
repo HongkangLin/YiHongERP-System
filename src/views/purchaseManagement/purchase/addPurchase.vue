@@ -192,16 +192,16 @@
             核对合同描述
             <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
-          <div class="lable" :style="'top:' + (420 + 163 * (form.productOfPurchaseDTOList.length - 1)) + 'px'">
+          <div class="lable" :style="'top:' + (530 + 163 * (form.productOfPurchaseDTOList.length - 1)) + 'px'">
             <i class="el-icon-collection-tag"></i>
             核对合同条款
             <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
         </div>
         <div class="right">
-          <el-form ref="info" class="form" :model="info" :rules="infoRule" label-width="210px">
+          <el-form ref="info" class="form last" :model="info" :rules="infoRule" label-width="210px">
             <el-form-item label="交货日期：" prop="dueTime">
-              <el-input v-model="info.dueTime" maxlength="100" placeholder="请输入交货日期"></el-input>
+              <el-input type="textarea" :rows="7" v-model="info.dueTime" maxlength="100" placeholder="请输入交货日期"></el-input>
             </el-form-item>
             <el-form-item label="放款方式备注：" prop="payBak">
               <el-input type="textarea" maxlength="100" :rows="7" v-model="info.payBak" placeholder="示例：自双方签订合同起付乙方30%定金27702元，剩余货款64638元出货前付清；"></el-input>
@@ -513,11 +513,6 @@ export default {
   /deep/.el-step__title.is-process,/deep/.el-step__title.is-wait {
     color: rgb(153, 153, 153);
   }
-  /deep/.el-button--small {
-    background-color: #1ABC9C;
-    border-color: #1ABC9C;
-    width: 180px;
-  }
   .page {
     display: flex;
     border: 1px solid rgb(228, 228, 228);
@@ -552,7 +547,7 @@ export default {
         }
       }
       .moneyLabel {
-        top: 260px;
+        top: 360px;
       }
       .compLabel {
         top: 420px;
@@ -575,6 +570,11 @@ export default {
         }
         /deep/.el-input--small .el-textarea__inner {
           width: 400px;
+        }
+        &.last {
+          /deep/.el-input--small .el-textarea__inner {
+            width: 550px;
+          }
         }
         .info {
           color: rgb(153, 153, 153)
@@ -622,6 +622,11 @@ export default {
           background-color: white;
           color: #1ABC9C;
           border: 1px solid #1ABC9C;
+        }
+        /deep/.el-button--small {
+          background-color: #1ABC9C;
+          border-color: #1ABC9C;
+          width: 180px;
         }
       }
     }

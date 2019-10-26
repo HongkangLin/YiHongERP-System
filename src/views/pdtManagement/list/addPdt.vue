@@ -108,23 +108,44 @@
             <el-form-item label="FNSKU文件：" prop="fnskuFileUrl">
               <el-upload
                 class="upload-demo"
-                accept=".jpg, .png"
+                accept=".pdf"
                 drag
                 action="/erp/file/upload"
                 :limit="1"
                 :on-exceed="() => {this.$message.warning('上传失败，只能上传一份资料哦～')}"
                 :file-list="form.fnskuFileUrl"
-                :before-upload="checkSize"
+                :before-upload="checkSize2"
                 :on-error="() => {this.$message.error('上传失败')}"
                 :headers="{'x-token': token}"
-                :on-success="up2"
+                :on-success="up4"
                 :on-preview="openFile"
-                :on-remove="handleRemove2"
+                :on-remove="handleRemove4"
                 multiple>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">只能上传jpg/png格式文件，文件不能超过2M，仅允许上传1份</div>
+                <div class="el-upload__tip" slot="tip">只能上传pdf格式文件，文件不能超过2M，仅允许上传1份</div>
               </el-upload>
+            </el-form-item>
+            <el-form-item label="FNSKU图片：" prop="fnskuFilePicUrl">
+              <el-upload
+                action="/erp/file/upload"
+                list-type="picture-card"
+                :headers="{'x-token': token}"
+                accept=".jpg, .png"
+                :limit="1"
+                :file-list="form.fnskuFilePicUrl"
+                :on-exceed="() => {this.$message.warning('上传失败，只能上传一张图片哦～')}"
+                :before-upload="checkSize"
+                :on-error="() => {this.$message.error('上传失败')}"
+                :on-success="up2"
+                :on-preview="handlePictureCardPreview2"
+                :on-remove="handleRemove2">
+                <i class="el-icon-plus"></i>
+                <div class="info" slot="tip">只能上传jpg/png格式文件，文件不能超过2M</div>
+              </el-upload>
+              <el-dialog :visible.sync="dialogVisible2">
+                <img width="100%" :src="dialogImageUrl2" alt="">
+              </el-dialog>
             </el-form-item>
             <el-form-item label="防跟卖标签：">
               <el-upload
@@ -374,6 +395,7 @@ export default {
         skuId: '', // sku
         goodsGoalPrice: '', // 销售目标价
         fnskuFileUrl: [], // fnsku文件
+        fnskuFilePicUrl: [], // fnsku图片
         goodsUrl: '', // 产品链接
         clearStocksFlag: false, // 是否清货
         fnskuId: '', // fnsku
@@ -401,6 +423,8 @@ export default {
       supplierName: '', // 供应商名称
       dialogImageUrl: '',
       dialogVisible: false,
+      dialogImageUrl2: '',
+      dialogVisible2: false,
       rules: {
         brandId: [
           {required: true, message: '请选择产品品牌', trigger: 'change'}
@@ -416,6 +440,9 @@ export default {
         ],
         fnskuFileUrl: [
           {required: true, message: '请上传FNSKU文件', trigger: 'blur'}
+        ],
+        fnskuFilePicUrl: [
+          {required: true, message: '请上传FNSKU图片', trigger: 'blur'}
         ]
       },
       id: '',
@@ -520,6 +547,7 @@ export default {
         name: data.data.fnskuFileName,
         url: data.data.fnskuFileUrl
       }];
+      data.data.fnskuFilePicUrl = data.data.fnskuFilePicUrl ? [{url: data.data.fnskuFilePicUrl}] : [];
       data.data.fnskuPicUrl = data.data.fnskuPicUrl ? [{url: data.data.fnskuPicUrl}] : [];
       data.data.mainPicUrl && this.pdtPhoto.push({
         name: '商品主图',
@@ -609,9 +637,29 @@ export default {
       }
     },
     openFile () { // 打开fnsku文件
-      window.open(this.form.fnskuFileUrl[0].url.replace('_80x80', ''));
+      console.log(this.form.fnskuFileUrl[0].url);
+      window.open(this.form.fnskuFileUrl[0].url);
     },
-    checkSize (file) { // 文件上传前检查文件大小(小于2M)
+    checkSize2 (file) { // 文件上传前检查文件大小和格式(小于2M)
+      let name = file.name.split('.');
+      let type = name[name.length - 1];
+      console.log('type: ' + type);
+      if (type !== 'pdf') {
+        this.$message({
+          message: '文件格式错误',
+          type: 'warning'
+        });
+        return false;
+      }
+      if (file.size >= 2 * 1024 * 1024) {
+        this.$message({
+          message: '文件超过限制大小',
+          type: 'warning'
+        });
+        return false;
+      }
+    },
+    checkSize (file) { // 文件上传前检查文件大小和格式(小于2M)
       let name = file.name.split('.');
       let type = name[name.length - 1];
       console.log('type: ' + type);
@@ -672,12 +720,24 @@ export default {
       };
       this.pdtPhoto.push(param);
     },
-    handleRemove2() { // 删除文件
+    handleRemove4() { // 删除文件
       this.form.fnskuFileUrl = [];
     },
-    up2 (response) { // 上传成功
+    up4 (response) { // 上传成功
       this.form.fnskuFileUrl.push({
         name: response.data.fileName,
+        url: response.data.originUrl
+      });
+    },
+    handleRemove2() { // 删除文件
+      this.form.fnskuFilePicUrl = [];
+    },
+    handlePictureCardPreview2(file) { // 展示大图
+      this.dialogImageUrl2 = file.url.replace('_80x80', '');
+      this.dialogVisible2 = true;
+    },
+    up2 (response) { // 上传成功
+      this.form.fnskuFilePicUrl.push({
         url: response.data.thumbUrl
       });
     },
@@ -790,6 +850,7 @@ export default {
       param.clearStocksFlag = ~~param.clearStocksFlag; // 是否清货
       param.fnskuFileName = param.fnskuFileUrl[0].name; // fnsku文件名称
       param.fnskuFileUrl = param.fnskuFileUrl[0].url; // fnsku文件
+      param.fnskuFilePicUrl = param.fnskuFilePicUrl[0].url; // fnsku图片
       param.fnskuPicUrl = param.fnskuPicUrl[0] && param.fnskuPicUrl[0].url; // 防跟卖标签
       param.mainPicUrl = this.pdtPhoto[0].url; // 商品主图
       param.picUrl1 = this.pdtPhoto[1] && this.pdtPhoto[1].url; // 商品图片
@@ -854,7 +915,7 @@ export default {
       height: 710px;
     }
     .secondLeft {
-      height: 2200px;
+      height: 2480px;
     }
     .left {
       position: relative;
@@ -880,10 +941,10 @@ export default {
         }
       }
       .moneyLabel {
-        top: 1210px;
+        top: 1400px;
       }
       .compLabel {
-        top: 1470px;
+        top: 1660px;
       }
     }
     .right {
