@@ -59,9 +59,9 @@
           <el-table-column align="center" fixed="right" label="操作" width="150" v-if="roleCtl.purchase_query || roleCtl.purchase_arrive || roleCtl.purchase_close">
             <template slot-scope="scope">
               <el-button type="text" size="small" @click="toDetailPage(scope.row.purchaseId)" v-if="roleCtl.purchase_query">详情</el-button>
-              <el-divider v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_query" direction="vertical"></el-divider>
+              <el-divider v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_query && roleCtl.purchase_arrive" direction="vertical"></el-divider>
               <el-button v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_arrive" type="text" size="small" @click="toArrivePage(scope.row.purchaseId)">到货</el-button>
-              <el-divider v-if="scope.row.purchaseStatus === '进行中'" direction="vertical"></el-divider>
+              <el-divider v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_close" direction="vertical"></el-divider>
               <el-button v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_close" type="text" size="small" @click="showCloseOrderDialog(scope.row.purchaseId)">关闭</el-button>
               <el-divider v-if="scope.row.approveShowFlag" direction="vertical"></el-divider>
               <el-button v-if="scope.row.approveShowFlag" type="text" size="small" @click="toApprovalPage(scope.row.purchaseId, scope.row.skuCount)">审批</el-button>
