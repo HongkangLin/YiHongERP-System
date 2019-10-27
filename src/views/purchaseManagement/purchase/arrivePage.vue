@@ -104,11 +104,11 @@ export default {
         const item = this.productInfo.purchaseProductList[index];
         if (item.arriveCount) {
           flag = true;
+          params.goods.push({
+            goodsId: item.goodsId,
+            arriveCount: item.arriveCount || 0
+          })
         }
-        params.goods.push({
-          goodsId: item.goodsId,
-          arriveCount: item.arriveCount || 0
-        })
       }
       if (!flag) return this.$message.warning("请输入本次到货数量");
       window.axios.post("/checkinorder/createp", params).then((data) => {
