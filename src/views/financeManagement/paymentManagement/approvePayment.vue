@@ -149,7 +149,7 @@ export default {
 
     // 下一审批人下拉
     getPeopleList() {
-      window.axios.get("/user/queryAllUserList").then((data) => {
+      window.axios.get("/user/queryOtherUserList").then((data) => {
         if (data.code !== 0) return
         this.peopleList = data.data;
       })

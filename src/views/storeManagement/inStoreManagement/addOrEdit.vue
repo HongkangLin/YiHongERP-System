@@ -41,6 +41,7 @@
         <div class="secTitle">产品信息</div>
         <el-button type="primary" icon="el-icon-plus" class="addPdtBtn" @click="dialogTableVisible = true">选择产品</el-button>
         <div class="productTable">
+          <el-form :model="tableRuleForm" :rules="tableRules" ref="tableRuleForm" :validate-on-rule-change="false">
           <el-table :data="productList" border show-summary style="width: 100%" :summary-method="getSummaries">
             <el-table-column label="图片" align="center" width="101">
               <template slot-scope="scope">
@@ -55,7 +56,9 @@
                 <span class="tableHeader">到货数量（套）</span>
               </template>
               <template slot-scope="scope">
-                <el-input-number v-model="scope.row.arriveCount" :min="0" :controls="false" placeholder="输入"></el-input-number>
+                <el-form-item :prop="'arriveCount' + scope.$index">
+                  <el-input-number v-model="scope.row.arriveCount" :min="0" step-strictly :controls="false" placeholder="输入"></el-input-number>
+                </el-form-item>
               </template>
             </el-table-column>
             <el-table-column align="center" fixed="right" label="操作" width="210">
@@ -64,6 +67,7 @@
               </template>
             </el-table-column>
           </el-table>
+          </el-form>
         </div>
         <!-- 提交 -->
         <div class="submit">
@@ -161,6 +165,29 @@ export default {
           path: ''
         }]
       }
+    },
+    tableRuleForm() {
+      let obj = {};
+      this.productList.length > 0 && this.productList.map((item, index) => {
+        obj["arriveCount"+index] = item.arriveCount;
+      })
+      return obj;
+    },
+    tableRules() {
+      let validateCount = (rule, value, callback) => {
+        if (value === undefined || value === null) {
+          callback(new Error('不可为空'));
+        } else {
+          callback();
+        }
+      };
+      let obj = {};
+      this.productList.length > 0 && this.productList.map((item, index) => {
+        obj["arriveCount"+index] = [
+          { validator: validateCount, trigger: 'blur' }
+        ]
+      })
+      return obj;
     }
   },
   created() {
@@ -252,31 +279,38 @@ export default {
 
     // 提交
     submitForm(formName) {
+      let _this = this;
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let flag = true;
+          // let flag = true;
           // 校验到货数量
           if (this.productList.length === 0) {
-            flag = false;
+            // flag = false;
             return this.$message.warning("请添加商品");
           } else {
-            this.productList.forEach(item => {
-              if (!item.arriveCount) {
-                flag = false;
-                return this.$message.warning("请填写到货数量");
+            this.$refs["tableRuleForm"].validate((valid) => {
+              if (valid) {
+                console.log('submit!');
+                if (_this.$route.query.inId) {
+                  // 编辑入库
+                  _this.editInStore();
+                } else {
+                  // 新增入库
+                  _this.addInStore();
+                }
+              } else {
+                console.log('error submit!!');
+                return false;
               }
-            });
+            })
+            // this.productList.forEach(item => {
+            //   if (!item.arriveCount) {
+            //     flag = false;
+            //     return this.$message.warning("请填写到货数量");
+            //   }
+            // });
           }
-          if (!flag) return
-
-          console.log('submit!');
-          if (this.$route.query.inId) {
-            // 编辑入库
-            this.editInStore();
-          } else {
-            // 新增入库
-            this.addInStore();
-          }
+          // if (!flag) return
         } else {
           console.log('error submit!!');
           return false;
@@ -423,7 +457,7 @@ export default {
               return prev;
             }
           }, 0);
-          sums[index] = sums[index].toFixed(2); 
+          // sums[index] = sums[index].toFixed(2); 
         } else {
           sums[index] = '';
         }
@@ -501,7 +535,11 @@ export default {
         }
         /deep/.el-table__body-wrapper {
           .el-input__inner {
-            border: none;
+            // border: none;
+          }
+          .el-form-item .el-form-item__error{
+            width: 100%;
+            text-align: center;
           }
         }
       }

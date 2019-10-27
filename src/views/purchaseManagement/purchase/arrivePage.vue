@@ -99,17 +99,18 @@ export default {
         remark: '',
         goods: []
       }
+      let flag = false;
       for (let index = 0; index < this.productInfo.purchaseProductList.length; index++) {
         const item = this.productInfo.purchaseProductList[index];
-        if (item.arriveCount === undefined || item.arriveCount === null) return this.$message.warning("请输入本次到货数量");
+        if (item.arriveCount) {
+          flag = true;
+        }
         params.goods.push({
           goodsId: item.goodsId,
           arriveCount: item.arriveCount || 0
         })
       }
-      this.productInfo.purchaseProductList.map((item) => {
-        
-      })
+      if (!flag) return this.$message.warning("请输入本次到货数量");
       window.axios.post("/checkinorder/createp", params).then((data) => {
         if (data.code !== 0) return
         this.$message.success("确认添加成功");

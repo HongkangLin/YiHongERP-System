@@ -66,7 +66,7 @@ import {
 	Avatar,
   // Main,
   // Footer,
-  // Loading,
+  Loading,
   MessageBox,
   Message,
   // Notification
@@ -140,9 +140,9 @@ export default (Vue) => {
 	// Vue.use(Main)
 	// Vue.use(Footer)
 
-	// Vue.use(Loading.directive)
+	Vue.use(Loading.directive)
 
-	// Vue.prototype.$loading = Loading.service
+	Vue.prototype.$loading = Loading.service
 	// Vue.prototype.$msgbox = MessageBox
 	Vue.prototype.$alert = MessageBox.alert
 	Vue.prototype.$confirm = MessageBox.confirm

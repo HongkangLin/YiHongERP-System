@@ -61,7 +61,7 @@
       <div class="dialogContent">确认提交吗？提交后将生成付款单，你可以在财务/应付费管理中查看审批流程以及付款单</div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmSubmit">提 交</el-button>
+        <el-button type="primary" @click="confirmSubmit" :loading="loading">提 交</el-button>
       </div>
     </el-dialog>
   </div>
@@ -106,6 +106,7 @@ export default {
 
       dialogVisible: false,
 
+      loading: false
     }
   },
   created() {
@@ -206,6 +207,7 @@ export default {
     },
 
     confirmSubmit() {
+      this.loading = true;
       let accountInfoArr = this.ruleForm.accountInfo.split(",");
       let params = {
         supplierId: this.supplierId,
@@ -225,6 +227,7 @@ export default {
         })
       })
       window.axios.post("/purchase/commitApplyPay", params).then((data) => {
+        this.loading = false;
         if (data.code !== 0) return
         this.$message.success("申请付款成功");
         this.$router.push({

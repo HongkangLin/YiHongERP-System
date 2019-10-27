@@ -1,7 +1,10 @@
 <template>
 <div>
   <!-- 顶部面包屑 -->
-  <crumbs :list="crumbList"></crumbs>
+  <section class="crumbSection">
+    <crumbs :list="crumbList"></crumbs>
+    <div class="refresh" @click="refresh"><i class="el-icon-refresh"></i>&nbsp;刷新</div>
+  </section>
   <div class="viewStore_wrap">
 		<div class="storeDetail">
       <!-- 基础信息 -->
@@ -102,11 +105,33 @@ export default {
         }
         this.tableData = obj;
       })
+    },
+
+    refresh () {
+      location.reload();
     }
   }
 };
 </script>
 <style lang="less" scoped>
+.crumbSection {
+  position: relative;
+  .refresh {
+    position: absolute;
+    right: 130px;
+    top: 10px;
+    vertical-align: middle;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    width: 70px;
+    color: #999;
+    cursor: pointer;
+    border-radius: 4px;
+    background-color: white;
+    border: 1px solid rgb(228, 228, 228);
+  }
+}
 .viewStore_wrap {
   box-sizing: border-box;
   padding: 20px 60px;

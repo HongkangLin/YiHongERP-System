@@ -136,6 +136,11 @@ export default {
 
     // 金额小写转大写
     numToText(number) {
+      let flag = false;
+      if (number.startsWith("-")) {
+        flag = true;
+        number = number.slice(1);
+      }
       let AA = new Array('零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖')
       let BB = new Array('', '拾', '佰', '仟', '萬', '亿')
       let reverseStr = number.split('').reverse().join('')
@@ -175,6 +180,9 @@ export default {
       })
 
       result += '元整'
+      if (flag) {
+        result = '负' + result
+      }
       return result
     },
 

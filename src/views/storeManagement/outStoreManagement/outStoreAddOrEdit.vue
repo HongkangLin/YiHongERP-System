@@ -42,6 +42,7 @@
         <div class="secTitle">产品信息</div>
         <el-button type="primary" icon="el-icon-plus" class="addPdtBtn" @click="dialogTableVisible = true">选择产品</el-button>
         <div class="productTable">
+          <el-form :model="tableRuleForm" :rules="tableRules" ref="tableRuleForm"  :validate-on-rule-change="false">
           <el-table :data="productList" border show-summary sum-text="汇总" style="width: 100%">
             <el-table-column label="图片" align="center" width="101">
               <template slot-scope="scope">
@@ -55,13 +56,15 @@
             <el-table-column prop="fullLoadQuantity" label="装箱数(套/箱)" align="center" min-width="90"></el-table-column>
             <el-table-column prop="quantity" label="件数" align="center" min-width="80"></el-table-column>
             <el-table-column prop="stockAvailCount" label="可用库存" align="center" min-width="80"></el-table-column>
-            <el-table-column prop="count" align="center" min-width="80">
+            <el-table-column prop="count" align="center" min-width="120">
               <template slot="header">
                 <span class="star">*</span>
                 <span class="tableHeader">本次出库</span>
               </template>
               <template slot-scope="scope">
-                <el-input-number v-model="scope.row.count" :min="0" :max="scope.row.stockAvailCount" :controls="false" placeholder="请输入" @change="inputCount(scope.row)"></el-input-number>
+                <el-form-item :prop="'count' + scope.$index">
+                  <el-input-number v-model="scope.row.count" :min="0" :controls="false" placeholder="请输入" @change="inputCount(scope.row)"></el-input-number>
+                </el-form-item>
               </template>
             </el-table-column>
             <el-table-column prop="totalSpace" label="总体积(m³)" align="center" min-width="80"></el-table-column>
@@ -72,6 +75,7 @@
               </template>
             </el-table-column>
           </el-table>
+          </el-form>
         </div>
         <!-- 提交 -->
         <div class="submit">
@@ -169,6 +173,36 @@ export default {
           path: ''
         }]
       }
+    },
+    tableRuleForm() {
+      let obj = {};
+      this.productList.length > 0 && this.productList.map((item, index) => {
+        obj["count"+index] = item.count;
+      })
+      return obj;
+    },
+    tableRules() {
+      let obj = {};
+      this.productList.length > 0 && this.productList.map((item, index) => {
+        let validateCount = (rule, value, callback) => {
+          if (value === undefined || value === null) {
+            callback(new Error('不可为空'));
+          } else if (value > item.stockAvailCount) {
+            callback(new Error('不可大于可用库存'));
+          } else if (item.quantity === "--") {
+            callback(new Error('输入有问题'));
+          } else if (value % item.fullLoadQuantity !== 0) {
+            callback(new Error('须为装箱数的倍数'));
+          } else {
+            callback();
+          }
+        };
+
+        obj["count"+index] = [
+          { validator: validateCount, trigger: 'blur' }
+        ]
+      })
+      return obj;
     }
   },
   created() {
@@ -282,40 +316,48 @@ export default {
 
     // 提交
     submitForm(formName) {
+      let _this = this;
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let flag = true;
+          // let flag = true;
           // 校验到货数量
           if (this.productList.length === 0) {
-            flag = false;
+            // flag = false;
             return this.$message.warning("请添加商品");
           } else {
-            for (let index = 0; index < this.productList.length; index++) {
-              const item = this.productList[index];
-              if (item.quantity === "--") {
-                flag = false;
-                return this.$message.warning("输入有问题,无法提交");
+            this.$refs["tableRuleForm"].validate((valid) => {
+              if (valid) {
+                console.log('submit!');
+                if (_this.$route.query.outId) {
+                  // 编辑出库
+                  _this.editOutStore();
+                } else {
+                  // 新增出库
+                  _this.addOutStore();
+                }
+              } else {
+                console.log('error submit!!');
+                return false;
               }
-              if (!item.count) {
-                flag = false;
-                return this.$message.warning("请填写本次出库");
-              }
-              if (item.count % item.fullLoadQuantity !== 0) {
-                flag = false;
-                return this.$message.warning("出库数量须为装箱数的倍数");
-              }
-            }
-          }
-          if (!flag) return
+            })
 
-          console.log('submit!');
-          if (this.$route.query.outId) {
-            // 编辑出库
-            this.editOutStore();
-          } else {
-            // 新增出库
-            this.addOutStore();
+            // for (let index = 0; index < this.productList.length; index++) {
+            //   const item = this.productList[index];
+            //   if (item.quantity === "--") {
+            //     flag = false;
+            //     return this.$message.warning("输入有问题,无法提交");
+            //   }
+            //   if (!item.count) {
+            //     flag = false;
+            //     return this.$message.warning("请填写本次出库");
+            //   }
+            //   if (item.count % item.fullLoadQuantity !== 0) {
+            //     flag = false;
+            //     return this.$message.warning("出库数量须为装箱数的倍数");
+            //   }
+            // }
           }
+          // if (!flag) return
         } else {
           console.log('error submit!!');
           return false;
@@ -469,6 +511,11 @@ export default {
       obj.totalSpace = obj.quantity === "--" ? "--" : ((obj.cartonLength * obj.cartonWidth * obj.cartonHeight * obj.quantity)/1000000).toFixed(4);
       // 总重量(kg)
       obj.totalWeight = obj.quantity === "--" ? "--" : (obj.fullLoadWeight * obj.quantity).toFixed(4);
+      if (obj.count === undefined || obj.count === null) {
+        obj.quantity = "--";
+        obj.totalSpace = "--";
+        obj.totalWeight = "--";
+      }
     }
   },
 };
@@ -545,8 +592,12 @@ export default {
           .el-input-number {
             width: 100%;
             .el-input__inner {
-              border: none;
+              // border: none;
             }
+          }
+          .el-form-item .el-form-item__error{
+            width: 100%;
+            text-align: center;
           }
         }
       }
