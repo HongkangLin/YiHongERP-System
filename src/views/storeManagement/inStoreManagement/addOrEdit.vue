@@ -200,11 +200,11 @@ export default {
       let _this = this;
       axios.all([
         axios.get("/warehouse/simpList"),
-        axios.get("/supplier/listAll", {params: {pageSize: 999, pageNum: 1}})
+        axios.get("/supplier/simpList")
       ])
       .then(axios.spread(function (storeData, supplierData) {
         _this.storeList = storeData.data;
-        _this.supplierList = supplierData.data.list;
+        _this.supplierList = supplierData.data;
       }));
       // 新增时获取弹窗用的产品列表
       !this.$route.query.inId && this.queryProductInfoList(false);
