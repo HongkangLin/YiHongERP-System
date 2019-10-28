@@ -66,18 +66,18 @@
             <el-form-item label="商品分类：">
               {{firstName}}&nbsp;<i v-if="seconedName" class="el-icon-arrow-right"></i>&nbsp;{{seconedName}}
             </el-form-item>
-            <el-form-item prop="name">
+            <el-form-item label="供应商名称：" prop="name">
+              <el-input v-model="form.name" maxlength="100" placeholder="请输入供应商企业全称"></el-input>
+            </el-form-item>
+            <el-form-item prop="sn">
               <span slot="label">
-                供应商名称
+                供应商编号
                 <el-tooltip class="nameInfo" effect="dark" placement="top">
                   <div slot="content">所有供应商编号用10位组成ABCDEFGHIJ，<br/>AB表示供应商所在省及直辖市编号、CD表<br/>示供应商所在地市码、EFG表示产品分类、<br/>HIJ表示供应商编号；</div>
                   <i class="el-icon-info"></i>
                 </el-tooltip>
                 ：
               </span>
-              <el-input v-model="form.name" maxlength="100" placeholder="请输入供应商企业全称"></el-input>
-            </el-form-item>
-            <el-form-item label="供应商编号：" prop="sn">
               <el-input v-model="form.sn" maxlength="100" placeholder="请输入10位供应商编号"></el-input>
             </el-form-item>
             <el-form-item label="供应商简称：" prop="shortname">
