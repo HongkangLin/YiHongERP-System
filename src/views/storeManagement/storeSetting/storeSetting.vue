@@ -152,7 +152,7 @@ export default {
   methods: {
     // 新增/编辑页 负责人下拉
     async getChargerList() {
-      let data = await window.axios.get('/user/queryUserList4Select/stockCharge');
+      let data = await window.axios.get('/user/queryUserList4SelectNoDept/stockCharge');
       if (data.code !== 0) return
       
       this.chargePersonList = data.data;
