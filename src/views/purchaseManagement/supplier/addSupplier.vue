@@ -66,7 +66,15 @@
             <el-form-item label="商品分类：">
               {{firstName}}&nbsp;<i v-if="seconedName" class="el-icon-arrow-right"></i>&nbsp;{{seconedName}}
             </el-form-item>
-            <el-form-item label="供应商名称：" prop="name">
+            <el-form-item prop="name">
+              <span slot="label">
+                供应商名称
+                <el-tooltip class="nameInfo" effect="dark" placement="top">
+                  <div slot="content">所有供应商编号用10位组成ABCDEFGHIJ，<br/>AB表示供应商所在省及直辖市编号、CD表<br/>示供应商所在地市码、EFG表示产品分类、<br/>HIJ表示供应商编号；</div>
+                  <i class="el-icon-info"></i>
+                </el-tooltip>
+                ：
+              </span>
               <el-input v-model="form.name" maxlength="100" placeholder="请输入供应商企业全称"></el-input>
             </el-form-item>
             <el-form-item label="供应商编号：" prop="sn">
@@ -115,8 +123,10 @@
             <el-form-item label="开户行：" prop="priAccountBankname">
               <el-input maxlength="100" v-model="form.priAccountBankname" placeholder="请输入私账开户行"></el-input>
             </el-form-item>
-            <el-form-item label="税率：">
-              <el-input min="0" type="number" @blur="() => {if (this.form.taxRate < 0) {this.form.taxRate = 0}}" v-model="form.taxRate" placeholder="请输入税率"></el-input>
+            <el-form-item class="append" label="税率：">
+              <el-input min="0" type="number" @blur="() => {if (this.form.taxRate < 0) {this.form.taxRate = 0}}" @input="oninput" v-model="form.taxRate" placeholder="请输入税率">
+                <template slot="append">%</template>
+              </el-input>
             </el-form-item>
             <el-form-item label="结算方式：">
               <el-select v-model="form.settleType" placeholder="请选择结算方式">
@@ -325,7 +335,7 @@ export default {
     };
     return {
       token: localStorage.getItem('token'),
-      active: 0, // 进度控制
+      active: 1, // 进度控制
       crumbList: [{ // 面包屑
         name: '供应商管理',
         path: '/F0302/F030201'
@@ -497,6 +507,9 @@ export default {
   methods: {
     goBack () { // 返回
       history.go(-1);
+    },
+    oninput (e) { // 输入小数保留两位有效数字
+      this.form.taxRate = this.form.taxRate.match(/^\d*(\.?\d{0,2})/g)[0];
     },
     changeInput () {
       this.form.shortname = this.form.shortname.toUpperCase();
@@ -797,6 +810,9 @@ export default {
       box-sizing: border-box;
       width: calc(100% - 180px);
       padding: 100px;
+      .nameInfo {
+        cursor: pointer;
+      }
       .typeList {
         margin-top: 20px;
         display: flex;
@@ -857,6 +873,16 @@ export default {
         }
         .info {
           color: rgb(153, 153, 153)
+        }
+      }
+      .append {
+        /deep/.el-input--small .el-input__inner {
+          width: 141px;
+          height: 35px;
+          line-height: 35px;
+        }
+        /deep/.el-input--small {
+          width: 140px;
         }
       }
       .add {
