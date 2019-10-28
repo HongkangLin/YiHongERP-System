@@ -346,7 +346,12 @@ export default {
       this.pdtList = data.data.list;
     },
     chanSupplier () { // 修改供应商编号
-      this.form.sn = this.form.supplierId;
+      for (let i = 0, len = this.supplierList.length; i < len; i++) {
+        if (this.form.supplierId === this.supplierList[i].id) {
+          this.form.sn = this.supplierList[i].sn;
+          break;
+        }
+      }
       this.form.productOfPurchaseDTOList = [];
     },
     disabledDate (data) { // 设置可选日期
