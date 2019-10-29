@@ -107,7 +107,6 @@
             </el-form-item>
             <el-form-item label="FNSKU文件：" prop="fnskuFileUrl">
               <el-upload
-                :disabled="disabled"
                 class="upload-demo"
                 accept=".pdf"
                 drag

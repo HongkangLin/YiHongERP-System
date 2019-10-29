@@ -335,7 +335,7 @@ export default {
     };
     return {
       token: localStorage.getItem('token'),
-      active: 1, // 进度控制
+      active: 0, // 进度控制
       crumbList: [{ // 面包屑
         name: '供应商管理',
         path: '/F0302/F030201'
