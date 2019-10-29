@@ -565,14 +565,14 @@ export default {
       this.getPdt();
     },
     async getType () { // 获取产品分类
-      let data = await window.axios.post('/product/queryAllCategory', {
+      let data = await window.axios.post('/product/queryAllCategoryRule', {
         pageNum: 1,
         pageSize: 999999
       });
       this.typeList = data.data.list;
     },
     async getBrand () { // 获取品牌
-      let data = await window.axios.post('/product/queryProductBrandList', {
+      let data = await window.axios.post('/product/queryProductBrandListRule', {
         pageSize: 9999999,
         pageNum: 1,
         goodsBrandNameOrLetter: ''
@@ -851,7 +851,7 @@ export default {
       param.fnskuFileName = param.fnskuFileUrl[0].name; // fnsku文件名称
       param.fnskuFileUrl = param.fnskuFileUrl[0].url; // fnsku文件
       param.fnskuFilePicUrl = param.fnskuFilePicUrl[0].url; // fnsku图片
-      param.fnskuPicUrl = param.fnskuPicUrl[0] && param.fnskuPicUrl[0].url; // 防跟卖标签
+      param.fnskuPicUrl = param.fnskuPicUrl[0] ? param.fnskuPicUrl[0].url : ''; // 防跟卖标签
       param.mainPicUrl = this.pdtPhoto[0].url; // 商品主图
       param.picUrl1 = this.pdtPhoto[1] && this.pdtPhoto[1].url; // 商品图片
       param.picUrl2 = this.pdtPhoto[2] && this.pdtPhoto[2].url; // 商品图片

@@ -562,7 +562,7 @@ export default {
       this.form.selectedOptions = arr;
     },
     async getType () { // 获取产品分类
-      let data = await window.axios.post('/product/queryAllCategory', {
+      let data = await window.axios.post('/product/queryAllCategoryRule', {
         pageNum: 1,
         pageSize: 999999
       });

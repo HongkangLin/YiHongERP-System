@@ -1,6 +1,6 @@
 <template>
   <div>
-    <crumbs :list="crumbList"></crumbs>
+    <crumbs :list="crumbList" :showReturn="false"></crumbs>
     <div class="pdtList">
       <div class="search">
         <div class="head">
@@ -197,7 +197,7 @@ export default {
   },
   methods: {
     async getBrand () { // 获取品牌
-      let data = await window.axios.post('/product/queryProductBrandList', {
+      let data = await window.axios.post('/product/queryProductBrandListRule', {
         goodsBrandNameOrLetter: '',
         pageNum: 1,
         pageSize: 9999999
@@ -209,7 +209,7 @@ export default {
       this.brandList.push(...data.data.list);
     },
     async getPrdType () { // 获取产品分类
-      let data = await window.axios.post('/product/queryAllCategory', {
+      let data = await window.axios.post('/product/queryAllCategoryRule', {
         pageSize: 999999,
         pageNum: 1
       });

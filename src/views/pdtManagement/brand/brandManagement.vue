@@ -1,6 +1,6 @@
 <template>
   <div>
-    <crumbs :list="crumbList"></crumbs>
+    <crumbs :list="crumbList" :showReturn="false"></crumbs>
     <div class="brandManagement">
       <div class="search">
         <div class="head">
