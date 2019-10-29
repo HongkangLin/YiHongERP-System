@@ -308,8 +308,8 @@ export default {
       this.info.contractTerms = data.data.contractTerms;
     },
     async getSupplier () { // 获取供应商
-      let data = await window.axios.get(`/supplier/listAll?pageSize=99999&pageNum=1`);
-      this.supplierList = data.data.list.filter(item => item.status);
+      let data = await window.axios.get(`/supplier/simpList`);
+      this.supplierList = data.data.filter(item => item.status);
     },
     async getRole () { // 获取采购员列表
       let data = await window.axios.get('/user/queryUserList4Select/purchase');

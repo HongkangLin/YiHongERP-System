@@ -585,7 +585,7 @@ export default {
       this.brandList = data.data.list;
     },
     async getSupplier (key) { // 获取供应商
-      let data = await window.axios.get(`/supplier/listAll?pageSize=${this.pageSize}&pageNum=${this.pageNum}&snOrNameKeyword=${key}`);
+      let data = await window.axios.get(`/supplier/listForPopWin?pageSize=${this.pageSize}&pageNum=${this.pageNum}&snOrNameKeyword=${key}`);
       this.total = data.data.total;
       data.data.list.forEach(item => {
         for (let i = 0, len = this.form.list.length; i < len; i++) {
