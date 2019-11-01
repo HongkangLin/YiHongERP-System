@@ -101,9 +101,11 @@
             label="供应商">
             <template slot-scope="scope">
               <el-button
+                v-if="roleCtl.product_update"
                 size="mini"
                 type="text"
                 @click="handleSupplier(scope.row.id)">{{scope.row.supplierCount + '家'}}</el-button>
+              <div v-else>{{scope.row.supplierCount + '家'}}</div>
             </template>
           </el-table-column>
           <el-table-column
