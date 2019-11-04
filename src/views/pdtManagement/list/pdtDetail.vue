@@ -142,21 +142,21 @@
           label="供应商编号"
           align="center">
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="supplierName"
           label="供应商名称"
           align="center">
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="supplierDeliverDay"
           label="交期（天）"
           align="center">
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="purchasePrice"
           label="采购价（元）"
           align="center">
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
     </div>
   </div>
