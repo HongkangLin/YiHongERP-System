@@ -43,38 +43,38 @@
         <el-button type="primary" icon="el-icon-plus" class="addPdtBtn" @click="dialogTableVisible = true">选择产品</el-button>
         <div class="productTable">
           <el-form :model="tableRuleForm" :rules="tableRules" ref="tableRuleForm"  :validate-on-rule-change="false">
-          <el-table :data="productList" border show-summary sum-text="汇总" style="width: 100%">
-            <el-table-column label="图片" align="center" width="101">
-              <template slot-scope="scope">
-                <img class="img" :src="scope.row.goodsPicUrl">
-              </template>
-            </el-table-column>
-            <el-table-column prop="goodsSku" label="SKU" align="center" min-width="85"></el-table-column>
-            <el-table-column prop="goodsName" label="产品名称" align="center" min-width="130"></el-table-column>
-            <el-table-column prop="dimentions" label="外箱尺寸(cm)" align="center" min-width="90"></el-table-column>
-            <el-table-column prop="fullLoadWeight" label="整箱重量(kg)" align="center" min-width="90"></el-table-column>
-            <el-table-column prop="fullLoadQuantity" label="装箱数(套/箱)" align="center" min-width="90"></el-table-column>
-            <el-table-column prop="quantity" label="件数" align="center" min-width="80"></el-table-column>
-            <el-table-column prop="stockAvailCount" label="可用库存" align="center" min-width="80"></el-table-column>
-            <el-table-column prop="count" align="center" min-width="120">
-              <template slot="header">
-                <span class="star">*</span>
-                <span class="tableHeader">本次出库</span>
-              </template>
-              <template slot-scope="scope">
-                <el-form-item :prop="'count' + scope.$index">
-                  <el-input-number v-model="scope.row.count" :min="0" :controls="false" placeholder="请输入" @change="inputCount(scope.row)"></el-input-number>
-                </el-form-item>
-              </template>
-            </el-table-column>
-            <el-table-column prop="totalSpace" label="总体积(m³)" align="center" min-width="80"></el-table-column>
-            <el-table-column prop="totalWeight" label="总重量(kg)" align="center" min-width="80"></el-table-column>
-            <el-table-column align="center" fixed="right" label="操作" width="80">
-              <template slot-scope="scope">
-                <el-button type="text" size="small" @click="removePdt(scope.row.goodsId)">移除</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
+            <el-table :data="productList" border show-summary sum-text="汇总" style="width: 100%">
+              <el-table-column label="图片" align="center" width="101">
+                <template slot-scope="scope">
+                  <img class="img" :src="scope.row.goodsPicUrl">
+                </template>
+              </el-table-column>
+              <el-table-column prop="goodsSku" label="SKU" align="center" min-width="85"></el-table-column>
+              <el-table-column prop="goodsName" label="产品名称" align="center" min-width="130"></el-table-column>
+              <el-table-column prop="dimentions" label="外箱尺寸(cm)" align="center" min-width="90"></el-table-column>
+              <el-table-column prop="fullLoadWeight" label="整箱重量(kg)" align="center" min-width="90"></el-table-column>
+              <el-table-column prop="fullLoadQuantity" label="装箱数(套/箱)" align="center" min-width="90"></el-table-column>
+              <el-table-column prop="quantity" label="件数" align="center" min-width="80"></el-table-column>
+              <el-table-column prop="stockAvailCount" label="可用库存" align="center" min-width="80"></el-table-column>
+              <el-table-column prop="count" align="center" min-width="120">
+                <template slot="header">
+                  <span class="star">*</span>
+                  <span class="tableHeader">本次出库</span>
+                </template>
+                <template slot-scope="scope">
+                  <el-form-item :prop="'count' + scope.$index">
+                    <el-input-number v-model="scope.row.count" :min="0" :controls="false" placeholder="请输入" @change="inputCount(scope.row)"></el-input-number>
+                  </el-form-item>
+                </template>
+              </el-table-column>
+              <el-table-column prop="totalSpace" label="总体积(m³)" align="center" min-width="80"></el-table-column>
+              <el-table-column prop="totalWeight" label="总重量(kg)" align="center" min-width="80"></el-table-column>
+              <el-table-column align="center" fixed="right" label="操作" width="80">
+                <template slot-scope="scope">
+                  <el-button type="text" size="small" @click="removePdt(scope.row.goodsId)">移除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
           </el-form>
         </div>
         <!-- 提交 -->
@@ -443,6 +443,7 @@ export default {
           return _this.productList.splice(index, 1);
         }
       });
+      this.$refs["tableRuleForm"].clearValidate();
     },
 
     // 添加/移除弹窗里列表的产品

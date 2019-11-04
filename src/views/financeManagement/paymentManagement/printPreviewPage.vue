@@ -34,7 +34,7 @@
       <div class="table row6">
         <el-row>
           <el-col :span="4" class="bg-grey">备注</el-col>
-          <el-col :span="20" class="content">这里是备注内容</el-col>
+          <el-col :span="20" class="content">{{printPageData.bak}}</el-col>
         </el-row>
       </div>
       <el-table :data="printPageData.financePurchaseDetailList" border  show-summary :summary-method="getSummaries" :header-cell-style="{color:'#000', borderColor: '#333'}" :cell-style="{borderColor: '#333'}">
