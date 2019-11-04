@@ -51,7 +51,7 @@
                 <span class="tableHeader">入库数量（套）</span>
               </template>
               <template slot-scope="scope">
-                <el-input-number v-model="scope.row.checkinCount" :min="0" :max="scope.row.arriveCount" :controls="false" placeholder="输入"></el-input-number>
+                <el-input-number v-model="scope.row.checkinCount" :min="1" step-strictly :max="scope.row.arriveCount" :controls="false" placeholder="输入"></el-input-number>
               </template>
             </el-table-column>
           </el-table>

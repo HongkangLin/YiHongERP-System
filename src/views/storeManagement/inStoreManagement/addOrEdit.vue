@@ -290,6 +290,17 @@ export default {
           } else {
             this.$refs["tableRuleForm"].validate((valid) => {
               if (valid) {
+                // 至少有一产品到货数量不为0
+                let flag = false;
+                _this.productList.forEach(item => {
+                  if (item.arriveCount) {
+                    flag = true;
+                  }
+                });
+                if (!flag) {
+                  return _this.$message.warning("请正取填写到货数量");
+                }
+
                 console.log('submit!');
                 if (_this.$route.query.inId) {
                   // 编辑入库
@@ -362,7 +373,7 @@ export default {
         goods: []
       }
       this.productList.map((item) => {
-        params.goods.push({
+        item.arriveCount && params.goods.push({
           goodsId: item.goodsId,
           arriveCount: item.arriveCount
         })
@@ -394,6 +405,7 @@ export default {
           return _this.productList.splice(index, 1);
         }
       });
+      this.$refs["tableRuleForm"].clearValidate();
     },
 
     // 添加/移除弹窗里列表的产品

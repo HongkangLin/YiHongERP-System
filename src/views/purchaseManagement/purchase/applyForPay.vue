@@ -39,12 +39,12 @@
           </el-table-column>
           <el-table-column prop="transportFee" label="运费（元）" min-width="120">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.transportFee" :min="0" :controls="false" placeholder="请输入"></el-input-number>
+              <el-input-number v-model="scope.row.transportFee" :min="0" :max="9999999999.99" :controls="false" placeholder="请输入"></el-input-number>
             </template>
           </el-table-column>
           <el-table-column prop="otherFee" label="其它（元）" min-width="110">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.otherFee" :controls="false" placeholder="请输入"></el-input-number>
+              <el-input-number v-model="scope.row.otherFee" :min="-9999999999.99" :max="9999999999.99" :controls="false" placeholder="请输入"></el-input-number>
             </template>
           </el-table-column>
           <el-table-column prop="bak" label="备注" min-width="240">
