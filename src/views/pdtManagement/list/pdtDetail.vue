@@ -4,7 +4,7 @@
       <div class="changeTab">
         <span @click="changeTab(0)" :class="active === 0 ? 'active' : ''">产品信息</span>
         <span @click="changeTab(1)" :class="active === 1 ? 'active' : ''">产品图片</span>
-        <span @click="changeTab(2)" :class="active === 2 ? 'active' : ''">关联供应商</span>
+        <!-- <span @click="changeTab(2)" :class="active === 2 ? 'active' : ''">关联供应商</span> -->
       </div>
       <div class="tool">
         <span @click="refreash"><i class="el-icon-refresh"></i>&nbsp;刷新</span>
@@ -142,21 +142,21 @@
           label="供应商编号"
           align="center">
         </el-table-column>
-        <!-- <el-table-column
+        <el-table-column
           prop="supplierName"
           label="供应商名称"
           align="center">
-        </el-table-column> -->
+        </el-table-column>
         <el-table-column
           prop="supplierDeliverDay"
           label="交期（天）"
           align="center">
         </el-table-column>
-        <!-- <el-table-column
+        <el-table-column
           prop="purchasePrice"
           label="采购价（元）"
           align="center">
-        </el-table-column> -->
+        </el-table-column>
       </el-table>
     </div>
   </div>
