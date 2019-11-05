@@ -148,7 +148,7 @@ export default {
         }
       } else { // 添加
         this.$set(this.pdtList[idx], 'sel', true);
-        let data = await window.axios.post('/supplyrel/create', {
+        let data = await window.axios.post('/supplyrel/createbysupplier', {
           list: [{
             goodsId: this.pdtList[idx].id,
             supplierId: this.$route.params.id,
@@ -188,7 +188,7 @@ export default {
         this.$message.warning('请输入采购价');
         return;
       }
-      let data = await window.axios.post('/supplyrel/update', {
+      let data = await window.axios.post('/supplyrel/updatebysupplier', {
         id: this.list[idx].relationId,
         goodsId: this.list[idx].goodsId,
         supplierId: this.$route.params.id,
