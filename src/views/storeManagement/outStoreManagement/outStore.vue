@@ -162,6 +162,9 @@ export default {
         if (element.count === undefined) {
           return this.$message.warning("请输入出库数量");
         }
+        if (element.count > element.stockAvailCount) {
+          return this.$message.warning("本次出库不可大于可用库存");
+        }
       }
       this.dialogVisible = true;
     },
