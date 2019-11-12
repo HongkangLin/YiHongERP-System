@@ -324,7 +324,7 @@ export default {
       }
     },
     async submitStatus (id, status) { // 提交修改的状态
-      let data = await window.axios.post('/product/addOrUpdateProductInfo', {
+      let data = await window.axios.post('/product/updateProductInfo', {
         skuId: id,
         status: ~~!status
       });
