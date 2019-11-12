@@ -169,10 +169,10 @@
               </el-dialog>
             </el-form-item>
             <el-form-item label="合同描述：">
-              <el-input type="textarea" :rows="5" maxlength="100" v-model="form.contractDescribe" placeholder="请输入合同描述，合同描述将会在生成合同时使用"></el-input>
+              <el-input type="textarea" :rows="5" maxlength="1000" v-model="form.contractDescribe" placeholder="请输入合同描述，合同描述将会在生成合同时使用"></el-input>
             </el-form-item>
             <el-form-item label="产品描述：">
-              <el-input type="textarea" maxlength="500" :rows="5" v-model="form.goodsDescribe" placeholder="请输入产品描述内容，500字以内"></el-input>
+              <el-input type="textarea" maxlength="1000" :rows="5" v-model="form.goodsDescribe" placeholder="请输入产品描述内容，500字以内"></el-input>
             </el-form-item>
             <div class="spanDiv"></div>
             <el-form-item label="海关编码：">

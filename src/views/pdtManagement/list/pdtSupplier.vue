@@ -146,7 +146,7 @@ export default {
           }
         }
       } else { // 添加
-        let data = await window.axios.post('/supplyrel/create', {
+        let data = await window.axios.post('/supplyrel/createbyproduct', {
           list: [{
             goodsId: this.$route.params.id,
             supplierId: this.supplierList[idx].id,
@@ -188,7 +188,7 @@ export default {
         this.$message.warning('请输入采购价');
         return;
       }
-      let data = await window.axios.post('/supplyrel/update', {
+      let data = await window.axios.post('/supplyrel/updatebysupplier', {
         id: this.list[idx].relationId,
         goodsId: this.$route.params.id,
         supplierId: this.list[idx].supplierId,

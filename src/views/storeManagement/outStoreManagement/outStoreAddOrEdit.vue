@@ -187,9 +187,11 @@ export default {
         let validateCount = (rule, value, callback) => {
           if (value === undefined || value === null) {
             callback(new Error('不可为空'));
-          } else if (value > item.stockAvailCount) {
-            callback(new Error('不可大于可用库存'));
-          } else if (item.quantity === "--") {
+          } 
+          // else if (value > item.stockAvailCount) {
+          //   callback(new Error('不可大于可用库存'));
+          // } 
+          else if (item.quantity === "--") {
             callback(new Error('输入有问题'));
           } else if (value % item.fullLoadQuantity !== 0) {
             callback(new Error('须为装箱数的倍数'));
