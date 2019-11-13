@@ -485,7 +485,7 @@ export default {
           let pdtDetail = pdtDetailData.data;
           let obj = {
             goodsId: pdtDetail.id,
-            goodsPicUrl: pdtDetail.fnskuPicUrl,
+            goodsPicUrl: pdtDetail.mainPicUrl,
             goodsSku: pdtDetail.skuId,
             goodsName: pdtDetail.goodsName,
             dimentions: pdtDetail.packingLength + " * " + pdtDetail.packingWide + " * " + pdtDetail.packingHigh,
