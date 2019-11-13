@@ -298,7 +298,7 @@ export default {
                   }
                 });
                 if (!flag) {
-                  return _this.$message.warning("请正取填写到货数量");
+                  return _this.$message.warning("请正确填写到货数量");
                 }
 
                 console.log('submit!');
