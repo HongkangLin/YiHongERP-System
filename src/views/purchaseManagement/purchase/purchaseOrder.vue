@@ -257,16 +257,12 @@ export default {
 
     // 查看详情
     toDetailPage(purchaseId) {
-      this.$router.push({
-        path: `/F0301/purchaseOrderDetail?purchaseId=${purchaseId}`
-      })
+      window.open(`/#/F0301/purchaseOrderDetail?purchaseId=${purchaseId}`);
     },
 
     // 到货
     toArrivePage(purchaseId) {
-      this.$router.push({
-        path: `/F0301/arrivePage?purchaseId=${purchaseId}`
-      })
+      window.open(`/#/F0301/arrivePage?purchaseId=${purchaseId}`);
     },
 
     // 查看审核详情
@@ -322,9 +318,7 @@ export default {
     
     // 审批
     toApprovalPage(purchaseId, skuCount) {
-      this.$router.push({
-        path: `/F0301/approvalPage?purchaseId=${purchaseId}&skuCount=${skuCount}`
-      })
+      window.open(`/#/F0301/approvalPage?purchaseId=${purchaseId}&skuCount=${skuCount}`);
     },
 
     // 申请付款
@@ -354,9 +348,7 @@ export default {
         })
         let ids = encodeURI(JSON.stringify(arr));
         let name = encodeURI(firstSupplierName);
-        this.$router.push({
-          path: `/F0301/applyForPay?purchaseIds=${ids}&supplierName=${name}&supplierId=${firstSupplierId}`
-        })
+        window.open(`/#/F0301/applyForPay?purchaseIds=${ids}&supplierName=${name}&supplierId=${firstSupplierId}`);
       }
     },
 
