@@ -11,14 +11,14 @@
       <div class="content">
         <div class="inputDiv">
           <el-input maxlength="100" @change="search" class="nameKeyword" v-model="snKeyword" placeholder="出库单号"></el-input>
-          <el-select v-model="warehouseId" @change="search" placeholder="仓库">
+          <el-select filterable v-model="warehouseId" @change="search" placeholder="仓库">
             <el-option v-for="(item, index) in storeList" :key="index" :label="item.name" :value="item.id"></el-option>
           </el-select>
-          <el-select v-model="type" @change="search" placeholder="出库类型">
+          <el-select filterable v-model="type" @change="search" placeholder="出库类型">
             <el-option label="正常出库" value=0></el-option>
             <el-option label="退换货" value=1></el-option>
           </el-select>
-          <el-select v-model="status" @change="search" placeholder="出库状态">
+          <el-select filterable v-model="status" @change="search" placeholder="出库状态">
             <el-option label="待出库" value=0></el-option>
             <el-option label="已出库" value=1></el-option>
           </el-select>

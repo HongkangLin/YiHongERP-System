@@ -21,7 +21,7 @@
               <el-input disabled placeholder="提交后自动生成"></el-input>
             </el-form-item>
             <el-form-item label="供应商：" prop="supplierId">
-              <el-select v-model="form.supplierId" @change="chanSupplier" placeholder="请选择供应商">
+              <el-select filterable v-model="form.supplierId" @change="chanSupplier" placeholder="请选择供应商">
                 <el-option
                   v-for="item in supplierList"
                   :key="item.id"
@@ -34,7 +34,7 @@
               <el-input disabled v-model="form.sn" placeholder="选择供应商自动带入"></el-input>
             </el-form-item>
             <el-form-item label="采购员：" prop="purchaseUserId">
-              <el-select :disabled="disabled" v-model="form.purchaseUserId" placeholder="请选择采购员">
+              <el-select filterable :disabled="disabled" v-model="form.purchaseUserId" placeholder="请选择采购员">
                 <el-option
                   v-for="item in peopleSel"
                   :key="item.id"
@@ -44,7 +44,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="仓库：" prop="warehouseId">
-              <el-select v-model="form.warehouseId" placeholder="请选择采购入库仓库">
+              <el-select filterable v-model="form.warehouseId" placeholder="请选择采购入库仓库">
                 <el-option
                   v-for="item in store"
                   :key="item.id"

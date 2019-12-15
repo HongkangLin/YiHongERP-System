@@ -10,7 +10,7 @@
         <div class="content">
           <div class="inputDiv">
             <el-input maxlength="100" class="name" @change="search" v-model="name" placeholder="请输入角色名"></el-input>
-            <el-select class="selList" @change="search" v-model="type" placeholder="请选择角色类型">
+            <el-select filterable class="selList" @change="search" v-model="type" placeholder="请选择角色类型">
               <el-option
                 v-for="item in typeOptions"
                 :key="item.value"

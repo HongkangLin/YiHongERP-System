@@ -88,7 +88,7 @@
               <el-radio v-model="form.status" label="0">否</el-radio>
             </el-form-item>
             <el-form-item label="供应商等级：" prop="level">
-              <el-select v-model="form.level" placeholder="请选择供应商等级">
+              <el-select filterable v-model="form.level" placeholder="请选择供应商等级">
                 <el-option
                   v-for="item in levelSel"
                   :key="item.value"
@@ -101,7 +101,7 @@
               <el-input v-model="form.source" maxlength="100" placeholder="请输入供应商来源"></el-input>
             </el-form-item>
             <el-form-item label="采购员：" prop="purchaserId">
-              <el-select v-model="form.purchaserId" placeholder="请选择采购员">
+              <el-select filterable v-model="form.purchaserId" placeholder="请选择采购员">
                 <el-option
                   v-for="item in peopleSel"
                   :key="item.value"
@@ -129,7 +129,7 @@
               </el-input>
             </el-form-item>
             <el-form-item label="结算方式：">
-              <el-select v-model="form.settleType" placeholder="请选择结算方式">
+              <el-select filterable v-model="form.settleType" placeholder="请选择结算方式">
                 <el-option
                   v-for="item in settleSel"
                   :key="item.value"
@@ -162,7 +162,7 @@
               <el-input maxlength="100" v-model="form.socialCreditCode" placeholder="请输入统一社会信用代码"></el-input>
             </el-form-item>
             <el-form-item label="公司规模：">
-              <el-select v-model="form.companySize" placeholder="请选择公司规模">
+              <el-select filterable v-model="form.companySize" placeholder="请选择公司规模">
                 <el-option
                   v-for="item in compSel"
                   :key="item.value"

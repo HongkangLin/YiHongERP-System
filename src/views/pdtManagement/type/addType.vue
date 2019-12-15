@@ -10,7 +10,7 @@
               <el-input maxlength="100" v-model="formData.goodsCategoryName" placeholder="请输入分类名称"></el-input>
             </el-form-item>
             <el-form-item label="上级分类：">
-              <el-select class="selList" :disabled="disable" v-model="formData.parentId" placeholder="请选择分类">
+              <el-select filterable class="selList" :disabled="disable" v-model="formData.parentId" placeholder="请选择分类">
                 <el-option
                   v-for="item in typeOptions"
                   :key="item.value"

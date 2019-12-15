@@ -10,7 +10,7 @@
         <div class="content">
           <div class="inputDiv">
             <el-input maxlength="100" @change="search" class="name" v-model="name" placeholder="产品名称/SKU/海关编码"></el-input>
-            <el-select class="selList" @change="search" v-model="status" placeholder="产品状态">
+            <el-select filterable class="selList" @change="search" v-model="status" placeholder="产品状态">
               <el-option
                 v-for="item in prdStatus"
                 :key="item.value"
@@ -19,6 +19,7 @@
               </el-option>
             </el-select>
             <el-cascader
+              filterable
               v-model="type"
               :options="prdType"
               class="selList"
@@ -26,7 +27,7 @@
               :props="{ expandTrigger: 'hover' }"
               @change="handleChange">
             </el-cascader>
-            <el-select class="selList" @change="search" v-model="brand" placeholder="品牌">
+            <el-select filterable class="selList" @change="search" v-model="brand" placeholder="品牌">
               <el-option
                 v-for="item in brandList"
                 :key="item.value"
@@ -34,7 +35,7 @@
                 :value="item.value">
               </el-option>
             </el-select>
-            <el-select class="selList" @change="search" v-model="people" placeholder="采购员">
+            <el-select filterable class="selList" @change="search" v-model="people" placeholder="采购员">
               <el-option
                 v-for="item in peopleList"
                 :key="item.value"

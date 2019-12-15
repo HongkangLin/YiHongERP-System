@@ -11,10 +11,10 @@
       <div class="content">
         <div class="inputDiv">
           <el-input maxlength="100" @change="search" class="nameKeyword" v-model="snOrNameKeyword" placeholder="入库单号/供应商名称"></el-input>
-          <el-select v-model="warehouseId" @change="search" placeholder="仓库">
+          <el-select filterable v-model="warehouseId" @change="search" placeholder="仓库">
             <el-option v-for="(item, index) in storeList" :key="index" :label="item.name" :value="item.id"></el-option>
           </el-select>
-          <el-select v-model="status" @change="search" placeholder="入库状态">
+          <el-select filterable v-model="status" @change="search" placeholder="入库状态">
             <el-option label="待入库" value=0></el-option>
             <el-option label="已入库" value=1></el-option>
           </el-select>

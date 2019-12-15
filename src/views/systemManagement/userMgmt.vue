@@ -104,16 +104,16 @@
               v-model="searchOpts.searchValue">
               <i slot="suffix" class="el-input__icon el-icon-search" @click="resetPageNumAndQuery"></i>
             </el-input>
-            <el-select v-model="searchOpts.roleType" placeholder="角色类型" size="mini">
+            <el-select filterable v-model="searchOpts.roleType" placeholder="角色类型" size="mini">
               <el-option label="超级管理员" :value="1"></el-option>
               <el-option label="主管" :value="2"></el-option>
               <el-option label="员工" :value="3"></el-option>
             </el-select>
-            <el-select v-model="groupHandler" placeholder="批量操作" size="mini" @change="handleMultSelection">
+            <el-select filterable v-model="groupHandler" placeholder="批量操作" size="mini" @change="handleMultSelection">
               <el-option label="批量修改部门" value="1"></el-option>
               <el-option label="批量修改角色" value="2"></el-option>
             </el-select>
-            <el-select v-model="searchOpts.roleId" placeholder="角色名称" size="mini">
+            <el-select filterable v-model="searchOpts.roleId" placeholder="角色名称" size="mini">
               <el-option
                 v-for="item in roleNameList"
                 :key="item.roleId"

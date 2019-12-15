@@ -17,7 +17,7 @@
             <el-input maxlength="100" v-model="ruleForm.password" placeholder="6到20位数字与字母组合" type="password"></el-input>
           </el-form-item>
           <el-form-item label="角色" prop="roleId">
-            <el-select v-model="ruleForm.roleId" placeholder="选择角色">
+            <el-select filterable v-model="ruleForm.roleId" placeholder="选择角色">
               <el-option v-for="(item, index) in roleNameList" :key="index" :label="item.roleName" :value="item.roleId"></el-option>
             </el-select>
           </el-form-item>

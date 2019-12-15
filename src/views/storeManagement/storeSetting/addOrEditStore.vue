@@ -10,7 +10,7 @@
           <el-input maxlength="100" v-model="ruleForm.name" placeholder="请输入仓库名称"></el-input>
         </el-form-item>
         <el-form-item label="负责人：" prop="chargePersonId">
-          <el-select v-model="ruleForm.chargePersonId" placeholder="选择负责人">
+          <el-select filterable v-model="ruleForm.chargePersonId" placeholder="选择负责人">
             <el-option v-for="(item, index) in chargePersonList" :key="index" :label="item.userName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
@@ -21,7 +21,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="仓库类型：" prop="type">
-          <el-select v-model="ruleForm.type" placeholder="选择仓库类型">
+          <el-select filterable v-model="ruleForm.type" placeholder="选择仓库类型">
             <el-option label="国内" value=0></el-option>
             <el-option label="国外" value=1></el-option>
           </el-select>
@@ -40,13 +40,13 @@
         </el-form-item>
         <el-form-item label="所在地：" prop="addrProvince">
           <div class="wrap">
-            <el-select v-model="ruleForm.addrProvince" placeholder="省" class="province" @change="getAddressList('city')">
+            <el-select filterable v-model="ruleForm.addrProvince" placeholder="省" class="province" @change="getAddressList('city')">
               <el-option v-for="(item, index) in provinceList" :key="index" :label="item.name" :value="item.code"></el-option>
             </el-select>
-            <el-select v-model="ruleForm.addrCity" placeholder="市" class="city" @change="getAddressList('area')">
+            <el-select filterable v-model="ruleForm.addrCity" placeholder="市" class="city" @change="getAddressList('area')">
               <el-option v-for="(item, index) in cityList" :key="index" :label="item.name" :value="item.code"></el-option>
             </el-select>
-            <el-select v-model="ruleForm.addrArea" placeholder="区" class="area">
+            <el-select filterable v-model="ruleForm.addrArea" placeholder="区" class="area">
               <el-option v-for="(item, index) in areaList" :key="index" :label="item.name" :value="item.code"></el-option>
             </el-select>
           </div>

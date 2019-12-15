@@ -21,11 +21,11 @@
         <div class="content">
           <div class="inputDiv">
             <el-input maxlength="100" class="searchValue" @change="search" v-model="searchValue" placeholder="采购单/供应商/sku/产品名称"></el-input>
-            <el-select v-model="payStatus" @change="search" placeholder="付款状态" clearable>
+            <el-select filterable v-model="payStatus" @change="search" placeholder="付款状态" clearable>
               <el-option label="未完成" :value="1"></el-option>
               <el-option label="已完成" :value="2"></el-option>
             </el-select>
-            <el-select v-model="arrivalStatus" @change="search" placeholder="到货状态" clearable>
+            <el-select filterable v-model="arrivalStatus" @change="search" placeholder="到货状态" clearable>
               <el-option label="未完成" :value="1"></el-option>
               <el-option label="已完成" :value="2"></el-option>
             </el-select>

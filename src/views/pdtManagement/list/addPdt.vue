@@ -72,7 +72,7 @@
               <el-radio v-model="form.status" label="1">停售</el-radio>
             </el-form-item>
             <el-form-item label="产品品牌：" prop="brandId">
-              <el-select v-model="form.brandId" placeholder="请选择产品品牌">
+              <el-select filterable v-model="form.brandId" placeholder="请选择产品品牌">
                 <el-option
                   v-for="item in brandList"
                   :key="item.value"

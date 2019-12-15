@@ -18,12 +18,12 @@
             <el-input maxlength="100" v-model="ruleForm.type" placeholder="外贸入库" disabled></el-input>
           </el-form-item>
           <el-form-item label="入库仓库：" prop="warehouseName">
-            <el-select v-model="ruleForm.warehouseName" placeholder="请选择入库仓库">
+            <el-select filterable v-model="ruleForm.warehouseName" placeholder="请选择入库仓库">
               <el-option v-for="(item, index) in storeList" :key="index" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="供应商：" prop="supplierName">
-            <el-select v-model="ruleForm.supplierName" placeholder="请选择供应商" @change="getPurchaser">
+            <el-select filterable v-model="ruleForm.supplierName" placeholder="请选择供应商" @change="getPurchaser">
               <el-option v-for="(item, index) in supplierList" :key="index" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>

@@ -50,7 +50,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="下一审批人：" prop="nextApproveUserId" v-if="ruleForm.approveResult === 'agree'">
-          <el-select v-model="ruleForm.nextApproveUserId" placeholder="选择下一审批人" clearable>
+          <el-select filterable v-model="ruleForm.nextApproveUserId" placeholder="选择下一审批人" clearable>
             <el-option v-for="item in peopleList" :key="item.id" :label="item.userName" :value="item.id"></el-option>
           </el-select>
           <div class="hint">不选下一审批人流程将终止并结束审批流程</div>

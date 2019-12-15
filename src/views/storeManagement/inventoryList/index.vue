@@ -10,7 +10,7 @@
       <div class="content">
         <div class="inputDiv">
           <el-input maxlength="100" class="nameKeyword" @change="search" v-model="gnameOrSkuKeyword" placeholder="产品名称/SKU"></el-input>
-          <el-select v-model="warehouseId" @change="search" placeholder="仓库">
+          <el-select filterable v-model="warehouseId" @change="search" placeholder="仓库">
             <el-option v-for="(item, index) in storeList" :key="index" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </div>

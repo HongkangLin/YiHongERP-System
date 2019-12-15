@@ -15,18 +15,18 @@
             <el-input maxlength="100" v-model="ruleForm.status" placeholder="待出库" disabled></el-input>
           </el-form-item>
           <el-form-item label="仓库：" prop="warehouseName">
-            <el-select v-model="ruleForm.warehouseName" placeholder="请选择仓库">
+            <el-select filterable v-model="ruleForm.warehouseName" placeholder="请选择仓库">
               <el-option v-for="(item, index) in storeList" :key="index" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="出库类型：" prop="type">
-            <el-select v-model="ruleForm.type" placeholder="选择出库类型">
+            <el-select filterable v-model="ruleForm.type" placeholder="选择出库类型">
               <el-option label="正常出库" value=0></el-option>
               <el-option label="退换货" value=1></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="运输方式：" prop="deliverMethod">
-            <el-select v-model="ruleForm.deliverMethod" placeholder="选择运输方式">
+            <el-select filterable v-model="ruleForm.deliverMethod" placeholder="选择运输方式">
               <el-option label="海运" value=0></el-option>
               <el-option label="空运" value=1></el-option>
               <el-option label="快递" value=2></el-option>

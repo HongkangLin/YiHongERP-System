@@ -9,7 +9,7 @@
     <!-- 弹窗 - 新建部门 -->
     <el-form v-if="dialogType === '2'" :model="ruleForm2" ref="ruleForm" label-width="100px">
       <el-form-item label="分组类型" prop="deptLevel" required>
-        <el-select v-model="ruleForm2.deptLevel" placeholder="请选择新建分组所在层级">
+        <el-select filterable v-model="ruleForm2.deptLevel" placeholder="请选择新建分组所在层级">
           <el-option label="新建同级部门" value="sameLevel"></el-option>
           <el-option label="新建下级部门" value="childLevel"></el-option>
         </el-select>
@@ -30,7 +30,7 @@
     <el-form v-if="dialogType === '6'" :model="ruleForm4" ref="ruleForm" label-width="100px">
       <el-alert title="更改角色会将用户强制登出系统，请谨慎操作" type="warning" show-icon></el-alert>
       <el-form-item label="选择角色" prop="roleName" required>
-        <el-select v-model="ruleForm4.roleName" placeholder="请选择角色">
+        <el-select filterable v-model="ruleForm4.roleName" placeholder="请选择角色">
           <el-option
             v-for="item in roleNameList"
             :key="item.roleId"

@@ -13,7 +13,7 @@
             <el-input maxlength="100" v-model="ruleForm.supplierName" disabled></el-input>
           </el-form-item>
           <el-form-item label="收款账号：" prop="accountInfo">
-            <el-select v-model="ruleForm.accountInfo" placeholder="请选择收款账号">
+            <el-select filterable v-model="ruleForm.accountInfo" placeholder="请选择收款账号">
               <el-option v-for="(item, index) in accountList" :key="index" :label="item.accountBankname" :value="`${item.accountNo},${item.accountBankname},${item.accountName}`"></el-option>
             </el-select>
           </el-form-item>
