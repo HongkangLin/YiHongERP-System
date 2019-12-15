@@ -62,7 +62,7 @@
               </el-date-picker>
             </el-form-item>
             <el-form-item label="备注：">
-              <el-input type="textarea" maxlength="200" :rows="7" v-model="form.bak" placeholder="请输入备注，200字以内"></el-input>
+              <el-input type="textarea" maxlength="20" :rows="7" v-model="form.bak" placeholder="请输入备注，20字以内"></el-input>
             </el-form-item>
           </el-form>
           <el-divider></el-divider>
