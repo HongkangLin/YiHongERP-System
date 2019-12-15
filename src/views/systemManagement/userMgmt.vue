@@ -15,6 +15,7 @@
             maxlength="100"
             class="searchDpt"
             placeholder="请输入部门名称"
+            @change="$refs.dptTree.filter(filterText)"
             v-model="filterText">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="$refs.dptTree.filter(filterText)"></i>
           </el-input>
@@ -99,6 +100,7 @@
               maxlength="100"
               class="searchMatch"
               placeholder="输入员工姓名/邮箱/手机号"
+              @change="resetPageNumAndQuery"
               v-model="searchOpts.searchValue">
               <i slot="suffix" class="el-input__icon el-icon-search" @click="resetPageNumAndQuery"></i>
             </el-input>

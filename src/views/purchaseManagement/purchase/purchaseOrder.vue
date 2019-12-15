@@ -20,17 +20,17 @@
         </div>
         <div class="content">
           <div class="inputDiv">
-            <el-input maxlength="100" class="searchValue" v-model="searchValue" placeholder="采购单/供应商/sku/产品名称"></el-input>
-            <el-select v-model="payStatus" placeholder="付款状态" clearable>
+            <el-input maxlength="100" class="searchValue" @change="search" v-model="searchValue" placeholder="采购单/供应商/sku/产品名称"></el-input>
+            <el-select v-model="payStatus" @change="search" placeholder="付款状态" clearable>
               <el-option label="未完成" :value="1"></el-option>
               <el-option label="已完成" :value="2"></el-option>
             </el-select>
-            <el-select v-model="arrivalStatus" placeholder="到货状态" clearable>
+            <el-select v-model="arrivalStatus" @change="search" placeholder="到货状态" clearable>
               <el-option label="未完成" :value="1"></el-option>
               <el-option label="已完成" :value="2"></el-option>
             </el-select>
-            <el-date-picker v-model="createTimeRange" value-format="yyyy-MM-dd" type="daterange" range-separator="" start-placeholder="采购单创建日期"></el-date-picker>
-            <el-date-picker v-model="arriveTimeRange" value-format="yyyy-MM-dd" type="daterange" range-separator="" start-placeholder="到货日期"></el-date-picker>
+            <el-date-picker @change="search" v-model="createTimeRange" value-format="yyyy-MM-dd" type="daterange" range-separator="" start-placeholder="采购单创建日期"></el-date-picker>
+            <el-date-picker @change="search" v-model="arriveTimeRange" value-format="yyyy-MM-dd" type="daterange" range-separator="" start-placeholder="到货日期"></el-date-picker>
           </div>
           <div class="sel" @click="search">查询</div>
         </div>
@@ -47,6 +47,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="goodsAmount" label="货款总金额（元）" align="center" min-width="140"></el-table-column>
+          <el-table-column prop="applyingAmount" label="申请中金额（元）" align="center" min-width="140"></el-table-column>
           <el-table-column prop="paidAmount" label="已支付货款（元）" align="center" min-width="120"></el-table-column>
           <el-table-column align="center" label="状态" width="80">
             <template slot-scope="scope">
@@ -56,6 +57,11 @@
           </el-table-column>
           <el-table-column prop="createTime" label="创建日期" align="center" min-width="110"></el-table-column>
           <el-table-column prop="purchaseUserName" label="采购员" align="center" min-width="85"></el-table-column>
+          <el-table-column label="备注" align="center" min-width="150">
+            <template slot-scope="scope">
+              <div>{{scope.row.bak.substring(0, 20)}}</div>
+            </template>
+          </el-table-column>
           <el-table-column align="center" fixed="right" label="操作" width="150" v-if="roleCtl.purchase_query || roleCtl.purchase_arrive || roleCtl.purchase_close">
             <template slot-scope="scope">
               <el-button type="text" size="small" @click="toDetailPage(scope.row.purchaseId)" v-if="roleCtl.purchase_query">详情</el-button>

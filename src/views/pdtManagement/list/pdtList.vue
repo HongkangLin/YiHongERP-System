@@ -9,8 +9,8 @@
         </div>
         <div class="content">
           <div class="inputDiv">
-            <el-input maxlength="100" class="name" v-model="name" placeholder="产品名称/SKU/海关编码"></el-input>
-            <el-select class="selList" v-model="status" placeholder="产品状态">
+            <el-input maxlength="100" @change="search" class="name" v-model="name" placeholder="产品名称/SKU/海关编码"></el-input>
+            <el-select class="selList" @change="search" v-model="status" placeholder="产品状态">
               <el-option
                 v-for="item in prdStatus"
                 :key="item.value"
@@ -26,7 +26,7 @@
               :props="{ expandTrigger: 'hover' }"
               @change="handleChange">
             </el-cascader>
-            <el-select class="selList" v-model="brand" placeholder="品牌">
+            <el-select class="selList" @change="search" v-model="brand" placeholder="品牌">
               <el-option
                 v-for="item in brandList"
                 :key="item.value"
@@ -34,7 +34,7 @@
                 :value="item.value">
               </el-option>
             </el-select>
-            <el-select class="selList" v-model="people" placeholder="采购员">
+            <el-select class="selList" @change="search" v-model="people" placeholder="采购员">
               <el-option
                 v-for="item in peopleList"
                 :key="item.value"
@@ -64,10 +64,14 @@
             </template>
           </el-table-column>
           <el-table-column
-            align="left"
+            prop="goodsName"
+            align="center"
+            label="产品名称">
+          </el-table-column>
+          <el-table-column
+            align="center"
             label="产品信息">
             <template slot-scope="scope">
-              <div>名称：{{scope.row.goodsName}}</div>
               <div>产品分类：{{scope.row.pdtTypeName}}</div>
               <div>品牌：{{scope.row.brandName}}</div>
             </template>
@@ -76,11 +80,6 @@
             prop="fnskuId"
             align="center"
             label="FNSKU">
-          </el-table-column>
-          <el-table-column
-            prop="customId"
-            align="center"
-            label="海关编码">
           </el-table-column>
           <el-table-column
             align="center"
@@ -272,6 +271,7 @@ export default {
     handleChange (value) { // 修改产品类型
       this.categoryParentId = value[0];
       this.categoryId = value[1];
+      this.search();
     },
     search () { // 查询按钮
       this.pageNum = 1;

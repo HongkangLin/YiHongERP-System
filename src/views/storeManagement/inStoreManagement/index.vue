@@ -10,15 +10,15 @@
       </div>
       <div class="content">
         <div class="inputDiv">
-          <el-input maxlength="100" class="nameKeyword" v-model="snOrNameKeyword" placeholder="入库单号/供应商名称"></el-input>
-          <el-select v-model="warehouseId" placeholder="仓库">
+          <el-input maxlength="100" @change="search" class="nameKeyword" v-model="snOrNameKeyword" placeholder="入库单号/供应商名称"></el-input>
+          <el-select v-model="warehouseId" @change="search" placeholder="仓库">
             <el-option v-for="(item, index) in storeList" :key="index" :label="item.name" :value="item.id"></el-option>
           </el-select>
-          <el-select v-model="status" placeholder="入库状态">
+          <el-select v-model="status" @change="search" placeholder="入库状态">
             <el-option label="待入库" value=0></el-option>
             <el-option label="已入库" value=1></el-option>
           </el-select>
-          <el-date-picker v-model="arriveDateRange" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="到货开始日期" end-placeholder="到货结束日期"></el-date-picker>
+          <el-date-picker v-model="arriveDateRange" @change="search" value-format="yyyy-MM-dd" type="daterange" range-separator="至" start-placeholder="到货开始日期" end-placeholder="到货结束日期"></el-date-picker>
         </div>
         <div class="sel" @click="search">查询</div>
       </div>

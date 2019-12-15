@@ -47,15 +47,15 @@
         <el-row>
           <el-col :span="4"><div class="td label">防跟卖标签</div></el-col>
           <el-col :span="8"><div class="td"><a target="_black" :href="info.fnskuPicUrl">点击查看</a>&nbsp;</div></el-col>
-          <el-col :span="4"><div class="td label">&nbsp;</div></el-col>
-          <el-col :span="8"><div class="td">&nbsp;</div></el-col>
+          <el-col :span="4"><div class="td label">交期（天）</div></el-col>
+          <el-col :span="8"><div class="td">{{maxDeliverDay}}&nbsp;</div></el-col>
         </el-row>
-        <el-row>
-          <el-col :span="4"><div class="td label">产品描述</div></el-col>
+        <el-row type="flex" align="stretch">
+          <el-col :span="4" class="td label"><div>产品描述</div></el-col>
           <el-col :span="20"><div class="td">{{info.goodsDescribe}}&nbsp;</div></el-col>
         </el-row>
-        <el-row>
-          <el-col :span="4"><div class="td label">合同描述</div></el-col>
+        <el-row type="flex" align="stretch">
+          <el-col :span="4" class="td label"><div>合同描述</div></el-col>
           <el-col :span="20"><div class="td">{{info.contractDescribe}}&nbsp;</div></el-col>
         </el-row>
       </div>
@@ -176,6 +176,7 @@ export default {
         name: '供应商详情',
         path: ''
       }],
+      maxDeliverDay: '', // 最大交期
       active: 0,
       typeList: [], // 产品分类
       info: {},
@@ -219,6 +220,13 @@ export default {
     },
     async getSupplier () { // 获取关联供应商
       let data = await window.axios.get(`/supplyrel/querybygoods?pageSize=99999&pageNum=1&goodsId=${this.$route.query.id}`);
+      let day = 0;
+      data.data.list.forEach(item => {
+        if (item.supplierDeliverDay > day) {
+          day = item.supplierDeliverDay;
+        }
+      });
+      this.maxDeliverDay = day;
       this.list = data.data.list;
     },
     changeTab (idx) { // 改变tab
@@ -298,6 +306,7 @@ export default {
       border-bottom: 1px solid rgb(228, 228, 228);
       box-sizing: border-box;
       padding: 0 10px;
+      height: auto;
     }
     .label {
       background-color: #f2f2f2;

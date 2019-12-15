@@ -88,7 +88,7 @@
               <el-input maxlength="100" :disabled="disabled" v-model="form.skuId" placeholder="请输入SKU编码"></el-input>
             </el-form-item>
             <el-form-item label="销售目标价：">
-              <el-input min="0" type="number" @blur="() => {if (this.form.goodsGoalPrice < 0) {this.form.goodsGoalPrice = 0}}" v-model="form.goodsGoalPrice" placeholder="请输入销售目标价"></el-input>
+              <el-input maxlength="20" v-model="form.goodsGoalPrice" placeholder="例如10.99-15.99"></el-input>
             </el-form-item>
             <el-form-item label="产品链接：">
               <el-input maxlength="100" v-model="form.goodsUrl" placeholder="请输入产品链接"></el-input>
