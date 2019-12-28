@@ -5,6 +5,7 @@ function resolve(dir) {
 }
 
 module.exports = {
+	outputDir: 'erp',
 	configureWebpack: {
 		resolve: {
 			alias: {

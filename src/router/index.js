@@ -168,13 +168,25 @@ const routes = [{
 		name: 'dataSupplierTable',
 		component: () => import(/* webpackChunkName: "dataSupplierTable" */ '../views/data/dataTable/supplierTable.vue'),
 	}, {
+		path: '/F0601/F060101/purchaseTable', // 数据 > 数据报表 > 采购价报表
+		name: 'dataPurchaseTable',
+		component: () => import(/* webpackChunkName: "dataPurchaseTable" */ '../views/data/dataTable/purchaseTable.vue'),
+	}, {
 		path: '/F0601/F060101/achievementTable', // 数据 > 数据报表 > 供应商业绩报表
 		name: 'dataAchievementTable',
 		component: () => import(/* webpackChunkName: "dataAchievementTable" */ '../views/data/dataTable/achievementTable.vue'),
 	}, {
+		path: '/F0601/F060101/inStoreTable', // 数据 > 数据报表 > 入库报表
+		name: 'dataInStoreTable',
+		component: () => import(/* webpackChunkName: "dataInStoreTable" */ '../views/data/dataTable/inStoreTable.vue'),
+	}, {
 		path: '/F0601/F060101/financeTable', // 数据 > 数据报表 > 财务付款报表
 		name: 'dataFinanceTable',
 		component: () => import(/* webpackChunkName: "dataFinanceTable" */ '../views/data/dataTable/financeTable.vue'),
+	}, {
+		path: '/F0601/F060101/moneyTable', // 数据 > 数据报表 > 入库货款总金额报表
+		name: 'dataMoneyTable',
+		component: () => import(/* webpackChunkName: "dataMoneyTable" */ '../views/data/dataTable/moneyTable.vue'),
 	}, {
 		path: '/F0601/F060102', // 数据 > 下载中心
 		name: 'dataDownload',

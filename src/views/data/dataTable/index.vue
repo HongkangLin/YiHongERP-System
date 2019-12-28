@@ -110,11 +110,13 @@ export default {
         case 3: // 供应商供货产品报表
           break;
         case 4: // 采购价报表
+          this.$router.push('/F0601/F060101/purchaseTable');
           break;
         case 5: // 供应商业绩报表
           this.$router.push('/F0601/F060101/achievementTable');
           break;
         case 6: // 入库报表
+          this.$router.push('/F0601/F060101/inStoreTable');
           break;
         case 7: // 出库报表
           break;
@@ -126,6 +128,7 @@ export default {
           this.$router.push('/F0601/F060101/financeTable');
           break;
         case 11: // 入库货款总金额报表
+          this.$router.push('/F0601/F060101/moneyTable');
           break;
       }
     }
