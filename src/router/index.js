@@ -155,6 +155,30 @@ const routes = [{
 		path: '/F0501/approvePayment', //财务管理 > 应付费管理 > 付款单打印页
 		name: 'approvePayment',
 		component: () => import(/* webpackChunkName: "approvePayment" */ '../views/financeManagement/paymentManagement/approvePayment.vue'),
+	}, {
+		path: '/F0601/F060101', // 数据 > 数据报表
+		name: 'dataTable',
+		component: () => import(/* webpackChunkName: "dataTable" */ '../views/data/dataTable/index.vue'),
+	}, {
+		path: '/F0601/F060101/pdtTable', // 数据 > 数据报表 > 产品信息报表
+		name: 'dataPdtTable',
+		component: () => import(/* webpackChunkName: "dataPdtTable" */ '../views/data/dataTable/pdtTable.vue'),
+	}, {
+		path: '/F0601/F060101/supplierTable', // 数据 > 数据报表 > 供应商信息报表
+		name: 'dataSupplierTable',
+		component: () => import(/* webpackChunkName: "dataSupplierTable" */ '../views/data/dataTable/supplierTable.vue'),
+	}, {
+		path: '/F0601/F060101/achievementTable', // 数据 > 数据报表 > 供应商业绩报表
+		name: 'dataAchievementTable',
+		component: () => import(/* webpackChunkName: "dataAchievementTable" */ '../views/data/dataTable/achievementTable.vue'),
+	}, {
+		path: '/F0601/F060101/financeTable', // 数据 > 数据报表 > 财务付款报表
+		name: 'dataFinanceTable',
+		component: () => import(/* webpackChunkName: "dataFinanceTable" */ '../views/data/dataTable/financeTable.vue'),
+	}, {
+		path: '/F0601/F060102', // 数据 > 下载中心
+		name: 'dataDownload',
+		component: () => import(/* webpackChunkName: "dataDownload" */ '../views/data/dataDownload/index.vue'),
 	}]
 }, {
 	path: '/F0501/printPreviewPage', //采购付款单打印预览

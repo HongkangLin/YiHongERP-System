@@ -63,7 +63,8 @@ export default {
         '产品': 'el-icon-goods',
         '采购': 'el-icon-shopping-cart-2',
         '库存': 'el-icon-box',
-        '财务': 'el-icon-s-data',
+        '财务': 'el-icon-data-line',
+        '数据': 'el-icon-s-data',
         '系统': 'el-icon-setting'
       },
       userName: localStorage.getItem('userName'),
