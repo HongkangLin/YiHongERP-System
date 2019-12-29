@@ -179,7 +179,7 @@
               <el-input v-model="form.customId" maxlength="100" placeholder="请输入海关编码"></el-input>
             </el-form-item>
             <el-form-item label="申报价值：">
-              <el-input min="0" type="number" @blur="() => {if (this.form.claimPrice < 0) {this.form.claimPrice = 0}}" v-model="form.claimPrice" placeholder="请输入申报价值"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.claimPrice < 0) {this.form.claimPrice = 0} else if (this.form.claimPrice > 1000000000) {this.form.claimPrice = 1000000000}}" v-model="form.claimPrice" placeholder="请输入申报价值"></el-input>
             </el-form-item>
             <el-form-item label="中文报关名：">
               <el-input maxlength="100" v-model="form.chineseName" placeholder="请输入中文报关名"></el-input>
@@ -192,9 +192,9 @@
             </el-form-item>
             <div class="spanDiv"></div>
             <el-form-item label="产品包装尺寸（cm）：" class="inline">
-              <el-input min="0" type="number" @blur="() => {if (this.form.goodsLength < 0) {this.form.goodsLength = 0}}" v-model="form.goodsLength" placeholder="长"></el-input>
-              <el-input min="0" type="number" @blur="() => {if (this.form.goodsWide < 0) {this.form.goodsWide = 0}}" v-model="form.goodsWide" class="leftSpan" placeholder="宽"></el-input>
-              <el-input min="0" type="number" @blur="() => {if (this.form.goodsHigh < 0) {this.form.goodsHigh = 0}}" v-model="form.goodsHigh" class="leftSpan" placeholder="高"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.goodsLength < 0) {this.form.goodsLength = 0} else if (this.form.goodsLength > 1000000000) {this.form.goodsLength = 1000000000}}" v-model="form.goodsLength" placeholder="长"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.goodsWide < 0) {this.form.goodsWide = 0} else if (this.form.goodsWide > 1000000000) {this.form.goodsWide = 1000000000}}" v-model="form.goodsWide" class="leftSpan" placeholder="宽"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.goodsHigh < 0) {this.form.goodsHigh = 0} else if (this.form.goodsHigh > 1000000000) {this.form.goodsHigh = 1000000000}}" v-model="form.goodsHigh" class="leftSpan" placeholder="高"></el-input>
             </el-form-item>
             <el-form-item label="产品包装尺寸（in）：" class="inline">
               <el-input disabled v-model="goodsLengthIn" placeholder="-"></el-input>
@@ -202,7 +202,7 @@
               <el-input disabled v-model="goodsHighIn" class="leftSpan" placeholder="-"></el-input>
             </el-form-item>
             <el-form-item label="每个产品重量：" class="inline">
-              <el-input min="0" type="number" @blur="() => {if (this.form.goodsWeight < 0) {this.form.goodsWeight = 0}}" v-model="form.goodsWeight" placeholder="">
+              <el-input min="0" type="number" @blur="() => {if (this.form.goodsWeight < 0) {this.form.goodsWeight = 0} else if (this.form.goodsWeight > 1000000000) {this.form.goodsWeight = 1000000000}}" v-model="form.goodsWeight" placeholder="">
                 <template slot="append">kg</template>
               </el-input>
               <el-input disabled v-model="goodsWeightLb" type="number" class="leftSpan" placeholder="-">
@@ -210,7 +210,7 @@
               </el-input>
             </el-form-item>
             <el-form-item label="整箱重量：" class="inline">
-              <el-input min="0" type="number" @blur="() => {if (this.form.packingWeight < 0) {this.form.packingWeight = 0}}" v-model="form.packingWeight" placeholder="">
+              <el-input min="0" type="number" @blur="() => {if (this.form.packingWeight < 0) {this.form.packingWeight = 0} else if (this.form.packingWeight > 1000000000) {this.form.packingWeight = 1000000000}}" v-model="form.packingWeight" placeholder="">
                 <template slot="append">kg</template>
               </el-input>
               <el-input disabled v-model="packingWeightLb" class="leftSpan" placeholder="">
@@ -218,14 +218,14 @@
               </el-input>
             </el-form-item>
             <el-form-item class="append" label="装箱数：">
-              <el-input min="0" type="number" @blur="() => {if (this.form.packingQuantity < 0) {this.form.packingQuantity = 0}}" v-model="form.packingQuantity" placeholder="">
+              <el-input min="0" type="number" @blur="() => {if (this.form.packingQuantity < 0) {this.form.packingQuantity = 0} else if (this.form.packingQuantity > 1000000000) {this.form.packingQuantity = 1000000000}}" v-model="form.packingQuantity" placeholder="">
                 <template slot="append">套</template>
               </el-input>
             </el-form-item>
             <el-form-item label="外箱尺寸（cm）：" class="inline">
-              <el-input min="0" type="number" @blur="() => {if (this.form.packingLength < 0) {this.form.packingLength = 0}}" v-model="form.packingLength" placeholder="长"></el-input>
-              <el-input min="0" type="number" @blur="() => {if (this.form.packingWide < 0) {this.form.packingWide = 0}}" v-model="form.packingWide" class="leftSpan" placeholder="宽"></el-input>
-              <el-input min="0" type="number" @blur="() => {if (this.form.packingHigh < 0) {this.form.packingHigh = 0}}" v-model="form.packingHigh" class="leftSpan" placeholder="高"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.packingLength < 0) {this.form.packingLength = 0} else if (this.form.packingLength > 1000000000) {this.form.packingLength = 1000000000}}" v-model="form.packingLength" placeholder="长"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.packingWide < 0) {this.form.packingWide = 0} else if (this.form.packingWide > 1000000000) {this.form.packingWide = 1000000000}}" v-model="form.packingWide" class="leftSpan" placeholder="宽"></el-input>
+              <el-input min="0" type="number" @blur="() => {if (this.form.packingHigh < 0) {this.form.packingHigh = 0} else if (this.form.packingHigh > 1000000000) {this.form.packingHigh = 1000000000}}" v-model="form.packingHigh" class="leftSpan" placeholder="高"></el-input>
             </el-form-item>
             <el-form-item label="外箱尺寸（in）：" class="inline">
               <el-input disabled v-model="packingLengthIn" placeholder="-"></el-input>
@@ -305,7 +305,7 @@
               align="center"
               label="采购价（元）">
               <template slot-scope="scope">
-                <el-input-number :min="0" :controls="false" @change="changeInput(scope.$index)" v-model="scope.row.price" placeholder="输入采购价"></el-input-number>
+                <el-input-number :min="0" :max="1000000000" :controls="false" @change="changeInput(scope.$index)" v-model="scope.row.price" placeholder="输入采购价"></el-input-number>
               </template>
             </el-table-column>
             <el-table-column label="操作" align="center">

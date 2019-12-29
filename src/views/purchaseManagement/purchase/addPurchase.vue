@@ -181,7 +181,7 @@
         </div>
       </div>
       <div v-if="active === 2" class="page">
-        <div class="left" :style="'height:' + (1020 + 163 * (form.productOfPurchaseDTOList.length - 1)) + 'px'">
+        <div class="left" :style="'height:' + (1140 + 163 * (form.productOfPurchaseDTOList.length - 1)) + 'px'">
           <div class="lable">
             <i class="el-icon-collection-tag"></i>
             完善合同信息
@@ -192,7 +192,7 @@
             核对合同描述
             <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
-          <div class="lable" :style="'top:' + (530 + 163 * (form.productOfPurchaseDTOList.length - 1)) + 'px'">
+          <div class="lable" :style="'top:' + (650 + 163 * (form.productOfPurchaseDTOList.length - 1)) + 'px'">
             <i class="el-icon-collection-tag"></i>
             核对合同条款
             <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
@@ -200,11 +200,31 @@
         </div>
         <div class="right">
           <el-form ref="info" class="form last" :model="info" :rules="infoRule" label-width="210px">
-            <el-form-item label="交货日期：" prop="dueTime">
-              <el-input type="textarea" :rows="7" v-model="info.dueTime" maxlength="100" placeholder="请输入交货日期"></el-input>
+            <el-form-item label="甲方企业抬头：" prop="companyId">
+              <el-select filterable v-model="info.companyId" placeholder="请选择甲方企业抬头，不同的企业对应不同的公章">
+                <el-option
+                  v-for="item in compList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="已方收款账号：" prop="accountNo">
+              <el-select filterable v-model="info.accountNo" placeholder="请选择乙方收款账号，可选择私账与公账">
+                <el-option
+                  v-for="item in compList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="放款方式备注：" prop="payBak">
               <el-input type="textarea" maxlength="100" :rows="7" v-model="info.payBak" placeholder="示例：自双方签订合同起付乙方30%定金27702元，剩余货款64638元出货前付清；"></el-input>
+            </el-form-item>
+            <el-form-item label="交货日期：" prop="dueTime">
+              <el-input type="textarea" :rows="7" v-model="info.dueTime" maxlength="100" placeholder="请输入交货日期"></el-input>
             </el-form-item>
             <div class="spanDiv"></div>
             <el-form-item v-for="(item, index) in form.productOfPurchaseDTOList" :key="index" :label="item.sku + '：'">
@@ -245,6 +265,16 @@ export default {
         name: '发起采购',
         path: ''
       }],
+      compList: [{
+        id: 1,
+        name: '深圳市一弘科技有限公司'
+      }, {
+        id: 2,
+        name: '深圳市毅弘电子商务有限公司'
+      }, {
+        id: 3,
+        name: '深圳市长弘电子商务有限公司'
+      }],
       supplierList: [], // 供应商列表
       peopleSel: [], // 采购员
       store: [], // 仓库
@@ -276,11 +306,21 @@ export default {
       show: false, // 是否显示添加界面
       disabled: false,
       info: { // 合同信息
+        companyId: '', // 甲方公司id
+        accountName: '', // 乙方收款人
+        accountBankname: '', // 乙方开户行
+        accountNo: '', // 乙方收款账号
         dueTime: '', // 交货日期
         payBak: '', // 放款方式备注
         contractTerms: '' // 产品合同描述
       },
       infoRule: { // 信息规则
+        companyId: [
+          {required: true, message: '请选择甲方公司', trigger: 'blur'}
+        ],
+        accountNo: [
+          {required: true, message: '请选择乙方收款账号', trigger: 'blur'}
+        ],
         dueTime: [
           {required: true, message: '请输入交货日期', trigger: 'blur'}
         ],
@@ -475,8 +515,8 @@ export default {
         if (valid) {
           let curr = {...this.form, ...this.info};
           let param = JSON.parse(JSON.stringify(curr));
-          let time = new Date(param.expectDueTime);
-          param.expectDueTime = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate();
+          // let time = new Date(param.expectDueTime);
+          // param.expectDueTime = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate();
           window.axios.post('/purchase/addPurchaseInfo', param).then(data => {
             this.loading = false;
             if (data.code === 0) {
@@ -552,7 +592,7 @@ export default {
         }
       }
       .moneyLabel {
-        top: 360px;
+        top: 480px;
       }
       .compLabel {
         top: 420px;
@@ -579,6 +619,11 @@ export default {
         &.last {
           /deep/.el-input--small .el-textarea__inner {
             width: 550px;
+          }
+          /deep/.el-input--small .el-input__inner {
+            width: 550px;
+            height: 35px;
+            line-height: 35px;
           }
         }
         .info {

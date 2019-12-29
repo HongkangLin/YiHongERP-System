@@ -119,11 +119,18 @@ export default {
       let _id = this.supplier || -1;
       let _start = this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[0] : '';
       let _end = this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[1] : '';
+      let name = '全部';
+      for(let i = this.supplierList.length; i--;) {
+        if (parseInt(this.supplierList[i].id) === parseInt(_id)) {
+          name = this.supplierList[i].name;
+          break;
+        }
+      }
       window.axios.post('/report/financePayReport', {
         supplierId: _id,
         payTimeStart: _start,
         payTimeEnd: _end,
-        searchContent: `{"supplierId": "${_id}", "payTimeStart": "${_start}", "payTimeEnd": "${_end}"}`
+        searchContent: `{"供应商": "${name}", "付款开始时间": "${_start}", "付款结束时间": "${_end}"}`
       });
       this.$router.push('/F0601/F060102');
     }

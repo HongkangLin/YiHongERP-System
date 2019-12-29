@@ -43,6 +43,7 @@
               <el-button
                 size="mini"
                 type="text"
+                :disabled="!scope.row.searchContent"
                 @click="handleLook(scope.row.searchContent)">筛选条件</el-button>
             </template>
           </el-table-column>
@@ -91,6 +92,26 @@ export default {
       window.open(url);
     },
     handleLook (content) { // 筛选条件
+      let str = '<table style="width: 100%;">', cnt = JSON.parse(content), i = 0;
+      for (let item in cnt) {
+        if (!(i % 2)) {
+          str += '<tr style="line-height: 30px;">';
+        }
+        str += `<td style="background-color: #f2f2f2;vertical-align: middle;color: #666;width: 25%;padding-left:5px;border: 1px solid rgb(228, 228, 228);">${item}</td><td style="width: 25%;vertical-align: middle;padding-left:5px;border: 1px solid rgb(228, 228, 228);">${cnt[item]}</td>`;
+        if (i % 2) {
+          str += '</tr>';
+        }
+        i++;
+      }
+      if (i % 2) {
+        str += '<td style="border: 1px solid rgb(228, 228, 228);">&nbsp;</td><td style="border: 1px solid rgb(228, 228, 228);">&nbsp;</td></tr>';
+      }
+      str += '</table>';
+      this.$alert(str, '筛选条件', {
+        dangerouslyUseHTMLString: true,
+        showConfirmButton: false,
+        closeOnClickModal: true
+      });
     },
     search () { // 查询按钮
       this.pageNum = 1;
