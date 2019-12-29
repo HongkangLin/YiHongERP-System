@@ -522,8 +522,8 @@ export default {
           param.accountBankname = param.compB.split(' ')[1], // 乙方开户行
           param.accountNo = param.compB.split(' ')[0], // 乙方收款账号
           delete param.compB;
-          let time = new Date(param.expectDueTime);
-          param.expectDueTime = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate();
+          // let time = new Date(param.expectDueTime);
+          // param.expectDueTime = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate();
           window.axios.post('/purchase/addPurchaseInfo', param).then(data => {
             this.loading = false;
             if (data.code === 0) {
