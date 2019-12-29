@@ -205,18 +205,18 @@
                 <el-option
                   v-for="item in compList"
                   :key="item.id"
-                  :label="item.name"
+                  :label="item.companyName"
                   :value="item.id">
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="已方收款账号：" prop="accountNo">
-              <el-select filterable v-model="info.accountNo" placeholder="请选择乙方收款账号，可选择私账与公账">
+            <el-form-item label="已方收款账号：" prop="compB">
+              <el-select filterable v-model="info.compB" placeholder="请选择乙方收款账号，可选择私账与公账">
                 <el-option
-                  v-for="item in compList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
+                  v-for="item in compBList"
+                  :key="item.accountNo"
+                  :label="item.accountName"
+                  :value="item.accountNo + ' ' + item.accountBankname + ' ' + item.accountName">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -265,16 +265,8 @@ export default {
         name: '发起采购',
         path: ''
       }],
-      compList: [{
-        id: 1,
-        name: '深圳市一弘科技有限公司'
-      }, {
-        id: 2,
-        name: '深圳市毅弘电子商务有限公司'
-      }, {
-        id: 3,
-        name: '深圳市长弘电子商务有限公司'
-      }],
+      compList: [],
+      compBList: [],
       supplierList: [], // 供应商列表
       peopleSel: [], // 采购员
       store: [], // 仓库
@@ -307,6 +299,7 @@ export default {
       disabled: false,
       info: { // 合同信息
         companyId: '', // 甲方公司id
+        compB: '', // 乙方信息
         accountName: '', // 乙方收款人
         accountBankname: '', // 乙方开户行
         accountNo: '', // 乙方收款账号
@@ -318,7 +311,7 @@ export default {
         companyId: [
           {required: true, message: '请选择甲方公司', trigger: 'blur'}
         ],
-        accountNo: [
+        compB: [
           {required: true, message: '请选择乙方收款账号', trigger: 'blur'}
         ],
         dueTime: [
@@ -338,10 +331,19 @@ export default {
     this.getRole();
     this.getStore();
     this.getContract();
+    this.getACompany();
   },
   methods: {
     goBack () { // 返回
       history.go(-1);
+    },
+    async getACompany () { // 获取甲方公司
+      let data = await window.axios.get('/purchase/queryPartyACompany');
+      this.compList = data.data;
+    },
+    async getSettleInfo () { // 获取乙方收款账号
+      let data = await window.axios.get(`/supplier/getSettleInfo?supplierId=${this.form.supplierId}`);
+      this.compBList = data.data.settleInfo;
     },
     async getContract () { // 获取合同条款
       let data = await window.axios.get('/purchase/queryContractTerms/con.purchase');
@@ -423,6 +425,7 @@ export default {
           this.$refs['form'].validate((valid) => {
             if (valid) {
               this.getPdt();
+              this.getSettleInfo();
               this.active = idx;
             } else {
               return false;
@@ -515,8 +518,12 @@ export default {
         if (valid) {
           let curr = {...this.form, ...this.info};
           let param = JSON.parse(JSON.stringify(curr));
-          // let time = new Date(param.expectDueTime);
-          // param.expectDueTime = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate();
+          param.accountName = param.compB.split(' ')[2], // 乙方收款人
+          param.accountBankname = param.compB.split(' ')[1], // 乙方开户行
+          param.accountNo = param.compB.split(' ')[0], // 乙方收款账号
+          delete param.compB;
+          let time = new Date(param.expectDueTime);
+          param.expectDueTime = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate();
           window.axios.post('/purchase/addPurchaseInfo', param).then(data => {
             this.loading = false;
             if (data.code === 0) {
