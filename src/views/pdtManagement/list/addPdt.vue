@@ -232,6 +232,9 @@
               <el-input disabled v-model="packingWideIn" class="leftSpan" placeholder="-"></el-input>
               <el-input disabled v-model="packingHighIn" class="leftSpan" placeholder="-"></el-input>
             </el-form-item>
+            <!-- <el-form-item label="FBA费（美元）：">
+              <el-input maxlength="20" v-model="form.goodsFbaFee" placeholder="请输入FBA费"></el-input>
+            </el-form-item> -->
           </el-form>
           <el-divider></el-divider>
           <div class="next">
@@ -416,6 +419,7 @@ export default {
         packingLength: '', // 外箱尺寸-长
         packingWide: '', // 外箱尺寸-宽
         packingHigh: '', // 外箱尺寸-高
+        // goodsFbaFee: '', // FBA费
         list: [] // 供应商列表
       },
       pdtPhoto: [], // 产品图片

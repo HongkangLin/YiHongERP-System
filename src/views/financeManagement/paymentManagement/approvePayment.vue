@@ -20,11 +20,11 @@
         <!-- 付款单信息 -->
         <div class="content-header"> <i class="el-icon-collection-tag"></i> 付款单信息</div>
          <section class="table">
-          <el-row v-for="(item, index) in table1List" :key="index">
+          <el-row v-for="(item, index) in table1List" :key="index" type="flex" align="stretch">
             <el-col :span="4" class="bg-grey">{{item.col1}}</el-col>
-            <el-col :span="8" class="content">{{tableData[item.col2]}}</el-col>
+            <el-col :span="8"><div class="content">{{tableData[item.col2]}}</div></el-col>
             <el-col :span="4" class="bg-grey">{{item.col3}}</el-col>
-            <el-col :span="8" class="content">{{tableData[item.col4]}}</el-col>
+            <el-col :span="8"><div class="content">{{tableData[item.col4]}}</div></el-col>
           </el-row>
         </section>
         <!-- 审核详情 -->
@@ -217,9 +217,8 @@ export default {
       border-left: 1px solid #e4e4e4;
       margin-bottom: 15px;
       .el-row {
-        line-height: 45px;
+        line-height: 40px;
         .el-col {
-          height: 45px;
           border-bottom: 1px solid #e4e4e4;
           border-right: 1px solid #e4e4e4;
         }
