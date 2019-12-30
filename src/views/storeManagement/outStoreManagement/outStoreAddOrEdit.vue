@@ -34,6 +34,15 @@
               <el-option label="铁路" value=4></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="出库国家：" prop="outCountryId">
+            <el-select filterable v-model="ruleForm.outCountryId" placeholder="选择出库国家">
+              <el-option label="美国" value=0></el-option>
+              <el-option label="英国" value=1></el-option>
+              <el-option label="德国" value=2></el-option>
+              <el-option label="日本" value=3></el-option>
+              <el-option label="法国" value=4></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item label="备注：" prop="remark">
             <el-input maxlength="100" type="textarea" :rows="4" placeholder="输入备注" v-model="ruleForm.remark"></el-input>
           </el-form-item>
@@ -51,6 +60,7 @@
               </el-table-column>
               <el-table-column prop="goodsSku" label="SKU" align="center" min-width="85"></el-table-column>
               <el-table-column prop="goodsName" label="产品名称" align="center" min-width="130"></el-table-column>
+              <el-table-column prop="goodsFNSKU" label="FNSKU" align="center" min-width="85"></el-table-column>
               <el-table-column prop="dimentions" label="外箱尺寸(cm)" align="center" min-width="90"></el-table-column>
               <el-table-column prop="fullLoadWeight" label="整箱重量(kg)" align="center" min-width="90"></el-table-column>
               <el-table-column prop="fullLoadQuantity" label="装箱数(套/箱)" align="center" min-width="90"></el-table-column>
@@ -117,6 +127,7 @@ export default {
         type: "", //入库单类型
         typeId: null,
         deliverMethod: "", //运输方式
+        outCountryId: '', // 出库国家
         deliverMethodId: null,
         remark: "" //备注
       },
@@ -129,6 +140,9 @@ export default {
         ],
         deliverMethod: [
           { required: true, message: '请选择运输方式', trigger: 'change' }
+        ],
+        outCountryId: [
+          { required: true, message: '请选择出库国家', trigger: 'change' }
         ]
       },
 
@@ -405,6 +419,7 @@ export default {
         type: this.ruleForm.type,
         deliverMethod: this.ruleForm.deliverMethod,
         remark: this.ruleForm.remark,
+        outCountryId: this.ruleForm.outCountryId,
         goods: []
       }
       this.productList.map((item) => {
@@ -487,6 +502,7 @@ export default {
             goodsId: pdtDetail.id,
             goodsPicUrl: pdtDetail.mainPicUrl,
             goodsSku: pdtDetail.skuId,
+            goodsFNSKU: pdtDetail.fnskuId,
             goodsName: pdtDetail.goodsName,
             dimentions: pdtDetail.packingLength + " * " + pdtDetail.packingWide + " * " + pdtDetail.packingHigh,
             fullLoadWeight: pdtDetail.packingWeight,
@@ -594,9 +610,6 @@ export default {
           }
           .el-input-number {
             width: 100%;
-            .el-input__inner {
-              // border: none;
-            }
           }
           .el-form-item .el-form-item__error{
             width: 100%;
