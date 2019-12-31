@@ -74,7 +74,8 @@ export default {
           {col1: "入库单号", col2: "sn", col3: "入库状态", col4: "status"},
           {col1: "入库类型", col2: "type", col3: "入库仓库", col4: "warehouseName"},
           {col1: "供应商", col2: "supplierName", col3: "采购员", col4: "purchaserName"},
-          {col1: "运单号", col2: "deliverSn", col3: "入库时间", col4: "checkinTime"},
+          {col1: "运单号", col2: "deliverSn", col3: "到货日期", col4: "updateTime"},
+          {col1: "入库时间", col2: "checkinTime", col3: "操作人", col4: "purchaserName"},
           {col1: "备注", col2: "remark", col3: "", col4: ""}
         ]
       } else { //采购入库
@@ -83,7 +84,8 @@ export default {
           {col1: "供应商名称", col2: "supplierName", col3: "采购员", col4: "purchaserName"},
           {col1: "入库仓库", col2: "warehouseName", col3: "入库状态", col4: "status"},
           {col1: "入库类型", col2: "type", col3: "运单号", col4: "deliverSn"},
-          {col1: "入库时间", col2: "checkinTime", col3: "备注", col4: "remark"}
+          {col1: "到货日期", col2: "updateTime", col3: "入库时间", col4: "checkinTime"},
+          {col1: "备注", col2: "remark", col3: "", col4: ""}
         ]
       }
     }

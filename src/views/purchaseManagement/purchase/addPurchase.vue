@@ -210,7 +210,7 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="已方收款账号：" prop="compB">
+            <el-form-item label="乙方收款账号：" prop="compB">
               <el-select filterable v-model="info.compB" placeholder="请选择乙方收款账号，可选择私账与公账">
                 <el-option
                   v-for="item in compBList"
