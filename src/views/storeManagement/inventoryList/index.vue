@@ -28,6 +28,7 @@
         </el-table-column>
         <el-table-column prop="goodsName" label="产品名称" align="center" min-width="230"></el-table-column>
         <el-table-column prop="warehouseName" label="仓库" align="center" min-width="150"></el-table-column>
+        <el-table-column prop="goodsWarnStorge" label="安全库存" align="center" min-width="150"></el-table-column>
         <el-table-column prop="stockAvailCount" label="可用库存" align="center" min-width="120"></el-table-column>
         <el-table-column prop="stockOnwayCount" label="在途库存" align="center" min-width="100"></el-table-column>
         <el-table-column prop="stockWaitCheckinCount" label="待入库" align="center" min-width="100"></el-table-column>
