@@ -23,7 +23,11 @@
           <el-input maxlength="100" v-model="bak" class="bak" placeholder="请输入付款备注"></el-input>
         </div>
         <el-table :data="orderList" border show-summary :summary-method="getSummaries" style="width: 100%">
-          <el-table-column prop="purchaseId" label="采购单号" min-width="125"></el-table-column>
+          <el-table-column label="采购单号" min-width="125">
+            <template slot-scope="scope">
+              <div class="number" @click="showSKU(scope.row.purchaseId)">{{scope.row.purchaseId}}</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="goodsAmount" label="货款总金额（元）" min-width="90"></el-table-column>
           <el-table-column prop="paidAmount" label="已支付货款（元）" min-width="90"></el-table-column>
           <el-table-column prop="unpaidAmount" label="未支付货款（元）" min-width="90"></el-table-column>
@@ -72,6 +76,58 @@
         <el-button type="primary" @click="confirmSubmit" :loading="loading">提 交</el-button>
       </div>
     </el-dialog>
+    <!-- SKU信息弹框 -->
+    <el-dialog title="采购单详情" :visible.sync="skuVisible" width="70%">
+      <el-table
+        :data="info.productList"
+        border
+        show-summary
+        :summary-method="getSummaries1"
+        style="width: 100%">
+        <el-table-column
+          label="图片"
+          align="center">
+          <template slot-scope="scope">
+            <img class="img" :src="scope.row.mainPicUrl" alt="">
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="skuId"
+          label="SKU"
+          align="center">
+        </el-table-column>
+        <el-table-column
+          prop="goodsName"
+          label="产品名称"
+          align="center">
+        </el-table-column>
+        <el-table-column
+          prop="purchasePrice"
+          label="采购价（元）"
+          align="center">
+        </el-table-column>
+        <el-table-column
+          prop="purchaseAmount"
+          label="采购数量（套）"
+          align="center">
+        </el-table-column>
+        <el-table-column
+          prop="goodsAmount"
+          label="货款总金额"
+          align="center">
+        </el-table-column>
+        <el-table-column
+          prop="remainArrivalAmount"
+          label="剩余到货数"
+          align="center">
+        </el-table-column>
+        <el-table-column
+          label="未支付货款（元）"
+          align="center">
+          --
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -109,6 +165,8 @@ export default {
           { required: true, message: '请选择收款账号', trigger: 'change' }
         ]
       },
+      info: [], // sku信息
+      skuVisible: false, // sku详情
       accountList: [], //收款账号下拉
       orderList: [], //采购单号表格数据
 
@@ -130,6 +188,64 @@ export default {
     },
     handleDelete (index) { // 移除操作
       this.orderList.splice(index, 1);
+    },
+    async showSKU (_id) { // 显示sku信息
+      let data = await window.axios.get(`/purchase/queryPurchaseDetail/${_id}`);
+      this.info = data.data;
+      this.skuVisible = true;
+    },
+    getSummaries1 (param) { // 计算汇总
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '汇总';
+          return;
+        }
+        if (index === 1) {
+          sums[index] = '共' + data.length + '类SKU';
+          return;
+        }
+        if (index === 2 || index === 3) {
+          sums[index] = '';
+          return;
+        }
+        if (index === 4) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].purchaseAmount) {
+              sum += parseInt(data[i].purchaseAmount);
+            }
+          }
+          sums[index] = sum || 0;
+          return;
+        }
+        if (index === 5) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].goodsAmount) {
+              sum += data[i].goodsAmount;
+            }
+          }
+          sums[index] = sum || 0;
+          return;
+        }
+        if (index === 6) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].remainArrivalAmount) {
+              sum += data[i].remainArrivalAmount;
+            }
+          }
+          sums[index] = sum || 0;
+          return;
+        }
+        if (index === 7) {
+          sums[index] = this.info.unpaidAmount;
+        }
+      });
+
+      return sums;
     },
 
     // 匹配供应商id
@@ -251,6 +367,9 @@ export default {
 </script>
 <style lang="less" scoped>
 .applyForPay_wrap {
+  .number {
+    cursor: pointer;
+  }
   box-sizing: border-box;
   padding: 20px 60px;
   background-color: #f6f7f9;
