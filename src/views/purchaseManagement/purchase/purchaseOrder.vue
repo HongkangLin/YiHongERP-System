@@ -69,6 +69,8 @@
               <el-button v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_arrive" type="text" size="small" @click="toArrivePage(scope.row.purchaseId)">到货</el-button>
               <el-divider v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_close" direction="vertical"></el-divider>
               <el-button v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_close" type="text" size="small" @click="showCloseOrderDialog(scope.row.purchaseId)">关闭</el-button>
+              <el-divider v-if="scope.row.purchaseStatus === '进行中' && !scope.row.applyingAmount && !scope.row.paidAmount" direction="vertical"></el-divider>
+              <el-button v-if="scope.row.purchaseStatus === '进行中' && !scope.row.applyingAmount && !scope.row.paidAmount" type="text" size="small" @click="close(scope.row.purchaseId)">完结</el-button>
               <el-divider v-if="scope.row.approveShowFlag" direction="vertical"></el-divider>
               <el-button v-if="scope.row.approveShowFlag" type="text" size="small" @click="toApprovalPage(scope.row.purchaseId, scope.row.skuCount)">审批</el-button>
             </template>
@@ -312,6 +314,21 @@ export default {
         } else {
           console.log('error submit!!');
           return false;
+        }
+      });
+    },
+    close (_id) { // 完结
+      this.$confirm('确认完结?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        let data = await window.axios.get(`/purchase/finishPurchase/${_id}`);
+        if (data.code === 0) {
+          this.$message({
+            message: data.message,
+            type: 'success'
+          });
         }
       });
     },
