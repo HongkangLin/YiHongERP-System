@@ -51,6 +51,10 @@
       </div>
       <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
     </div>
+    <!-- 筛选条件 -->
+    <el-dialog title="筛选条件" :visible.sync="ruleVisible" width="70%">
+      <div v-html="str"></div>
+    </el-dialog>
   </div>
 </template>
 
@@ -69,6 +73,8 @@ export default {
         name: '下载中心',
         path: ''
       }],
+      ruleVisible: false, // 筛选条件
+      str: '', // 内容
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
@@ -95,7 +101,7 @@ export default {
       let str = '<table style="width: 100%;">', cnt = JSON.parse(content), i = 0;
       for (let item in cnt) {
         if (!(i % 2)) {
-          str += '<tr style="line-height: 30px;">';
+          str += '<tr style="line-height: 60px;">';
         }
         str += `<td style="background-color: #f2f2f2;vertical-align: middle;color: #666;width: 25%;padding-left:5px;border: 1px solid rgb(228, 228, 228);">${item}</td><td style="width: 25%;vertical-align: middle;padding-left:5px;border: 1px solid rgb(228, 228, 228);">${cnt[item]}</td>`;
         if (i % 2) {
@@ -107,11 +113,8 @@ export default {
         str += '<td style="border: 1px solid rgb(228, 228, 228);">&nbsp;</td><td style="border: 1px solid rgb(228, 228, 228);">&nbsp;</td></tr>';
       }
       str += '</table>';
-      this.$alert(str, '筛选条件', {
-        dangerouslyUseHTMLString: true,
-        showConfirmButton: false,
-        closeOnClickModal: true
-      });
+      this.str = str;
+      this.ruleVisible = true;
     },
     search () { // 查询按钮
       this.pageNum = 1;
