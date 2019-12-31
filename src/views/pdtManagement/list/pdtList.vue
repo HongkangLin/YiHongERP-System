@@ -331,8 +331,8 @@ export default {
       }
     },
     async confirmApplyForClose () { // 快速编辑
-      let data = window.axios.post('/product/quickUpdateProductInfo', {
-        skuid: this.skuid,
+      let data = await window.axios.post('/product/quickUpdateProductInfo', {
+        skuId: this.skuid,
         fnskuId: this.form.fnskuId,
         goodsUrl: this.form.goodsUrl,
         fnskuFileUrl: this.form.fnskuFileUrl ? this.form.fnskuFileUrl[0].url : '',
