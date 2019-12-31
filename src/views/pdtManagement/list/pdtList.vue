@@ -125,6 +125,11 @@
                 size="mini"
                 type="text"
                 @click="handleLook(scope.row.id, scope.row.skuId)">查看</el-button>
+              <el-divider direction="vertical"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleFast(scope.row.id, scope.row.skuId)">快速编辑</el-button>
               <el-divider direction="vertical" v-if="roleCtl.product_delete"></el-divider>
               <el-button
                 size="mini"
@@ -137,6 +142,62 @@
       </div>
       <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
     </div>
+    <el-dialog title="快速编辑" :visible.sync="fastVisible" width="70%" top="20px">
+      <el-form ref="form" class="form" :model="form" label-width="170px">
+        <el-form-item label="产品链接：">
+          <el-input maxlength="100" v-model="form.goodsUrl" placeholder="请输入产品链接"></el-input>
+        </el-form-item>
+        <el-form-item label="FNSKU编号：">
+          <el-input maxlength="100" disabled v-model="form.fnskuId" placeholder="请输入FNSKU编号"></el-input>
+        </el-form-item>
+        <el-form-item label="FNSKU文件：">
+          <el-upload
+            class="upload-demo"
+            accept=".pdf"
+            drag
+            action="/erp/file/upload"
+            :limit="1"
+            :on-exceed="() => {this.$message.warning('上传失败，只能上传一份资料哦～')}"
+            :file-list="form.fnskuFileUrl"
+            :before-upload="checkSize2"
+            :on-error="() => {this.$message.error('上传失败')}"
+            :headers="{'x-token': token}"
+            :on-success="up4"
+            :on-preview="openFile"
+            :on-remove="handleRemove4"
+            multiple>
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <div class="el-upload__tip" slot="tip">只能上传pdf格式文件，文件不能超过2M，仅允许上传1份</div>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="FNSKU图片：">
+          <el-upload
+            action="/erp/file/upload"
+            list-type="picture-card"
+            :headers="{'x-token': token}"
+            accept=".jpg, .png"
+            :limit="1"
+            :file-list="form.fnskuFilePicUrl"
+            :on-exceed="() => {this.$message.warning('上传失败，只能上传一张图片哦～')}"
+            :before-upload="checkSize"
+            :on-error="() => {this.$message.error('上传失败')}"
+            :on-success="up2"
+            :on-preview="handlePictureCardPreview2"
+            :on-remove="handleRemove2">
+            <i class="el-icon-plus"></i>
+            <div class="info" slot="tip">只能上传jpg/png格式文件，文件不能超过2M</div>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible2">
+            <img width="100%" :src="dialogImageUrl2" alt="">
+          </el-dialog>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="fastVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmApplyForClose">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -149,6 +210,7 @@ export default {
   data () {
     return {
       roleCtl: this.$store.state.role.roleCtl,
+      token: localStorage.getItem('token'),
       crumbList: [{ // 面包屑
         name: '产品管理',
         path: '/F0201/F020101'
@@ -156,6 +218,16 @@ export default {
         name: '产品列表',
         path: ''
       }],
+      fastVisible: false, // 快速编辑
+      form: { // 产品信息
+        goodsUrl: '', // 产品链接
+        fnskuId: '',
+        fnskuFileUrl: [],
+        fnskuFilePicUrl: []
+      },
+      skuid: '', // 当前操作的skuid
+      dialogImageUrl2: '',
+      dialogVisible2: false,
       name: '', // 产品名称/SKU/海关编码
       status: '', // 产品状态
       prdStatus: [{ // 产品状态选项
@@ -198,6 +270,80 @@ export default {
     this.queryList();
   },
   methods: {
+    openFile () { // 打开fnsku文件
+      window.open(this.form.fnskuFileUrl[0].url);
+    },
+    handleRemove4() { // 删除文件
+      this.form.fnskuFileUrl = [];
+    },
+    up4 (response) { // 上传成功
+      this.form.fnskuFileUrl.push({
+        name: response.data.fileName,
+        url: response.data.originUrl
+      });
+    },
+    handleRemove2() { // 删除文件
+      this.form.fnskuFilePicUrl = [];
+    },
+    handlePictureCardPreview2(file) { // 展示大图
+      this.dialogImageUrl2 = file.url.replace('_80x80', '');
+      this.dialogVisible2 = true;
+    },
+    up2 (response) { // 上传成功
+      this.form.fnskuFilePicUrl.push({
+        url: response.data.thumbUrl
+      });
+    },
+    checkSize2 (file) { // 文件上传前检查文件大小和格式(小于2M)
+      let name = file.name.split('.');
+      let type = name[name.length - 1];
+      if (type !== 'pdf') {
+        this.$message({
+          message: '文件格式错误',
+          type: 'warning'
+        });
+        return false;
+      }
+      if (file.size >= 2 * 1024 * 1024) {
+        this.$message({
+          message: '文件超过限制大小',
+          type: 'warning'
+        });
+        return false;
+      }
+    },
+    checkSize (file) { // 文件上传前检查文件大小和格式(小于2M)
+      let name = file.name.split('.');
+      let type = name[name.length - 1];
+      if (type !== 'png' && type !== 'jpg') {
+        this.$message({
+          message: '文件格式错误',
+          type: 'warning'
+        });
+        return false;
+      }
+      if (file.size >= 2 * 1024 * 1024) {
+        this.$message({
+          message: '文件超过限制大小',
+          type: 'warning'
+        });
+        return false;
+      }
+    },
+    async confirmApplyForClose () { // 快速编辑
+      let data = window.axios.post('/product/quickUpdateProductInfo', {
+        skuid: this.skuid,
+        fnskuId: this.form.fnskuId,
+        goodsUrl: this.form.goodsUrl,
+        fnskuFileUrl: this.form.fnskuFileUrl ? this.form.fnskuFileUrl[0].url : '',
+        fnskuFilePicUrl: this.form.fnskuFilePicUrl ? this.form.fnskuFilePicUrl[0].url : '',
+        fnskuFileName: this.form.fnskuFileUrl ? this.form.fnskuFileUrl[0].name : ''
+      });
+      if (data.code === 0) {
+        this.$message.success(data.message);
+        this.fastVisible = false;
+      }
+    },
     async getBrand () { // 获取品牌
       let data = await window.axios.post('/product/queryProductBrandListRule', {
         goodsBrandNameOrLetter: '',
@@ -268,6 +414,22 @@ export default {
         item.pdtTypeName = name;
       });
       this.tableData = data.list;
+    },
+    async handleFast (id, skuid) { // 快速编辑
+      this.skuid = skuid;
+      let data = await window.axios.post(`/product/queryProductInfoDetail`, {
+        skuId: skuid
+      });
+      this.form = {
+        goodsUrl: data.data.goodsUrl, // 产品链接
+        fnskuId: data.data.fnskuId,
+        fnskuFileUrl: [{
+          name: data.data.fnskuFileName,
+          url: data.data.fnskuFileUrl
+        }],
+        fnskuFilePicUrl: data.data.fnskuFilePicUrl ? [{url: data.data.fnskuFilePicUrl}] : []
+      };
+      this.fastVisible = true;
     },
     handleChange (value) { // 修改产品类型
       this.categoryParentId = value[0];
