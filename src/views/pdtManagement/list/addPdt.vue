@@ -58,6 +58,11 @@
           </div>
           <div class="lable compLabel">
             <i class="el-icon-collection-tag"></i>
+            清关信息
+            <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
+          </div>
+          <div class="lable ruleLabel">
+            <i class="el-icon-collection-tag"></i>
             规格信息
             <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
@@ -89,6 +94,9 @@
             </el-form-item>
             <el-form-item label="销售目标价：">
               <el-input maxlength="20" v-model="form.goodsGoalPrice" placeholder="例如10.99-15.99"></el-input>
+            </el-form-item>
+            <el-form-item label="安全库存：">
+              <el-input min="0" type="number" @blur="() => {if (this.form.goodsWarnStorge < 0) {this.form.goodsWarnStorge = 0} else if (this.form.goodsWarnStorge > 999999) {this.form.goodsWarnStorge = 999999}}" v-model="form.goodsWarnStorge" placeholder="请输入安全库存预警数量"></el-input>
             </el-form-item>
             <el-form-item label="产品链接：">
               <el-input maxlength="100" v-model="form.goodsUrl" placeholder="请输入产品链接"></el-input>
@@ -175,20 +183,41 @@
               <el-input type="textarea" maxlength="1000" :rows="5" v-model="form.goodsDescribe" placeholder="请输入产品描述内容，500字以内"></el-input>
             </el-form-item>
             <div class="spanDiv"></div>
-            <el-form-item label="海关编码：">
+            <el-form-item label="国内海关编码：">
               <el-input v-model="form.customId" maxlength="100" placeholder="请输入海关编码"></el-input>
             </el-form-item>
-            <el-form-item label="申报价值：">
+            <el-form-item label="报税申报价值（美元）：">
               <el-input min="0" type="number" @blur="() => {if (this.form.claimPrice < 0) {this.form.claimPrice = 0} else if (this.form.claimPrice > 1000000000) {this.form.claimPrice = 1000000000}}" v-model="form.claimPrice" placeholder="请输入申报价值"></el-input>
             </el-form-item>
             <el-form-item label="中文报关名：">
               <el-input maxlength="100" v-model="form.chineseName" placeholder="请输入中文报关名"></el-input>
             </el-form-item>
-            <el-form-item label="英文报关名：">
+            <div class="spanDiv"></div>
+            <!-- <el-form-item label="英文报关名：">
               <el-input maxlength="100" v-model="form.englishName" placeholder="请输入英文报关名"></el-input>
             </el-form-item>
             <el-form-item label="美国进口关税：">
               <el-input maxlength="100" v-model="form.tariffs" placeholder="请输入美国进口关税"></el-input>
+            </el-form-item> -->
+            <el-form-item label="国外发票（中文品名）：">
+              <el-input maxlength="20" v-model="form.overseaInvoiceCn" placeholder="请输入国外发票中文品名"></el-input>
+            </el-form-item>
+            <el-form-item label="国外发票（英文品名）：">
+              <el-input maxlength="20" v-model="form.overseaInvoiceEn" placeholder="请输入国外发票英文品名"></el-input>
+            </el-form-item>
+            <el-form-item label="国外发票（材质）：">
+              <el-input maxlength="20" v-model="form.overseaInvoiceTexture" placeholder="请输入国外发票材质"></el-input>
+            </el-form-item>
+            <el-form-item label="国外发票（用途）：">
+              <el-input maxlength="20" v-model="form.overseaInvoiceUse" placeholder="请输入国外发票用途"></el-input>
+            </el-form-item>
+            <el-form-item label="国外海关编码：">
+              <el-input maxlength="20" v-model="form.overseaCustomId" placeholder="请输入国外海关编码"></el-input>
+            </el-form-item>
+            <el-form-item class="append" label="国外进口关税：">
+              <el-input min="0" type="number" @blur="() => {if (this.form.tariffs < 0) {this.form.tariffs = 0} else if (this.form.tariffs > 1000000000) {this.form.tariffs = 1000000000}}" v-model="form.tariffs" placeholder="请输入国外进口关税">
+                <template slot="append">%</template>
+              </el-input>
             </el-form-item>
             <div class="spanDiv"></div>
             <el-form-item label="产品包装尺寸（cm）：" class="inline">
@@ -201,7 +230,7 @@
               <el-input disabled v-model="goodsWideIn" class="leftSpan" placeholder="-"></el-input>
               <el-input disabled v-model="goodsHighIn" class="leftSpan" placeholder="-"></el-input>
             </el-form-item>
-            <el-form-item label="每个产品重量：" class="inline">
+            <el-form-item label="单个产品重量：" class="inline">
               <el-input min="0" type="number" @blur="() => {if (this.form.goodsWeight < 0) {this.form.goodsWeight = 0} else if (this.form.goodsWeight > 1000000000) {this.form.goodsWeight = 1000000000}}" v-model="form.goodsWeight" placeholder="">
                 <template slot="append">kg</template>
               </el-input>
@@ -232,9 +261,9 @@
               <el-input disabled v-model="packingWideIn" class="leftSpan" placeholder="-"></el-input>
               <el-input disabled v-model="packingHighIn" class="leftSpan" placeholder="-"></el-input>
             </el-form-item>
-            <!-- <el-form-item label="FBA费（美元）：">
+            <el-form-item label="FBA费（美元）：">
               <el-input maxlength="20" v-model="form.goodsFbaFee" placeholder="请输入FBA费"></el-input>
-            </el-form-item> -->
+            </el-form-item>
           </el-form>
           <el-divider></el-divider>
           <div class="next">
@@ -397,6 +426,7 @@ export default {
         goodsName: '', // 名称
         skuId: '', // sku
         goodsGoalPrice: '', // 销售目标价
+        goodsWarnStorge: '', // 安全库存
         fnskuFileUrl: [], // fnsku文件
         fnskuFilePicUrl: [], // fnsku图片
         goodsUrl: '', // 产品链接
@@ -408,7 +438,12 @@ export default {
         customId: '', // 海关编码
         claimPrice: '', // 申报价值
         chineseName: '', // 中文报关名
-        englishName: '', // 英文报关名
+        overseaInvoiceCn: '', // 国外发票中文名
+        overseaInvoiceEn: '', // 国外发票英文名
+        overseaInvoiceTexture: '', // 国外发票材质
+        overseaInvoiceUse: '', // 国外发票用途
+        overseaCustomId: '', // 国外海关编码
+        // englishName: '', // 英文报关名
         tariffs: '', // 进口关税
         goodsLength: '', // 包装尺寸-长
         goodsWide: '', // 包装尺寸-宽
@@ -419,7 +454,7 @@ export default {
         packingLength: '', // 外箱尺寸-长
         packingWide: '', // 外箱尺寸-宽
         packingHigh: '', // 外箱尺寸-高
-        // goodsFbaFee: '', // FBA费
+        goodsFbaFee: '', // FBA费
         list: [] // 供应商列表
       },
       pdtPhoto: [], // 产品图片
@@ -919,7 +954,7 @@ export default {
       height: 710px;
     }
     .secondLeft {
-      height: 2480px;
+      height: 2842px;
     }
     .left {
       position: relative;
@@ -945,10 +980,13 @@ export default {
         }
       }
       .moneyLabel {
-        top: 1400px;
+        top: 1460px;
       }
       .compLabel {
-        top: 1660px;
+        top: 1610px;
+      }
+      .ruleLabel {
+        top: 1940px;
       }
     }
     .right {
