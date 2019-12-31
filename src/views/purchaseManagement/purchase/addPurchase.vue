@@ -376,6 +376,7 @@ export default {
         pageNum: this.pageNum,
         searchValue: this.pdtName
       });
+      this.total = data.data.total;
       data.data.list.forEach(item => {
         item.purchaseAmount = 1;
         for (let i = 0, len = this.form.productOfPurchaseDTOList.length; i < len; i++) {

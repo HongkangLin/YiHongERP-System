@@ -7,6 +7,14 @@
         <el-row>
           <el-col :span="4" class="bg-grey">付款单号</el-col>
           <el-col :span="8" class="content">{{printPageData.id}}</el-col>
+          <el-col :span="4" class="bg-grey">申请日期</el-col>
+          <el-col :span="8" class="content">{{printPageData.createTime}}</el-col>
+        </el-row>
+      </div>
+      <div class="table row3">
+        <el-row>
+          <el-col :span="4" class="bg-grey">供应商</el-col>
+          <el-col :span="8" class="content">{{printPageData.supplierName}}</el-col>
           <el-col :span="4" class="bg-grey">收款单位</el-col>
           <el-col :span="8" class="content">{{printPageData.accountName}}</el-col>
         </el-row>
@@ -22,13 +30,13 @@
       <div class="table row4">
         <el-row>
           <el-col :span="4" class="bg-grey">金额大写</el-col>
-          <el-col :span="20" class="content">{{amount_word}}</el-col>
+          <el-col :span="20" class="content" style="color:red;">{{amount_word}}</el-col>
         </el-row>
       </div>
       <div class="table row5">
         <el-row>
           <el-col :span="4" class="bg-grey">金额小写</el-col>
-          <el-col :span="20" class="content">¥ {{amount_num}}</el-col>
+          <el-col :span="20" class="content" style="color:red;">¥ {{amount_num}}</el-col>
         </el-row>
       </div>
       <div class="table row6">
