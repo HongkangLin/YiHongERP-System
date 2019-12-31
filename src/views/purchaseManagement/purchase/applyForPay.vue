@@ -52,6 +52,14 @@
               <el-input maxlength="100" v-model="scope.row.bak" placeholder="请输入"></el-input>
             </template>
           </el-table-column>
+          <el-table-column label="操作" align="center">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleDelete(scope.$index)">移除</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <el-button type="primary" @click="openDialog" class="submitBtn">提交申请</el-button>
       </div>
@@ -120,6 +128,9 @@ export default {
       // this.getSupplierId();
       this.getAccountList();
     },
+    handleDelete (index) { // 移除操作
+      this.orderList.splice(index, 1);
+    },
 
     // 匹配供应商id
     // getSupplierId() {
@@ -180,7 +191,7 @@ export default {
       });
       // console.log("sums: ", sums);
       let calc = Number(sums[5]) + Number(sums[6]) + Number(sums[7]);
-      sums[sums.length - 1] = '本次申请金额汇总：' + calc.toFixed(2);
+      sums[sums.length - 2] = '本次申请金额汇总：' + calc.toFixed(2);
       return sums;
     },
 
