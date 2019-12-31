@@ -9,9 +9,34 @@
       </div>
       <div class="content">
         <div class="inputDiv">
-          <el-input maxlength="100" class="nameKeyword" @change="search" v-model="gnameOrSkuKeyword" placeholder="产品名称/SKU"></el-input>
-          <el-select filterable v-model="warehouseId" @change="search" placeholder="仓库">
+          <el-input maxlength="100" class="selList" @change="search" v-model="gnameOrSkuKeyword" placeholder="产品名称/SKU"></el-input>
+          <el-select filterable v-model="warehouseId" class="selList" @change="search" placeholder="仓库">
             <el-option v-for="(item, index) in storeList" :key="index" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+          <el-cascader
+            filterable
+            v-model="categoryId"
+            :options="prdType"
+            class="selList"
+            placeholder="产品分类"
+            :props="{ expandTrigger: 'hover' }"
+            @change="handleChange">
+          </el-cascader>
+          <el-select filterable class="selList" @change="search" v-model="brandId" placeholder="品牌">
+            <el-option
+              v-for="item in brandList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <el-select filterable class="selList" @change="search" v-model="availStatus" placeholder="库存状态">
+            <el-option
+              v-for="item in statusList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
           </el-select>
         </div>
         <div class="sel" @click="search">查询</div>
@@ -52,6 +77,20 @@ export default {
     return {
       warehouseId: null, //仓库id
       gnameOrSkuKeyword: '', //搜索的关键字
+      categoryId: '', // 产品分类
+      prdType: [], // 产婆分类列表
+      brandId: '', // 品牌
+      brandList: [], // 品牌列表
+      availStatus: '', // 库存状态
+      statusList: [ // 可选库存列表
+        {
+          label: '有库存',
+          value: 1
+        }, {
+          label: '无库存',
+          value: 0
+        }
+      ],
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
@@ -69,6 +108,8 @@ export default {
     }
   },
   created() {
+    this.getPrdType();
+    this.getBrand();
     this.queryList();
     this.getStoreList();
   },
@@ -80,11 +121,47 @@ export default {
       
       this.storeList = data.data;
     },
+    async getBrand () { // 获取品牌
+      let data = await window.axios.post('/product/queryProductBrandListRule', {
+        goodsBrandNameOrLetter: '',
+        pageNum: 1,
+        pageSize: 9999999
+      });
+      data.data.list.forEach(item => {
+        item.label = item.goodsBrandName,
+        item.value = item.id
+      });
+      this.brandList.push(...data.data.list);
+    },
+    async getPrdType () { // 获取产品分类
+      let data = await window.axios.post('/product/queryAllCategoryRule', {
+        pageSize: 999999,
+        pageNum: 1
+      });
+      data.data.list.forEach(item => {
+        item.label = item.goodsCategoryName;
+        item.value = item.id;
+        item.listChildCategory.forEach(sub => {
+          sub.label = sub.goodsCategoryName;
+          sub.value = sub.id;
+        });
+        item.children = item.listChildCategory;
+      });
+      this.prdType.push(...data.data.list); // 初始化新增分类页面可选分类
+    },
+    handleChange (value) { // 改变产品分类
+      // this.categoryParentId = value[0];
+      this.categoryId = value[1];
+      this.search();
+    },
 
     async queryList () { 
       let params = {
         gnameOrSkuKeyword: this.gnameOrSkuKeyword,
         warehouseId: this.warehouseId,
+        brandId: this.brandId,
+        categoryId: this.categoryId,
+        availStatus: this.availStatus,
         pageNum: this.pageNum,
         pageSize: this.pageSize
       }
