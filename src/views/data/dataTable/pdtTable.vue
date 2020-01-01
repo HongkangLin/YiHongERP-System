@@ -5,7 +5,7 @@
       <div class="search">
         <div class="head">
           <div class="label"><i class="el-icon-s-unfold"></i>产品信息报表</div>
-          <div class="new" v-if="roleCtl.product_add" @click="exp">导出报表</div>
+          <div class="new" @click="exp">导出报表</div>
         </div>
         <div class="content">
           <div class="inputDiv">
@@ -34,7 +34,7 @@
                 :value="item.value">
               </el-option>
             </el-select>
-            <el-select filterable class="selList" @change="search" v-model="people" placeholder="采购员">
+            <el-select filterable class="selList" @change="search" v-model="people" placeholder="采购人">
               <el-option
                 v-for="item in peopleList"
                 :key="item.value"
@@ -42,6 +42,7 @@
                 :value="item.value">
               </el-option>
             </el-select>
+            <el-date-picker @change="search" v-model="createTimeRange" value-format="yyyy-MM-dd" type="daterange" range-separator="" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
           </div>
           <div class="sel" @click="search">查询</div>
         </div>
@@ -69,9 +70,11 @@
             label="产品名称">
           </el-table-column>
           <el-table-column
-            prop="pdtTypeName"
             align="center"
             label="分类">
+            <template slot-scope="scope">
+              <div>{{scope.row.categoryParentName + '/' + scope.row.categoryName}}</div>
+            </template>
           </el-table-column>
           <el-table-column
             prop="fnskuId"
@@ -91,32 +94,36 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="brandName"
+            prop="goodsFbaFee"
             align="center"
             label="FBA费">
           </el-table-column>
           <el-table-column
-            prop="purchaserName"
             align="center"
             label="产品包装尺寸">
+            <template slot-scope="scope">
+              <div>{{scope.row.goodsLength + '*' + scope.row.goodsWide + '*' + scope.row.goodsHigh}}</div>
+            </template>
           </el-table-column>
           <el-table-column
-            prop="purchaserName"
             align="center"
             label="外箱尺寸">
+            <template slot-scope="scope">
+              <div>{{scope.row.packingLength + '*' + scope.row.packingWide + '*' + scope.row.packingHigh}}</div>
+            </template>
           </el-table-column>
           <el-table-column
-            prop="purchaserName"
+            prop="goodsWeight"
             align="center"
             label="单个产品重量（kg）">
           </el-table-column>
           <el-table-column
-            prop="purchaserName"
+            prop="packingWeight"
             align="center"
             label="整箱重量（kg）">
           </el-table-column>
           <el-table-column
-            prop="purchaserName"
+            prop="packingQuantity"
             align="center"
             label="装箱数（套）">
           </el-table-column>
@@ -126,7 +133,7 @@
             label="采购员">
           </el-table-column>
           <el-table-column
-            prop="purchaserName"
+            prop="createTime"
             align="center"
             label="创建日期">
           </el-table-column>
@@ -145,7 +152,7 @@ export default {
   },
   data () {
     return {
-      roleCtl: this.$store.state.role.roleCtl,
+      createTimeRange: [],
       crumbList: [{ // 面包屑
         name: '数据',
         path: '/F0601/F060101'
@@ -234,15 +241,16 @@ export default {
       this.peopleList.push(...data.data);
     },
     async queryList () { // 查询列表
-      let data = await window.axios.post('/product/queryProductInfoList', {
+      let data = await window.axios.post('/report/queryProductInfoReportList', {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
-        skuIdOrGoodsNameOrCustomId: this.name,
         status: parseInt(this.status) < 0 ? '' : this.status,
         categoryParentId: this.categoryParentId,
         categoryId: this.categoryId,
         brandId: parseInt(this.brand) < 0 ? '' : this.brand,
-        purchaserId: parseInt(this.people) < 0 ? '' : this.people
+        purchaserId: parseInt(this.people) < 0 ? '' : this.people,
+        startTime: this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[0] : '',
+        endTime: this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[1] : ''
       });
       data = data.data;
       this.total = data.total;
@@ -277,59 +285,6 @@ export default {
       this.pageNum = 1;
       this.queryList();
     },
-    handleLook (id, skuid) { // 查看详情
-      this.$router.push({path: '/pdtDetail', query: {id, skuid}});
-    },
-    handleSupplier (id) { // 产品供应商
-      this.$router.push(`/pdtSupplier/${id}`);
-    },
-    handleEdit (id, skuid) { // 编辑角色
-      this.$router.push({path: '/addPdt', query: {id, skuid}});
-    },
-    handleDelete (id) { // 删除产品
-      this.$confirm('确定删除此产品?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        window.axios.post('/product/deleteProductInfo', {
-          skuId: id
-        }).then(data => {
-          if (data.code === 0) {
-            this.$message({
-              message: data.message,
-              type: 'success'
-            });
-            if (this.tableData.length === 1) { // 当前页最后一条数据
-              this.pageNum = (this.pageNum - 1) || 1;
-            }
-            this.queryList(); // 重新获取数据
-          }
-        });
-      });
-    },
-    changeStatus (idx, id, status) { // 修改销售状态
-      if (!status) {
-        this.$confirm('确定要停售此产品吗？停售后将不可进行采购下单', '停售产品', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.submitStatus(id, status);
-        }).catch(() => {
-          this.tableData[idx].status = true;
-        });
-      } else {
-        this.submitStatus(id, status);
-      }
-    },
-    async submitStatus (id, status) { // 提交修改的状态
-      let data = await window.axios.post('/product/updateProductInfo', {
-        skuId: id,
-        status: ~~!status
-      });
-      data.code === 0 ? this.$message.success(data.message) : this.$message.error(data.message);
-    },
     changeNum (num) { // 改变页码
       this.pageNum = num;
       this.queryList();
@@ -340,7 +295,16 @@ export default {
       this.queryList();
     },
     exp () { // 导出报表
-      this.$router.push('/addPdt');
+      window.axios.post('/report/ProductInfoReport', {
+        status: parseInt(this.status) < 0 ? '' : this.status,
+        categoryParentId: this.categoryParentId,
+        categoryId: this.categoryId,
+        brandId: parseInt(this.brand) < 0 ? '' : this.brand,
+        purchaserId: parseInt(this.people) < 0 ? '' : this.people,
+        startTime: this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[0] : '',
+        endTime: this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[1] : ''
+      });
+      this.$router.push('/F0601/F060102');
     }
   }
 }
@@ -358,6 +322,9 @@ export default {
     /deep/.el-input--small .el-input__inner {
       height: 35px;
       line-height: 35px;
+    }
+    /deep/.el-date-editor--daterange {
+      width: 260px;
     }
   }
   /deep/.el-switch__label--left {

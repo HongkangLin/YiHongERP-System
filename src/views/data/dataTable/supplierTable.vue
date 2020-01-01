@@ -5,11 +5,27 @@
       <div class="search">
         <div class="head">
           <div class="label"><i class="el-icon-s-unfold"></i>供应商信息报表</div>
-          <div class="new" v-if="roleCtl.supplier_add" @click="exp">导出报表</div>
+          <div class="new" @click="exp">导出报表</div>
         </div>
         <div class="content">
           <div class="inputDiv">
-            <el-input maxlength="100" class="name" @change="search" v-model="name" placeholder="供应商名称/编号"></el-input>
+            <el-input maxlength="100" class="selList" @change="search" v-model="name" placeholder="供应商名称/编号"></el-input>
+            <el-select filterable class="selList" @change="search" v-model="settle" placeholder="结算方式">
+              <el-option
+                v-for="item in settleSel"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+            <el-select filterable class="selList" @change="search" v-model="level" placeholder="供应商等级">
+              <el-option
+                v-for="item in levelList"
+                :key="item.label"
+                :label="item.label"
+                :value="item.label">
+              </el-option>
+            </el-select>
           </div>
           <div class="sel" @click="search">查询</div>
         </div>
@@ -22,80 +38,67 @@
           <el-table-column
             prop="sn"
             label="供应商编号"
-            align="center"
-            width="150">
+            align="center">
           </el-table-column>
           <el-table-column
             prop="name"
             label="供应商名称"
-            align="center"
-            width="150">
+            align="center">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="shortname"
             label="简称"
-            align="center"
-            width="150">
+            align="center">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="level"
             label="供应商等级"
-            align="center"
-            width="150">
+            align="center">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="source"
             label="供应商来源"
-            align="center"
-            width="150">
+            align="center">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="taxRate"
             label="税率"
-            align="center"
-            width="150">
+            align="center">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="settleType"
             label="结算方式"
-            align="center"
-            width="150">
+            align="center">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="pubAccountCompanyName"
             label="收款单位"
-            align="center"
-            width="150">
+            align="center">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="priAccountName"
             label="收款人"
-            align="center"
-            width="150">
+            align="center">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="priAccountNo"
             label="收款账号"
-            align="center"
-            width="150">
+            align="center">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="deliverDay"
             label="交期（天）"
-            align="center"
-            width="150">
+            align="center">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="contactName"
             label="联系人"
-            align="center"
-            width="150">
+            align="center">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="mobile"
             label="联系电话"
-            align="center"
-            width="150">
+            align="center">
           </el-table-column>
           <el-table-column
             label="详细地址"
@@ -119,7 +122,6 @@ export default {
   },
   data () {
     return {
-      roleCtl: this.$store.state.role.roleCtl,
       crumbList: [{ // 面包屑
         name: '数据',
         path: '/F0601/F060101'
@@ -130,6 +132,18 @@ export default {
         name: '供应商信息报表',
         path: ''
       }],
+      level: '',
+      levelList: [{
+          label: 'A'
+        }, {
+          label: 'B'
+        }, {
+          label: 'C'
+        }, {
+          label: 'D'
+      }],
+      settle: '',
+      settleSel: [], // 结算方式
       name: '', // 品牌名/品牌缩写
       total: 0, // 总数
       pageNum: 1, // pageNumber
@@ -138,11 +152,26 @@ export default {
     };
   },
   mounted () {
+    this.getSettle();
     this.queryList();
   },
   methods: {
+    async getSettle () { // 获取结算方式
+      let data = await window.axios.get(`/settletype/simpList`);
+      data.data.forEach(item => {
+        item.label = item.name,
+        item.value = item.id
+      });
+      this.settleSel = data.data;
+    },
     async queryList () { // 获取供应商列表
-      let data = await window.axios.get(`/supplier/listAll?pageNum=${this.pageNum}&pageSize=${this.pageSize}&snOrNameKeyword=${this.name}`);
+      let data = await window.axios.post('/report/querySupplierInfoReportList', {
+        pageSize: this.pageSize,
+        pageNum: this.pageNum,
+        name: this.name,
+        level: this.level,
+        settleType: this.settle
+      });
       data = data.data;
       this.total = data.total;
       this.tableData = data.list;
@@ -161,7 +190,12 @@ export default {
       this.queryList();
     },
     exp () { // 导出报表
-      this.$router.push('/addSupplier');
+      window.axios.post('/report/supplierInfoReport', {
+        name: this.name,
+        level: this.level,
+        settleType: this.settle
+      });
+      this.$router.push('/F0601/F060102');
     }
   }
 }
