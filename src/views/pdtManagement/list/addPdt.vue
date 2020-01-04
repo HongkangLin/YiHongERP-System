@@ -673,6 +673,7 @@ export default {
         name: '设为主图',
         url: data.data.picUrl2
       });
+      data.data.list = !data.data.list ? [] : data.data.list;
       this.form = data.data;
       this.saveId ? this.getSupplier('') : this.getPdt();
     },
@@ -952,7 +953,7 @@ export default {
       }
     },
     async submit (mode) { // 提交(mode->save:存为草稿)
-      if (mode !== 'save' && !this.id && !this.form.list.length) {
+      if (!this.id && !this.form.list.length) {
         this.$message.warning('请先关联供应商');
         return;
       }
