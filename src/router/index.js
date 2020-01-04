@@ -168,6 +168,10 @@ const routes = [{
 		name: 'dataSupplierTable',
 		component: () => import(/* webpackChunkName: "dataSupplierTable" */ '../views/data/dataTable/supplierTable.vue'),
 	}, {
+		path: '/F0601/F060101/supplierPdtTable', // 数据 > 数据报表 > 供应商供货产品报表
+		name: 'dataSupplierPdtrTable',
+		component: () => import(/* webpackChunkName: "dataSupplierPdtrTable" */ '../views/data/dataTable/supplierPdtTable.vue'),
+	}, {
 		path: '/F0601/F060101/purchaseTable', // 数据 > 数据报表 > 采购价报表
 		name: 'dataPurchaseTable',
 		component: () => import(/* webpackChunkName: "dataPurchaseTable" */ '../views/data/dataTable/purchaseTable.vue'),
@@ -179,6 +183,14 @@ const routes = [{
 		path: '/F0601/F060101/inStoreTable', // 数据 > 数据报表 > 入库报表
 		name: 'dataInStoreTable',
 		component: () => import(/* webpackChunkName: "dataInStoreTable" */ '../views/data/dataTable/inStoreTable.vue'),
+	}, {
+		path: '/F0601/F060101/outStoreTable', // 数据 > 数据报表 > 出库报表
+		name: 'dataOutStoreTable',
+		component: () => import(/* webpackChunkName: "dataOutStoreTable" */ '../views/data/dataTable/outStoreTable.vue'),
+	}, {
+		path: '/F0601/F060101/storeBalanceTable', // 数据 > 数据报表 > 库存结存报表
+		name: 'dataStoreBalanceTable',
+		component: () => import(/* webpackChunkName: "dataStoreBalanceTable" */ '../views/data/dataTable/storeBalanceTable.vue'),
 	}, {
 		path: '/F0601/F060101/financeTable', // 数据 > 数据报表 > 财务付款报表
 		name: 'dataFinanceTable',

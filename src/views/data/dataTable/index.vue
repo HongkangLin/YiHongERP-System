@@ -108,6 +108,7 @@ export default {
           this.$router.push('/F0601/F060101/supplierTable');
           break;
         case 3: // 供应商供货产品报表
+          this.$router.push('/F0601/F060101/supplierPdtTable');
           break;
         case 4: // 采购价报表
           this.$router.push('/F0601/F060101/purchaseTable');
@@ -119,10 +120,13 @@ export default {
           this.$router.push('/F0601/F060101/inStoreTable');
           break;
         case 7: // 出库报表
+          this.$router.push('/F0601/F060101/outStoreTable');
           break;
         case 8: // 仓库库存盘点报表
+          this.$message('功能建设中，敬请期待～～');
           break;
         case 9: // 库存结存采购报表
+          this.$router.push('/F0601/F060101/storeBalanceTable');
           break;
         case 10: // 财务付款报表
           this.$router.push('/F0601/F060101/financeTable');
