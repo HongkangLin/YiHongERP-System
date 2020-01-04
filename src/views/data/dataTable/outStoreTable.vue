@@ -9,14 +9,6 @@
         </div>
         <div class="content">
           <div class="inputDiv">
-            <el-select filterable class="selList" @change="search" v-model="supplier" placeholder="供应商名称">
-              <el-option
-                v-for="item in supplierList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-              </el-option>
-            </el-select>
             <el-date-picker @change="search" v-model="createTimeRange" value-format="yyyy-MM-dd" type="daterange" range-separator="" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
           </div>
           <div class="sel" @click="search">查询</div>
@@ -48,11 +40,6 @@
             align="center">
           </el-table-column>
           <el-table-column
-            prop="supplierName"
-            label="供应商"
-            align="center">
-          </el-table-column>
-          <el-table-column
             prop="sku"
             label="SKU"
             align="center">
@@ -79,10 +66,10 @@
     <el-dialog title="导出报表" :visible.sync="ruleVisible" width="70%">
       <table class="expTable">
         <tr class="expTr">
-          <td class="expTd">供应商名称</td>
-          <td>{{supplierName}}</td>
           <td class="expTd">月份</td>
           <td>{{timeStr}}</td>
+          <td class="expTd"></td>
+          <td></td>
         </tr>
       </table>
       <div slot="footer" class="dialog-footer">
@@ -102,8 +89,6 @@ export default {
   data () {
     return {
       createTimeRange: [], // 日期范围
-      supplier: '', // 供应商
-      supplierList: [], // 供应商列表
       crumbList: [{ // 面包屑
         name: '数据',
         path: '/F0601/F060101'
@@ -122,14 +107,6 @@ export default {
     };
   },
   computed: {
-    supplierName () { // 供应商名称
-      for (let i = 0; i < this.supplierList.length; i++) {
-        if (this.supplier === this.supplierList[i].id) {
-          return this.supplierList[i].name;
-        }
-      }
-      return '全部';
-    },
     timeStr () { // 创建时间
       if (!this.createTimeRange || !this.createTimeRange.length) {
         return '';
@@ -138,17 +115,11 @@ export default {
     }
   },
   mounted () {
-    this.getSupplier();
     this.queryList();
   },
   methods: {
-    async getSupplier () { // 获取供应商
-      let data = await window.axios.get(`/supplier/simpList`);
-      this.supplierList = data.data.filter(item => item.status);
-    },
     async queryList () { // 查询入库列表
       let data = await window.axios.post('/report/queryStockoutList', {
-        supplierId: this.supplier || -1,
         stockoutStartTime: this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[0] : '',
         stockoutEndTime: this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[1] : '',
         pageNum: this.pageNum,
@@ -175,14 +146,12 @@ export default {
       this.ruleVisible = true;
     },
     async submitExp () {
-      let _id = this.supplier || -1;
       let _start = this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[0] : '';
       let _end = this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[1] : '';
       let data = await window.axios.post('/report/stockoutReport', {
-        supplierId: _id,
         checkInTimeStart: _start,
         checkInTimeEnd: _end,
-        searchContent: `{"供应商名称": "${this.supplierName}", "月份": "${this.timeStr}"}`
+        searchContent: `{"月份": "${this.timeStr}"}`
       });
       if (data.code === 0) {
         this.$router.push('/F0601/F060102');

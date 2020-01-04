@@ -95,12 +95,18 @@
     </div>
     <!-- 添加产品弹窗 -->
     <el-dialog title="添加产品" :visible.sync="dialogTableVisible" width="45%" class="pdtDialog" @open="checkIfAdded">
-      <el-input maxlength="100" v-model="dialog.skuIdOrGoodsNameOrCustomId" placeholder="商品名称/SKU" class="searchPdt">
+      <el-input maxlength="100" v-model="dialog.skuIdOrGoodsNameOrCustomId" placeholder="商品名称/SKU/FNSKU/品牌" class="searchPdt">
         <el-button slot="append" icon="el-icon-search" @click="searchDialogPdt"></el-button>
       </el-input>
       <el-table :data="dialogPdtList" border style="width: 100%" :key="dialogTableKey">
-        <el-table-column prop="goodsName" label="产品名称" align="center" min-width="220"></el-table-column>
-        <el-table-column prop="skuId" label="SKU" align="center" min-width="180"></el-table-column>
+        <el-table-column prop="goodsName" label="产品名称" align="center"></el-table-column>
+        <el-table-column label="品牌" align="center">
+          <template slot-scope="scope">
+            <div>{{scope.row.categoryParentName + '/' + scope.row.categoryName}}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="skuId" label="SKU" align="center"></el-table-column>
+        <el-table-column prop="fnskuId" label="FNSKU" align="center"></el-table-column>
         <el-table-column align="center" fixed="right" label="操作" width="150">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="handleDialogPdt(scope.row.id, scope.row.added, scope.row.skuId)">{{scope.row.added === "added" ? "移除" : "添加"}}</el-button>

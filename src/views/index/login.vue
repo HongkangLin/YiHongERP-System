@@ -54,10 +54,6 @@ export default {
           };
           window.axios.post('/user/login', param).then(e => {
             if (e.code === 0) {
-              this.$message({
-                message: e.message,
-                type: 'success'
-              });
               localStorage.setItem('token', e.data.token);
               localStorage.setItem('userName', e.data.userName);
               localStorage.setItem('email', e.data.email);
