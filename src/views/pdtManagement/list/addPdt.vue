@@ -495,13 +495,13 @@ export default {
   },
   computed: {
     goodsLengthIn () { // 包装尺寸英寸长
-      return this.form.goodsLength ? (this.form.goodsLength * 0.3937).toFixed(2) : '-';
+      return this.form.goodsLength ? (this.form.goodsLength * 0.39).toFixed(2) : '-';
     },
     goodsWideIn () { // 包装尺寸英寸宽
-      return this.form.goodsWide ? (this.form.goodsWide * 0.3937).toFixed(2) : '-';
+      return this.form.goodsWide ? (this.form.goodsWide * 0.39).toFixed(2) : '-';
     },
     goodsHighIn () { // 包装尺寸英寸高
-      return this.form.goodsHigh ? (this.form.goodsHigh * 0.3937).toFixed(2) : '-';
+      return this.form.goodsHigh ? (this.form.goodsHigh * 0.39).toFixed(2) : '-';
     },
     goodsWeightLb () { // 单个产品重量磅
       return this.form.goodsWeight ? (this.form.goodsWeight * 2.2046226).toFixed(2) : '-';
@@ -510,13 +510,13 @@ export default {
       return this.form.packingWeight ? (this.form.packingWeight * 2.2046226).toFixed(2) : '-';
     },
     packingLengthIn () { // 外箱尺寸英寸长
-      return this.form.packingLength ? (this.form.packingLength * 0.3937).toFixed(2) : '-';
+      return this.form.packingLength ? (this.form.packingLength * 0.39).toFixed(2) : '-';
     },
     packingWideIn () { // 外箱尺寸英寸宽
-      return this.form.packingWide ? (this.form.packingWide * 0.3937).toFixed(2) : '-';
+      return this.form.packingWide ? (this.form.packingWide * 0.39).toFixed(2) : '-';
     },
     packingHighIn () { // 外箱尺寸英寸高
-      return this.form.packingHigh ? (this.form.packingHigh * 0.3937).toFixed(2) : '-';
+      return this.form.packingHigh ? (this.form.packingHigh * 0.39).toFixed(2) : '-';
     },
     disabled () {
       return !!this.id;
@@ -549,15 +549,15 @@ export default {
           return 5.26;
         }
         if (amazon_billing_volume_weight < 20) {
-          return (5.26 + 0.38 * ((Math.ceil(amazon_billing_volume_weight)) - 3)).toFixed(2);
+          return (5.26 + 0.38 * (Math.ceil(amazon_billing_volume_weight) - 3)).toFixed(2);
         }
         if (amazon_billing_volume_weight < 70) {
-          return (8.13 + 0.38 * ((Math.ceil(amazon_billing_volume_weight)) - 2)).toFixed(2);
+          return (8.13 + 0.38 * (Math.ceil(amazon_billing_volume_weight) - 2)).toFixed(2);
         }
         if (amazon_billing_volume_weight < 150) {
-          return (9.44 + 0.38 * ((Math.ceil(amazon_billing_volume_weight)) - 2)).toFixed(2);
+          return (9.44 + 0.38 * (Math.ceil(amazon_billing_volume_weight) - 2)).toFixed(2);
         }
-        return (137.32 + 0.91 * ((Math.ceil(amazon_billing_volume_weight)) - 90)).toFixed(2);
+        return (137.32 + 0.91 * (Math.ceil(amazon_billing_volume_weight) - 90)).toFixed(2);
       } else {
         if (fba_outbound_actual_weight < 0.625) {
           return 2.48;
@@ -572,15 +572,15 @@ export default {
           return 5.26;
         }
         if (fba_outbound_actual_weight < 20) {
-          return (5.26 + 0.38 * ((Math.ceil(fba_outbound_actual_weight)) - 3)).toFixed(2);
+          return (5.26 + 0.38 * (Math.ceil(fba_outbound_actual_weight) - 3)).toFixed(2);
         }
         if (fba_outbound_actual_weight < 70) {
-          return (8.13 + 0.38 * ((Math.ceil(fba_outbound_actual_weight)) - 2)).toFixed(2);
+          return (8.13 + 0.38 * (Math.ceil(fba_outbound_actual_weight) - 2)).toFixed(2);
         }
         if (fba_outbound_actual_weight < 150) {
-          return (9.44 + 0.38 * ((Math.ceil(fba_outbound_actual_weight)) - 2)).toFixed(2);
+          return (9.44 + 0.38 * (Math.ceil(fba_outbound_actual_weight) - 2)).toFixed(2);
         }
-        return (137.32 + 0.91 * ((Math.ceil(fba_outbound_actual_weight)) - 90)).toFixed(2);
+        return (137.32 + 0.91 * (Math.ceil(fba_outbound_actual_weight) - 90)).toFixed(2);
       }
     }
   },
