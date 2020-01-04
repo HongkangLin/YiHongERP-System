@@ -224,14 +224,14 @@
       </div>
     </div>
     <el-dialog title="快速编辑" :visible.sync="fastVisible" width="70%" top="20px">
-      <el-form ref="form" class="form" :model="form" label-width="170px">
+      <el-form ref="form" class="form" :model="form" :rules="rules" label-width="170px">
         <el-form-item label="产品链接：">
           <el-input maxlength="100" v-model="form.goodsUrl" placeholder="请输入产品链接"></el-input>
         </el-form-item>
-        <el-form-item label="FNSKU编号：">
+        <el-form-item label="FNSKU编号：" prop="fnskuId">
           <el-input maxlength="100" disabled v-model="form.fnskuId" placeholder="请输入FNSKU编号"></el-input>
         </el-form-item>
-        <el-form-item label="FNSKU文件：">
+        <el-form-item label="FNSKU文件：" prop="fnskuFileUrl">
           <el-upload
             class="upload-demo"
             accept=".pdf"
@@ -252,7 +252,7 @@
             <div class="el-upload__tip" slot="tip">只能上传pdf格式文件，文件不能超过2M，仅允许上传1份</div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="FNSKU图片：">
+        <el-form-item label="FNSKU图片：" prop="fnskuFilePicUrl">
           <el-upload
             action="/erp/file/upload"
             list-type="picture-card"
@@ -306,6 +306,17 @@ export default {
         fnskuId: '',
         fnskuFileUrl: [],
         fnskuFilePicUrl: []
+      },
+      rules: {
+        fnskuId: [
+          {required: true, message: '请输入FNSKU编号', trigger: 'blur'}
+        ],
+        fnskuFileUrl: [
+          {required: true, message: '请上传FNSKU文件', trigger: 'blur'}
+        ],
+        fnskuFilePicUrl: [
+          {required: true, message: '请上传FNSKU图片', trigger: 'blur'}
+        ]
       },
       skuid: '', // 当前操作的skuid
       dialogImageUrl2: '',
@@ -434,19 +445,25 @@ export default {
         return false;
       }
     },
-    async confirmApplyForClose () { // 快速编辑
-      let data = await window.axios.post('/product/quickUpdateProductInfo', {
-        skuId: this.skuid,
-        fnskuId: this.form.fnskuId,
-        goodsUrl: this.form.goodsUrl,
-        fnskuFileUrl: this.form.fnskuFileUrl ? this.form.fnskuFileUrl[0].url : '',
-        fnskuFilePicUrl: this.form.fnskuFilePicUrl ? this.form.fnskuFilePicUrl[0].url : '',
-        fnskuFileName: this.form.fnskuFileUrl ? this.form.fnskuFileUrl[0].name : ''
+    confirmApplyForClose () { // 快速编辑
+      this.$refs['form'].validate(async valid => {
+        if (valid) {
+          let data = await window.axios.post('/product/quickUpdateProductInfo', {
+            skuId: this.skuid,
+            fnskuId: this.form.fnskuId,
+            goodsUrl: this.form.goodsUrl,
+            fnskuFileUrl: this.form.fnskuFileUrl ? this.form.fnskuFileUrl[0].url : '',
+            fnskuFilePicUrl: this.form.fnskuFilePicUrl ? this.form.fnskuFilePicUrl[0].url : '',
+            fnskuFileName: this.form.fnskuFileUrl ? this.form.fnskuFileUrl[0].name : ''
+          });
+          if (data.code === 0) {
+            this.$message.success(data.message);
+            this.fastVisible = false;
+          }
+        } else {
+          return false;
+        }
       });
-      if (data.code === 0) {
-        this.$message.success(data.message);
-        this.fastVisible = false;
-      }
     },
     async getBrand () { // 获取品牌
       let data = await window.axios.post('/product/queryProductBrandListRule', {

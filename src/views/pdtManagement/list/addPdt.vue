@@ -953,7 +953,7 @@ export default {
       }
     },
     async submit (mode) { // 提交(mode->save:存为草稿)
-      if (!this.id && !this.form.list.length) {
+      if (mode !== 'save' && !this.id && !this.form.list.length) {
         this.$message.warning('请先关联供应商');
         return;
       }

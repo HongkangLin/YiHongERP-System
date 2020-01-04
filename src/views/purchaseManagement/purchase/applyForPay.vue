@@ -369,6 +369,7 @@ export default {
 .applyForPay_wrap {
   .number {
     cursor: pointer;
+    color: #1ABC9C;
   }
   box-sizing: border-box;
   padding: 20px 60px;
