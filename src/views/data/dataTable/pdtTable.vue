@@ -19,7 +19,6 @@
             </el-select>
             <el-cascader
               filterable
-              v-model="type"
               :options="prdType"
               class="selList"
               placeholder="产品分类"
@@ -141,6 +140,32 @@
       </div>
       <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
     </div>
+    <el-dialog title="导出报表" :visible.sync="ruleVisible" width="70%">
+      <table class="expTable">
+        <tr class="expTr">
+          <td class="expTd">产品类目</td>
+          <td>{{categoryName}}</td>
+          <td class="expTd">品牌</td>
+          <td>{{brandName}}</td>
+        </tr>
+        <tr class="expTr">
+          <td class="expTd">采购员</td>
+          <td>{{peopleName}}</td>
+          <td class="expTd">状态</td>
+          <td>{{statusName}}</td>
+        </tr>
+        <tr class="expTr">
+          <td class="expTd">商品创建日期</td>
+          <td>{{timeStr}}</td>
+          <td class="expTd"></td>
+          <td></td>
+        </tr>
+      </table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="ruleVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitExp">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -174,14 +199,14 @@ export default {
         label: '停售',
         value: '1'
       }],
-      type: '', // 产品分类
       categoryParentId: '', // 一级分类
       categoryId: '', // 二级分类
+      categoryName: '全部', // 分类名
       prdType: [{ // 产品分类
         label: '全部',
         value: ''
       }],
-      brand: '', // 品牌,
+      brand: '', // 品牌
       brandList: [{ // 品牌列表
         label: '全部',
         value: '-1'
@@ -194,8 +219,41 @@ export default {
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
-      tableData: [] // 表格数据
+      tableData: [], // 表格数据
+      ruleVisible: false
     };
+  },
+  computed: {
+    brandName () { // 品牌名
+      for (let i = 0; i < this.brandList.length; i++) {
+        if (this.brand === this.brandList[i].value) {
+          return this.brandList[i].label;
+        }
+      }
+      return '全部';
+    },
+    peopleName () { // 采购人
+      for (let i = 0; i < this.peopleList.length; i++) {
+        if (this.people === this.peopleList[i].value) {
+          return this.peopleList[i].label;
+        }
+      }
+      return '全部';
+    },
+    statusName () { // 状态
+      for (let i = 0; i < this.prdStatus.length; i++) {
+        if (this.status === this.prdStatus[i].value) {
+          return this.prdStatus[i].label;
+        }
+      }
+      return '全部';
+    },
+    timeStr () { // 创建时间
+      if (!this.createTimeRange || !this.createTimeRange.length) {
+        return '';
+      }
+      return this.createTimeRange[0] + '~' + this.createTimeRange[1];
+    }
   },
   async mounted () {
     await this.getPrdType();
@@ -254,31 +312,27 @@ export default {
       });
       data = data.data;
       this.total = data.total;
-      data.list.forEach(item => {
-        item.status = item.status === 0;
-        for (let i = 0, len = this.brandList.length; i < len; i++) {
-          if (this.brandList[i].value === item.brandId) {
-            item.brandName = this.brandList[i].label;
-          }
-        }
-        let name = '';
-        for (let j = 0, jlen = this.prdType.length; j < jlen; j++) {
-          if (this.prdType[j].value === item.categoryParentId) {
-            name += this.prdType[j].label + '/';
-            for (let k = 0, klen = this.prdType[j].listChildCategory.length; k < klen; k++) {
-              if (this.prdType[j].listChildCategory[k].value === item.categoryId) {
-                name += this.prdType[j].listChildCategory[k].label;
-              }
-            }
-          }
-        }
-        item.pdtTypeName = name;
-      });
       this.tableData = data.list;
     },
     handleChange (value) { // 修改产品类型
       this.categoryParentId = value[0];
-      this.categoryId = value[1];
+      this.categoryId = value[1] || '';
+      this.categoryName = '';
+      for (let i = 0; i < this.prdType.length; i++) {
+        if (this.prdType[i].value === this.categoryParentId) {
+          this.categoryName += this.prdType[i].label;
+          if (this.categoryName === '全部') {
+            break;
+          }
+          let label = this.prdType[i].children;
+          for (let j = 0; j < label.length; j++) {
+            if (this.categoryId === label[j].value) {
+              this.categoryName += '/' + label[j].label;
+              break;
+            }
+          }
+        }
+      }
       this.search();
     },
     search () { // 查询按钮
@@ -294,17 +348,23 @@ export default {
       this.pageSize = size;
       this.queryList();
     },
-    exp () { // 导出报表
-      window.axios.post('/report/ProductInfoReport', {
+    exp () { // 导出报表弹框显示
+      this.ruleVisible = true;
+    },
+    async submitExp () { // 导出报表
+      let data = await window.axios.post('/report/ProductInfoReport', {
         status: parseInt(this.status) < 0 ? '' : this.status,
         categoryParentId: this.categoryParentId,
         categoryId: this.categoryId,
         brandId: parseInt(this.brand) < 0 ? '' : this.brand,
         purchaserId: parseInt(this.people) < 0 ? '' : this.people,
         startTime: this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[0] : '',
-        endTime: this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[1] : ''
+        endTime: this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[1] : '',
+        searchContent: `{"产品类目": "${this.categoryName}", "品牌": "${this.brandName}", "采购员": "${this.peopleName}", "状态": "${this.statusName}", "商品创建日期": "${this.timeStr}"}`
       });
-      this.$router.push('/F0601/F060102');
+      if (data.code === 0) {
+        this.$router.push('/F0601/F060102');
+      }
     }
   }
 }
@@ -406,6 +466,22 @@ export default {
   }
   .table {
     margin-top: 20px;
+  }
+}
+.expTable {
+  width: 100%;
+  .expTr {
+    line-height: 60px;
+    td {
+      vertical-align: middle;
+      color: #666;
+      width: 25%;
+      padding-left: 5px;
+      border: 1px solid rgb(228, 228, 228);
+    }
+    .expTd {
+      background-color: #f2f2f2;
+    }
   }
 }
 </style>

@@ -111,6 +111,26 @@
       </div>
       <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
     </div>
+    <el-dialog title="导出报表" :visible.sync="ruleVisible" width="70%">
+      <table class="expTable">
+        <tr class="expTr">
+          <td class="expTd">供应商名称</td>
+          <td>{{name}}</td>
+          <td class="expTd">结算方式</td>
+          <td>{{settleName}}</td>
+        </tr>
+        <tr class="expTr">
+          <td class="expTd">供应商等级</td>
+          <td>{{level || '全部'}}</td>
+          <td class="expTd"></td>
+          <td></td>
+        </tr>
+      </table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="ruleVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitExp">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -144,12 +164,23 @@ export default {
       }],
       settle: '',
       settleSel: [], // 结算方式
-      name: '', // 品牌名/品牌缩写
+      name: '', // 供应商名称/编号
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
-      tableData: [] // 表格数据
+      tableData: [], // 表格数据
+      ruleVisible: false
     };
+  },
+  computed: {
+    settleName () { // 结算方式
+      for (let i = 0; i < this.settleSel.length; i++) {
+        if (this.settle === this.settleSel[i].id) {
+          return this.settleSel[i].name;
+        }
+      }
+      return '全部';
+    }
   },
   mounted () {
     this.getSettle();
@@ -190,12 +221,18 @@ export default {
       this.queryList();
     },
     exp () { // 导出报表
-      window.axios.post('/report/supplierInfoReport', {
+      this.ruleVisible = true;
+    },
+    async submitExp () {
+      let data = await window.axios.post('/report/supplierInfoReport', {
         name: this.name,
         level: this.level,
-        settleType: this.settle
+        settleType: this.settle,
+        searchContent: `{"供应商名称": "${this.name}", "结算方式": "${this.settleName}", "供应商等级": "${this.level || '全部'}"}`
       });
-      this.$router.push('/F0601/F060102');
+      if (data.code === 0) {
+        this.$router.push('/F0601/F060102');
+      }
     }
   }
 }
@@ -294,6 +331,22 @@ export default {
   }
   .table {
     margin-top: 20px;
+  }
+}
+.expTable {
+  width: 100%;
+  .expTr {
+    line-height: 60px;
+    td {
+      vertical-align: middle;
+      color: #666;
+      width: 25%;
+      padding-left: 5px;
+      border: 1px solid rgb(228, 228, 228);
+    }
+    .expTd {
+      background-color: #f2f2f2;
+    }
   }
 }
 </style>

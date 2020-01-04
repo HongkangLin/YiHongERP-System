@@ -65,6 +65,20 @@
       </div>
       <div class="splitPage"><pageination :pageNum="pageNum" :total="total" :pageSize="pageSize" @changePageSize="changePageSize" @changePageNum="changeNum"></pageination></div>
     </div>
+    <el-dialog title="导出报表" :visible.sync="ruleVisible" width="70%">
+      <table class="expTable">
+        <tr class="expTr">
+          <td class="expTd">供应商名称</td>
+          <td>{{supplierName}}</td>
+          <td class="expTd"></td>
+          <td></td>
+        </tr>
+      </table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="ruleVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitExp">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -91,8 +105,19 @@ export default {
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
-      tableData: [] // 表格数据
+      tableData: [], // 表格数据
+      ruleVisible: false
     };
+  },
+  computed: {
+    supplierName () { // 供应商名称
+      for (let i = 0; i < this.supplierList.length; i++) {
+        if (this.supplier === this.supplierList[i].id) {
+          return this.supplierList[i].name;
+        }
+      }
+      return '全部';
+    }
   },
   mounted () {
     this.getSupplier();
@@ -127,10 +152,16 @@ export default {
       this.queryList();
     },
     exp () { // 导出报表
-      window.axios.post('/report/queryQuotePriceList', {
-        supplierId: this.supplier || -1
+      this.ruleVisible = true;
+    },
+    async submitExp () {
+      let data = await window.axios.post('/report/quotePriceReport', {
+        supplierId: this.supplier || -1,
+        searchContent: `{"供应商名称": "${this.supplierName}"}`
       });
-      this.$router.push('/F0601/F060102');
+      if (data.code === 0) {
+        this.$router.push('/F0601/F060102');
+      }
     }
   }
 }
@@ -229,6 +260,22 @@ export default {
   }
   .table {
     margin-top: 20px;
+  }
+}
+.expTable {
+  width: 100%;
+  .expTr {
+    line-height: 60px;
+    td {
+      vertical-align: middle;
+      color: #666;
+      width: 25%;
+      padding-left: 5px;
+      border: 1px solid rgb(228, 228, 228);
+    }
+    .expTd {
+      background-color: #f2f2f2;
+    }
   }
 }
 </style>
