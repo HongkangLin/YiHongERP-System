@@ -5,7 +5,7 @@
       <div class="search">
         <div class="head">
           <div class="label"><i class="el-icon-s-unfold"></i>出库报表</div>
-          <div class="new" @click="exp">导出报表</div>
+          <div class="new" @click="exp" v-if="roleCtl.stock_out_export">导出报表</div>
         </div>
         <div class="content">
           <div class="inputDiv">
@@ -88,6 +88,7 @@ export default {
   },
   data () {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       createTimeRange: [], // 日期范围
       crumbList: [{ // 面包屑
         name: '数据',

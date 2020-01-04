@@ -5,7 +5,7 @@
       <div class="search">
         <div class="head">
           <div class="label"><i class="el-icon-s-unfold"></i>入库货款总金额报表</div>
-          <div class="new" @click="exp">导出报表</div>
+          <div class="new" @click="exp" v-if="roleCtl.check_in_amount_of_purchase_export">导出报表</div>
         </div>
         <div class="content">
           <div class="inputDiv">
@@ -106,6 +106,7 @@ export default {
   },
   data () {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       createTimeRange: [], // 日期范围
       supplier: '', // 供应商
       supplierList: [], // 供应商列表

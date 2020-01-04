@@ -5,7 +5,7 @@
       <div class="search">
         <div class="head">
           <div class="label"><i class="el-icon-s-unfold"></i>供应商供货产品报表</div>
-          <div class="new" @click="exp">导出报表</div>
+          <div class="new" @click="exp" v-if="roleCtl.supplier_producto_export">导出报表</div>
         </div>
         <div class="content">
           <div class="inputDiv">
@@ -89,6 +89,7 @@ export default {
   },
   data () {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       crumbList: [{ // 面包屑
         name: '数据',
         path: '/F0601/F060101'

@@ -152,20 +152,20 @@ export default {
     selSome (idx, index) { // 选择某个
       let funcList = this.roleList[idx].funcList;
       if (funcList[index].funcName.split('-')[1] !== '查看') { // 当前操作非查看
-        let pos = 0;
+        let pos = '';
         for (let i = 0, len = funcList.length; i < len; i++) {
           if (funcList[i].funcName.split('-')[1] === '查看') { // 查看勾选上
             pos = i;
             break;
           }
         }
-        if (funcList[index].check) { // 选择时
+        if (funcList[index].check && pos !== '') { // 选择时
           this.$set(funcList[pos], 'check', true);
           this.$set(funcList[pos], 'disable', true);
         } else { // 取消勾选且当前只有查看被选择时
           let arr = funcList.filter(item => item.check);
           if (arr.length === 1) {
-            this.$set(funcList[pos], 'disable', false);
+            pos !== '' && this.$set(funcList[pos], 'disable', false);
           }
         }
       }
