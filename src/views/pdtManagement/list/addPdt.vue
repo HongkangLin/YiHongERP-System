@@ -268,6 +268,7 @@
           <el-divider></el-divider>
           <div class="next">
             <div @click="next(1, 0)" class="pre">上一步，选择产品分类</div>
+            <div @click="submit('save')" class="save">保存</div>
             <div @click="next(1, 2)">下一步，上传产品图片</div>
           </div>
         </div>
@@ -301,6 +302,7 @@
           <el-divider></el-divider>
           <div class="next">
             <div @click="next(2, 1)" class="pre">上一步，填写产品信息</div>
+            <div @click="submit('save')" class="save">保存</div>
             <div @click="next(2, 3)">下一步，关联供应商</div>
           </div>
         </div>
@@ -485,6 +487,7 @@ export default {
         ]
       },
       id: '',
+      saveId: '',
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10 // pageSize
@@ -586,7 +589,8 @@ export default {
     await this.getBrand();
     await this.getSupplier('');
     this.id = this.$route.query.skuid;
-    if (this.id) { // 编辑时
+    this.saveId = this.$route.query.saveId; // 草稿箱id
+    if (this.id || this.saveId) { // 编辑时
       this.crumbList.push({
         name: '编辑产品',
         path: ''
@@ -625,10 +629,17 @@ export default {
         }
       });
     },
-    async getDetail () { // 获取详情
-      let data = await window.axios.post(`/product/queryProductInfoDetail`, {
-        skuId: this.id
-      });
+    async getDetail () { // 编辑时获取详情
+      let data = {};
+      if (this.saveId) { // 从草稿过来
+        data = await window.axios.post(`/product/queryProductInfoTmpDetail`, {
+          id: this.saveId
+        });
+      } else { // 从列表过来
+        data = await window.axios.post(`/product/queryProductInfoDetail`, {
+          skuId: this.id
+        });
+      }
       for (let i = 0, len = this.typeList.length; i < len; i++) {
         for (let j = 0, jLen = this.typeList[i].listChildCategory.length; j < jLen; j++) {
           let curr = this.typeList[i].listChildCategory[j];
@@ -663,7 +674,7 @@ export default {
         url: data.data.picUrl2
       });
       this.form = data.data;
-      this.getPdt();
+      this.saveId ? this.getSupplier('') : this.getPdt();
     },
     async getType () { // 获取产品分类
       let data = await window.axios.post('/product/queryAllCategoryRule', {
@@ -940,8 +951,8 @@ export default {
         }
       }
     },
-    async submit () { // 提交
-      if (!this.id && !this.form.list.length) {
+    async submit (mode) { // 提交(mode->save:存为草稿)
+      if (mode !== 'save' && !this.id && !this.form.list.length) {
         this.$message.warning('请先关联供应商');
         return;
       }
@@ -969,6 +980,14 @@ export default {
       param.packingWide = param.packingWide || 0; // 外箱尺寸-宽
       param.packingHigh = param.packingHigh || 0; // 外箱尺寸-高
       param.goodsFbaFee = this.fba;
+      if (mode === 'save') { // 存为草稿时调用接口后中断后续执行
+        param.id = this.saveId || ''; // 将id置为草稿箱id
+        let result = await window.axios.post('/product/addOrUpdateProductInfoTmp', param);
+        if (result.code === 0) {
+          this.$message.success(result.message);
+        }
+        return;
+      }
       if (!this.id) { // 新增时传入供应关系
         param.list.forEach(item => {
           item.supplierId = item.id;
@@ -1178,6 +1197,12 @@ export default {
           text-align: center;
         }
         .pre {
+          background-color: white;
+          color: #1ABC9C;
+          border: 1px solid #1ABC9C;
+        }
+        .save {
+          width: 80px;
           background-color: white;
           color: #1ABC9C;
           border: 1px solid #1ABC9C;
