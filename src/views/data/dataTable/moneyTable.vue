@@ -149,7 +149,7 @@ export default {
   },
   methods: {
     async getSupplier () { // 获取供应商
-      let data = await window.axios.get(`/supplier/simpList`);
+      let data = await window.axios.get(`/supplier/simpListNoChk`);
       this.supplierList = data.data.filter(item => item.status);
     },
     async queryList () { // 查询入库货款总金额列表

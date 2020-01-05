@@ -200,7 +200,7 @@ export default {
       let _this = this;
       axios.all([
         axios.get("/warehouse/simpList"),
-        axios.get("/supplier/simpList")
+        axios.get("/supplier/simpListNoChk")
       ])
       .then(axios.spread(function (storeData, supplierData) {
         _this.storeList = storeData.data;
