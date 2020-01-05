@@ -342,5 +342,14 @@ export default {
   .el-table--border {
     border: 1px solid #333;
   }
+  /deep/.el-table__footer-wrapper td {
+    border-top: 1px solid #333;
+  }
+  /deep/.el-table__footer-wrapper tbody td {
+    background-color: white;
+  }
+  /deep/.el-table--border td {
+    border-right: 1px solid #333;
+  }
 }
 </style>
