@@ -268,7 +268,7 @@
           <el-divider></el-divider>
           <div class="next">
             <div @click="next(1, 0)" class="pre">上一步，选择产品分类</div>
-            <div @click="submit('save')" class="save">保存</div>
+            <div v-if="!id" @click="submit('save')" class="save">保存</div>
             <div @click="next(1, 2)">下一步，上传产品图片</div>
           </div>
         </div>
@@ -302,7 +302,7 @@
           <el-divider></el-divider>
           <div class="next">
             <div @click="next(2, 1)" class="pre">上一步，填写产品信息</div>
-            <div @click="submit('save')" class="save">保存</div>
+            <div v-if="!id" @click="submit('save')" class="save">保存</div>
             <div @click="next(2, 3)">下一步，关联供应商</div>
           </div>
         </div>
@@ -957,15 +957,27 @@ export default {
         this.$message.warning('请先关联供应商');
         return;
       }
+      let flag = false;
+      if (mode === 'save' && this.active === 1) {
+        this.$refs['form'].validate((valid) => {
+          if (!valid) {
+            flag = true;
+            return false;
+          }
+        });
+      }
+      if (flag) { // 使用保存功能时如果第二页验证不通过不允许继续操作
+        return;
+      }
       let param = JSON.parse(JSON.stringify(this.form));
       param.categoryParentId = this.typeList[this.currFirst].id; // 一级分类id
       param.categoryId = this.currSecond !== '' ? this.seconedList[this.currSecond].id : ''; // 二级分类id
       param.clearStocksFlag = ~~param.clearStocksFlag; // 是否清货
-      param.fnskuFileName = param.fnskuFileUrl[0].name; // fnsku文件名称
-      param.fnskuFileUrl = param.fnskuFileUrl[0].url; // fnsku文件
-      param.fnskuFilePicUrl = param.fnskuFilePicUrl[0].url; // fnsku图片
+      param.fnskuFileName = param.fnskuFileUrl[0] ? param.fnskuFileUrl[0].name : ''; // fnsku文件名称
+      param.fnskuFileUrl = param.fnskuFileUrl[0] ? param.fnskuFileUrl[0].url : ''; // fnsku文件
+      param.fnskuFilePicUrl = param.fnskuFilePicUrl[0] ? param.fnskuFilePicUrl[0].url : ''; // fnsku图片
       param.fnskuPicUrl = param.fnskuPicUrl[0] ? param.fnskuPicUrl[0].url : ''; // 防跟卖标签
-      param.mainPicUrl = this.pdtPhoto[0].url; // 商品主图
+      param.mainPicUrl = this.pdtPhoto[0] ? this.pdtPhoto[0].url : ''; // 商品主图
       param.picUrl1 = this.pdtPhoto[1] && this.pdtPhoto[1].url; // 商品图片
       param.picUrl2 = this.pdtPhoto[2] && this.pdtPhoto[2].url; // 商品图片
       param.goodsGoalPrice = param.goodsGoalPrice || 0; // 销售目标价
@@ -985,6 +997,7 @@ export default {
         param.id = this.saveId || ''; // 将id置为草稿箱id
         let result = await window.axios.post('/product/addOrUpdateProductInfoTmp', param);
         if (result.code === 0) {
+          this.saveId = result.data.id;
           this.$message.success(result.message);
         }
         return;
