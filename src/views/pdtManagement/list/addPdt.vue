@@ -1001,6 +1001,11 @@ export default {
       let data = await window.axios.post(url, param);
       if (data.code === 0) {
         this.$message.success(data.message);
+        if (this.saveId) { // 如果数据是从草稿过来，提交时需要删除草稿数据
+          window.axios.post('/product/deleteProductInfoTmp', {
+            id: this.saveId
+          });
+        }
         history.go(-1);
       }
     }

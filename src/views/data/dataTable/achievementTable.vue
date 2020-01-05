@@ -20,6 +20,7 @@
             <el-date-picker
               v-model="month"
               @change="search"
+              :clearable="false"
               value-format="yyyy-MM"
               type="month"
               placeholder="选择月">
@@ -124,6 +125,8 @@ export default {
     }
   },
   mounted () {
+    let date = new Date();
+    this.month = date.getFullYear() + '-' + (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
     this.getSupplier();
     this.queryList();
   },

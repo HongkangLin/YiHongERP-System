@@ -130,8 +130,8 @@
         <el-row>
           <el-col :span="4"><div class="td label">装箱数（套）</div></el-col>
           <el-col :span="8"><div class="td">{{info.packingQuantity}}&nbsp;</div></el-col>
-          <el-col :span="4"><div class="td label">&nbsp;</div></el-col>
-          <el-col :span="8"><div class="td">&nbsp;</div></el-col>
+          <el-col :span="4"><div class="td label">FBA费（美元）</div></el-col>
+          <el-col :span="8"><div class="td">{{info.goodsFbaFee}}</div></el-col>
         </el-row>
       </div>
       <div class="spanDiv"></div>

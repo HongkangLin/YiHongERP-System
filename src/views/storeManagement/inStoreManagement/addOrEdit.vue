@@ -430,7 +430,7 @@ export default {
             _this.dialogTableKey++;
             let obj = {
               goodsId: element.id,
-              goodsPicUrl: element.fnskuPicUrl,
+              goodsPicUrl: element.mainPicUrl,
               goodsSku: element.skuId,
               goodsName: element.goodsName
             }

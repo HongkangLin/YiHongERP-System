@@ -30,7 +30,7 @@
     <section class="tableArea">
       <el-table :data="tableData" border style="width: 100%">
         <el-table-column prop="sn" label="出库单号" align="center" min-width="130"></el-table-column>
-        <el-table-column prop="brand" label="品牌" align="center" min-width="130"></el-table-column>
+        <el-table-column prop="brandName" label="品牌" align="center" min-width="130"></el-table-column>
         <el-table-column prop="totalQuantity" label="出库数量（件）" align="center" min-width="170"></el-table-column>
         <el-table-column prop="warehouseName" label="仓库" align="center" min-width="120"></el-table-column>
         <el-table-column prop="type" label="出库类型" align="center" min-width="135"></el-table-column>
@@ -80,7 +80,7 @@ export default {
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
-
+      way: ['海运', '空运', '快递', '快船', '铁路'],
       tableData: [{}],
       storeList: [], //仓库下拉
       
@@ -114,6 +114,7 @@ export default {
       arr.map((item) => {
         item.status = item.status ? "已出库" : "待出库";
         item.type = item.type ? "退换货" : "正常出库";
+        item.deliverMethod = this.way[item.deliverMethod];
       })
       this.tableData = arr;
       this.total = data.data.total;
