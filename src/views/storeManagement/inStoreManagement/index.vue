@@ -31,7 +31,7 @@
         <el-table-column prop="warehouseName" label="仓库" align="center" min-width="120"></el-table-column>
         <el-table-column prop="type" label="入库类型" align="center" min-width="135"></el-table-column>
         <el-table-column prop="status" label="入库状态" align="center" min-width="110"></el-table-column>
-        <el-table-column prop="warehouseChargePersonName" label="仓管" align="center" min-width="75"></el-table-column>
+        <el-table-column prop="operator" label="操作人" align="center" min-width="75"></el-table-column>
         <el-table-column prop="arriveTime" label="到货日期" align="center" min-width="200"></el-table-column>
         <el-table-column align="center" fixed="right" label="操作" width="160" v-if="roleCtl.checkinorder_detail || roleCtl.checkinorder_update ||roleCtl.checkinorder_checkin">
           <template slot-scope="scope">

@@ -58,6 +58,7 @@
                   <img class="img" :src="scope.row.goodsPicUrl">
                 </template>
               </el-table-column>
+              <el-table-column prop="brandName" label="品牌" align="center" min-width="85"></el-table-column>
               <el-table-column prop="goodsSku" label="SKU" align="center" min-width="85"></el-table-column>
               <el-table-column prop="goodsName" label="产品名称" align="center" min-width="130"></el-table-column>
               <el-table-column prop="goodsFNSKU" label="FNSKU" align="center" min-width="85"></el-table-column>
@@ -345,7 +346,13 @@ export default {
           } else {
             this.$refs["tableRuleForm"].validate((valid) => {
               if (valid) {
-                console.log('submit!');
+                let prd = this.productList[0].brandName;
+                for (let i = 1; i < this.productList.length; i++) { // 出库时品牌必须一样
+                  if (this.productList[i].brandName !== prd) {
+                    this.$message.warning('一个出库单仅允许出库一个品牌');
+                    return;
+                  }
+                }
                 if (_this.$route.query.outId) {
                   // 编辑出库
                   _this.editOutStore();
@@ -427,6 +434,7 @@ export default {
       this.productList.map((item) => {
         params.goods.push({
           goodsId: item.goodsId,
+          fnskuId: item.goodsFNSKU,
           cartonHeight: item.cartonHeight,
           cartonLength: item.cartonLength,
           cartonWidth: item.cartonWidth,
@@ -506,6 +514,7 @@ export default {
             goodsSku: pdtDetail.skuId,
             goodsFNSKU: pdtDetail.fnskuId,
             goodsName: pdtDetail.goodsName,
+            brandName: pdtDetail.brandName,
             dimentions: pdtDetail.packingLength + " * " + pdtDetail.packingWide + " * " + pdtDetail.packingHigh,
             fullLoadWeight: pdtDetail.packingWeight,
             fullLoadQuantity: pdtDetail.packingQuantity, //装箱数
