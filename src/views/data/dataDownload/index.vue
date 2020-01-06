@@ -101,9 +101,9 @@ export default {
       let str = '<table style="width: 100%;">', cnt = JSON.parse(content), i = 0;
       for (let item in cnt) {
         if (!(i % 2)) {
-          str += '<tr style="line-height: 60px;">';
+          str += '<tr style="height: 60px;">';
         }
-        str += `<td style="background-color: #f2f2f2;vertical-align: middle;color: #666;width: 25%;padding-left:5px;border: 1px solid rgb(228, 228, 228);">${item}</td><td style="width: 25%;vertical-align: middle;padding-left:5px;border: 1px solid rgb(228, 228, 228);">${cnt[item]}</td>`;
+        str += `<td style="line-height: 25px;background-color: #f2f2f2;vertical-align: middle;color: #666;width: 25%;padding-left:5px;border: 1px solid rgb(228, 228, 228);">${item}</td><td style="line-height: 25px;width: 25%;vertical-align: middle;padding-left:5px;border: 1px solid rgb(228, 228, 228);">${cnt[item]}</td>`;
         if (i % 2) {
           str += '</tr>';
         }

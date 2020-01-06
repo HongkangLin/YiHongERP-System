@@ -337,8 +337,9 @@ export default {
 .expTable {
   width: 100%;
   .expTr {
-    line-height: 60px;
+    height: 60px;
     td {
+      line-height: 25px;
       vertical-align: middle;
       color: #666;
       width: 25%;

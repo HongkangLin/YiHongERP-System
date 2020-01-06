@@ -289,10 +289,28 @@ export default {
           this.ruleForm.deliverMethod = "铁路";
           break;
       }
+      switch (obj.outCountryId) {
+        case 0:
+          this.ruleForm.outCountryId = "美国";
+          break;
+        case 1:
+          this.ruleForm.outCountryId = "英国";
+          break;
+        case 2:
+          this.ruleForm.outCountryId = "德国";
+          break;
+        case 3:
+          this.ruleForm.outCountryId = "日本";
+          break;
+        case 4:
+          this.ruleForm.outCountryId = "法国";
+          break;
+      }
       this.ruleForm.remark = obj.remark;
 
       // 产品信息列表
       obj.goods.map((item) => {
+        item.goodsFNSKU = item.fnskuId;
         // 外箱尺寸(cm)
         item.dimentions = item.cartonLength + " * " + item.cartonWidth + " * " + item.cartonHeight;
         // 总体积(m³)
@@ -404,6 +422,7 @@ export default {
         params.goods.push({
           id: item.id,
           goodsId: item.goodsId,
+          brandName: item.brandName,
           fnskuId: item.goodsFNSKU,
           cartonHeight: item.cartonHeight,
           cartonLength: item.cartonLength,
@@ -435,6 +454,7 @@ export default {
       this.productList.map((item) => {
         params.goods.push({
           goodsId: item.goodsId,
+          brandName: item.brandName,
           fnskuId: item.goodsFNSKU,
           cartonHeight: item.cartonHeight,
           cartonLength: item.cartonLength,
