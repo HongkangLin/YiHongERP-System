@@ -310,7 +310,10 @@ export default {
 
       // 产品信息列表
       obj.goods.map((item) => {
+        // fnskuid
         item.goodsFNSKU = item.fnskuId;
+        // 品牌
+        item.brandName = obj.brandName;
         // 外箱尺寸(cm)
         item.dimentions = item.cartonLength + " * " + item.cartonWidth + " * " + item.cartonHeight;
         // 总体积(m³)
