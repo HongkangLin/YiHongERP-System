@@ -89,7 +89,7 @@
             align="center"
             label="产品状态">
             <template slot-scope="scope">
-              <div>{{scope.row.status ? '在售' : '停售'}}</div>
+              <div>{{!scope.row.status ? '在售' : '停售'}}</div>
             </template>
           </el-table-column>
           <el-table-column
