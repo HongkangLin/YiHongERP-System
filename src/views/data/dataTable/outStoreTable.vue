@@ -121,8 +121,8 @@ export default {
   methods: {
     async queryList () { // 查询入库列表
       let data = await window.axios.post('/report/queryStockoutList', {
-        stockoutStartTime: this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[0] : '',
-        stockoutEndTime: this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[1] : '',
+        stockoutTimeStart: this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[0] : '',
+        stockoutTimeEnd: this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[1] : '',
         pageNum: this.pageNum,
         pageSize: this.pageSize
       });
