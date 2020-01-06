@@ -140,11 +140,20 @@ export default {
       this.queryList();
     },
     exp () { // 导出报表
+      if (!this.multipleSelection.length) {
+        this.$message.warning('请先勾选需要导出的数据');
+        return;
+      }
       this.ruleVisible = true;
     },
     async submitExp () {
+      let arr = [];
+      for (let i = 0; i < this.multipleSelection.length; i++) {
+        arr[i] = this.multipleSelection[i].sn;
+      }
       let data = await window.axios.post('/report/supplierProductReport', {
         name: this.name,
+        supplierSNList: arr,
         searchContent: `{"供应商名称": "${this.name || '全部'}"}`
       });
       if (data.code === 0) {
