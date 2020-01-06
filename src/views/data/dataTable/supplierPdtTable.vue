@@ -68,7 +68,7 @@
       <table class="expTable">
         <tr class="expTr">
           <td class="expTd">供应商名称</td>
-          <td>{{name}}</td>
+          <td>{{name || '全部'}}</td>
           <td class="expTd"></td>
           <td></td>
         </tr>
@@ -145,7 +145,7 @@ export default {
     async submitExp () {
       let data = await window.axios.post('/report/supplierProductReport', {
         name: this.name,
-        searchContent: `{"供应商名称": "${this.name}"}`
+        searchContent: `{"供应商名称": "${this.name || '全部'}"}`
       });
       if (data.code === 0) {
         this.$router.push('/F0601/F060102');

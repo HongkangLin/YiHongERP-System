@@ -66,7 +66,7 @@
     <el-dialog title="导出报表" :visible.sync="ruleVisible" width="70%">
       <table class="expTable">
         <tr class="expTr">
-          <td class="expTd">月份</td>
+          <td class="expTd">出库时间</td>
           <td>{{timeStr}}</td>
           <td class="expTd"></td>
           <td></td>
@@ -110,7 +110,7 @@ export default {
   computed: {
     timeStr () { // 创建时间
       if (!this.createTimeRange || !this.createTimeRange.length) {
-        return '';
+        return '全部';
       }
       return this.createTimeRange[0] + '~' + this.createTimeRange[1];
     }
@@ -152,7 +152,7 @@ export default {
       let data = await window.axios.post('/report/stockoutReport', {
         checkInTimeStart: _start,
         checkInTimeEnd: _end,
-        searchContent: `{"月份": "${this.timeStr}"}`
+        searchContent: `{"出库时间": "${this.timeStr}"}`
       });
       if (data.code === 0) {
         this.$router.push('/F0601/F060102');

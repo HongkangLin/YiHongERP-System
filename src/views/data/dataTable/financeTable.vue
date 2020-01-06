@@ -108,7 +108,7 @@ export default {
     },
     timeStr () { // 创建时间
       if (!this.createTimeRange || !this.createTimeRange.length) {
-        return '';
+        return '全部';
       }
       return this.createTimeRange[0] + '~' + this.createTimeRange[1];
     }
@@ -165,7 +165,7 @@ export default {
         supplierId: _id,
         payTimeStart: _start,
         payTimeEnd: _end,
-        searchContent: `{"供应商": "${name}", "付款开始时间": "${_start}", "付款结束时间": "${_end}"}`
+        searchContent: `{"供应商": "${name}", "付款日期": "${this.timeStr}"}`
       });
       if (data.code === 0) {
         this.$router.push('/F0601/F060102');

@@ -138,7 +138,7 @@ export default {
     },
     timeStr () { // 创建时间
       if (!this.createTimeRange || !this.createTimeRange.length) {
-        return '';
+        return '全部';
       }
       return this.createTimeRange[0] + '~' + this.createTimeRange[1];
     }

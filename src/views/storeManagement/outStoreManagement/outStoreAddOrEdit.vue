@@ -404,6 +404,7 @@ export default {
         params.goods.push({
           id: item.id,
           goodsId: item.goodsId,
+          fnskuId: item.goodsFNSKU,
           cartonHeight: item.cartonHeight,
           cartonLength: item.cartonLength,
           cartonWidth: item.cartonWidth,

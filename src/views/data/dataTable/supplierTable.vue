@@ -66,7 +66,7 @@
             align="center">
           </el-table-column>
           <el-table-column
-            prop="settleType"
+            prop="settleTypeName"
             label="结算方式"
             align="center">
           </el-table-column>
@@ -115,7 +115,7 @@
       <table class="expTable">
         <tr class="expTr">
           <td class="expTd">供应商名称</td>
-          <td>{{name}}</td>
+          <td>{{name || '全部'}}</td>
           <td class="expTd">结算方式</td>
           <td>{{settleName}}</td>
         </tr>
@@ -229,7 +229,7 @@ export default {
         name: this.name,
         level: this.level,
         settleType: this.settle,
-        searchContent: `{"供应商名称": "${this.name}", "结算方式": "${this.settleName}", "供应商等级": "${this.level || '全部'}"}`
+        searchContent: `{"供应商名称": "${this.name || '全部'}", "结算方式": "${this.settleName}", "供应商等级": "${this.level || '全部'}"}`
       });
       if (data.code === 0) {
         this.$router.push('/F0601/F060102');
