@@ -46,7 +46,7 @@
           </el-table-column>
           <el-table-column
             prop="lastMonthRemainAmount"
-            label="上次剩余货款（元）"
+            label="上月剩余货款（元）"
             align="center">
           </el-table-column>
           <el-table-column
