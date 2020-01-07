@@ -11,7 +11,7 @@
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input ref="pas" maxlength="100" @focus="foc" @change="down" type="password" v-model="form.password" placeholder="请输入密码">
+            <el-input ref="pas" id="pas" maxlength="100" type="password" v-model="form.password" placeholder="请输入密码">
               <i class="el-icon-edit el-input__icon" slot="prefix"></i>
             </el-input>
           </el-form-item>
@@ -42,6 +42,13 @@ export default {
       }
     }
   },
+  mounted () {
+    document.getElementById('pas').addEventListener('keydown', e => {
+      if (e.keyCode === 13) {
+        this.login('ruleForm');
+      }
+    });
+  },
   methods: {
     login (formName) { // 登陆
       this.$refs[formName].validate((valid) => {
@@ -68,15 +75,6 @@ export default {
           return false;
         }
       });
-    },
-    foc () {
-      this.flag = true;
-    },
-    down (e) {
-      if (this.flag) { // 只有当前焦点在密码框上回车才允许登陆
-        this.login('ruleForm');
-        this.flag = false;
-      }
     }
   }
 };

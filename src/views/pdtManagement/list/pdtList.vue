@@ -124,18 +124,18 @@
                   type="text"
                   v-if="roleCtl.product_update"
                   @click="handleEdit(scope.row.id, scope.row.skuId)">编辑</el-button>
-                <el-divider direction="vertical" v-if="roleCtl.product_update && roleCtl.product_query"></el-divider>
+                <el-divider direction="vertical" v-if="roleCtl.product_update"></el-divider>
                 <el-button
                   size="mini"
                   type="text"
                   @click="handleLook(scope.row.id, scope.row.skuId)">查看</el-button>
-                <el-divider direction="vertical" v-if="roleCtl.product_query && roleCtl.product_update"></el-divider>
+                <el-divider direction="vertical" v-if="roleCtl.product_quick_update"></el-divider>
                 <el-button
                   size="mini"
                   type="text"
-                  v-if="roleCtl.product_update"
+                  v-if="roleCtl.product_quick_update"
                   @click="handleFast(scope.row.id, scope.row.skuId)">快速编辑</el-button>
-                <el-divider direction="vertical" v-if="roleCtl.product_delete && roleCtl.product_update"></el-divider>
+                <el-divider direction="vertical" v-if="roleCtl.product_delete"></el-divider>
                 <el-button
                   size="mini"
                   type="text"
