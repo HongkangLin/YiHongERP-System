@@ -17,7 +17,7 @@
           </el-form-item>
         </el-form>
       </div>
-      <div class="submit" @change="login('ruleForm')">登录</div>
+      <div class="submit" @click="login('ruleForm')">登录</div>
     </div>
   </div>
 </template>

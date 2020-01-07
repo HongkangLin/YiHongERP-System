@@ -64,7 +64,7 @@
           <el-col :span="3" class="bg-grey">财务</el-col>
           <el-col :span="3" class="content"></el-col>
           <el-col :span="3" class="bg-grey">经办人</el-col>
-          <el-col :span="3" class="content">{{printPageData.CreateIdName}}</el-col>
+          <el-col :span="3" class="content">{{printPageData.createIdName}}</el-col>
         </el-row>
       </div>
     </div>
