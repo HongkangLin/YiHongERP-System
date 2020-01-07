@@ -6,12 +6,12 @@
       <div class="input">
         <el-form :model="form" :rules="rules" ref="ruleForm">
           <el-form-item prop="email">
-            <el-input maxlength="100" @change="$refs.pas.focus()" v-model="form.email" placeholder="请输入邮箱">
+            <el-input autocomplete="new-password" maxlength="100" @change="$refs.pas.focus()" v-model="form.email" placeholder="请输入邮箱">
               <i class="el-icon-s-custom el-input__icon" slot="prefix"></i>
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input ref="pas" id="pas" maxlength="100" type="password" v-model="form.password" placeholder="请输入密码">
+            <el-input autocomplete="new-password" ref="pas" id="pas" maxlength="100" type="password" v-model="form.password" placeholder="请输入密码">
               <i class="el-icon-edit el-input__icon" slot="prefix"></i>
             </el-input>
           </el-form-item>
@@ -43,7 +43,7 @@ export default {
     }
   },
   mounted () {
-    document.getElementById('pas').addEventListener('keydown', e => {
+    document.getElementById('pas').addEventListener('keydown', e => { // 在密码框上回车自动登录
       if (e.keyCode === 13) {
         this.login('ruleForm');
       }

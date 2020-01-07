@@ -318,7 +318,7 @@ export default {
       });
     },
     close (_id) { // 完结
-      this.$confirm('确定要手动完结当前采购单吗?', '提示', {
+      this.$confirm('确定要手动完结当前采购单吗?完结后采购单状态变更为已完成，同时会移除当前采购单在途库存与供应商欠款。', '完结采购单', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
