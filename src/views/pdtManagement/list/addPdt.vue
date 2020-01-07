@@ -536,6 +536,9 @@ export default {
         amazon_billing_volume_weight = parseFloat((length * wide * high / 139).toFixed(2)) + 0.25;
       }
       if (amazon_billing_volume_weight >= fba_outbound_actual_weight) { // 亚马逊计费体积重于FBA出库实际重量
+        if (amazon_billing_volume_weight <= 0.25) {
+          return 0;
+        }
         if (amazon_billing_volume_weight < 0.625) {
           return 2.48;
         }
@@ -559,6 +562,9 @@ export default {
         }
         return (137.32 + 0.91 * (Math.ceil(amazon_billing_volume_weight) - 90)).toFixed(2);
       } else {
+        if (fba_outbound_actual_weight < 0.25) {
+          return 0;
+        }
         if (fba_outbound_actual_weight < 0.625) {
           return 2.48;
         }

@@ -11,13 +11,13 @@
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input ref="pas" maxlength="100" type="password" @change="login('ruleForm')" v-model="form.password" placeholder="请输入密码">
+            <el-input ref="pas" maxlength="100" @focus="foc" @change="down" type="password" v-model="form.password" placeholder="请输入密码">
               <i class="el-icon-edit el-input__icon" slot="prefix"></i>
             </el-input>
           </el-form-item>
         </el-form>
       </div>
-      <div class="submit">登录</div>
+      <div class="submit" @change="login('ruleForm')">登录</div>
     </div>
   </div>
 </template>
@@ -31,6 +31,7 @@ export default {
         email: '',
         password: ''
       },
+      flag: false,
       rules: {
         email: [
           {required: true, message: '请输入邮箱', trigger: 'blur'}
@@ -67,6 +68,15 @@ export default {
           return false;
         }
       });
+    },
+    foc () {
+      this.flag = true;
+    },
+    down (e) {
+      if (this.flag) { // 只有当前焦点在密码框上回车才允许登陆
+        this.login('ruleForm');
+        this.flag = false;
+      }
     }
   }
 };

@@ -419,6 +419,7 @@ export default {
         deliverMethod : typeof(this.ruleForm.deliverMethod) === "number" ? this.ruleForm.deliverMethod : this.ruleForm.deliverMethodId,
         type : typeof(this.ruleForm.type) === "number" ? this.ruleForm.type : this.ruleForm.typeId,
         remark : this.ruleForm.remark,
+        outCountryId: this.ruleForm.outCountryId,
         goods: []
       }
       this.productList.map((item) => {

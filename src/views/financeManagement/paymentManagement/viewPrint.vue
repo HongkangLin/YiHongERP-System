@@ -70,11 +70,13 @@
         <div class="table last">
           <el-row>
             <el-col :span="3" class="bg-grey">审核人</el-col>
-            <el-col :span="5" class="content"></el-col>
+            <el-col :span="3" class="content"></el-col>
             <el-col :span="3" class="bg-grey">经理</el-col>
-            <el-col :span="5" class="content"></el-col>
+            <el-col :span="3" class="content"></el-col>
             <el-col :span="3" class="bg-grey">财务</el-col>
-            <el-col :span="5" class="content"></el-col>
+            <el-col :span="3" class="content"></el-col>
+            <el-col :span="3" class="bg-grey">经办人</el-col>
+            <el-col :span="3" class="content">{{printPageData.CreateIdName}}</el-col>
           </el-row>
         </div>
       </div>

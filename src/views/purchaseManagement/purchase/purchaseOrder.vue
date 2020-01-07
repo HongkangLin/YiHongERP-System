@@ -318,7 +318,7 @@ export default {
       });
     },
     close (_id) { // 完结
-      this.$confirm('确认完结?', '提示', {
+      this.$confirm('确定要手动完结当前采购单吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
