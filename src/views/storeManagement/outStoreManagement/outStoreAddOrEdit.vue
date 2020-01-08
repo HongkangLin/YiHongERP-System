@@ -34,8 +34,8 @@
               <el-option label="铁路" value=4></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="出库国家：" prop="outCountryId">
-            <el-select filterable v-model="ruleForm.outCountryId" placeholder="选择出库国家">
+          <el-form-item label="出库国家：" prop="outCountry">
+            <el-select filterable v-model="ruleForm.outCountry" placeholder="选择出库国家">
               <el-option label="美国" value=0></el-option>
               <el-option label="英国" value=1></el-option>
               <el-option label="德国" value=2></el-option>
@@ -130,7 +130,8 @@ export default {
         type: "", //入库单类型
         typeId: null,
         deliverMethod: "", //运输方式
-        outCountryId: '', // 出库国家
+        outCountry: '', // 出库国家
+        outCountryId: null,
         deliverMethodId: null,
         remark: "" //备注
       },
@@ -144,7 +145,7 @@ export default {
         deliverMethod: [
           { required: true, message: '请选择运输方式', trigger: 'change' }
         ],
-        outCountryId: [
+        outCountry: [
           { required: true, message: '请选择出库国家', trigger: 'change' }
         ]
       },
@@ -289,21 +290,22 @@ export default {
           this.ruleForm.deliverMethod = "铁路";
           break;
       }
+      this.ruleForm.outCountryId = obj.outCountryId;
       switch (obj.outCountryId) {
         case 0:
-          this.ruleForm.outCountryId = "美国";
+          this.ruleForm.outCountry = "美国";
           break;
         case 1:
-          this.ruleForm.outCountryId = "英国";
+          this.ruleForm.outCountry = "英国";
           break;
         case 2:
-          this.ruleForm.outCountryId = "德国";
+          this.ruleForm.outCountry = "德国";
           break;
         case 3:
-          this.ruleForm.outCountryId = "日本";
+          this.ruleForm.outCountry = "日本";
           break;
         case 4:
-          this.ruleForm.outCountryId = "法国";
+          this.ruleForm.outCountry = "法国";
           break;
       }
       this.ruleForm.remark = obj.remark;
@@ -419,7 +421,7 @@ export default {
         deliverMethod : typeof(this.ruleForm.deliverMethod) === "number" ? this.ruleForm.deliverMethod : this.ruleForm.deliverMethodId,
         type : typeof(this.ruleForm.type) === "number" ? this.ruleForm.type : this.ruleForm.typeId,
         remark : this.ruleForm.remark,
-        outCountryId: this.ruleForm.outCountryId,
+        outCountryId: typeof(this.ruleForm.outCountry) === "number" ? this.ruleForm.outCountry : this.ruleForm.outCountryId,
         goods: []
       }
       this.productList.map((item) => {
@@ -452,7 +454,7 @@ export default {
         type: this.ruleForm.type,
         deliverMethod: this.ruleForm.deliverMethod,
         remark: this.ruleForm.remark,
-        outCountryId: this.ruleForm.outCountryId,
+        outCountryId: this.ruleForm.outCountry,
         goods: []
       }
       this.productList.map((item) => {

@@ -20,7 +20,7 @@
             <el-col :span="4" class="bg-grey">付款单号</el-col>
             <el-col :span="8" class="content">{{printPageData.id}}</el-col>
             <el-col :span="4" class="bg-grey">申请日期</el-col>
-            <el-col :span="8" class="content">{{printPageData.createTime}}</el-col>
+            <el-col :span="8" class="content">{{printPageData.createTime | timeStr}}</el-col>
           </el-row>
         </div>
         <div class="table row3">
@@ -99,6 +99,13 @@ export default {
       amount_word: "",
 
       showPrintPreview: false
+    }
+  },
+  filters: {
+    timeStr (str) {
+      let date = new Date(str);
+      console.log(date);
+      return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
     }
   },
   created() {
