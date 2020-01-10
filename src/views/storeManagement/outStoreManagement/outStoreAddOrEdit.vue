@@ -418,10 +418,10 @@ export default {
       let params = {
         id : this.ruleForm.id,
         warehouseId : typeof(this.ruleForm.warehouseName) === "number" ? this.ruleForm.warehouseName : this.ruleForm.warehouseId,
-        deliverMethod : typeof(this.ruleForm.deliverMethod) === "number" ? this.ruleForm.deliverMethod : this.ruleForm.deliverMethodId,
-        type : typeof(this.ruleForm.type) === "number" ? this.ruleForm.type : this.ruleForm.typeId,
+        deliverMethod : /^\d+$/.test(this.ruleForm.deliverMethod) ? this.ruleForm.deliverMethod : this.ruleForm.deliverMethodId,
+        type : /^\d+$/.test(this.ruleForm.type) ? this.ruleForm.type : this.ruleForm.typeId,
         remark : this.ruleForm.remark,
-        outCountryId: typeof(this.ruleForm.outCountry) === "number" ? this.ruleForm.outCountry : this.ruleForm.outCountryId,
+        outCountryId: /^\d+$/.test(this.ruleForm.outCountry) ? this.ruleForm.outCountry : this.ruleForm.outCountryId,
         goods: []
       }
       this.productList.map((item) => {
