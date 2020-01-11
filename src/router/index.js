@@ -208,6 +208,10 @@ const routes = [{
 		name: 'logisticsManagement',
 		component: () => import(/* webpackChunkName: "logisticsManagement" */ '../views/logistics/logisticsManagement.vue'),
 	}, {
+		path: '/F0801/F080101', // 审批 > 审批中心 > 我的审批
+		name: 'myApproval',
+		component: () => import(/* webpackChunkName: "myApproval" */ '../views/approval/myApproval.vue'),
+	}, {
 		path: '/F0101/F010101', // 系统管理-权限-用户管理
 		name: 'userMgmt',
 		component: () => import(/* webpackChunkName: "userMgmt" */ '../views/systemManagement/userMgmt.vue'),
