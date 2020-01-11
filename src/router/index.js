@@ -200,11 +200,11 @@ const routes = [{
 		name: 'dataDownload',
 		component: () => import(/* webpackChunkName: "dataDownload" */ '../views/data/dataDownload/index.vue'),
 	}, {
-		path: '/logisticsOrder', // 物流 > 物流管理 > 物流订单
+		path: '/F0701/F070101', // 物流 > 物流管理 > 物流订单
 		name: 'logisticsOrder',
 		component: () => import(/* webpackChunkName: "logisticsOrder" */ '../views/logistics/logisticsOrder.vue'),
 	}, {
-		path: '/logisticsManagement', // 物流 > 物流管理 > 物流商管理
+		path: '/F0701/F070102', // 物流 > 物流管理 > 物流商管理
 		name: 'logisticsManagement',
 		component: () => import(/* webpackChunkName: "logisticsManagement" */ '../views/logistics/logisticsManagement.vue'),
 	}, {
