@@ -9,7 +9,19 @@
             <div class="head">
               <img :src="headImg" alt="">
             </div>
-            <div class="up">上传头像</div>
+            <div class="up">
+              <el-upload
+                action="/erp/file/upload"
+                :headers="{'x-token': token}"
+                :show-file-list="false"
+                :before-upload="checkSize"
+                :file-list="fileList"
+                :on-error="() => {this.$message.error('上传失败')}"
+                :on-success="up"
+                accept=".jpg, .png">
+                <span>上传头像</span>
+              </el-upload>
+            </div>
             <el-form class="form" ref="form" label-width="100px" :model="form" :rules="rules">
               <el-form-item label="邮箱：">
                 <el-input disabled v-model="form.email"></el-input>
@@ -39,6 +51,7 @@
 export default {
   data() {
     return {
+      token: localStorage.getItem('token'),
       crumbList: [{ // 面包屑
         name: '首页',
         path: '/home'
@@ -47,7 +60,8 @@ export default {
         path: ''
       }],
       headImg: require('../../assets/image/head.png'),
-      form: {
+      fileList: [], // 文件列表
+      form: { // 表单数据
         email: '',
         name: '',
         tel: '',
@@ -71,6 +85,31 @@ export default {
     }
   },
   methods: {
+    checkSize (file) { // 文件上传前检查文件大小和格式(小于2M)
+      let name = file.name.split('.');
+      let type = name[name.length - 1];
+      if (type !== 'png' && type !== 'jpg') {
+        this.$message({
+          message: '文件格式错误',
+          type: 'warning'
+        });
+        return false;
+      }
+      if (file.size >= 2 * 1024 * 1024) {
+        this.$message({
+          message: '文件超过限制大小',
+          type: 'warning'
+        });
+        return false;
+      }
+    },
+    up (response) { // 上传
+      this.fileList = [{
+        name: response.data.fileName,
+        url: response.data.originUrl
+      }];
+      this.headImg = response.data.originUrl;
+    },
     submit () { // 提交
       this.$refs['form'].validate((valid) => {
         if (valid) {
