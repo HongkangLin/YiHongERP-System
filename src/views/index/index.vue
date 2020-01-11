@@ -30,7 +30,7 @@
         <el-menu :default-active="activeMenu" class="classTwoMenu" :collapse="true" background-color="#474c5a">
           <el-submenu index="F00">
             <template slot="title">
-              <i class="classTwoMenuName el-icon-house">首页</i>
+              <i class="classTwoMenuName el-icon-s-home">首页</i>
             </template>
             <el-menu-item-group>
               <span slot="title">首页系统</span>
@@ -75,6 +75,8 @@ export default {
         '库存': 'el-icon-box',
         '财务': 'el-icon-data-line',
         '数据': 'el-icon-s-data',
+        '物流': 'el-icon-truck',
+        '审批': 'el-icon-s-check',
         '系统': 'el-icon-setting'
       },
       userName: localStorage.getItem('userName'),
