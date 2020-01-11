@@ -6,8 +6,16 @@ const routes = [{
 	path: '/',
 	name: 'index',
 	component: () => import(/* webpackChunkName: "index" */ '../views/index/index.vue'),
-	redirect: '/F0201/F020101',
+	redirect: '/F0001/F000101',
 	children: [{
+		path: '/F0001/F000101', //首页-系统首页-系统首页
+		name: 'homePage',
+		component: () => import(/* webpackChunkName: "homePage" */ '../views/indexPage/index.vue'),
+	}, {
+		path: '/F0001/F000102', //首页-系统首页-账号设置
+		name: 'accountSet',
+		component: () => import(/* webpackChunkName: "homePage" */ '../views/indexPage/accountSet.vue'),
+	}, {
 		path: '/F0101/F010101', //系统管理-权限-用户管理
 		name: 'userMgmt',
 		component: () => import(/* webpackChunkName: "userMgmt" */ '../views/systemManagement/userMgmt.vue'),

@@ -68,7 +68,7 @@ export default {
               localStorage.setItem('email', e.data.email);
               localStorage.setItem('mobile', e.data.mobile);
               localStorage.setItem('roleName', e.data.roleName);
-              this.$router.replace('/F0201/F020101'); // 登陆成功
+              this.$router.replace('/F0001/F000101'); // 登陆成功
             }
           });
         } else {

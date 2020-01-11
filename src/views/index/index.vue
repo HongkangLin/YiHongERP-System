@@ -28,6 +28,16 @@
       <!-- 左侧二级菜单 -->
       <el-aside>
         <el-menu :default-active="activeMenu" class="classTwoMenu" :collapse="true" background-color="#474c5a">
+          <el-submenu index="F00">
+            <template slot="title">
+              <i class="classTwoMenuName el-icon-house">首页</i>
+            </template>
+            <el-menu-item-group>
+              <span slot="title">首页系统</span>
+              <el-menu-item @click="goHome(1)" index="F0001-F000101">系统首页</el-menu-item>
+              <el-menu-item @click="goHome(2)"  index="F0001-F000102">账户设置</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
           <el-submenu :index="item.menuPath" v-for="(item, index) in menuList" :key="index">
             <template slot="title">
               <i class="classTwoMenuName" :class="classList[item.menuName]">{{item.menuName}}</i>
@@ -72,7 +82,7 @@ export default {
       mobile: localStorage.getItem('mobile'),
       email: localStorage.getItem('email'),
       dialogVisible: false,
-      activeMenu: 'F0201-F020101' // active菜单
+      activeMenu: 'F0001-F000101' // active菜单
     }
   },
   computed: {
@@ -92,6 +102,9 @@ export default {
     }
   },
   methods: {
+    goHome (number) {
+      number === 1 ? this.$router.push('/F0001/F000101') : this.$router.push('/F0001/F000102');
+    },
     // 跳转到对应页面
     handleSelect(path) {
       this.$router.push(path);
