@@ -45,6 +45,8 @@
             <el-button v-if="scope.row.status === '待出库' && roleCtl.stockoutorder_update" type="text" size="small" @click="handleEdit(scope.row.id)">编辑</el-button>
             <el-divider v-if="scope.row.status === '待出库'" direction="vertical"></el-divider>
             <el-button v-if="scope.row.status === '待出库' && roleCtl.stockoutorder_stockout" type="text" size="small" @click="handleInStore(scope.row.id)">出库</el-button>
+            <el-divider v-if="scope.row.status === '待出库' && roleCtl.stockoutorder_close" direction="vertical"></el-divider>
+            <el-button v-if="scope.row.status === '待出库' && roleCtl.stockoutorder_close" type="text" size="small" @click="handleClose(scope.row.id)">关闭</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -53,6 +55,20 @@
       </div>
     </section>
 	</div>
+  <el-dialog title="关闭出库单" :visible.sync="closeVisible" width="50%">
+    <el-form ref="form" class="form" :model="form" :rules="rules" label-width="110px">
+      <el-form-item label="关闭原因：" prop="closeReason">
+        <el-input maxlength="200" type="textarea" :rows="7" v-model="form.closeReason" placeholder="请输入关闭出库单的原因，200个字符以内"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <div style="color: red;">关闭之后将清除当前出库单的待出库数量，关闭后需要再次出库请重新添加出库单，关闭后不可撤回，请谨慎操作！</div>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="closeExp">取 消</el-button>
+      <el-button type="primary" @click="submitExp">确 定</el-button>
+    </div>
+  </el-dialog>
 </div>
 </template>
 
@@ -65,6 +81,7 @@ export default {
   data() {
     return {
       roleCtl: this.$store.state.role.roleCtl,
+      closeVisible: false,
       crumbList: [{ // 面包屑
         name: '库存管理',
         path: '/F0401/F040103'
@@ -83,7 +100,15 @@ export default {
       way: ['海运', '空运', '快递', '快船', '铁路'],
       tableData: [{}],
       storeList: [], //仓库下拉
-      
+      form: {
+        id: '',
+        closeReason: ''
+      },
+      rules: {
+        closeReason: [
+          { required: true, message: '请输入关闭原因', trigger: 'blur' }
+        ]
+      }
     }
   },
   created() {
@@ -165,6 +190,32 @@ export default {
       this.$router.push({
         path: '/F0401/outStore?outId=' + outId
       })
+    },
+    handleClose (id) { // 关闭窗口触发
+      this.form.id = id;
+      this.closeVisible = true;
+    },
+    closeExp () { // 关闭弹框
+      this.closeVisible = false;
+      this.form.closeReason = '';
+    },
+    submitExp () { // 关闭
+      this.$refs['form'].validate((valid) => { // 提交
+        if (valid) {
+          window.axios.post('/stockoutorder/close', this.form).then(data => {
+            if (data.code === 0) {
+              this.$message({
+                message: data.message,
+                type: 'success'
+              });
+              this.closeVisible = false;
+              this.queryList();
+            }
+          });
+        } else {
+          return false;
+        }
+      });
     }
   },
 
