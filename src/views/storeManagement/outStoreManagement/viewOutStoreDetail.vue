@@ -14,6 +14,14 @@
           <el-col :span="8" class="content">{{tableData[item.col4]}}</el-col>
         </el-row>
       </section>
+      <!-- 关闭原因 -->
+      <div class="header"> <i class="el-icon-collection-tag"></i> 关闭原因</div>
+      <section class="table">
+        <el-row>
+          <el-col :span="4" class="bg-grey">关闭原因</el-col>
+          <el-col :span="20" class="content">{{tableData.closeReason}}</el-col>
+        </el-row>
+      </section>
       <!-- 产品信息 -->
       <div class="header"> <i class="el-icon-collection-tag"></i> 产品信息</div>
       <!-- 产品信息 -->
@@ -26,13 +34,13 @@
         <el-table-column prop="goodsSku" label="SKU" align="center" min-width="90"></el-table-column>
         <el-table-column prop="goodsName" label="产品名称" align="center" min-width="90"></el-table-column>
         <el-table-column prop="dimentions" label="外箱尺寸(cm)" align="center" min-width="90"></el-table-column>
-        <el-table-column prop="fullLoadWeight" label="整箱重量(kg)" align="center" min-width="90"></el-table-column>
+        <el-table-column prop="fullLoadWeight" label="整箱重量(g)" align="center" min-width="90"></el-table-column>
         <el-table-column prop="fullLoadQuantity" label="装箱数(套/箱)" align="center" min-width="90"></el-table-column>
         <el-table-column prop="quantity" label="件数" align="center" min-width="90"></el-table-column>
         <el-table-column prop="stockAvailCount" label="可用库存" align="center" min-width="90"></el-table-column>
         <el-table-column prop="count" label="本次出库" align="center" min-width="90"></el-table-column>
         <el-table-column prop="totalSpace" label="总体积(m³)" align="center" min-width="90"></el-table-column>
-        <el-table-column prop="totalWeight" label="总重量(kg)" align="center" min-width="90"></el-table-column>
+        <el-table-column prop="totalWeight" label="总重量(g)" align="center" min-width="90"></el-table-column>
       </el-table>
     </div>
 	</div>
@@ -56,7 +64,8 @@ export default {
       tableList: [
         {col1: "出库单号", col2: "sn", col3: "仓库", col4: "warehouseName"},
         {col1: "出库类型", col2: "type", col3: "出库状态", col4: "status"},
-        {col1: "运输方式", col2: "deliverMethod", col3: "出库时间", col4: "stockoutTime"},
+        {col1: "创建时间", col2: "createTime", col3: "出库时间", col4: "stockoutTime"},
+        {col1: "运输方式", col2: "deliverMethod", col3: "出库国家", col4: "outCountryId"},
         {col1: "备注", col2: "remark", col3: "", col4: ""}
       ],
       tableData: {}, 
@@ -93,6 +102,27 @@ export default {
             obj.deliverMethod = "铁路";
             break;
         }
+        switch (obj.outCountryId) {
+          case 0:
+            obj.outCountryId = "美国";
+            break;
+        
+          case 1:
+            obj.outCountryId = "英国";
+            break;
+
+          case 2:
+            obj.outCountryId = "德国";
+            break;
+
+          case 3:
+            obj.outCountryId = "日本";
+            break;
+
+          case 4:
+            obj.outCountryId = "法国";
+            break;
+        }
 
         for (const key in obj) {
           obj[key] = obj[key] === null ? "--" : obj[key];
@@ -102,7 +132,7 @@ export default {
           item.dimentions = item.cartonLength + " * " + item.cartonWidth + " * " + item.cartonHeight;
           // 总体积(m³)
           item.totalSpace = (item.cartonLength * item.cartonWidth * item.cartonHeight * item.quantity)/1000000;
-          // 总重量(kg)
+          // 总重量(g)
           item.totalWeight = item.fullLoadWeight * item.quantity;
         })
         this.tableData = obj;

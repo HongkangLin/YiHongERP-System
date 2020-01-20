@@ -17,6 +17,14 @@
           <el-col :span="8" class="content">{{tableData[item.col4]}}</el-col>
         </el-row>
       </section>
+      <!-- 关闭原因 -->
+      <div class="header"> <i class="el-icon-collection-tag"></i> 关闭原因</div>
+      <section class="table">
+        <el-row>
+          <el-col :span="4" class="bg-grey">关闭原因</el-col>
+          <el-col :span="20" class="content">{{tableData.closeReason}}</el-col>
+        </el-row>
+      </section>
       <!-- 产品信息 -->
       <div class="header"> <i class="el-icon-collection-tag"></i> 产品信息</div>
       <!-- 产品信息-外贸入库 -->
@@ -85,7 +93,7 @@ export default {
           {col1: "入库仓库", col2: "warehouseName", col3: "入库状态", col4: "status"},
           {col1: "入库类型", col2: "type", col3: "运单号", col4: "deliverSn"},
           {col1: "到货日期", col2: "updateTime", col3: "入库时间", col4: "checkinTime"},
-          {col1: "备注", col2: "remark", col3: "", col4: ""}
+          {col1: "备注", col2: "remark", col3: "操作人", col4: "purchaserName"}
         ]
       }
     }

@@ -114,12 +114,12 @@
           <el-table-column
             prop="goodsWeight"
             align="center"
-            label="单个产品重量（kg）">
+            label="单个产品重量（g）">
           </el-table-column>
           <el-table-column
             prop="packingWeight"
             align="center"
-            label="整箱重量（kg）">
+            label="整箱重量（g）">
           </el-table-column>
           <el-table-column
             prop="packingQuantity"

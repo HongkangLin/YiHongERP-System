@@ -232,7 +232,7 @@
             </el-form-item>
             <el-form-item label="单个产品重量：" class="inline">
               <el-input min="0" type="number" @blur="() => {if (this.form.goodsWeight < 0) {this.form.goodsWeight = 0} else if (this.form.goodsWeight > 1000000000) {this.form.goodsWeight = 1000000000}}" v-model="form.goodsWeight" placeholder="">
-                <template slot="append">kg</template>
+                <template slot="append">g</template>
               </el-input>
               <el-input disabled v-model="goodsWeightLb" type="number" class="leftSpan" placeholder="-">
                 <template slot="append">lb</template>
@@ -240,7 +240,7 @@
             </el-form-item>
             <el-form-item label="整箱重量：" class="inline">
               <el-input min="0" type="number" @blur="() => {if (this.form.packingWeight < 0) {this.form.packingWeight = 0} else if (this.form.packingWeight > 1000000000) {this.form.packingWeight = 1000000000}}" v-model="form.packingWeight" placeholder="">
-                <template slot="append">kg</template>
+                <template slot="append">g</template>
               </el-input>
               <el-input disabled v-model="packingWeightLb" class="leftSpan" placeholder="">
                 <template slot="append">lb</template>

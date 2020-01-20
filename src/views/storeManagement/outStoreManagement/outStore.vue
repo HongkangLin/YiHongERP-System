@@ -39,13 +39,13 @@
             <el-table-column prop="goodsSku" label="SKU" align="center" min-width="85"></el-table-column>
             <el-table-column prop="goodsName" label="产品名称" align="center" min-width="130"></el-table-column>
             <el-table-column prop="dimentions" label="外箱尺寸(cm)" align="center" min-width="90"></el-table-column>
-            <el-table-column prop="fullLoadWeight" label="整箱重量(kg)" align="center" min-width="90"></el-table-column>
+            <el-table-column prop="fullLoadWeight" label="整箱重量(g)" align="center" min-width="90"></el-table-column>
             <el-table-column prop="fullLoadQuantity" label="装箱数(套/箱)" align="center" min-width="90"></el-table-column>
             <el-table-column prop="quantity" label="件数" align="center" min-width="80"></el-table-column>
             <el-table-column prop="stockAvailCount" label="可用库存" align="center" min-width="80"></el-table-column>
             <el-table-column prop="count" label="本次出库" align="center" min-width="80"></el-table-column>
             <el-table-column prop="totalSpace" label="总体积(m³)" align="center" min-width="80"></el-table-column>
-            <el-table-column prop="totalWeight" label="总重量(kg)" align="center" min-width="80"></el-table-column>
+            <el-table-column prop="totalWeight" label="总重量(g)" align="center" min-width="80"></el-table-column>
           </el-table>
         </div>
         <!-- 确认出库 -->
@@ -147,7 +147,7 @@ export default {
         item.dimentions = item.cartonLength + " * " + item.cartonWidth + " * " + item.cartonHeight;
         // 总体积(m³)
         item.totalSpace = ((item.cartonLength * item.cartonWidth * item.cartonHeight * item.quantity)/1000000).toFixed(4);
-        // 总重量(kg)
+        // 总重量(g)
         item.totalWeight = (item.fullLoadWeight * item.quantity).toFixed(4);
         // 本次出库
         // item.count = item.count ? item.count : undefined;

@@ -133,7 +133,7 @@ export default {
       if (data.code !== 0) return
       let arr = data.data.list;
       arr.map((item) => {
-        item.status = item.status ? "已入库" : "待入库";
+        item.status = item.status === 2 ? "已关闭" : item.status === 1 ? "已入库" : "待入库";
         item.type = item.type ? "采购入库" : "外贸入库";
       })
       this.tableData = arr;

@@ -137,7 +137,7 @@ export default {
       if (data.code !== 0) return
       let arr = data.data.list;
       arr.map((item) => {
-        item.status = item.status ? "已出库" : "待出库";
+        item.status = item.status === 2 ? "已关闭" : item.status === 1 ? "已出库" : "待出库";
         item.type = item.type ? "退换货" : "正常出库";
         item.deliverMethod = this.way[item.deliverMethod];
       })
