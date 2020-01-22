@@ -35,14 +35,14 @@
             <el-table-column align="center" label="审批状态" width="80">
               <template slot-scope="scope">
                 <div class="status">{{scope.row.applyStatus}}</div>
-                <el-button type="text" size="small" @click="viewReviewDetail(scope.row.applyNo)">审核详情</el-button>
+                <el-button type="text" size="small" @click="viewReviewDetail(scope.row.bussinessNo)">审核详情</el-button>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="发起日期" align="center" min-width="110"></el-table-column>
             <el-table-column align="center" fixed="right" label="操作" width="150">
               <template slot-scope="scope">
-                <el-button v-if="activeName === '1'" type="text" size="small" @click="toDetailPage(scope.row.applyType, scope.row.bussinessNo, 'me')">审批</el-button>
-                <el-button v-else type="text" size="small" @click="toDetailPage(scope.row.applyType, scope.row.bussinessNo)">查看</el-button>
+                <el-button v-if="activeName === '1'" type="text" size="small" @click="toDetailPage(scope.row.id, scope.row.applyType, scope.row.bussinessNo, 'me')">审批</el-button>
+                <el-button v-else type="text" size="small" @click="toDetailPage(scope.row.id, scope.row.applyType, scope.row.bussinessNo)">查看</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -178,13 +178,13 @@ export default {
     },
 
     // 查看详情
-    toDetailPage(type, bussinessNo, doing) {
+    toDetailPage(id, type, bussinessNo, doing) {
       switch (type) {
         case 'purchase.pay':
-          this.$router.push(`/F0801/F080101/myApprovalPayDetail?bussinessNo=${bussinessNo}&doing=${doing}`);
+          this.$router.push(`/F0801/F080101/myApprovalPayDetail?id=${id}&bussinessNo=${bussinessNo}&doing=${doing}`);
           break;
         case 'purchase.close':
-          this.$router.push(`/F0801/F080101/myApprovalCloseDetail?bussinessNo=${bussinessNo}&doing=${doing}`);
+          this.$router.push(`/F0801/F080101/myApprovalCloseDetail?id=${id}&bussinessNo=${bussinessNo}&doing=${doing}`);
           break;
       }
     },

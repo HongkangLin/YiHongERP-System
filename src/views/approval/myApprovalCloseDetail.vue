@@ -81,6 +81,7 @@ export default {
         name: '采购单关闭申请',
         path: ''
       }],
+      id: '',
       doing: '',
       tableData: {
         purchaseInfo: {},
@@ -106,6 +107,7 @@ export default {
   },
   created() {
     this.doing = this.$route.query.doing;
+    this.id = this.$route.query.id;
     this.getApprovalInfo();
     this.getPeopleList();
   },
@@ -155,19 +157,15 @@ export default {
     // 确认审核
     confirmApprove() {
       let params = {
-        purchaseId: this.tableData.purchaseInfo.purchaseId,
-        applyId: this.tableData.applyInfo.applyId,
+        applyId: parseInt(this.id),
         approveResult: this.ruleForm.approveResult,
         nextApproveUserId: this.ruleForm.nextApproveUserId,
-        feedbackReason: this.ruleForm.approveResult === "agree" && this.ruleForm.feedbackReason === "" ? "同意" : this.ruleForm.feedbackReason,
-        recordFlag: this.tableData.recordFlag
+        feedbackReason: this.ruleForm.approveResult === "agree" && this.ruleForm.feedbackReason === "" ? "同意" : this.ruleForm.feedbackReason
       }
-      window.axios.post("/approve/doApprove", params).then((data) => {
+      window.axios.post("/approve/executeApprove", params).then((data) => {
         if (data.code !== 0) return
         this.$message.success("已提交");
-        this.$router.push({
-          path: "/F0301/F030101"
-        })
+        history.go(-1);
       })
     },
 
