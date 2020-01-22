@@ -5,7 +5,12 @@
   <div class="inStoreList_wrap">
 		<div class="search">
       <div class="head">
-        <div class="label">出库管理</div>
+        <el-tabs v-model="activeName" class="statusTabs">
+          <el-tab-pane :label="'全部/'+statusTotal.all" name="0"></el-tab-pane>
+          <el-tab-pane :label="'待出库/'+statusTotal.underway" name="1"></el-tab-pane>
+          <el-tab-pane :label="'已出库/'+statusTotal.completed" name="2"></el-tab-pane>
+          <el-tab-pane :label="'关闭/'+statusTotal.closed" name="3"></el-tab-pane>
+        </el-tabs>
         <el-button type="primary" @click="addInStore" v-if="roleCtl.stockoutorder_add">新增出库</el-button>
       </div>
       <div class="content">
@@ -18,10 +23,10 @@
             <el-option label="正常出库" value=0></el-option>
             <el-option label="退换货" value=1></el-option>
           </el-select>
-          <el-select filterable v-model="status" @change="search" placeholder="出库状态">
+          <!-- <el-select filterable v-model="status" @change="search" placeholder="出库状态">
             <el-option label="待出库" value=0></el-option>
             <el-option label="已出库" value=1></el-option>
-          </el-select>
+          </el-select> -->
         </div>
         <div class="sel" @click="search">查询</div>
       </div>
@@ -81,6 +86,13 @@ export default {
   data() {
     return {
       roleCtl: this.$store.state.role.roleCtl,
+      activeName: 0,
+      statusTotal: {
+        all: 0,
+        underway: 0,
+        completed: 0,
+        closed: 0
+      },
       closeVisible: false,
       crumbList: [{ // 面包屑
         name: '库存管理',
@@ -114,6 +126,20 @@ export default {
   created() {
     this.getStoreList();
     this.queryList();
+    this.countStatus();
+  },
+  watch: {
+    activeName() {
+      this.snKeyword = "";
+      this.warehouseId = null;
+      this.status = parseInt(this.activeName) - 1;
+      if (this.status === -1) {
+        this.status = null;
+      }
+      this.type = null;
+      this.pageNum = 1;
+      this.queryList();
+    }
   },
   methods: {
     // 仓库下拉
@@ -122,6 +148,26 @@ export default {
       if (data.code !== 0) return
       
       this.storeList = data.data;
+    },
+    async countStatus () {
+      let data = await window.axios.get('/stockoutorder/countStatus');
+      if (data.code !== 0) return
+      data.data.map(item => {
+        switch (item.status) {
+          case 0:
+            this.statusTotal.underway = item.count;
+            break;
+          case 1:
+            this.statusTotal.completed = item.count;
+            break;
+          case 2:
+            this.statusTotal.closed = item.count;
+            break;
+          case -1:
+            this.statusTotal.all = item.count;
+            break;
+        }
+      });
     },
 
     async queryList () { 
@@ -244,6 +290,25 @@ export default {
         line-height: 32px;
         &.label{
           color: #666;
+        }
+      }
+    }
+    .el-tabs {
+      /deep/.el-tabs__header {
+        .el-tabs__nav-wrap::after {
+          display: none!important;
+        }
+        .el-tabs__nav {
+          margin-left: 20px;
+          .el-tabs__item {
+            padding: 0 40px;
+            &:nth-child(2) {
+              padding-left: 16px;
+            }
+            &:last-child {
+              padding-right: 16px;
+            }
+          }
         }
       }
     }
