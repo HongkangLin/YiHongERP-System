@@ -208,6 +208,14 @@ const routes = [{
 		name: 'logisticsManagement',
 		component: () => import(/* webpackChunkName: "logisticsManagement" */ '../views/logistics/manager/logisticsManagement.vue'),
 	}, {
+		path: '/addLogistics', // 物流 > 物流管理 > 新增物流商
+		name: 'addLogistics',
+		component: () => import(/* webpackChunkName: "addLogistics" */ '../views/logistics/manager/addLogistics.vue'),
+	}, {
+		path: '/logisticsDetail', // 物流 > 物流管理 > 物流商详情
+		name: 'logisticsDetail',
+		component: () => import(/* webpackChunkName: "logisticsDetail" */ '../views/logistics/manager/logisticsDetail.vue'),
+	}, {
 		path: '/F0801/F080101', // 审批 > 审批中心 > 我的审批
 		name: 'myApproval',
 		component: () => import(/* webpackChunkName: "myApproval" */ '../views/approval/myApproval.vue'),
