@@ -9,7 +9,7 @@
           <el-tab-pane :label="'全部/'+statusTotal.all" name="0"></el-tab-pane>
           <el-tab-pane :label="'待出库/'+statusTotal.underway" name="1"></el-tab-pane>
           <el-tab-pane :label="'已出库/'+statusTotal.completed" name="2"></el-tab-pane>
-          <el-tab-pane :label="'关闭/'+statusTotal.closed" name="3"></el-tab-pane>
+          <el-tab-pane :label="'已关闭/'+statusTotal.closed" name="3"></el-tab-pane>
         </el-tabs>
         <el-button type="primary" @click="addInStore" v-if="roleCtl.stockoutorder_add">新增出库</el-button>
       </div>
