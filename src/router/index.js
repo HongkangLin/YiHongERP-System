@@ -202,15 +202,31 @@ const routes = [{
 	}, {
 		path: '/F0701/F070101', // 物流 > 物流管理 > 物流订单
 		name: 'logisticsOrder',
-		component: () => import(/* webpackChunkName: "logisticsOrder" */ '../views/logistics/logisticsOrder.vue'),
+		component: () => import(/* webpackChunkName: "logisticsOrder" */ '../views/logistics/order/logisticsOrder.vue'),
 	}, {
 		path: '/F0701/F070102', // 物流 > 物流管理 > 物流商管理
 		name: 'logisticsManagement',
-		component: () => import(/* webpackChunkName: "logisticsManagement" */ '../views/logistics/logisticsManagement.vue'),
+		component: () => import(/* webpackChunkName: "logisticsManagement" */ '../views/logistics/manager/logisticsManagement.vue'),
+	}, {
+		path: '/addLogistics', // 物流 > 物流管理 > 新增物流商
+		name: 'addLogistics',
+		component: () => import(/* webpackChunkName: "addLogistics" */ '../views/logistics/manager/addLogistics.vue'),
+	}, {
+		path: '/logisticsDetail', // 物流 > 物流管理 > 物流商详情
+		name: 'logisticsDetail',
+		component: () => import(/* webpackChunkName: "logisticsDetail" */ '../views/logistics/manager/logisticsDetail.vue'),
 	}, {
 		path: '/F0801/F080101', // 审批 > 审批中心 > 我的审批
 		name: 'myApproval',
 		component: () => import(/* webpackChunkName: "myApproval" */ '../views/approval/myApproval.vue'),
+	}, {
+		path: '/F0801/F080101/myApprovalPayDetail', // 审批 > 审批中心 > 我的审批 > 采购单付款申请
+		name: 'myApprovalPayDetail',
+		component: () => import(/* webpackChunkName: "myApprovalPayDetail" */ '../views/approval/myApprovalPayDetail.vue'),
+	}, {
+		path: '/F0801/F080101/myApprovalCloseDetail', // 审批 > 审批中心 > 我的审批 > 采购单关闭申请
+		name: 'myApprovalCloseDetail',
+		component: () => import(/* webpackChunkName: "myApprovalCloseDetail" */ '../views/approval/myApprovalCloseDetail.vue'),
 	}, {
 		path: '/F0101/F010101', // 系统管理-权限-用户管理
 		name: 'userMgmt',
