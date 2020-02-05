@@ -16,7 +16,10 @@
               <div class="content"><span>·&nbsp;电子邮箱：</span>{{email}}</div>
             </div>
             <div slot="reference" class="userInfoClick">
-              <el-avatar icon="el-icon-user-solid"></el-avatar>
+              <div v-if="avatarFilePath" style="width: 40px;height:40px">
+                <img :src="avatarFilePath" style="width: 100%; height: 100%" alt="">
+              </div>
+              <el-avatar v-else icon="el-icon-user-solid"></el-avatar>
               <span class="userName">{{userName}}</span>
             </div>
         </el-popover>
@@ -28,16 +31,6 @@
       <!-- 左侧二级菜单 -->
       <el-aside>
         <el-menu :default-active="activeMenu" class="classTwoMenu" :collapse="true" background-color="#474c5a">
-          <el-submenu index="F00">
-            <template slot="title">
-              <i class="classTwoMenuName el-icon-s-home">首页</i>
-            </template>
-            <el-menu-item-group>
-              <span slot="title">首页系统</span>
-              <el-menu-item @click="goHome(1)" index="F0001-F000101">系统首页</el-menu-item>
-              <el-menu-item @click="goHome(2)"  index="F0001-F000102">账户设置</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
           <el-submenu :index="item.menuPath" v-for="(item, index) in menuList" :key="index">
             <template slot="title">
               <i class="classTwoMenuName" :class="classList[item.menuName]">{{item.menuName}}</i>
@@ -70,6 +63,7 @@ export default {
   data() {
     return {
       classList: {
+        '首页': 'el-icon-s-home',
         '产品': 'el-icon-goods',
         '采购': 'el-icon-shopping-cart-2',
         '库存': 'el-icon-box',
@@ -83,8 +77,9 @@ export default {
       roleName: localStorage.getItem('roleName'),
       mobile: localStorage.getItem('mobile'),
       email: localStorage.getItem('email'),
+      avatarFilePath: localStorage.getItem('avatarFilePath'),
       dialogVisible: false,
-      activeMenu: 'F0001-F000101' // active菜单
+      activeMenu: 'F0901-F090101' // active菜单
     }
   },
   computed: {
@@ -105,7 +100,7 @@ export default {
   },
   methods: {
     goHome (number) {
-      number === 1 ? this.$router.push('/F0001/F000101') : this.$router.push('/F0001/F000102');
+      number === 1 ? this.$router.push('/F0901/F090101') : this.$router.push('/F0001/F000102');
     },
     // 跳转到对应页面
     handleSelect(path) {

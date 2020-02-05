@@ -47,7 +47,7 @@ export default {
     return {
       crumbList: [{ // 面包屑
         name: '首页',
-        path: '/home'
+        path: '/F0901/F090101'
       }, {
         name: '系统首页',
         path: ''

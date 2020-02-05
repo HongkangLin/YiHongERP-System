@@ -24,19 +24,19 @@
             </div>
             <el-form class="form" ref="form" label-width="100px" :model="form" :rules="rules">
               <el-form-item label="邮箱：">
-                <el-input disabled v-model="form.email"></el-input>
+                <el-input disabled v-model="email"></el-input>
               </el-form-item>
-              <el-form-item label="姓名：" prop="name">
-                <el-input v-model="form.name"></el-input>
+              <el-form-item label="姓名：" prop="userName">
+                <el-input maxlength="100" placeholder="请输入姓名" v-model="form.userName"></el-input>
               </el-form-item>
-              <el-form-item label="手机号：" prop="tel">
-                <el-input v-model="form.tel"></el-input>
+              <el-form-item label="手机号：" prop="mobile">
+                <el-input maxlength="11" placeholder="请输入手机号" v-model="form.mobile"></el-input>
               </el-form-item>
               <el-form-item label="新密码：" prop="newPwd">
-                <el-input v-model="form.newPwd"></el-input>
+                <el-input maxlength="100" placeholder="请输入密码" v-model="form.newPwd"></el-input>
               </el-form-item>
-              <el-form-item label="确定密码：" prop="surePwd">
-                <el-input v-model="form.surePwd"></el-input>
+              <el-form-item label="确定密码：" prop="confirmPwd">
+                <el-input maxlength="100" placeholder="请输入密码" v-model="form.confirmPwd"></el-input>
               </el-form-item>
             </el-form>
             <div @click="submit" class="save">提&nbsp;交</div>
@@ -48,8 +48,23 @@
 </template>
 
 <script>
+const publicKey = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCCw8LEbXLArEnUwnGiOPw0YqDUwopOs3s0c5SWZgMID2J3s3pBD+Fme1a6JuMgiisBmFOt2bYkzHfVWkiqaZEjq5u+LAvmRhRoxgP4ESKE1Z99PWu8BlANHlctA6ybBOyWilPAYbkeUy355ot7pI97GIcLSsftD1p/8VBsJ6PafwIDAQAB';
 export default {
   data() {
+    var validateTel = (rule, value, callback) => {
+      if (!(/^1(3|4|5|6|7|8|9)\d{9}$/.test(value))) {
+        callback(new Error('请输入正确电话号码'));
+      } else {
+        callback();
+      }
+    };
+    var validatePwd = (rule, value, callback) => {
+      if (/.*[\u4e00-\u9fa5]+.*$/.test(value)) {
+        callback(new Error('密码中不能包含中文'));
+      } else {
+        callback();
+      }
+    };
     return {
       token: localStorage.getItem('token'),
       crumbList: [{ // 面包屑
@@ -59,27 +74,30 @@ export default {
         name: '账户设置',
         path: ''
       }],
-      headImg: require('../../assets/image/head.png'),
+      headImg: localStorage.getItem('avatarFilePath') || require('../../assets/image/head.png'),
       fileList: [], // 文件列表
+      email: localStorage.getItem('email'),
       form: { // 表单数据
-        email: '',
-        name: '',
-        tel: '',
+        userName: localStorage.getItem('userName'),
+        mobile: localStorage.getItem('mobile'),
         newPwd: '',
-        surePwd: ''
+        confirmPwd: ''
       },
       rules: {
-        name: [
+        userName: [
           {required: true, message: '请输入姓名', trigger: 'blur'}
         ],
-        tel: [
-          {required: true, message: '请输入手机号', trigger: 'blur'}
+        mobile: [
+          {required: true, message: '请输入手机号', trigger: 'blur'},
+          { validator: validateTel, trigger: 'blur' }
         ],
         newPwd: [
-          {required: true, message: '请输入密码', trigger: 'blur'}
+          {required: true, message: '请输入密码', trigger: 'blur'},
+          { validator: validatePwd, trigger: 'blur' }
         ],
-        surePwd: [
-          {required: true, message: '请输入密码', trigger: 'blur'}
+        confirmPwd: [
+          {required: true, message: '请输入密码', trigger: 'blur'},
+          { validator: validatePwd, trigger: 'blur' }
         ]
       }
     }
@@ -111,9 +129,24 @@ export default {
       this.headImg = response.data.originUrl;
     },
     submit () { // 提交
-      this.$refs['form'].validate((valid) => {
+      this.$refs['form'].validate(async valid => {
         if (valid) {
-          console.log(11);
+          if (this.form.newPwd !== this.form.confirmPwd) {
+            this.$message.warning('两次输入密码必须一致');
+            return;
+          }
+          let param = JSON.parse(JSON.stringify(this.form));
+          let encrypt = new window.JSEncrypt();
+          encrypt.setPublicKey(publicKey);
+          param.newPwd = encrypt.encrypt(param.newPwd);
+          param.confirmPwd = encrypt.encrypt(param.confirmPwd);
+          param.avatarFilePath = this.fileList[0] ? this.fileList[0].url : '';
+          let data = await window.axios.post('/user/updateOwnUserInfo', param);
+          if (data.code === 0) {
+            this.$message.success(data.message);
+            localStorage.removeItem('token');
+            this.$router.replace('/login');
+          }
         } else {
           return false;
         }

@@ -35,7 +35,7 @@
             <el-table-column align="center" label="审批状态" width="80">
               <template slot-scope="scope">
                 <div class="status">{{scope.row.applyStatus}}</div>
-                <el-button type="text" size="small" @click="viewReviewDetail(scope.row.bussinessNo)">审核详情</el-button>
+                <el-button type="text" size="small" @click="viewReviewDetail(scope.row.applyNo)">审核详情</el-button>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="发起日期" align="center" min-width="110"></el-table-column>
@@ -190,10 +190,10 @@ export default {
     },
 
     // 查看审核详情
-    viewReviewDetail(purchaseId) {
+    viewReviewDetail(applyNo) {
       this.reviewDetailData = [];
       this.dialogTableVisible = true;
-      window.axios.get(`/approve/queryApproveDetail/${purchaseId}`).then((data) => {
+      window.axios.get(`/approve/queryApproveDetail/${applyNo}`).then((data) => {
         if (data.code !== 0) return
         data.data.map((item) => {
           if (item.approveResult === "agree") {

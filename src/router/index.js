@@ -6,13 +6,13 @@ const routes = [{
 	path: '/',
 	name: 'index',
 	component: () => import(/* webpackChunkName: "index" */ '../views/index/index.vue'),
-	redirect: '/F0001/F000101',
+	redirect: '/F0901/F090101',
 	children: [{
-		path: '/F0001/F000101', // 首页-系统首页-系统首页
+		path: '/F0901/F090101', // 首页-系统首页-系统首页
 		name: 'homePage',
 		component: () => import(/* webpackChunkName: "homePage" */ '../views/indexPage/index.vue'),
 	}, {
-		path: '/F0001/F000102', // 首页-系统首页-账号设置
+		path: '/F0901/F090102', // 首页-系统首页-账号设置
 		name: 'accountSet',
 		component: () => import(/* webpackChunkName: "homePage" */ '../views/indexPage/accountSet.vue'),
 	}, {

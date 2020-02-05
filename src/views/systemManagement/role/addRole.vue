@@ -84,6 +84,18 @@ export default {
   methods: {
     async queryList () { // 新增权限查询
       let data = await window.axios.get('/func/queryAllFuncList');
+      data.data.forEach(item => {
+        if (item.menuId === 35 || item.menuId === 38 || item.menuId === 39 || item.menuId === 28) { // 我的审批、系统首页、账户设置、下载中心权限不允许更改
+          item.check = true;
+          item.disable = true;
+        }
+        item.funcList.forEach((key, idx) => {
+          if (item.menuId === 35 || item.menuId === 38 || item.menuId === 39 || item.menuId === 28) { // 我的审批、系统首页、账户设置、下载中心权限不允许更改
+            key.check = true;
+            key.disable = true;
+          }
+        });
+      });
       this.roleList = data.data;
     },
     async queryListByRole () { // 编辑权限查询
@@ -99,12 +111,18 @@ export default {
         if (data.roleType === 1 && item.menuId === 4) { // 超级管理员不允许编辑角色权限管理模块
           item.disable = true;
         }
+        if (item.menuId === 35 || item.menuId === 38 || item.menuId === 39 || item.menuId === 28) { // 我的审批、系统首页、账户设置、下载中心权限不允许更改
+          item.disable = true;
+        }
         let curr = 0, pos = '';
         item.funcList.forEach((key, idx) => {
           if (key.funcName.split('-')[1] === '查看') { // 找到查看位置
             pos = idx;
           }
           if (data.roleType === 1 && item.menuId === 4) { // 超级管理员不允许编辑角色权限管理模块
+            key.disable = true;
+          }
+          if (item.menuId === 35 || item.menuId === 38 || item.menuId === 39 || item.menuId === 28) { // 我的审批、系统首页、账户设置、下载中心权限不允许更改
             key.disable = true;
           }
           if (key.ownFlag) {
