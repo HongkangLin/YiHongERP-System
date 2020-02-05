@@ -120,7 +120,7 @@ export default {
         name: '物流',
         path: '/F0301/F030101'
       }, {
-        name: '物流定单',
+        name: '物流订单',
         path: ''
       }],
 
