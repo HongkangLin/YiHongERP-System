@@ -8,8 +8,8 @@
         <div class="head">
           <el-tabs v-model="activeName" class="statusTabs">
             <el-tab-pane :label="'全部/'+statusTotal.all" name="0"></el-tab-pane>
-            <el-tab-pane :label="'审核中/'+statusTotal.underway" name="1"></el-tab-pane>
-            <el-tab-pane :label="'驳回/'+statusTotal.rejected" name="2"></el-tab-pane>
+            <!-- <el-tab-pane :label="'审核中/'+statusTotal.underway" name="1"></el-tab-pane>
+            <el-tab-pane :label="'驳回/'+statusTotal.rejected" name="2"></el-tab-pane> -->
             <el-tab-pane :label="'待付款/'+statusTotal.pending" name="3"></el-tab-pane>
             <el-tab-pane :label="'付款完成/'+statusTotal.paid" name="4"></el-tab-pane>
             <el-tab-pane :label="'已取消/'+statusTotal.cancel" name="5"></el-tab-pane>

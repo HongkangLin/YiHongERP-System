@@ -1,5 +1,5 @@
 <template>
-  <div class="purchaseOrder_wrap">
+  <div class="logisticsOrder_wrap">
 		<!-- 顶部面包屑 -->
     <crumbs :list="crumbList" :showReturn="false"></crumbs>
     <div class="order_main">
@@ -9,29 +9,22 @@
           <el-tabs v-model="activeName" class="statusTabs">
             <el-tab-pane :label="'全部/'+statusTotal.all" name="0"></el-tab-pane>
             <el-tab-pane :label="'未完成/'+statusTotal.underway" name="1"></el-tab-pane>
-            <el-tab-pane :label="'已生成/'+statusTotal.completed" name="2"></el-tab-pane>
-            <el-tab-pane :label="'审核中/'+statusTotal.closing" name="3"></el-tab-pane>
-            <el-tab-pane :label="'代付款/'+statusTotal.closed" name="4"></el-tab-pane>
-            <el-tab-pane :label="'已完成/'+statusTotal.closed" name="4"></el-tab-pane>
+            <el-tab-pane :label="'已生成/'+statusTotal.generate" name="2"></el-tab-pane>
+            <el-tab-pane :label="'审核中/'+statusTotal.examine" name="3"></el-tab-pane>
+            <el-tab-pane :label="'待付款/'+statusTotal.payment" name="4"></el-tab-pane>
+            <el-tab-pane :label="'已完成/'+statusTotal.completed" name="4"></el-tab-pane>
           </el-tabs>
           <div class="btns">
-            <!-- <el-button @click="applyForPay" v-if="roleCtl.purchase_apply">申请付款</el-button> -->
             <el-button @click="addPurchase" type="primary" v-if="roleCtl.purchase_add">申请付款</el-button>
           </div>
         </div>
         <div class="content">
           <div class="inputDiv">
-            <el-input maxlength="100" class="searchValue" @change="search" v-model="searchValue" placeholder="物流单号"></el-input>
-            <el-select filterable v-model="payStatus" @change="search" placeholder="物流商" clearable>
-              <el-option label="未完成" :value="1"></el-option>
-              <el-option label="已完成" :value="2"></el-option>
+            <el-input maxlength="100" class="searchValue" @change="search" v-model="idKeyword" placeholder="物流单号"></el-input>
+            <el-select filterable v-model="expcompId" @change="search" placeholder="物流商" clearable>
+              <el-option v-for="(item, idx) in expcompList" :key="idx" :label="item.label" :value="item.value"></el-option>
             </el-select>
-            <!-- <el-select filterable v-model="arrivalStatus" @change="search" placeholder="到货状态" clearable>
-              <el-option label="未完成" :value="1"></el-option>
-              <el-option label="已完成" :value="2"></el-option>
-            </el-select> -->
             <el-date-picker @change="search" v-model="createTimeRange" value-format="yyyy-MM-dd" type="daterange" range-separator="" start-placeholder="请选择发货日期"></el-date-picker>
-            <!-- <el-date-picker @change="search" v-model="arriveTimeRange" value-format="yyyy-MM-dd" type="daterange" range-separator="" start-placeholder="到货日期"></el-date-picker> -->
           </div>
           <div class="sel" @click="search">查询</div>
         </div>
@@ -40,7 +33,7 @@
       <section class="tableArea">
         <el-table :data="tableData" @selection-change="handleSelectionChange" border style="width: 100%">
           <el-table-column align="center" type="selection" width="55"></el-table-column>
-          <el-table-column prop="purchaseId" label="采购单号" align="center" min-width="100"></el-table-column>
+          <el-table-column prop="purchaseId" label="物流订单号" align="center" min-width="100"></el-table-column>
           <el-table-column prop="supplierName" label="供应商名称" align="center" min-width="150"></el-table-column>
           <el-table-column label="SKU数量" align="center" min-width="130">
             <template slot-scope="scope">
@@ -91,8 +84,8 @@
         <el-table-column property="feedbackReason" label="反馈详情" min-width="200"></el-table-column>
       </el-table>
     </el-dialog>
-    <!-- 申请关闭采购单弹窗 -->
-    <el-dialog title="申请关闭采购单" :visible.sync="closeOrderVisible" width="35%">
+    <!-- 申请关闭物流订单弹窗 -->
+    <el-dialog title="申请关闭物流订单" :visible.sync="closeOrderVisible" width="35%">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
         <el-form-item label="关闭原因：" prop="reason">
           <el-input maxlength="100" v-model="ruleForm.reason" type="textarea" :rows="4" placeholder="请输入原因"></el-input>
@@ -124,12 +117,11 @@ export default {
         path: ''
       }],
 
-      activeName: "0", //采购单状态Tab
-      searchValue: "", //购单、供应商、sku、产品名称
-      payStatus: null, //付款状态
-      arrivalStatus: null, //到货状态
-      createTimeRange: [], //采购单创建日期
-      arriveTimeRange: [], //到货日期
+      activeName: "0", //物流订单状态Tab
+      idKeyword: "", // 物流单号
+      expcompList: [], // 物流商选择列表
+      expcompId: '', // 物流商id
+      createTimeRange: [], // 发货日期
 
       total: 0, // 总数
       pageNum: 1, // pageNumber
@@ -139,17 +131,18 @@ export default {
       multipleSelection: [], //批量选中的项
 
       statusTotal: {
-        underway: 0, //进行中
-        completed: 0, //已完成
-        closing: 0, //关闭中
-        closed: 0, //已关闭
-        all: 0 //全部
+        underway: 0, // 未完成
+        generate: 0, // 已生成
+        examine: 0, // 审核中
+        payment: 0, // 待付款
+        completed: 0, // 已完成
+        all: 0 // 全部
       },
 
       dialogTableVisible: false, //审核详情弹窗
       reviewDetailData: [],
 
-      closeOrderVisible: false, //申请关闭采购单弹窗
+      closeOrderVisible: false, //申请关闭物流订单弹窗
       closeOrderId: "",
       ruleForm: {
         reason: ""
@@ -162,9 +155,10 @@ export default {
       
     }
   },
-  created() {
-    // this.queryList();
+  async created() {
     this.queryStatusTotal();
+    await this.getExpcomp();
+    this.queryList();
   },
   watch: {
     activeName() {
@@ -178,36 +172,50 @@ export default {
     }
   },
   methods: {
+    async getExpcomp () { // 获取物流商
+      let data = await window.axios.post('/express/queryExpressCompanyInfoList', {
+        pageSize: 9999999,
+        pageNum: 1,
+        snOrNameKeyword: ''
+      });
+      let arr = [];
+      data.data.list.forEach(item => {
+        arr.push({
+          label: item.companyName,
+          value: item.id
+        });
+      });
+      this.expcompList = arr;
+    },
     async queryList () { 
       let params = {
-        searchValue: this.searchValue,
-        purchaseStatus: Number(this.activeName) ? Number(this.activeName) : null,
-        payStatus: this.payStatus,
-        arrivalStatus: this.arrivalStatus,
-        createTimeBegin: this.createTimeRange ? this.createTimeRange[0] : null,
-        createTimeEnd: this.createTimeRange ? this.createTimeRange[1] : null,
-        arriveTimeBegin: this.arriveTimeRange ? this.arriveTimeRange[0] : null,
-        arriveTimeEnd: this.arriveTimeRange ? this.arriveTimeRange[1] : null,
+        idKeyword: this.idKeyword,
+        expcompId: this.expcompId,
+        deliverDateStart: this.createTimeRange ? this.createTimeRange[0] : null,
+        deliverDateEnd: this.createTimeRange ? this.createTimeRange[1] : null,
         pageNum: this.pageNum,
         pageSize: this.pageSize
       }
-      let data = await window.axios.post('/purchase/queryPurchaseInfoByPage', params);
+      let data = await window.axios.get('/express/order/listAll', params);
       if (data.code !== 0) return
       let arr = data.data.list;
       arr.map((item) => {
-        // 采购单状态
-        switch (item.purchaseStatus) {
+        // 物流订单状态
+        switch (item.status) {
+          case 0:
+            item.status = "未生成";
+            break;
           case 1:
-            item.purchaseStatus = "进行中";
+            item.status = "已生成";
             break;
           case 2:
-            item.purchaseStatus = "已完成";
+            item.status = "审核中";
             break;
           case 3:
-            item.purchaseStatus = "关闭中";
+            item.status = "待付款";
             break;
           case 4:
-            item.purchaseStatus = "已关闭";
+            item.status = "已完成";
             break;
         }
 
@@ -216,23 +224,32 @@ export default {
       this.total = data.data.total;
     },
 
-    // 采购单列表-查询汇总数据
+    // 物流订单列表-查询汇总数据
     async queryStatusTotal() {
-      let data = await window.axios.get('/purchase/queryCountGroupByPurchaseStatus');
+      let data = await window.axios.get('/express/order/countStatus');
       if (data.code !== 0) return
       data.data.map((item) => {
-        if (item.purchaseStatus === 1) { //进行中
-          this.statusTotal.underway = item.count;
-        } else if (item.purchaseStatus === 2) { //已完成
-          this.statusTotal.completed = item.count;
-        } else if (item.purchaseStatus === 3) { //关闭中
-          this.statusTotal.closing = item.count;
-        } else if (item.purchaseStatus === 4) { //已关闭
-          this.statusTotal.closed = item.count;
-        } else { //全部
-          this.statusTotal.all = item.count;
+        switch (item.status) {
+          case -1: // 全部
+            this.statusTotal.all = item.count;
+            break;
+          case 0: // 未生成
+            this.statusTotal.underway = item.count;
+            break;
+          case 1: // 已生成
+            this.statusTotal.generate = item.count;
+            break;
+          case 2: // 审核中
+            this.statusTotal.examine = item.count;
+            break;
+          case 3: // 待付款
+            this.statusTotal.payment = item.count;
+            break;
+          case 4: // 已完成
+            this.statusTotal.completed = item.count;
+            break;
         }
-      })
+      });
     },
 
     // 查询按钮
@@ -288,14 +305,14 @@ export default {
       })
     },
 
-    // 显示申请关闭采购单弹窗
+    // 显示申请关闭物流订单弹窗
     showCloseOrderDialog(purchaseId) {
       this.closeOrderId = purchaseId;
       this.ruleForm.reason = "";
       this.closeOrderVisible = true;
     }, 
 
-    // 申请关闭采购单
+    // 申请关闭物流订单
     confirmApplyForClose() {
       let _this = this;
       this.$refs["ruleForm"].validate((valid) => {
@@ -319,7 +336,7 @@ export default {
       });
     },
     close (_id) { // 完结
-      this.$confirm('确定要手动完结当前采购单吗?完结后采购单状态变更为已完成，同时会移除当前采购单在途库存与供应商欠款。', '完结采购单', {
+      this.$confirm('确定要手动完结当前物流订单吗?完结后物流订单状态变更为已完成，同时会移除当前物流订单在途库存与供应商欠款。', '完结物流订单', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -343,7 +360,7 @@ export default {
     // 申请付款
     applyForPay() {
       if (!this.multipleSelection.length) {
-        return this.$message.warning("请选择采购单");
+        return this.$message.warning("请选择物流订单");
       }
       
       let flag = true;
@@ -351,7 +368,7 @@ export default {
       let firstSupplierId = this.multipleSelection[0].supplierId;
       this.multipleSelection.map((item) => {
         if (item.purchaseStatus !== "进行中") {
-          this.$message.warning("只能对进行中的采购单申请付款");
+          this.$message.warning("只能对进行中的物流订单申请付款");
           flag = false;
           return;
         } else if (item.supplierName !== firstSupplierName) {
@@ -378,7 +395,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.purchaseOrder_wrap {
+.logisticsOrder_wrap {
   .order_main {
     box-sizing: border-box;
     padding: 20px 60px;
