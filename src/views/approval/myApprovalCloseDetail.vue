@@ -132,8 +132,6 @@ export default {
             obj.purchaseInfo.purchaseStatus = "已关闭";
             break;
         }
-        // 采购单信息-SKU数量
-        obj.purchaseInfo.skuCount = this.$route.query.skuCount;
         // 审核详情-审核结果
         obj.approveList.map((item) => {
           if (item.approveResult === "agree") {

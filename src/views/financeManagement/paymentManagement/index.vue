@@ -28,8 +28,13 @@
       <section class="tableArea">
         <el-table :data="tableData" border style="width: 100%">
           <el-table-column prop="payId" label="付款单号" align="center" min-width="120"></el-table-column>
-          <el-table-column prop="supplierName" label="供应商名称" align="center" min-width="175"></el-table-column>
+          <el-table-column prop="supplierName" label="收款单位" align="center" min-width="175"></el-table-column>
           <el-table-column prop="payAmount" label="付款单金额（元）" align="center" min-width="150"></el-table-column>
+          <el-table-column label="付款类型" align="center" min-width="150">
+            <template slot-scope="scope">
+              <div>{{['', '采购付款', '物流付款'][scope.row.payType]}}</div>
+            </template>
+          </el-table-column>
           <el-table-column align="center" label="付款单状态" min-width="160">
             <template slot-scope="scope">
               <div class="status">{{scope.row.payStatus}}</div>

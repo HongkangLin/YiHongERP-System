@@ -20,7 +20,7 @@
           border
           style="width: 100%">
           <el-table-column
-            prop="goodsBrandName"
+            prop="companyId"
             label="物流商编号"
             align="center">
           </el-table-column>
@@ -202,6 +202,12 @@ export default {
       height: 35px;
       line-height: 35px;
     }
+  }
+  /deep/.el-switch__label--left {
+    color: #ccc;
+  }
+  /deep/.el-switch__label--right {
+    color: #1ABC9C;
   }
   box-sizing: border-box;
   padding: 20px 50px;
