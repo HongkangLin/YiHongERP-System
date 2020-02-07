@@ -16,7 +16,7 @@
               <div class="content"><span>·&nbsp;电子邮箱：</span>{{email}}</div>
             </div>
             <div slot="reference" class="userInfoClick">
-              <div v-if="avatarFilePath !== 'null' && avatarFilePath !== ''" style="width: 40px;height:40px">
+              <div v-if="avatarFilePath !== 'null' && avatarFilePath !== ''" style="width: 40px;height: 40px;border-radius: 100px;overflow: hidden;">
                 <img :src="avatarFilePath" style="width: 100%; height: 100%" alt="">
               </div>
               <el-avatar v-else icon="el-icon-user-solid"></el-avatar>

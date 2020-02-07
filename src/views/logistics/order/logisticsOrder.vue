@@ -12,7 +12,7 @@
             <el-tab-pane :label="'已生成/'+statusTotal.generate" name="2"></el-tab-pane>
             <el-tab-pane :label="'审核中/'+statusTotal.examine" name="3"></el-tab-pane>
             <el-tab-pane :label="'待付款/'+statusTotal.payment" name="4"></el-tab-pane>
-            <el-tab-pane :label="'已完成/'+statusTotal.completed" name="4"></el-tab-pane>
+            <el-tab-pane :label="'已完成/'+statusTotal.completed" name="5"></el-tab-pane>
           </el-tabs>
           <div class="btns">
             <el-button @click="addPurchase" type="primary" v-if="roleCtl.purchase_add">申请付款</el-button>
@@ -32,25 +32,22 @@
       <!-- 列表区域 -->
       <section class="tableArea">
         <el-table :data="tableData" @selection-change="handleSelectionChange" border style="width: 100%">
-          <el-table-column align="center" type="selection" width="55"></el-table-column>
-          <el-table-column prop="purchaseId" label="物流订单号" align="center" min-width="100"></el-table-column>
-          <el-table-column prop="supplierName" label="供应商名称" align="center" min-width="150"></el-table-column>
-          <el-table-column label="SKU数量" align="center" min-width="130">
-            <template slot-scope="scope">
-              <el-button type="text" size="small" @click="toDetailPage(scope.row.purchaseId)">{{scope.row.skuCount}}</el-button>
-            </template>
-          </el-table-column>
-          <el-table-column prop="goodsAmount" label="货款总金额（元）" align="center" min-width="140"></el-table-column>
-          <el-table-column prop="applyingAmount" label="申请中金额（元）" align="center" min-width="140"></el-table-column>
-          <el-table-column prop="paidAmount" label="已支付货款（元）" align="center" min-width="120"></el-table-column>
+          <el-table-column align="center" type="selection" width="55" fixed></el-table-column>
+          <el-table-column prop="id" label="物流单号" align="center" min-width="100"></el-table-column>
+          <el-table-column prop="expcompName" label="物流商名称" align="center" min-width="150"></el-table-column>
+          <el-table-column prop="totalQuantity" label="数量（件）" align="center" min-width="150"></el-table-column>
+          <el-table-column prop="deliverMethod" label="运输方式" align="center" min-width="150"></el-table-column>
+          <el-table-column prop="totalCostAmount" label="物流总费用（元）" align="center" min-width="140"></el-table-column>
+          <el-table-column prop="applyingAmount" label="申请中费用（元）" align="center" min-width="140"></el-table-column>
+          <el-table-column prop="paidAmount" label="已支付（元）" align="center" min-width="120"></el-table-column>
           <el-table-column align="center" label="状态" width="80">
             <template slot-scope="scope">
-              <div class="status">{{scope.row.purchaseStatus}}</div>
-              <el-button type="text" size="small" v-if="scope.row.purchaseStatus==='关闭中' || scope.row.purchaseStatus==='已关闭'" @click="viewReviewDetail(scope.row.purchaseId)">审核详情</el-button>
+              <div class="status">{{scope.row.status}}</div>
+              <el-button type="text" size="small" v-if="scope.row.status==='关闭中' || scope.row.status==='已关闭'" @click="viewReviewDetail(scope.row.purchaseId)">审核详情</el-button>
             </template>
           </el-table-column>
-          <el-table-column prop="createTime" label="创建日期" align="center" min-width="110"></el-table-column>
-          <el-table-column prop="purchaseUserName" label="采购员" align="center" min-width="85"></el-table-column>
+          <el-table-column prop="deliverDate" label="发货日期" align="center" min-width="110"></el-table-column>
+          <el-table-column prop="applier" label="申请人" align="center" min-width="85"></el-table-column>
           <el-table-column label="备注" align="center" min-width="150">
             <template slot-scope="scope">
               <div>{{scope.row.bak.substring(0, 20)}}</div>
@@ -187,16 +184,8 @@ export default {
       });
       this.expcompList = arr;
     },
-    async queryList () { 
-      let params = {
-        idKeyword: this.idKeyword,
-        expcompId: this.expcompId,
-        deliverDateStart: this.createTimeRange ? this.createTimeRange[0] : null,
-        deliverDateEnd: this.createTimeRange ? this.createTimeRange[1] : null,
-        pageNum: this.pageNum,
-        pageSize: this.pageSize
-      }
-      let data = await window.axios.get('/express/order/listAll', params);
+    async queryList () { // 获取列表
+      let data = await window.axios.get(`/express/order/listAll?idKeyword=${this.idKeyword}&expcompId=${this.expcompId}&deliverDateStart=${this.createTimeRange[0] ? this.createTimeRange[0] : ''}&deliverDateEnd=${this.createTimeRange[0] ? this.createTimeRange[1] : ''}&pageNum=${this.pageNum}&pageSize=${this.pageSize}`);
       if (data.code !== 0) return
       let arr = data.data.list;
       arr.map((item) => {
