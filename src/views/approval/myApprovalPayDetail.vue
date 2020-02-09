@@ -75,10 +75,10 @@ export default {
     return {
       crumbList: [{ // 面包屑
         name: '审批',
-        path: '/F0301/F030101'
+        path: '/F0801/F080101'
       }, {
         name: '审批中心',
-        path: '/F0301/F030101'
+        path: '/F0801/F080101'
       }, {
         name: '采购单付款申请',
         path: ''

@@ -15,7 +15,7 @@
             <el-tab-pane :label="'已完成/'+statusTotal.completed" name="5"></el-tab-pane>
           </el-tabs>
           <div class="btns">
-            <el-button @click="addPurchase" type="primary" v-if="roleCtl.purchase_add">申请付款</el-button>
+            <el-button @click="applyForPay" type="primary">申请付款</el-button>
           </div>
         </div>
         <div class="content">
@@ -32,10 +32,14 @@
       <!-- 列表区域 -->
       <section class="tableArea">
         <el-table :data="tableData" @selection-change="handleSelectionChange" border style="width: 100%">
-          <el-table-column align="center" type="selection" width="55" fixed></el-table-column>
+          <el-table-column align="center" type="selection" width="55" fixed :selectable="row => {return row.status === '未生成' || row.status === '已生成'}"></el-table-column>
           <el-table-column prop="id" label="物流单号" align="center" min-width="100"></el-table-column>
-          <el-table-column prop="expcompName" label="物流商名称" align="center" min-width="150"></el-table-column>
-          <el-table-column prop="totalQuantity" label="数量（件）" align="center" min-width="150"></el-table-column>
+          <el-table-column prop="expcompName" label="物流商名称" align="center" min-width="150">
+            <template slot-scope="scope">
+              {{scope.row.expcompName || '--'}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="totalQuantity" label="数量（件）" align="center" min-width="100"></el-table-column>
           <el-table-column prop="deliverMethod" label="运输方式" align="center" min-width="150"></el-table-column>
           <el-table-column prop="totalCostAmount" label="物流总费用（元）" align="center" min-width="140"></el-table-column>
           <el-table-column prop="applyingAmount" label="申请中费用（元）" align="center" min-width="140"></el-table-column>
@@ -43,27 +47,23 @@
           <el-table-column align="center" label="状态" width="80">
             <template slot-scope="scope">
               <div class="status">{{scope.row.status}}</div>
-              <el-button type="text" size="small" v-if="scope.row.status==='关闭中' || scope.row.status==='已关闭'" @click="viewReviewDetail(scope.row.purchaseId)">审核详情</el-button>
+              <el-button type="text" size="small" v-if="scope.row.status==='审核中'" @click="viewReviewDetail(scope.row.purchaseId)">审核详情</el-button>
             </template>
           </el-table-column>
           <el-table-column prop="deliverDate" label="发货日期" align="center" min-width="110"></el-table-column>
           <el-table-column prop="applier" label="申请人" align="center" min-width="85"></el-table-column>
           <el-table-column label="备注" align="center" min-width="150">
             <template slot-scope="scope">
-              <div>{{scope.row.bak.substring(0, 20)}}</div>
+              <div>{{scope.row.bak ? scope.row.bak.substring(0, 20) : ''}}</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" fixed="right" label="操作" width="150" v-if="roleCtl.purchase_query || roleCtl.purchase_arrive || roleCtl.purchase_close">
+          <el-table-column align="center" fixed="right" label="操作" width="150">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="toDetailPage(scope.row.purchaseId)" v-if="roleCtl.purchase_query">详情</el-button>
-              <el-divider v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_query && roleCtl.purchase_arrive" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_arrive" type="text" size="small" @click="toArrivePage(scope.row.purchaseId)">到货</el-button>
-              <el-divider v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_close" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_close" type="text" size="small" @click="showCloseOrderDialog(scope.row.purchaseId)">关闭</el-button>
-              <el-divider v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_finish" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_finish" type="text" size="small" @click="close(scope.row.purchaseId)">完结</el-button>
-              <el-divider v-if="scope.row.approveShowFlag" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.approveShowFlag" type="text" size="small" @click="toApprovalPage(scope.row.purchaseId, scope.row.skuCount)">审批</el-button>
+              <a class="link" target="_black" :href="`/#/F0701/logisticsOrderDetail?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status === '未生成' || scope.row.status === '已生成'">编辑</a>
+              <el-divider v-if="scope.row.status === '已生成'" direction="vertical"></el-divider>
+              <a class="link" target="_black" :href="`/#/F0701/logisticsOrderDetail?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status !== '未生成'">查看</a>
+              <!-- <el-divider v-if="scope.row.status === '审核中'" direction="vertical"></el-divider>
+              <el-button type="text" size="small" v-if="scope.row.status === '审核中'" @click="showCloseOrderDialog(scope.row.id)">撤回</el-button> -->
             </template>
           </el-table-column>
         </el-table>
@@ -81,17 +81,12 @@
         <el-table-column property="feedbackReason" label="反馈详情" min-width="200"></el-table-column>
       </el-table>
     </el-dialog>
-    <!-- 申请关闭物流订单弹窗 -->
-    <el-dialog title="申请关闭物流订单" :visible.sync="closeOrderVisible" width="35%">
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
-        <el-form-item label="关闭原因：" prop="reason">
-          <el-input maxlength="100" v-model="ruleForm.reason" type="textarea" :rows="4" placeholder="请输入原因"></el-input>
-        </el-form-item>
-      </el-form>
-      <div class="hint">发起申请后您将无权操作此订单，解除异常后才能操作。请联系主管尽快处理！</div>
+    <!-- 撤回 -->
+    <el-dialog title="撤回确认" :visible.sync="closeOrderVisible" width="35%">
+      <div class="hint">确定要撤回当前付款申请吗？撤回后物流订单状态将变更为已生成，可重新编辑并申请付款</div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="closeOrderVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmApplyForClose">发起申请</el-button>
+        <el-button type="primary" @click="confirmApplyForClose">确 定</el-button>
       </div>
     </el-dialog>
 	</div>
@@ -105,15 +100,14 @@ export default {
   },
   data() {
     return {
-      roleCtl: this.$store.state.role.roleCtl,
       crumbList: [{ // 面包屑
         name: '物流',
-        path: '/F0301/F030101'
+        path: '/F0701/F070101'
       }, {
         name: '物流订单',
         path: ''
       }],
-
+      way: ['海运', '空运', '快递', '快船', '铁路'],
       activeName: "0", //物流订单状态Tab
       idKeyword: "", // 物流单号
       expcompList: [], // 物流商选择列表
@@ -140,15 +134,7 @@ export default {
       reviewDetailData: [],
 
       closeOrderVisible: false, //申请关闭物流订单弹窗
-      closeOrderId: "",
-      ruleForm: {
-        reason: ""
-      },
-      rules: {
-        reason: [
-          { required: true, message: '请输入关闭原因', trigger: 'blur' }
-        ]
-      }
+      closeOrderId: ""
       
     }
   },
@@ -159,11 +145,9 @@ export default {
   },
   watch: {
     activeName() {
-      this.searchValue = ""; 
-      this.payStatus = null; 
-      this.arrivalStatus = null; 
+      this.idKeyword = ''; 
+      this.expcompId = ''; 
       this.createTimeRange = []; 
-      this.arriveTimeRange = [];
       this.pageNum = 1;
       this.queryList();
     }
@@ -185,7 +169,7 @@ export default {
       this.expcompList = arr;
     },
     async queryList () { // 获取列表
-      let data = await window.axios.get(`/express/order/listAll?idKeyword=${this.idKeyword}&expcompId=${this.expcompId}&deliverDateStart=${this.createTimeRange[0] ? this.createTimeRange[0] : ''}&deliverDateEnd=${this.createTimeRange[0] ? this.createTimeRange[1] : ''}&pageNum=${this.pageNum}&pageSize=${this.pageSize}`);
+      let data = await window.axios.get(`/express/order/listAll?status=${this.activeName === '0' ? '' : parseInt(this.activeName) - 1}&idKeyword=${this.idKeyword}&expcompId=${this.expcompId}&deliverDateStart=${this.createTimeRange && this.createTimeRange[0] ? this.createTimeRange[0] : ''}&deliverDateEnd=${this.createTimeRange && this.createTimeRange[0] ? this.createTimeRange[1] : ''}&pageNum=${this.pageNum}&pageSize=${this.pageSize}`);
       if (data.code !== 0) return
       let arr = data.data.list;
       arr.map((item) => {
@@ -207,8 +191,9 @@ export default {
             item.status = "已完成";
             break;
         }
-
-      })
+        // 运输方式
+        item.deliverMethod = this.way[item.deliverMethod];
+      });
       this.tableData = arr;
       this.total = data.data.total;
     },
@@ -264,16 +249,6 @@ export default {
       this.multipleSelection = val;
     },
 
-    // 查看详情
-    toDetailPage(purchaseId) {
-      window.open(`/#/F0301/purchaseOrderDetail?purchaseId=${purchaseId}`);
-    },
-
-    // 到货
-    toArrivePage(purchaseId) {
-      window.open(`/#/F0301/arrivePage?purchaseId=${purchaseId}`);
-    },
-
     // 查看审核详情
     viewReviewDetail(purchaseId) {
       this.reviewDetailData = [];
@@ -294,19 +269,17 @@ export default {
       })
     },
 
-    // 显示申请关闭物流订单弹窗
+    // 显示撤回订单弹窗
     showCloseOrderDialog(purchaseId) {
       this.closeOrderId = purchaseId;
-      this.ruleForm.reason = "";
       this.closeOrderVisible = true;
     }, 
 
-    // 申请关闭物流订单
+    // 撤回订单
     confirmApplyForClose() {
       let _this = this;
       this.$refs["ruleForm"].validate((valid) => {
         if (valid) {
-          console.log('submit!');
           let params = {
             purchaseId: _this.closeOrderId,
             reason: _this.ruleForm.reason
@@ -324,44 +297,22 @@ export default {
         }
       });
     },
-    close (_id) { // 完结
-      this.$confirm('确定要手动完结当前物流订单吗?完结后物流订单状态变更为已完成，同时会移除当前物流订单在途库存与供应商欠款。', '完结物流订单', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(async () => {
-        let data = await window.axios.get(`/purchase/finishPurchase/${_id}`);
-        if (data.code === 0) {
-          this.$message({
-            message: data.message,
-            type: 'success'
-          });
-          this.queryList();
-        }
-      });
-    },
-    
-    // 审批
-    toApprovalPage(purchaseId, skuCount) {
-      window.open(`/#/F0301/approvalPage?purchaseId=${purchaseId}&skuCount=${skuCount}`);
-    },
 
     // 申请付款
     applyForPay() {
       if (!this.multipleSelection.length) {
         return this.$message.warning("请选择物流订单");
       }
-      
       let flag = true;
-      let firstSupplierName = this.multipleSelection[0].supplierName;
-      let firstSupplierId = this.multipleSelection[0].supplierId;
+      let firstExpcompName = this.multipleSelection[0].expcompName;
+      let firstExpcompId = this.multipleSelection[0].expcompId;
       this.multipleSelection.map((item) => {
-        if (item.purchaseStatus !== "进行中") {
-          this.$message.warning("只能对进行中的物流订单申请付款");
+        if (item.status !== "未生成" && item.status !== "已生成") {
+          this.$message.warning("只能对未生成或已生成的物流订单申请付款");
           flag = false;
           return;
-        } else if (item.supplierName !== firstSupplierName) {
-          this.$message.warning("请选择同一家供应商");
+        } else if (item.expcompName !== firstExpcompName) {
+          this.$message.warning("请选择同一家物流商");
           flag = false;
           return;
         }
@@ -369,22 +320,22 @@ export default {
       if (flag) {
         let arr = [];
         this.multipleSelection.map((item) => {
-          arr.push(item.purchaseId);
+          arr.push(item.id);
         })
         let ids = encodeURI(JSON.stringify(arr));
-        let name = encodeURI(firstSupplierName);
-        window.open(`/#/F0301/applyForPay?purchaseIds=${ids}&supplierName=${name}&supplierId=${firstSupplierId}`);
+        let name = encodeURI(firstExpcompName);
+        window.open(`/#/F0701/logisticsApplyForPay?ids=${ids}&expcompName=${name}&expcompId=${firstExpcompId}`);
       }
-    },
-
-    addPurchase () {
-      this.$router.push('/addPurchase');
     }
   },
 };
 </script>
 <style lang="less" scoped>
 .logisticsOrder_wrap {
+  .link {
+    color:#1ABC9C;
+    cursor: pointer;
+  }
   .order_main {
     box-sizing: border-box;
     padding: 20px 60px;

@@ -31,7 +31,9 @@
             <el-table-column prop="applyNo" label="审批编号" align="center" min-width="100"></el-table-column>
             <el-table-column prop="bussinessNo" label="业务单号" align="center" min-width="150"></el-table-column>
             <el-table-column prop="creatorName" label="发起人" align="center" min-width="140"></el-table-column>
-            <el-table-column prop="applyType" label="审批名称" align="center" min-width="140"></el-table-column>
+            <el-table-column label="审批名称" align="center" min-width="140">
+              <template slot-scope="scope">{{toZW[scope.row.applyType]}}</template>
+            </el-table-column>
             <el-table-column align="center" label="审批状态" width="80">
               <template slot-scope="scope">
                 <div class="status">{{scope.row.applyStatus}}</div>
@@ -75,12 +77,16 @@ export default {
       roleCtl: this.$store.state.role.roleCtl,
       crumbList: [{ // 面包屑
         name: '审批',
-        path: '/F0301/F030101'
+        path: '/F0801/F080101'
       }, {
         name: '我的审批',
         path: ''
       }],
-
+      toZW: {
+        'exporder.pay': '物流订单付款申请',
+        'purchase.pay': '采购单付款申请',
+        'purchase.close': '采购单关闭申请'
+      },
       activeName: "0", // 状态Tab
       searchValue: "", // 审批编号/付款单号/采购单号
       applyStatus: null, // 审批状态
@@ -180,11 +186,14 @@ export default {
     // 查看详情
     toDetailPage(id, type, bussinessNo, doing) {
       switch (type) {
-        case 'purchase.pay':
+        case 'purchase.pay': // 采购单付款申请
           this.$router.push(`/F0801/F080101/myApprovalPayDetail?id=${id}&bussinessNo=${bussinessNo}&doing=${doing}`);
           break;
-        case 'purchase.close':
+        case 'purchase.close': // 采购单关闭申请
           this.$router.push(`/F0801/F080101/myApprovalCloseDetail?id=${id}&bussinessNo=${bussinessNo}&doing=${doing}`);
+          break;
+        case 'exporder.pay': // 物流订单付款申请
+          this.$router.push(`/F0801/F080101/logisticsPayDetail?id=${id}&bussinessNo=${bussinessNo}&doing=${doing}`);
           break;
       }
     },
