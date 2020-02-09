@@ -204,6 +204,10 @@ const routes = [{
 		name: 'logisticsOrder',
 		component: () => import(/* webpackChunkName: "logisticsOrder" */ '../views/logistics/order/logisticsOrder.vue'),
 	}, {
+		path: '/F0701/editLogisticsOrder', // 物流 > 物流管理 > 物流订单 > 编辑
+		name: 'editLogisticsOrder',
+		component: () => import(/* webpackChunkName: "editLogisticsOrder" */ '../views/logistics/order/editOrder.vue'),
+	}, {
 		path: '/F0701/logisticsOrderDetail', // 物流 > 物流管理 > 物流订单 > 详情
 		name: 'logisticsOrderDetail',
 		component: () => import(/* webpackChunkName: "logisticsOrderDetail" */ '../views/logistics/order/logisticsOrderDetail.vue'),

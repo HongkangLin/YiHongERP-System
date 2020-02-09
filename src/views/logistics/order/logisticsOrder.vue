@@ -47,7 +47,7 @@
           <el-table-column align="center" label="状态" width="80">
             <template slot-scope="scope">
               <div class="status">{{scope.row.status}}</div>
-              <el-button type="text" size="small" v-if="scope.row.status==='审核中'" @click="viewReviewDetail(scope.row.purchaseId)">审核详情</el-button>
+              <el-button type="text" size="small" v-if="scope.row.status==='审核中'" @click="viewReviewDetail(scope.row.id)">审核详情</el-button>
             </template>
           </el-table-column>
           <el-table-column prop="deliverDate" label="发货日期" align="center" min-width="110"></el-table-column>
@@ -59,7 +59,7 @@
           </el-table-column>
           <el-table-column align="center" fixed="right" label="操作" width="150">
             <template slot-scope="scope">
-              <a class="link" target="_black" :href="`/#/F0701/logisticsOrderDetail?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status === '未生成' || scope.row.status === '已生成'">编辑</a>
+              <a class="link" target="_black" :href="`/#/F0701/editLogisticsOrder?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status === '未生成' || scope.row.status === '已生成'">编辑</a>
               <el-divider v-if="scope.row.status === '已生成'" direction="vertical"></el-divider>
               <a class="link" target="_black" :href="`/#/F0701/logisticsOrderDetail?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status !== '未生成'">查看</a>
               <!-- <el-divider v-if="scope.row.status === '审核中'" direction="vertical"></el-divider>
@@ -253,7 +253,7 @@ export default {
     viewReviewDetail(purchaseId) {
       this.reviewDetailData = [];
       this.dialogTableVisible = true;
-      window.axios.get(`/approve/queryApproveDetail/${purchaseId}`).then((data) => {
+      window.axios.get(`/approve/queryBussinessApproveDetail/${purchaseId}`).then((data) => {
         if (data.code !== 0) return
         data.data.map((item) => {
           if (item.approveResult === "agree") {
@@ -309,6 +309,10 @@ export default {
       this.multipleSelection.map((item) => {
         if (item.status !== "未生成" && item.status !== "已生成") {
           this.$message.warning("只能对未生成或已生成的物流订单申请付款");
+          flag = false;
+          return;
+        } else if (item.expcompName === '' || item.expcompName === null) {
+          this.$message.warning("物流商不能为空");
           flag = false;
           return;
         } else if (item.expcompName !== firstExpcompName) {

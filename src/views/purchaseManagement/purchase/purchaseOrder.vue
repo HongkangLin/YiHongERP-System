@@ -271,7 +271,7 @@ export default {
     viewReviewDetail(purchaseId) {
       this.reviewDetailData = [];
       this.dialogTableVisible = true;
-      window.axios.get(`/approve/queryApproveDetail/${purchaseId}`).then((data) => {
+      window.axios.get(`/approve/queryBussinessApproveDetail/${purchaseId}`).then((data) => {
         if (data.code !== 0) return
         data.data.map((item) => {
           if (item.approveResult === "agree") {
