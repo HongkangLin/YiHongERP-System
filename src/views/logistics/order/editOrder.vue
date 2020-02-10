@@ -394,7 +394,7 @@ export default {
               subzoneId = this.simpList[i].id;
             }
           }
-          let {id, realWeight, transCostType, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt} = {...this.form};
+          let {id, realWeight, transCostType, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt, bak} = {...this.form};
           let param = {
             id,
             realWeight,
@@ -406,7 +406,8 @@ export default {
             exchRate,
             customsClearAmnt,
             subzoneId,
-            transCostType
+            transCostType,
+            bak
           };
           window.axios.post('/express/order/update', param).then(data => {
             this.loading = false;
