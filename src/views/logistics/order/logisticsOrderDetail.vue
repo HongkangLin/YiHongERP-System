@@ -23,7 +23,7 @@
           <el-col :span="4"><div class="td label">关联出库单号</div></el-col>
           <el-col :span="8"><div class="td">{{info.stockoutOrderId}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">物流商名称</div></el-col>
-          <el-col :span="8"><div class="td">{{info.expcompId}}？&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.expcompName}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">数量（件）</div></el-col>
@@ -33,13 +33,13 @@
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">运输方式</div></el-col>
-          <el-col :span="8"><div class="td">{{info.deliverMethod}}?&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{['海运', '空运', '快递', '快船', '铁路'][info.deliverMethod]}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">出库国家</div></el-col>
-          <el-col :span="8"><div class="td">{{info.outCountryId}}?&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{['美国', '英国', '德国', '日本', '法国'][info.outCountryId]}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">分区地址</div></el-col>
-          <el-col :span="8"><div class="td">?&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.subzoneWhName}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">&nbsp;</div></el-col>
           <el-col :span="8"><div class="td">&nbsp;</div></el-col>
         </el-row>
@@ -48,9 +48,9 @@
       <div class="info">
         <el-row>
           <el-col :span="4"><div class="td label">预估计费重（g）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.realWeight}}?</div></el-col>
+          <el-col :span="8"><div class="td">{{info.weight}}</div></el-col>
           <el-col :span="4"><div class="td label">预估体积（m³）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.realVolume}}?&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.volume}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">实际计费重</div></el-col>
@@ -65,7 +65,7 @@
           <el-col :span="4"><div class="td label">运费单价（元/g）</div></el-col>
           <el-col :span="8"><div class="td">{{info.transCostUnit}}</div></el-col>
           <el-col :span="4"><div class="td label">运费（元）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.transCostAmount}}?&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{(info.realWeight * info.transCostUnit).toFixed(2)}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">入仓费（元）</div></el-col>
@@ -75,19 +75,19 @@
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">关税（美元）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.customsDutiesAmnt}}?&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.customsDutiesAmnt}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">汇率</div></el-col>
           <el-col :span="8"><div class="td">{{info.exchRate}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">关税（元）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.customsDutiesAmnt}}?&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{(info.customsDutiesAmnt * info.exchRate).toFixed(2)}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">总运费（元）</div></el-col>
           <el-col :span="8"><div class="td">{{info.transCostAmount}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">费用合计（元）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.totalCostAmount}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{(parseFloat((info.customsDutiesAmnt * info.exchRate).toFixed(2)) + info.transCostAmount).toFixed(2)}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">备注</div></el-col>
           <el-col :span="8"><div class="td">{{info.bak}}&nbsp;</div></el-col>
         </el-row>
@@ -145,9 +145,9 @@
           align="center">
         </el-table-column>
         <el-table-column
-          prop="remainArrivalAmount"
           label="可用库存"
           align="center">
+          <template>--</template>
         </el-table-column>
         <el-table-column
           label="本次出库"
@@ -157,12 +157,16 @@
         <el-table-column
           label="总体积"
           align="center">
-          --
+          <template slot-scope="scope">
+            {{((scope.row.cartonLength * scope.row.cartonWidth * scope.row.cartonHeight)/1000000).toFixed(2)}}
+          </template>
         </el-table-column>
         <el-table-column
           label="总重量(g)"
           align="center">
-          --
+          <template slot-scope="scope">
+            {{scope.row.fullLoadWeight * scope.row.quantity}}
+          </template>
         </el-table-column>
       </el-table>
       <div class="spanDiv"></div>
@@ -230,6 +234,7 @@ export default {
       typeList: ['', '审核中', '驳回', '待付款', '付款完成', '取消'],
       active: 0,
       id: '',
+      compList: [],
       info: {},
       payList: [],
       payTotal: 0,
@@ -239,12 +244,37 @@ export default {
   },
   async mounted () {
     this.id = this.$route.query.id;
+    await this.getExpcomp();
     this.getInfo(); // 获取详情
     this.getPay(); // 获取付款记录
   },
   methods: {
+    async getExpcomp () { // 获取物流商
+      let data = await window.axios.post('/express/queryExpressCompanyInfoList', {
+        pageSize: 999999,
+        pageNum: 1,
+        snOrNameKeyword: ''
+      });
+      this.compList = data.data.list;
+    },
     async getInfo () { // 获取信息
       let data = await window.axios.get(`/express/order/detail/${this.id}`);
+      for (let i = 0; i < this.compList.length; i++) {
+        if (this.compList[i].id === data.data.expcompId) {
+          data.data.expcompName = this.compList[i].companyName;
+        }
+      }
+      let weight = 0, volume = 0;
+      data.data.goods.forEach(item => {
+        if (item.cartonLength && item.cartonWidth && item.cartonHeight) {
+          weight += parseFloat(((item.cartonLength * item.cartonWidth * item.cartonHeight)/1000000).toFixed(3));
+        }
+        if (item.fullLoadWeight && item.quantity) {
+          volume += item.fullLoadWeight * item.quantity;
+        }
+      });
+      data.data.weight = weight;
+      data.data.volume = volume;
       this.info = data.data;
     },
     getSummaries (param) { // 计算汇总
@@ -255,29 +285,19 @@ export default {
           sums[index] = '汇总';
           return;
         }
-        if (index === 1) {
+        if (index === 2) {
           sums[index] = '共' + data.length + '类SKU';
           return;
         }
-        if (index === 2 || index === 3) {
+        if (index === 1 || index === 3 || index === 4) {
           sums[index] = '';
-          return;
-        }
-        if (index === 4) {
-          let sum = 0;
-          for (let i = 0, len = data.length; i < len; i++) {
-            if (data[i].purchaseAmount) {
-              sum += parseInt(data[i].purchaseAmount);
-            }
-          }
-          sums[index] = sum || 0;
           return;
         }
         if (index === 5) {
           let sum = 0;
           for (let i = 0, len = data.length; i < len; i++) {
-            if (data[i].goodsAmount) {
-              sum += data[i].goodsAmount;
+            if (data[i].fullLoadWeight) {
+              sum += data[i].fullLoadWeight;
             }
           }
           sums[index] = sum || 0;
@@ -286,15 +306,54 @@ export default {
         if (index === 6) {
           let sum = 0;
           for (let i = 0, len = data.length; i < len; i++) {
-            if (data[i].remainArrivalAmount) {
-              sum += data[i].remainArrivalAmount;
+            if (data[i].fullLoadQuantity) {
+              sum += data[i].fullLoadQuantity;
             }
           }
           sums[index] = sum || 0;
           return;
         }
         if (index === 7) {
-          sums[index] = this.info.unpaidAmount;
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].quantity) {
+              sum += data[i].quantity;
+            }
+          }
+          sums[index] = sum || 0;
+          return;
+        }
+        if (index === 9) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].count) {
+              sum += data[i].count;
+            }
+          }
+          sums[index] = sum || 0;
+          return;
+        }
+        if (index === 10) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].cartonLength && data[i].cartonWidth && data[i].cartonHeight) {
+              sum += parseFloat(((data[i].cartonLength * data[i].cartonWidth * data[i].cartonHeight)/1000000).toFixed(2));
+            }
+          }
+          this.weight = sum || 0;
+          sums[index] = sum || 0;
+          return;
+        }
+        if (index === 11) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].fullLoadWeight && data[i].quantity) {
+              sum += data[i].fullLoadWeight * data[i].quantity;
+            }
+          }
+          this.volume = sum || 0,
+          sums[index] = sum || 0;
+          return;
         }
       });
 

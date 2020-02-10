@@ -14,19 +14,19 @@
             产品信息
             <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
-          <div class="lable" :style="'top:' + (form.goods.length * 104 + 650) + 'px'">
+          <div class="lable" :style="'top:' + (form.goods && (form.goods.length * 104 + 650)) + 'px'">
             <i class="el-icon-collection-tag"></i>
             订单规格
             <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
-          <div class="lable" :style="'top:' + (form.goods.length * 104 + 840) + 'px'">
+          <div class="lable" :style="'top:' + (form.goods && (form.goods.length * 104 + 840)) + 'px'">
             <i class="el-icon-collection-tag"></i>
             费用信息
             <img class="hexagon" src="../../../assets/image/svg/hexagon.svg" alt="">
           </div>
         </div>
         <div class="right">
-          <el-form ref="form" class="form" :model="form" :rules="rules" label-width="170px">
+          <el-form ref="info" class="form" :model="form" :rules="rules" label-width="170px">
             <el-form-item label="订单状态：">
               <el-input disabled :value="['未生成', '已生成', '审核中', '待付款', '已完成'][form.status]"></el-input>
             </el-form-item>
@@ -59,12 +59,14 @@
               <el-input disabled :value="['美国', '英国', '德国', '日本', '法国'][form.outCountryId]"></el-input>
             </el-form-item>
             <el-form-item label="分区地址：" prop="subzoneWhName">
-              <el-cascader
-                size="large"
-                placeholder="请选择仓库分区地址"
-                :options="options"
-                v-model="form.subzoneWhName">
-              </el-cascader>
+              <el-select filterable v-model="form.subzoneWhName" placeholder="请选择仓库分区地址">
+                <el-option
+                  v-for="item in simpList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name">
+                </el-option>
+              </el-select>
             </el-form-item>
             <div class="spanDiv"></div>
             <el-table
@@ -128,7 +130,7 @@
               <el-table-column
                 label="总体积(m³)"
                 align="center">
-                <template slot-scope="scope">{{scope.row.cartonLength * scope.row.cartonWidth * scope.row.cartonHeight}}</template>
+                <template slot-scope="scope">{{((scope.row.cartonLength * scope.row.cartonWidth * scope.row.cartonHeight)/1000000).toFixed(2)}}</template>
               </el-table-column>
               <el-table-column
                 label="总总量(kg)"
@@ -138,23 +140,25 @@
             </el-table>
             <div class="spanDiv"></div>
             <el-form-item label="预估计费重（g）：">
-              <el-input disabled></el-input>
+              <el-input disabled :value="weight"></el-input>
             </el-form-item>
             <el-form-item label="预估体积（m³）：">
-              <el-input disabled></el-input>
+              <el-input disabled :value="volume"></el-input>
             </el-form-item>
             <el-form-item label="实际计费重（g）：" prop="realWeight">
               <el-input v-model="form.realWeight" maxlength="100" placeholder="请输入实际计费重"></el-input>
+              <div><el-radio v-model="form.transCostType" label="1">设为计费标准</el-radio></div>
             </el-form-item>
             <el-form-item label="实际体积（m³）：" prop="realVolume">
               <el-input v-model="form.realVolume" maxlength="100" placeholder="请输入实际体积"></el-input>
+              <div><el-radio v-model="form.transCostType" label="2">设为计费标准</el-radio></div>
             </el-form-item>
             <div class="spanDiv"></div>
             <el-form-item label="运费单价（元/kg）：" prop="transCostUnit">
               <el-input v-model="form.transCostUnit" maxlength="100" placeholder="请输入运费单价"></el-input>
             </el-form-item>
             <el-form-item label="运费（元）：">
-              <el-input disabled></el-input>
+              <el-input disabled :value="trans"></el-input>
             </el-form-item>
             <el-form-item label="入仓费（元）：" prop="inwareCostAmount">
               <el-input v-model="form.inwareCostAmount" maxlength="100" placeholder="请输入入仓费，可以为0"></el-input>
@@ -169,13 +173,13 @@
               <el-input v-model="form.exchRate" maxlength="100" placeholder="请输入人民币与关税货币的汇率"></el-input>
             </el-form-item>
             <el-form-item label="关税（元）：">
-              <el-input disabled></el-input>
+              <el-input disabled :value="rate"></el-input>
             </el-form-item>
             <el-form-item label="总运费（元）：">
-              <el-input disabled v-model="transCostAmount"></el-input>
+              <el-input disabled v-model="form.transCostAmount"></el-input>
             </el-form-item>
             <el-form-item label="费用合计（元）：">
-              <el-input disabled v-model="totalCostAmount"></el-input>
+              <el-input disabled :value="total"></el-input>
             </el-form-item>
             <el-form-item label="备注：">
               <el-input type="textarea" maxlength="20" :rows="7" v-model="form.bak" placeholder="请输入备注，20字以内"></el-input>
@@ -195,6 +199,13 @@
 import { provinceAndCityData } from 'element-china-area-data';
 export default {
   data () {
+    // var validateNumber = (rule, value, callback) => {
+    //   if (!(/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/.test(value))) {
+    //     callback(new Error('最多保留输入两位小数'));
+    //   } else {
+    //     callback();
+    //   }
+    // };
     return {
       loading: false,
       crumbList: [{ // 面包屑
@@ -207,8 +218,11 @@ export default {
         name: '编辑',
         path: ''
       }],
+      weight: 0,
+      volume: 0,
       compList: [],
       options: provinceAndCityData, // 省市区选择
+      simpList: [],
       form: { // form表单
       },
       rules: {
@@ -219,34 +233,62 @@ export default {
           {required: true, message: '请选择分区地址', trigger: 'change'}
         ],
         realWeight: [
-          {required: true, message: '请输入实际计费重', trigger: 'change'}
+          {required: true, message: '请输入实际计费重', trigger: 'change'},
+          // { validator: validateNumber, trigger: 'blur' }
         ],
         realVolume: [
-          {required: true, message: '请输入实际计费体积', trigger: 'change'}
+          {required: true, message: '请输入实际计费体积', trigger: 'change'},
+          // { validator: validateNumber, trigger: 'blur' }
         ],
         transCostUnit: [
-          {required: true, message: '请输入运费单价', trigger: 'change'}
+          {required: true, message: '请输入运费单价', trigger: 'change'},
+          // { validator: validateNumber, trigger: 'blur' }
         ],
         inwareCostAmount: [
-          {required: true, message: '请输入入仓费', trigger: 'change'}
+          {required: true, message: '请输入入仓费', trigger: 'change'},
+          // { validator: validateNumber, trigger: 'blur' }
         ],
         customsClearAmnt: [
-          {required: true, message: '请输入报关费', trigger: 'change'}
+          {required: true, message: '请输入报关费', trigger: 'change'},
+          // { validator: validateNumber, trigger: 'blur' }
         ],
         customsDutiesAmnt: [
-          {required: true, message: '请输入关税', trigger: 'change'}
+          {required: true, message: '请输入关税', trigger: 'change'},
+          // { validator: validateNumber, trigger: 'blur' }
         ],
         exchRate: [
-          {required: true, message: '请输入汇率', trigger: 'change'}
+          {required: true, message: '请输入汇率', trigger: 'change'},
+          // { validator: validateNumber, trigger: 'blur' }
         ]
       }
     };
   },
+  computed: {
+    trans () { // 运费
+      let weight = this.form.realWeight || 0;
+      let cost = this.form.transCostUnit || 0;
+      return (weight * cost).toFixed(2);
+    },
+    rate () { // 关税
+      let customsDutiesAmnt = this.form.customsDutiesAmnt || 0;
+      let exchRate = this.form.exchRate || 0;
+      return (customsDutiesAmnt * exchRate).toFixed(2);
+    },
+    total () { // 费用合计
+      let transCostAmount = this.form.transCostAmount || 0;
+      return parseInt(this.rate + transCostAmount).toFixed(2);
+    }
+  },
   async mounted () {
+    await this.getSimpList();
     await this.getExpcomp();
     this.getLogistics();
   },
   methods: {
+    async getSimpList () { // 获取仓库列表
+      let data = await window.axios.get(`/warehouse/simpList`);
+      this.simpList = data.data;
+    },
     async getExpcomp () { // 获取物流商
       let data = await window.axios.post('/express/queryExpressCompanyInfoList', {
         pageSize: 999999,
@@ -257,6 +299,7 @@ export default {
     },
     async getLogistics () { // 获取物流订单数据列表
       let data = await window.axios.get(`/express/order/detail/${this.$route.query.id}`);
+      data.data.transCostType = data.data.transCostType.toString();
       this.form = data.data;
     },
     getSummaries (param) { // 计算汇总
@@ -315,6 +358,17 @@ export default {
           sums[index] = sum || 0;
           return;
         }
+        if (index === 10) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].cartonLength && data[i].cartonWidth && data[i].cartonHeight) {
+              sum += parseFloat(((data[i].cartonLength * data[i].cartonWidth * data[i].cartonHeight)/1000000).toFixed(2));
+            }
+          }
+          this.weight = sum || 0;
+          sums[index] = sum || 0;
+          return;
+        }
         if (index === 11) {
           let sum = 0;
           for (let i = 0, len = data.length; i < len; i++) {
@@ -322,6 +376,7 @@ export default {
               sum += data[i].fullLoadWeight * data[i].quantity;
             }
           }
+          this.volume = sum || 0,
           sums[index] = sum || 0;
           return;
         }
@@ -333,7 +388,26 @@ export default {
       this.loading = true;
       this.$refs['info'].validate((valid) => {
         if (valid) {
-          let param = JSON.parse(JSON.stringify(this.form));
+          let subzoneId = '';
+          for (let i = 0; i < this.simpList.length; i++) {
+            if (this.simpList[i].name === this.form.subzoneWhName) {
+              subzoneId = this.simpList[i].id;
+            }
+          }
+          let {id, realWeight, transCostType, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt} = {...this.form};
+          let param = {
+            id,
+            realWeight,
+            realVolume,
+            inwareCostAmount,
+            customsDutiesAmnt,
+            transCostUnit,
+            expcompId,
+            exchRate,
+            customsClearAmnt,
+            subzoneId,
+            transCostType
+          };
           window.axios.post('/express/order/update', param).then(data => {
             this.loading = false;
             if (data.code === 0) {
