@@ -33,13 +33,19 @@
           <el-table-column
             align="center"
             width="220"
+            prop="purchasePrice"
             label="采购价（元）">
-            <template slot-scope="scope">
+            <!-- <template slot-scope="scope">
               <el-input-number :min="0" :controls="false" @change="changeData(scope.$index)" v-model="scope.row.purchasePrice" placeholder="输入采购价"></el-input-number>
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleAddPrice(scope.row.supplierId, scope.row.purchasePrice)">新增采购价</el-button>
+              <el-divider direction="vertical"></el-divider>
               <el-button
                 size="mini"
                 type="text"
@@ -88,6 +94,23 @@
           </div>
         </div>
       </div>
+      <el-dialog title="新增采购价" :visible.sync="addVisible" width="50%" top="120px">
+        <el-form ref="form" class="form" :model="form" :rules="rules" label-width="170px">
+          <el-form-item label="当前采购价（元）：">
+            <el-input maxlength="100" disabled :value="form.currPrice"></el-input>
+          </el-form-item>
+          <el-form-item label="最新采购价（元）：" prop="price">
+            <el-input maxlength="10" v-model="form.price" placeholder="请输入最新采购价"></el-input>
+          </el-form-item>
+          <el-form-item label="调价原因：" prop="remark">
+            <el-input maxlength="20" v-model="form.remark" placeholder="请输入调价原因，20个字以内"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="addVisible = false">取 消</el-button>
+          <el-button type="primary" @click="confirmApplyForClose">确定</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -106,6 +129,21 @@ export default {
         name: '已关联供应商',
         path: ''
       }],
+      addVisible: false,
+      form: {
+        supplierId: '',
+        currPrice: '',
+        price: '',
+        remark: ''
+      },
+      rules: {
+        price: [
+          {required: true, message: '请输入最新采购价', trigger: 'blur'}
+        ],
+        remark: [
+          {required: true, message: '请输入调价原因', trigger: 'blur'}
+        ]
+      },
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
@@ -213,6 +251,33 @@ export default {
     searchPdt () { // 搜索
       this.pageNum = 1;
       this.getSupplierList(this.pdtName);
+    },
+    handleAddPrice (_id, price) {
+      this.form = {
+        supplierId: _id,
+        currPrice: price,
+        price: '',
+        remark: ''
+      };
+      this.addVisible = true;
+    },
+    async confirmApplyForClose () {
+      this.$refs['form'].validate(async valid => {
+        if (valid) {
+          let data = await window.axios.post('/supplyrel/price/add', {
+            goodsId: this.$route.params.id,
+            supplierId: this.form.supplierId,
+            price: this.form.price,
+            remark: this.form.remark
+          });
+          if (data.code === 0) {
+            this.addVisible = false;
+            this.getPdt('');
+          }
+        } else {
+          return false;
+        }
+      });
     }
   }
 }
