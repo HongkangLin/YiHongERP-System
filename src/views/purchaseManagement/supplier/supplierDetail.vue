@@ -180,7 +180,47 @@
           label="采购价（元）"
           align="center">
         </el-table-column>
+          <el-table-column label="操作" align="center">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleLook(scope.row.goodsId)">价格走势</el-button>
+            </template>
+          </el-table-column>
       </el-table>
+      <div class="addSome" v-if="show">
+        <div class="title">
+          <span>价格走势</span>
+          <i class="el-icon-close" @click="show = false"></i>
+        </div>
+        <div class="content">
+          <el-table
+            :data="priceList"
+            key="add"
+            border
+            style="width: 100%">
+            <el-table-column
+              prop="createTime"
+              label="时间"
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="price"
+              label="价格"
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="remark"
+              label="备注"
+              align="center">
+            </el-table-column>
+          </el-table>
+          <div class="page">
+            <el-pagination background layout="prev, pager, next" :pageSize="pageSize" :total="total" @current-change="changeNum"></el-pagination>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -200,6 +240,12 @@ export default {
         path: ''
       }],
       active: 0,
+      show: false,
+      currGoodsId: 0, // 当前操作的产品id
+      priceList: [], // 价格走势列表
+      pageSize: 10, // 页面大小
+      pageNum: 1, // 当前页
+      total: 0, // 总数
       companySize: ['0～20人', '20～25人', '50～100人', '100～500人', '500～1000人', '1000人以上'],
       typeList: [], // 产品分类
       settleSel: [], // 结算方式
@@ -255,6 +301,23 @@ export default {
     },
     refreash () {
       location.reload();
+    },
+    handleLook (_id) { // 查看价格走势
+      this.currGoodsId = _id;
+      this.pageNum = 1;
+      this.getPrice();
+    },
+    async getPrice () { // 获取价格走势
+      let data = await window.axios.get(`/supplyrel/price/list?pageNum=${this.pageNum}&pageSize=${this.pageSize}&goodsId=${this.currGoodsId}&supplierId=${this.$route.params.id}`);
+      if (data.code === 0) {
+        this.show = true;
+        this.total = data.data.total;
+        this.priceList = data.data.list;
+      }
+    },
+    changeNum (num) {
+      this.pageNum = num;
+      this.getPrice();
     },
     goBack () { // 返回
       history.go(-1);
@@ -348,6 +411,55 @@ export default {
     border: 1px solid rgb(228, 228, 228);
     background-color: rgba(243, 243, 243, 1);
     text-indent: 10px;
+  }
+  .addSome {
+    position: absolute;
+    z-index: 100;
+    top: 200px;
+    left: 30%;
+    width: 600px;
+    background-color: white;
+    border: 1px solid rgb(228, 228, 228);
+    border-radius: 4px;
+    -moz-box-shadow:0px 0px 7px rgb(228, 228, 228);
+    -webkit-box-shadow:0px 0px 7px rgb(228, 228, 228);
+    box-shadow:0px 0px 7px rgb(228, 228, 228);
+    .title {
+      display: flex;
+      justify-content: space-between;
+      line-height: 50px;
+      font-size: 16px;
+      align-items: center;
+      border-bottom: 1px solid rgb(228, 228, 228);
+      background-color: rgba(243, 243, 243, 1);
+      padding: 0 15px;
+      color: #777;
+      i {
+        cursor: pointer;
+      }
+    }
+    .page {
+      height: 60px;
+      position: relative;
+      .el-pagination {
+        position: absolute;
+        top: 20px;
+        right: 0;
+      }
+    }
+    .content {
+      box-sizing: border-box;
+      padding: 20px;
+      .search1 {
+        width: 100px;
+        margin-bottom: 10px;
+        /deep/.el-input--small .el-input__inner {
+          width: 200px;
+          height: 35px;
+          line-height: 35px;
+        }
+      }
+    }
   }
 }
 </style>

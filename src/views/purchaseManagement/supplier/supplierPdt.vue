@@ -33,12 +33,18 @@
               <el-input-number :min="0" :controls="false" :disabled="!roleCtl.supplyrel_update" @change="changeData(scope.$index)" v-model="scope.row.purchasePrice" placeholder="输入采购价"></el-input-number>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center" v-if="roleCtl.supplyrel_delete">
+          <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button
                 size="mini"
                 type="text"
+                v-if="roleCtl.supplyrel_delete"
                 @click="handleDelete(scope.$index)">移除</el-button>
+              <el-divider direction="vertical" v-if="roleCtl.supplyrel_delete"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleLook(scope.row.goodsId)">价格走势</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -84,6 +90,38 @@
           </div>
         </div>
       </div>
+      <div class="addSome" v-if="show1">
+        <div class="title">
+          <span>价格走势</span>
+          <i class="el-icon-close" @click="show1 = false"></i>
+        </div>
+        <div class="content">
+          <el-table
+            :data="priceList"
+            key="add"
+            border
+            style="width: 100%">
+            <el-table-column
+              prop="createTime"
+              label="时间"
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="price"
+              label="价格"
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="remark"
+              label="备注"
+              align="center">
+            </el-table-column>
+          </el-table>
+          <div class="page">
+            <el-pagination background layout="prev, pager, next" :pageSize="pageSize1" :total="total1" @current-change="changeNum1"></el-pagination>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -103,6 +141,12 @@ export default {
         name: '供应中产品',
         path: ''
       }],
+      show1: false,
+      currGoodsId: 0,
+      priceList: [], // 价格走势列表
+      total1: 0,
+      pageNum1: 1,
+      pageSize1: 10,
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
@@ -213,6 +257,23 @@ export default {
     searchPdt () { // 搜索
       this.pageNum = 1;
       this.getPdtList(this.pdtName);
+    },
+    handleLook (_id) { // 查看价格走势
+      this.currGoodsId = _id;
+      this.pageNum1 = 1;
+      this.getPrice();
+    },
+    async getPrice () { // 获取价格走势
+      let data = await window.axios.get(`/supplyrel/price/list?pageNum=${this.pageNum1}&pageSize=${this.pageSize1}&goodsId=${this.currGoodsId}&supplierId=${this.$route.params.id}`);
+      if (data.code === 0) {
+        this.show1 = true;
+        this.total1 = data.data.total;
+        this.priceList = data.data.list;
+      }
+    },
+    changeNum1 (num) {
+      this.pageNum1 = num;
+      this.getPrice();
     }
   }
 }
