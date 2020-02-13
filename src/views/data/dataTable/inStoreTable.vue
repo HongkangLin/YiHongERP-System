@@ -33,6 +33,16 @@
             align="center">
           </el-table-column>
           <el-table-column
+            prop="purchaseNo"
+            label="关联采购单"
+            align="center">
+          </el-table-column>
+          <el-table-column
+            prop="checkInType"
+            label="入库类型"
+            align="center">
+          </el-table-column>
+          <el-table-column
             prop="operatorName"
             label="操作人"
             align="center">

@@ -38,6 +38,11 @@
             align="center">
           </el-table-column>
           <el-table-column
+            prop="payType"
+            label="付款类型"
+            align="center">
+          </el-table-column>
+          <el-table-column
             prop="payAmount"
             label="付款金额"
             align="center">

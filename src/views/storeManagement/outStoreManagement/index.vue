@@ -16,6 +16,9 @@
       <div class="content">
         <div class="inputDiv">
           <el-input maxlength="100" @change="search" class="nameKeyword" v-model="snKeyword" placeholder="出库单号"></el-input>
+          <el-select filterable v-model="brandId" @change="search" placeholder="品牌">
+            <el-option v-for="(item, index) in brandList" :key="index" :label="item.label" :value="item.value"></el-option>
+          </el-select>
           <el-select filterable v-model="warehouseId" @change="search" placeholder="仓库">
             <el-option v-for="(item, index) in storeList" :key="index" :label="item.name" :value="item.id"></el-option>
           </el-select>
@@ -27,6 +30,13 @@
             <el-option label="待出库" value=0></el-option>
             <el-option label="已出库" value=1></el-option>
           </el-select> -->
+          <el-select filterable v-model="deliverMethod" @change="search" placeholder="运输方式">
+            <el-option label="海运" value=0></el-option>
+            <el-option label="空运" value=1></el-option>
+            <el-option label="快递" value=2></el-option>
+            <el-option label="快船" value=3></el-option>
+            <el-option label="铁路" value=4></el-option>
+          </el-select>
         </div>
         <div class="sel" @click="search">查询</div>
       </div>
@@ -93,6 +103,7 @@ export default {
         completed: 0,
         closed: 0
       },
+      brandList: [],
       closeVisible: false,
       crumbList: [{ // 面包屑
         name: '库存管理',
@@ -124,6 +135,7 @@ export default {
     }
   },
   created() {
+    this.getBrand();
     this.getStoreList();
     this.queryList();
     this.countStatus();
@@ -142,6 +154,18 @@ export default {
     }
   },
   methods: {
+    async getBrand () { // 获取品牌
+      let data = await window.axios.post('/product/queryProductBrandListRule', {
+        goodsBrandNameOrLetter: '',
+        pageNum: 1,
+        pageSize: 9999999
+      });
+      data.data.list.forEach(item => {
+        item.label = item.goodsBrandName,
+        item.value = item.id
+      });
+      this.brandList.push(...data.data.list);
+    },
     // 仓库下拉
     async getStoreList() {
       let data = await window.axios.get('/warehouse/simpList');
@@ -176,6 +200,8 @@ export default {
         warehouseId: this.warehouseId,
         status: this.status,
         type: this.type,
+        deliverMethod: this.deliverMethod,
+        brandId: this.brandId,
         pageNum: this.pageNum,
         pageSize: this.pageSize
       }
