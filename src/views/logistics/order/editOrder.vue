@@ -176,7 +176,7 @@
               <el-input disabled :value="rate"></el-input>
             </el-form-item>
             <el-form-item label="总运费（元）：">
-              <el-input disabled v-model="form.transCostAmount"></el-input>
+              <el-input disabled v-model="allMoney"></el-input>
             </el-form-item>
             <el-form-item label="费用合计（元）：">
               <el-input disabled :value="total"></el-input>
@@ -265,18 +265,25 @@ export default {
   },
   computed: {
     trans () { // 运费
-      let weight = this.form.realWeight || 0;
+      let tran = '';
+      if (this.form.transCostType === '1') { // 以重量计算
+        tran = this.form.realWeight || 0;
+      } else { // 以体积计算
+        tran = this.form.realVolume || 0;
+      }
       let cost = this.form.transCostUnit || 0;
-      return (weight * cost).toFixed(2);
+      return (tran * cost).toFixed(2);
     },
     rate () { // 关税
       let customsDutiesAmnt = this.form.customsDutiesAmnt || 0;
       let exchRate = this.form.exchRate || 0;
-      return (customsDutiesAmnt * exchRate).toFixed(2);
+      return customsDutiesAmnt * exchRate;
+    },
+    allMoney () { // 总运费
+      return parseFloat(this.trans) + this.form.inwareCostAmount + this.form.customsClearAmnt;
     },
     total () { // 费用合计
-      let transCostAmount = this.form.transCostAmount || 0;
-      return parseInt(this.rate + transCostAmount).toFixed(2);
+      return parseFloat(this.rate) + this.allMoney;
     }
   },
   async mounted () {

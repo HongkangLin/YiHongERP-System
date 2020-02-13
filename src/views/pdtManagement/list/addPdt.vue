@@ -504,10 +504,10 @@ export default {
       return this.form.goodsHigh ? (this.form.goodsHigh * 0.39).toFixed(2) : '-';
     },
     goodsWeightLb () { // 单个产品重量磅
-      return this.form.goodsWeight ? (this.form.goodsWeight * 2.2046226).toFixed(2) : '-';
+      return this.form.goodsWeight ? (this.form.goodsWeight * 0.0022026).toFixed(2) : '-';
     },
     packingWeightLb () { // 整箱重量磅
-      return this.form.packingWeight ? (this.form.packingWeight * 2.2046226).toFixed(2) : '-';
+      return this.form.packingWeight ? (this.form.packingWeight * 0.0022026).toFixed(2) : '-';
     },
     packingLengthIn () { // 外箱尺寸英寸长
       return this.form.packingLength ? (this.form.packingLength * 0.39).toFixed(2) : '-';

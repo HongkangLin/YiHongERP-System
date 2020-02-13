@@ -29,9 +29,9 @@
         </section>
         <!-- 审核详情 -->
         <div class="content-header"> <i class="el-icon-collection-tag"></i> 审核详情</div>
-        <el-table :data="tableData.purPayApproveRecordList" border style="width: 100%">
+        <el-table :data="tableData.approveList" border style="width: 100%">
           <el-table-column align="center" prop="approveTime" label="审核时间" min-width="230"></el-table-column>
-          <el-table-column align="center" prop="approverName" label="审核人员" min-width="130"></el-table-column>
+          <el-table-column align="center" prop="approveUserName" label="审核人员" min-width="130"></el-table-column>
           <el-table-column align="center" prop="approveResult" label="审核结果" min-width="130"></el-table-column>
           <el-table-column align="center" prop="feedbackReason" label="反馈详情" min-width="540"></el-table-column>
         </el-table>
