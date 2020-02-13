@@ -23,6 +23,9 @@
           <el-form-item label="运输方式：" prop="deliverMethod">
             <el-input maxlength="100" v-model="ruleForm.deliverMethod" placeholder="请选择运输方式" disabled></el-input>
           </el-form-item>
+          <el-form-item label="出库国家：" prop="outCountryId">
+            <el-input maxlength="100" v-model="ruleForm.outCountryId" placeholder="请选择出库国家" disabled></el-input>
+          </el-form-item>
           <el-form-item label="备注：" prop="remark">
             <el-input maxlength="100" type="textarea" :rows="4" placeholder="输入备注" v-model="ruleForm.remark"></el-input>
           </el-form-item>
@@ -136,6 +139,23 @@ export default {
           break;
         case 4:
           this.ruleForm.deliverMethod = "铁路";
+          break;
+      }
+      switch (obj.outCountryId) {
+        case 0:
+          this.ruleForm.outCountryId = "美国";
+          break;
+        case 1:
+          this.ruleForm.outCountryId = "英国";
+          break;
+        case 2:
+          this.ruleForm.outCountryId = "德国";
+          break;
+        case 3:
+          this.ruleForm.outCountryId = "日本";
+          break;
+        case 4:
+          this.ruleForm.outCountryId = "法国";
           break;
       }
       this.ruleForm.remark = obj.remark;

@@ -47,13 +47,13 @@
       <div class="title"><i class="el-icon-collection-tag"></i><span>订单规格</span></div>
       <div class="info">
         <el-row>
-          <el-col :span="4"><div class="td label">预估计费重（g）</div></el-col>
+          <el-col :span="4"><div class="td label">预估计费重（kg）</div></el-col>
           <el-col :span="8"><div class="td">{{info.weight}}</div></el-col>
           <el-col :span="4"><div class="td label">预估体积（m³）</div></el-col>
           <el-col :span="8"><div class="td">{{info.volume}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
-          <el-col :span="4"><div class="td label">实际计费重</div></el-col>
+          <el-col :span="4"><div class="td label">实际计费重（kg）</div></el-col>
           <el-col :span="8"><div class="td">{{info.realWeight}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">实际体积（m³）</div></el-col>
           <el-col :span="8"><div class="td">{{info.realVolume}}&nbsp;</div></el-col>
@@ -62,7 +62,7 @@
       <div class="title"><i class="el-icon-collection-tag"></i><span>费用信息</span></div>
       <div class="info">
         <el-row>
-          <el-col :span="4"><div class="td label">运费单价（元/g）</div></el-col>
+          <el-col :span="4"><div class="td label">运费单价（元/kg）</div></el-col>
           <el-col :span="8"><div class="td">{{info.transCostUnit}}</div></el-col>
           <el-col :span="4"><div class="td label">运费（元）</div></el-col>
           <el-col :span="8"><div class="td">{{(info.realWeight * info.transCostUnit).toFixed(2)}}&nbsp;</div></el-col>

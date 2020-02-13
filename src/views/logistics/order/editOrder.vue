@@ -139,13 +139,13 @@
               </el-table-column>
             </el-table>
             <div class="spanDiv"></div>
-            <el-form-item label="预估计费重（g）：">
+            <el-form-item label="预估计费重（kg）：">
               <el-input disabled :value="weight"></el-input>
             </el-form-item>
             <el-form-item label="预估体积（m³）：">
               <el-input disabled :value="volume"></el-input>
             </el-form-item>
-            <el-form-item label="实际计费重（g）：" prop="realWeight">
+            <el-form-item label="实际计费重（kg）：" prop="realWeight">
               <el-input v-model="form.realWeight" maxlength="100" placeholder="请输入实际计费重"></el-input>
               <div><el-radio v-model="form.transCostType" label="1">设为计费标准</el-radio></div>
             </el-form-item>
@@ -154,7 +154,7 @@
               <div><el-radio v-model="form.transCostType" label="2">设为计费标准</el-radio></div>
             </el-form-item>
             <div class="spanDiv"></div>
-            <el-form-item label="运费单价（元/kg）：" prop="transCostUnit">
+            <el-form-item :label="'运费单价' + (form.transCostType === '1' ? '（元/kg）：' : '（元/m³）：')" prop="transCostUnit">
               <el-input v-model="form.transCostUnit" maxlength="100" placeholder="请输入运费单价"></el-input>
             </el-form-item>
             <el-form-item label="运费（元）：">
