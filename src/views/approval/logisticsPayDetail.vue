@@ -117,8 +117,15 @@ export default {
       let bussinessNo = this.$route.query.bussinessNo;
       window.axios.get(`/express/order/queryPayApproveDetail/${bussinessNo}`).then((data) => {
         if (data.code !== 0) return
-
         let obj = data.data;
+        // 审核详情-审核结果
+        obj.approveList.map((item) => {
+          if (item.approveResult === "agree") {
+            item.approveResult = "通过"
+          } else if (item.approveResult === "disagree") {
+            item.approveResult = "驳回"
+          }
+        })
         this.tableData = obj;
       })
     },
