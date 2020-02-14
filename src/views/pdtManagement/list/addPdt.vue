@@ -965,12 +965,17 @@ export default {
       }
       let flag = false;
       if (mode === 'save' && this.active === 1) {
-        this.$refs['form'].validate((valid) => {
-          if (!valid) {
-            flag = true;
-            return false;
-          }
-        });
+        // this.$refs['form'].validate((valid) => {
+        //   if (!valid) {
+        //     flag = true;
+        //     return false;
+        //   }
+        // });
+        if (!(this.form.brandId && this.form.goodsName && this.form.skuId)) {
+          this.$message.warning('保存数据前输入产品品牌、产品名称、sku编码');
+          flag = true;
+          return false;
+        }
       }
       if (flag) { // 使用保存功能时如果第二页验证不通过不允许继续操作
         return;
