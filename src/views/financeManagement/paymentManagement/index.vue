@@ -46,7 +46,7 @@
           <el-table-column prop="payTime" label="付款时间" align="center" min-width="100"></el-table-column>
           <el-table-column align="center" fixed="right" label="操作" width="160" v-if="roleCtl.finance_detail || roleCtl.finance_pay || roleCtl.finance_cancel">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="toPrintPage(scope.row.payId)" v-if="roleCtl.finance_detail">查看</el-button>
+              <el-button type="text" size="small" @click="toPrintPage(scope.row.payId, scope.row.payType)" v-if="roleCtl.finance_detail">查看</el-button>
               <el-divider v-if="scope.row.payStatus === '待付款' && roleCtl.finance_detail && roleCtl.finance_pay" direction="vertical"></el-divider>
               <el-button v-if="scope.row.payStatus === '待付款' && roleCtl.finance_pay" type="text" size="small" @click="payAct(scope.row.payId)">付款</el-button>
               <el-divider v-if="scope.row.payStatus === '待付款' && roleCtl.finance_cancel" direction="vertical"></el-divider>
@@ -245,10 +245,19 @@ export default {
     },
 
     // 查看详情
-    toPrintPage(payId) {
-      this.$router.push({
-        path: `/F0501/viewPrint?payId=${payId}`
-      })
+    toPrintPage(payId, type) {
+      switch (type) {
+        case 1:
+          this.$router.push({
+            path: `/F0501/viewPrint?payId=${payId}`
+          });
+          break;
+        case 2:
+          this.$router.push({
+            path: `/F0501/logisticsViewPrint?payId=${payId}`
+          });
+          break;
+      }
     },
 
     // 显示付款弹窗

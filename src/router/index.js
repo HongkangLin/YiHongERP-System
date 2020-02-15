@@ -144,11 +144,15 @@ const routes = [{
 		name: 'paymentManagement',
 		component: () => import(/* webpackChunkName: "paymentManagement" */ '../views/financeManagement/paymentManagement/index.vue'),
 	}, {
-		path: '/F0501/viewPrint', // 财务管理 > 应付费管理 > 付款单打印页
+		path: '/F0501/viewPrint', // 财务管理 > 应付费管理 > 采购付款单打印页
 		name: 'viewPrint',
 		component: () => import(/* webpackChunkName: "viewPrint" */ '../views/financeManagement/paymentManagement/viewPrint.vue'),
 	}, {
-		path: '/F0501/approvePayment', // 财务管理 > 应付费管理 > 付款单打印页
+		path: '/F0501/logisticsViewPrint', // 财务管理 > 应付费管理 > 物流付款单打印页
+		name: 'logisticsViewPrint',
+		component: () => import(/* webpackChunkName: "logisticsViewPrint" */ '../views/financeManagement/paymentManagement/logisticsViewPrint.vue'),
+	}, {
+		path: '/F0501/approvePayment', // 财务管理 > 应付费管理 > 付款审批
 		name: 'approvePayment',
 		component: () => import(/* webpackChunkName: "approvePayment" */ '../views/financeManagement/paymentManagement/approvePayment.vue'),
 	}, {
@@ -260,6 +264,10 @@ const routes = [{
 	path: '/F0501/printPreviewPage', //采购付款单打印预览
 	name: 'printPreviewPage',
 	component: () => import(/* webpackChunkName: "printPreviewPage" */ '../views/financeManagement/paymentManagement/printPreviewPage.vue'),
+}, {
+	path: '/F0501/logisticsPrintPreviewPage', //物流付款单打印预览
+	name: 'logisticsPrintPreviewPage',
+	component: () => import(/* webpackChunkName: "logisticsPrintPreviewPage" */ '../views/financeManagement/paymentManagement/logisticsPrintPreviewPage.vue'),
 }, {
 	path: '/login', //登录页
 	name: 'login',

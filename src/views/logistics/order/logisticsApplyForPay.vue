@@ -40,7 +40,7 @@
               <el-input-number v-model="scope.row.applyAmount" :min="0" :max="scope.row.unpaidAmount" :controls="false" placeholder="请输入"></el-input-number>
             </template>
           </el-table-column>
-          <el-table-column prop="bk" label="备注" min-width="240">
+          <el-table-column prop="bak" label="备注" min-width="240">
             <template slot-scope="scope">
               <el-input maxlength="100" v-model="scope.row.bak" placeholder="请输入"></el-input>
             </template>
@@ -349,14 +349,14 @@ export default {
         accountNo: accountInfoArr[0].trim(),
         accountBankName: accountInfoArr[1].trim(),
         accountName: accountInfoArr[2].trim(),
-        bk: this.bak,
+        bak: this.bak,
         expOrders: []
       }
       this.orderList.map((item) => {
         params.expOrders.push({
           id: item.expOrderId,
           applyAmount: item.applyAmount,
-          bk: item.bak
+          bak: item.bak
         })
       })
       window.axios.post("/express/order/commitApplyPay", params).then((data) => {
