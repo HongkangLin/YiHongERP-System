@@ -1,6 +1,6 @@
 <template>
   <div>
-    <crumbs :list="crumbList" :showReturn="false"></crumbs>
+    <crumbs :list="crumbList"></crumbs>
     <div class="addSupplier">
       <div class="page">
         <div class="left firstLeft">

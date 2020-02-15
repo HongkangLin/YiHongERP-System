@@ -8,7 +8,7 @@
         <div class="head">
           <el-tabs v-model="activeName" class="statusTabs">
             <el-tab-pane :label="'全部/'+statusTotal.all" name="0"></el-tab-pane>
-            <el-tab-pane :label="'未完成/'+statusTotal.underway" name="1"></el-tab-pane>
+            <el-tab-pane :label="'未生成/'+statusTotal.underway" name="1"></el-tab-pane>
             <el-tab-pane :label="'已生成/'+statusTotal.generate" name="2"></el-tab-pane>
             <el-tab-pane :label="'审核中/'+statusTotal.examine" name="3"></el-tab-pane>
             <el-tab-pane :label="'待付款/'+statusTotal.payment" name="4"></el-tab-pane>
@@ -59,7 +59,7 @@
           </el-table-column>
           <el-table-column align="center" fixed="right" label="操作" width="150">
             <template slot-scope="scope">
-              <a class="link" target="_black" :href="`/#/F0701/editLogisticsOrder?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status === '未生成' || scope.row.status === '已生成'">编辑</a>
+              <a class="link" target="_self" :href="`/#/F0701/editLogisticsOrder?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status === '未生成' || scope.row.status === '已生成'">编辑</a>
               <el-divider v-if="scope.row.status === '已生成'" direction="vertical"></el-divider>
               <a class="link" target="_black" :href="`/#/F0701/logisticsOrderDetail?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status !== '未生成'">查看</a>
               <!-- <el-divider v-if="scope.row.status === '审核中'" direction="vertical"></el-divider>
