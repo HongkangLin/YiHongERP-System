@@ -280,10 +280,10 @@ export default {
       return customsDutiesAmnt * exchRate;
     },
     allMoney () { // 总运费
-      return parseFloat(this.trans) + this.form.inwareCostAmount + this.form.customsClearAmnt;
+      return parseFloat(this.trans) + parseFloat(this.form.inwareCostAmount) + parseFloat(this.form.customsClearAmnt);
     },
     total () { // 费用合计
-      return parseFloat(this.rate) + this.allMoney;
+      return parseFloat(this.rate) + parseFloat(this.allMoney);
     }
   },
   async mounted () {
