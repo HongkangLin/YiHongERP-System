@@ -61,7 +61,7 @@
             <template slot-scope="scope">
               <a class="link" target="_self" :href="`/#/F0701/editLogisticsOrder?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status === '未生成' || scope.row.status === '已生成'">编辑</a>
               <el-divider v-if="scope.row.status === '已生成'" direction="vertical"></el-divider>
-              <a class="link" target="_black" :href="`/#/F0701/logisticsOrderDetail?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status !== '未生成'">查看</a>
+              <a class="link" target="_self" :href="`/#/F0701/logisticsOrderDetail?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status !== '未生成'">查看</a>
               <!-- <el-divider v-if="scope.row.status === '审核中'" direction="vertical"></el-divider>
               <el-button type="text" size="small" v-if="scope.row.status === '审核中'" @click="showCloseOrderDialog(scope.row.id)">撤回</el-button> -->
             </template>

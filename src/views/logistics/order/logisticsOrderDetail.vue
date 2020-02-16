@@ -7,7 +7,7 @@
       </div>
       <div class="tool">
         <span @click="refreash"><i class="el-icon-refresh"></i>&nbsp;刷新</span>
-        <!-- <span @click="goBack"><i class="el-icon-arrow-left"></i>&nbsp;返回</span> -->
+        <span @click="goBack"><i class="el-icon-arrow-left"></i>&nbsp;返回</span>
       </div>
     </div>
     <div class="supplierDetail" v-if="active === 0">
@@ -375,6 +375,9 @@ export default {
     },
     changeTab (idx) { // 改变tab
       this.active = idx;
+    },
+    goBack () {
+      history.go(-1);
     },
     refreash () {
       location.reload();
