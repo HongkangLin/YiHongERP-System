@@ -75,12 +75,18 @@ export default {
     this.initTable();
   },
   methods: {
+    timeStr (str) {
+      let date = new Date(str);
+      return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+    },
     initTable() {
       axios.get(`/stockoutorder/detail/${this.$route.params.outId}`).then((data) => {
         if (data.code !== 0) return
         let obj = data.data;
         obj.status = obj.status === 0 ? "待出库" : "已出库";
         obj.type = obj.type === 0 ? "正常出库" : "退换货";
+        obj.createTime = obj.createTime && this.timeStr(obj.createTime);
+        obj.stockoutTime = obj.stockoutTime && this.timeStr(obj.stockoutTime);
         switch (obj.deliverMethod) {
           case 0:
             obj.deliverMethod = "海运";
