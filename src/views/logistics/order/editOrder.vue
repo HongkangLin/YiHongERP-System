@@ -277,7 +277,7 @@ export default {
     rate () { // 关税
       let customsDutiesAmnt = this.form.customsDutiesAmnt || 0;
       let exchRate = this.form.exchRate || 0;
-      return customsDutiesAmnt * exchRate;
+      return (customsDutiesAmnt * exchRate).toFixed(2);
     },
     allMoney () { // 总运费
       return parseFloat(this.trans) + parseFloat(this.form.inwareCostAmount) + parseFloat(this.form.customsClearAmnt);
