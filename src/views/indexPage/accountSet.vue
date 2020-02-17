@@ -39,7 +39,7 @@
                 <el-input maxlength="100" placeholder="请输入密码" v-model="form.confirmPwd"></el-input>
               </el-form-item>
             </el-form>
-            <div @click="submit" class="save">提&nbsp;交</div>
+            <div @click="submit" class="save" v-if="roleCtl.ownuser_update">提&nbsp;交</div>
           </div>
         </div>
       </div>
@@ -66,6 +66,7 @@ export default {
       }
     };
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       token: localStorage.getItem('token'),
       crumbList: [{ // 面包屑
         name: '首页',

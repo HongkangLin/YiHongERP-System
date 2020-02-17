@@ -15,7 +15,7 @@
             <el-tab-pane :label="'已完成/'+statusTotal.completed" name="5"></el-tab-pane>
           </el-tabs>
           <div class="btns">
-            <el-button @click="applyForPay" type="primary">申请付款</el-button>
+            <el-button @click="applyForPay" type="primary" v-if="roleCtl.express_order_applyPay">申请付款</el-button>
           </div>
         </div>
         <div class="content">
@@ -59,8 +59,8 @@
           </el-table-column>
           <el-table-column align="center" fixed="right" label="操作" width="150">
             <template slot-scope="scope">
-              <a class="link" target="_self" :href="`/#/F0701/editLogisticsOrder?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status === '未生成' || scope.row.status === '已生成'">编辑</a>
-              <el-divider v-if="scope.row.status === '已生成'" direction="vertical"></el-divider>
+              <a class="link" target="_self" :href="`/#/F0701/editLogisticsOrder?id=${scope.row.id}`" type="text" size="small" v-if="(scope.row.status === '未生成' || scope.row.status === '已生成') && roleCtl.express_order_update">编辑</a>
+              <el-divider v-if="scope.row.status === '已生成' && roleCtl.express_order_update" direction="vertical"></el-divider>
               <a class="link" target="_self" :href="`/#/F0701/logisticsOrderDetail?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status !== '未生成'">查看</a>
               <!-- <el-divider v-if="scope.row.status === '审核中'" direction="vertical"></el-divider>
               <el-button type="text" size="small" v-if="scope.row.status === '审核中'" @click="showCloseOrderDialog(scope.row.id)">撤回</el-button> -->
@@ -100,6 +100,7 @@ export default {
   },
   data() {
     return {
+      roleCtl: this.$store.state.role.roleCtl,
       crumbList: [{ // 面包屑
         name: '物流',
         path: '/F0701/F070101'

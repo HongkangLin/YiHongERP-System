@@ -5,7 +5,7 @@
       <div class="search">
         <div class="head">
           <div class="label">物流商管理</div>
-          <div class="new" v-if="roleCtl.brand_add" @click="addBrand">新增物流商</div>
+          <div class="new" v-if="roleCtl.express_company_add" @click="addBrand">新增物流商</div>
         </div>
         <div class="content">
           <div class="inputDiv">
@@ -55,24 +55,24 @@
             label="创建人"
             align="center">
           </el-table-column>
-          <el-table-column label="操作" align="center" v-if="roleCtl.brand_update || roleCtl.brand_delete">
+          <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button
                 size="mini"
                 type="text"
-                v-if="roleCtl.brand_update"
+                v-if="roleCtl.express_company_update"
                 @click="handleEdit(scope.row.id)">编辑</el-button>
-              <el-divider direction="vertical" v-if="roleCtl.brand_update && roleCtl.brand_delete"></el-divider>
+              <el-divider direction="vertical" v-if="roleCtl.express_company_update"></el-divider>
               <el-button
                 size="mini"
                 type="text"
                 v-if="roleCtl.brand_update"
                 @click="handleLook(scope.row.id)">查看</el-button>
-              <el-divider direction="vertical" v-if="roleCtl.brand_update && roleCtl.brand_delete"></el-divider>
+              <el-divider direction="vertical" v-if="roleCtl.express_company_delete"></el-divider>
               <el-button
                 size="mini"
                 type="text"
-                v-if="roleCtl.brand_delete"
+                v-if="roleCtl.express_company_delete"
                 @click="handleDelete(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
