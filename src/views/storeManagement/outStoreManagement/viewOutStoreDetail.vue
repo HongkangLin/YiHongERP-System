@@ -85,8 +85,6 @@ export default {
         let obj = data.data;
         obj.status = obj.status === 0 ? "待出库" : "已出库";
         obj.type = obj.type === 0 ? "正常出库" : "退换货";
-        obj.createTime = obj.createTime && this.timeStr(obj.createTime);
-        obj.stockoutTime = obj.stockoutTime && this.timeStr(obj.stockoutTime);
         switch (obj.deliverMethod) {
           case 0:
             obj.deliverMethod = "海运";

@@ -113,8 +113,6 @@ export default {
         let obj = data.data;
         obj.status = obj.status === 0 ? "待入库" : "已入库";
         obj.type = obj.type === 0 ? "外贸入库" : "采购单入库";
-        obj.checkinTime = obj.checkinTime && this.timeStr(obj.checkinTime);
-        obj.createTime = obj.createTime && this.timeStr(obj.createTime);
         for (const key in obj) {
           obj[key] = obj[key] === null ? "--" : obj[key];
         }
