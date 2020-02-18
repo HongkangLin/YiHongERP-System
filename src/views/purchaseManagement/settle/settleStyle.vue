@@ -38,10 +38,11 @@
           </el-table-column>
           <el-table-column label="操作" align="center" v-if="roleCtl.settletype_update">
             <template slot-scope="scope">
-              <el-button
+              <!-- <el-button
                 size="mini"
                 type="text"
-                @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                @click="handleEdit(scope.$index, scope.row)">编辑</el-button> -->
+              <a class="link" target="_self" :href="`/#/addSettle?id=${scope.row.id}&name=${scope.row.name}&remark=${scope.row.remark}`">编辑</a>
             </template>
           </el-table-column>
         </el-table>
@@ -109,6 +110,11 @@ export default {
 
 <style lang="less" scoped>
 .settleStyle {
+  .link {
+    color:#1ABC9C;
+    cursor: pointer;
+    user-select: none;
+  }
   .content {
     /deep/.el-input--small .el-input__inner {
       height: 35px;

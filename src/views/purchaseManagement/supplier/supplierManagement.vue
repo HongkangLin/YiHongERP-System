@@ -73,16 +73,18 @@
           </el-table-column>
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
-              <el-button
+              <!-- <el-button
                 size="mini"
                 type="text"
                 v-if="roleCtl.supplier_update"
-                @click="handleEdit(scope.row.id)">编辑</el-button>
+                @click="handleEdit(scope.row.id)">编辑</el-button> -->
+              <a class="link" target="_self" :href="`/#/addSupplier?id=${scope.row.id}`" v-if="roleCtl.supplier_update">编辑</a>
               <el-divider direction="vertical" v-if="roleCtl.supplier_update"></el-divider>
-              <el-button
+              <!-- <el-button
                 size="mini"
                 type="text"
-                @click="handleLook(scope.row.id)">查看</el-button>
+                @click="handleLook(scope.row.id)">查看</el-button> -->
+              <a class="link" target="_self" :href="`/#/supplierDetail/${scope.row.id}`">查看</a>
               <el-divider direction="vertical" v-if="roleCtl.supplier_delete"></el-divider>
               <el-button
                 size="mini"
@@ -206,6 +208,11 @@ export default {
 
 <style lang="less" scoped>
 .supplierManagement {
+  .link {
+    color:#1ABC9C;
+    cursor: pointer;
+    user-select: none;
+  }
   .content {
     /deep/.el-input--small .el-input__inner {
       height: 35px;

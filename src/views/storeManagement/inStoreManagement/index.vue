@@ -40,11 +40,13 @@
         <el-table-column prop="arriveTime" label="到货日期" align="center" min-width="200"></el-table-column>
         <el-table-column align="center" fixed="right" label="操作" width="160" v-if="roleCtl.checkinorder_detail || roleCtl.checkinorder_update ||roleCtl.checkinorder_checkin">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="handleView(scope.row.id, scope.row.type)" v-if="roleCtl.checkinorder_detail">查看</el-button>
+            <!-- <el-button type="text" size="small" @click="handleView(scope.row.id, scope.row.type)" v-if="roleCtl.checkinorder_detail">查看</el-button> -->
+            <a class="link" target="_self" :href="`/#/F0401/F040102/${scope.row.id}?type=${scope.row.type === '外贸入库'? '0' : '1'}`" v-if="roleCtl.checkinorder_detail">查看</a>
             <el-divider v-if="scope.row.type === '外贸入库' && scope.row.status === '待入库' && roleCtl.checkinorder_detail" direction="vertical"></el-divider>
             <el-button v-if="scope.row.type === '外贸入库' && scope.row.status === '待入库' && roleCtl.checkinorder_update" type="text" size="small" @click="handleEdit(scope.row.id)">编辑</el-button>
             <el-divider v-if="scope.row.status === '待入库'" direction="vertical"></el-divider>
-            <el-button v-if="scope.row.status === '待入库' && roleCtl.checkinorder_checkin" type="text" size="small" @click="handleInStore(scope.row.id)">入库</el-button>
+            <!-- <el-button v-if="scope.row.status === '待入库' && roleCtl.checkinorder_checkin" type="text" size="small" @click="handleInStore(scope.row.id)">入库</el-button> -->
+            <a class="link" target="_self" :href="`/#/F0401/inStore?inId=${scope.row.id}`" v-if="scope.row.status === '待入库' && roleCtl.checkinorder_checkin">入库</a>
             <el-divider v-if="scope.row.status === '待入库' && roleCtl.checkinorder_close" direction="vertical"></el-divider>
             <el-button v-if="scope.row.status === '待入库' && roleCtl.checkinorder_close" type="text" size="small" @click="handleClose(scope.row.id)">关闭</el-button>
           </template>
@@ -264,6 +266,11 @@ export default {
 </script>
 <style lang="less" scoped>
 .inStoreList_wrap {
+  .link {
+    color:#1ABC9C;
+    cursor: pointer;
+    user-select: none;
+  }
   box-sizing: border-box;
   padding: 20px 60px;
   background-color: #f6f7f9;

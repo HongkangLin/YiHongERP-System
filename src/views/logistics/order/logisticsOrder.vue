@@ -340,6 +340,7 @@ export default {
   .link {
     color:#1ABC9C;
     cursor: pointer;
+    user-select: none;
   }
   .order_main {
     box-sizing: border-box;

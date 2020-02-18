@@ -64,9 +64,11 @@
           </el-table-column>
           <el-table-column align="center" fixed="right" label="操作" width="150" v-if="roleCtl.purchase_query || roleCtl.purchase_arrive || roleCtl.purchase_close">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="toDetailPage(scope.row.purchaseId)" v-if="roleCtl.purchase_query">详情</el-button>
+              <!-- <el-button type="text" size="small" @click="toDetailPage(scope.row.purchaseId)" v-if="roleCtl.purchase_query">详情</el-button> -->
+              <a class="link" target="_self" :href="`/#/F0301/purchaseOrderDetail?purchaseId=${scope.row.purchaseId}`" v-if="roleCtl.purchase_query">详情</a>
               <el-divider v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_query && roleCtl.purchase_arrive" direction="vertical"></el-divider>
-              <el-button v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_arrive" type="text" size="small" @click="toArrivePage(scope.row.purchaseId)">到货</el-button>
+              <!-- <el-button v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_arrive" type="text" size="small" @click="toArrivePage(scope.row.purchaseId)">到货</el-button> -->
+              <a class="link" target="_self" :href="`/#/F0301/arrivePage?purchaseId=${scope.row.purchaseId}`" v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_arrive">到货</a>
               <el-divider v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_close" direction="vertical"></el-divider>
               <el-button v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_close" type="text" size="small" @click="showCloseOrderDialog(scope.row.purchaseId)">关闭</el-button>
               <el-divider v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_finish" direction="vertical"></el-divider>
@@ -378,6 +380,11 @@ export default {
 </script>
 <style lang="less" scoped>
 .purchaseOrder_wrap {
+  .link {
+    color:#1ABC9C;
+    cursor: pointer;
+    user-select: none;
+  }
   .order_main {
     box-sizing: border-box;
     padding: 20px 60px;

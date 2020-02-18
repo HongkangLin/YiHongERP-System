@@ -46,7 +46,9 @@
           <el-table-column prop="payTime" label="付款时间" align="center" min-width="100"></el-table-column>
           <el-table-column align="center" fixed="right" label="操作" width="160" v-if="roleCtl.finance_detail || roleCtl.finance_pay || roleCtl.finance_cancel">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="toPrintPage(scope.row.payId, scope.row.payType)" v-if="roleCtl.finance_detail">查看</el-button>
+              <!-- <el-button type="text" size="small" @click="toPrintPage(scope.row.payId, scope.row.payType)" v-if="roleCtl.finance_detail">查看</el-button> -->
+              <a class="link" target="_self" :href="`/#/F0501/viewPrint?payId=${scope.row.payId}`" v-if="roleCtl.finance_detail && scope.row.payType === 1">查看</a>
+              <a class="link" target="_self" :href="`/#/F0501/logisticsViewPrint?payId=${scope.row.payId}`" v-if="roleCtl.finance_detail && scope.row.payType === 2">查看</a>
               <el-divider v-if="scope.row.payStatus === '待付款' && roleCtl.finance_detail && roleCtl.finance_pay" direction="vertical"></el-divider>
               <el-button v-if="scope.row.payStatus === '待付款' && roleCtl.finance_pay" type="text" size="small" @click="payAct(scope.row.payId)">付款</el-button>
               <el-divider v-if="scope.row.payStatus === '待付款' && roleCtl.finance_cancel" direction="vertical"></el-divider>
@@ -338,6 +340,11 @@ export default {
 </script>
 <style lang="less" scoped>
 .financeIndex_wrap {
+  .link {
+    color:#1ABC9C;
+    cursor: pointer;
+    user-select: none;
+  }
   .order_main {
     box-sizing: border-box;
     padding: 20px 60px;

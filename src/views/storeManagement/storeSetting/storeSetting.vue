@@ -57,11 +57,12 @@
           </el-table-column>
           <el-table-column label="操作" align="center" fixed="right" min-width="120" v-if="roleCtl.warehouse_detail || roleCtl.warehouse_update">
             <template slot-scope="scope">
-              <el-button
+              <!-- <el-button
                 v-if="roleCtl.warehouse_detail"
                 size="mini"
                 type="text"
-                @click="handleView(scope.row.id)">查看</el-button>
+                @click="handleView(scope.row.id)">查看</el-button> -->
+              <a class="link" target="_self" :href="`/#/F0401/F040104/${scope.row.id}`" v-if="roleCtl.warehouse_detail">查看</a>
               <el-divider direction="vertical" v-if="roleCtl.warehouse_detail && roleCtl.warehouse_update"></el-divider>
               <el-button
                 v-if="roleCtl.warehouse_update"
@@ -234,6 +235,11 @@ export default {
 </script>
 <style lang="less" scoped>
 .storeSetting_wrap {
+  .link {
+    color:#1ABC9C;
+    cursor: pointer;
+    user-select: none;
+  }
   /deep/.inputDiv .el-input--small .el-input__inner {
     height: 35px;
     line-height: 35px;

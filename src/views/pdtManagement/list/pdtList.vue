@@ -119,16 +119,9 @@
             </el-table-column>
             <el-table-column label="操作" align="center">
               <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  type="text"
-                  v-if="roleCtl.product_update"
-                  @click="handleEdit(scope.row.id, scope.row.skuId)">编辑</el-button>
+                <a class="link" target="_self" :href="`/#/addPdt?id=${scope.row.id}&skuid=${scope.row.skuId}`" v-if="roleCtl.product_update">编辑</a>
                 <el-divider direction="vertical" v-if="roleCtl.product_update"></el-divider>
-                <el-button
-                  size="mini"
-                  type="text"
-                  @click="handleLook(scope.row.id, scope.row.skuId)">查看</el-button>
+                <a class="link" target="_self" :href="`/#/pdtDetail?id=${scope.row.id}&skuid=${scope.row.skuId}`">查看</a>
                 <el-divider direction="vertical" v-if="roleCtl.product_quick_update"></el-divider>
                 <el-button
                   size="mini"
@@ -702,6 +695,11 @@ export default {
 
 <style lang="less" scoped>
 .pdtList {
+  .link {
+    color:#1ABC9C;
+    cursor: pointer;
+    user-select: none;
+  }
   box-sizing: border-box;
   padding: 20px 50px;
   width: 100%;

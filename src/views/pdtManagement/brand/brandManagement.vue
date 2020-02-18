@@ -38,11 +38,12 @@
           </el-table-column>
           <el-table-column label="操作" align="center" v-if="roleCtl.brand_update || roleCtl.brand_delete">
             <template slot-scope="scope">
-              <el-button
+              <!-- <el-button
                 size="mini"
                 type="text"
                 v-if="roleCtl.brand_update"
-                @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                @click="handleEdit(scope.$index, scope.row)">编辑</el-button> -->
+              <a class="link" target="_self" :href="`/#/addBrand?id=${scope.row.id}&goodsBrandPicUrl=${scope.row.goodsBrandPicUrl}&goodsBrandName=${scope.row.goodsBrandName}&goodsBrandLetter=${scope.row.goodsBrandLetter}&goodsBrandDecription=${scope.row.goodsBrandDecription}`" v-if="roleCtl.brand_update">编辑</a>
               <el-divider direction="vertical" v-if="roleCtl.brand_update && roleCtl.brand_delete"></el-divider>
               <el-button
                 size="mini"
@@ -142,6 +143,11 @@ export default {
 
 <style lang="less" scoped>
 .brandManagement {
+  .link {
+    color:#1ABC9C;
+    cursor: pointer;
+    user-select: none;
+  }
   .content {
     /deep/.el-input--small .el-input__inner {
       height: 35px;
