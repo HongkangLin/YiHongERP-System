@@ -155,7 +155,7 @@ export default {
   },
   methods: {
     async getExpcomp () { // 获取物流商
-      let data = await window.axios.post('/express/queryExpressCompanyInfoList', {
+      let data = await window.axios.post('/express/queryExpressCompanyInfoListAuth', {
         pageSize: 9999999,
         pageNum: 1,
         snOrNameKeyword: ''
