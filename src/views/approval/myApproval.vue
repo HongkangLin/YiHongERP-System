@@ -34,6 +34,18 @@
             <el-table-column label="审批名称" align="center" min-width="140">
               <template slot-scope="scope">{{toZW[scope.row.applyType]}}</template>
             </el-table-column>
+            <el-table-column label="审批摘要" align="center" min-width="140">
+              <template slot-scope="scope">
+                <div v-if="scope.row.applyType === 'purchase.close'">
+                  <div style="text-align: left;">供应商：{{scope.row.payeeName}}</div>
+                  <div style="text-align: left;">货款总金额：{{scope.row.payAmount}}</div>
+                </div>
+                <div v-else>
+                  <div style="text-align: left;">收款单位：{{scope.row.payeeName}}</div>
+                  <div style="text-align: left;">金额：{{scope.row.payAmount}}</div>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column align="center" label="审批状态" width="80">
               <template slot-scope="scope">
                 <div class="status">{{scope.row.applyStatus}}</div>
@@ -108,6 +120,8 @@ export default {
     }
   },
   created() {
+    this.activeName = localStorage.getItem('approvalActiveName') || '0';
+    localStorage.removeItem('approvalActiveName');
     this.queryList();
     this.queryStatusTotal();
   },
@@ -185,6 +199,7 @@ export default {
 
     // 查看详情
     toDetailPage(id, type, bussinessNo, doing) {
+      localStorage.setItem('approvalActiveName', this.activeName);
       switch (type) {
         case 'purchase.pay': // 采购单付款申请
           this.$router.push(`/F0801/F080101/myApprovalPayDetail?id=${id}&bussinessNo=${bussinessNo}&doing=${doing}`);
