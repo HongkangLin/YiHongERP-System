@@ -38,11 +38,11 @@
               <template slot-scope="scope">
                 <div v-if="scope.row.applyType === 'purchase.close'">
                   <div style="text-align: left;">供应商：{{scope.row.payeeName}}</div>
-                  <div style="text-align: left;">货款总金额：{{scope.row.payAmount}}</div>
+                  <div style="text-align: left;">货款总金额（元）：{{scope.row.payAmount}}</div>
                 </div>
                 <div v-else>
                   <div style="text-align: left;">收款单位：{{scope.row.payeeName}}</div>
-                  <div style="text-align: left;">金额：{{scope.row.payAmount}}</div>
+                  <div style="text-align: left;">金额（元）：{{scope.row.payAmount}}</div>
                 </div>
               </template>
             </el-table-column>
