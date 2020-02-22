@@ -21,7 +21,7 @@
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">关联出库单号</div></el-col>
-          <el-col :span="8"><div class="td">{{info.stockoutOrderId}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.stockoutOrderSn}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">物流商名称</div></el-col>
           <el-col :span="8"><div class="td">{{info.expcompName}}&nbsp;</div></el-col>
         </el-row>
@@ -47,7 +47,7 @@
       <div class="title"><i class="el-icon-collection-tag"></i><span>订单规格</span></div>
       <div class="info">
         <el-row>
-          <el-col :span="4"><div class="td label">预估计费重（kg）</div></el-col>
+          <el-col :span="4"><div class="td label">预估实重（kg）</div></el-col>
           <el-col :span="8"><div class="td">{{info.weight}}</div></el-col>
           <el-col :span="4"><div class="td label">预估体积（m³）</div></el-col>
           <el-col :span="8"><div class="td">{{info.volume}}&nbsp;</div></el-col>
@@ -62,7 +62,7 @@
       <div class="title"><i class="el-icon-collection-tag"></i><span>费用信息</span></div>
       <div class="info">
         <el-row>
-          <el-col :span="4"><div class="td label">运费单价（元/kg）</div></el-col>
+          <el-col :span="4"><div class="td label">运费单价{{parseInt(info.transCostType) === 1 ? '（元/kg）：' : '（元/m³）：'}}</div></el-col>
           <el-col :span="8"><div class="td">{{info.transCostUnit}}</div></el-col>
           <el-col :span="4"><div class="td label">运费（元）</div></el-col>
           <el-col :span="8"><div class="td">{{(info.realWeight * info.transCostUnit).toFixed(2)}}&nbsp;</div></el-col>
@@ -267,10 +267,10 @@ export default {
       let weight = 0, volume = 0;
       data.data.goods.forEach(item => {
         if (item.cartonLength && item.cartonWidth && item.cartonHeight) {
-          weight += parseFloat(((item.cartonLength * item.cartonWidth * item.cartonHeight)/1000000).toFixed(3));
+          volume += parseFloat(((item.cartonLength * item.cartonWidth * item.cartonHeight)/1000000).toFixed(3));
         }
         if (item.fullLoadWeight && item.quantity) {
-          volume += item.fullLoadWeight * item.quantity;
+          weight += item.fullLoadWeight * item.quantity;
         }
       });
       data.data.weight = weight;

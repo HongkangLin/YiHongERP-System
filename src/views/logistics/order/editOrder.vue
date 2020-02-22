@@ -166,7 +166,7 @@
             <el-form-item label="报关费（元）：" prop="customsClearAmnt">
               <el-input v-model="form.customsClearAmnt" maxlength="100" placeholder="请输入报关费，可以为0"></el-input>
             </el-form-item>
-            <el-form-item label="关税（美元）：" prop="customsDutiesAmnt">
+            <el-form-item :label="'关税（' + rateChange[form.outCountryId] + '）：'" prop="customsDutiesAmnt">
               <el-input v-model="form.customsDutiesAmnt" maxlength="100" placeholder="请输入关税，单位随国家变化"></el-input>
             </el-form-item>
             <el-form-item label="汇率：" prop="exchRate">
@@ -220,6 +220,7 @@ export default {
       }],
       weight: 0,
       volume: 0,
+      rateChange: ['美元', '英镑', '欧元', '日元', '法郎'],
       compList: [],
       options: provinceAndCityData, // 省市区选择
       simpList: [],
@@ -372,7 +373,7 @@ export default {
               sum += parseFloat(((data[i].cartonLength * data[i].cartonWidth * data[i].cartonHeight)/1000000).toFixed(2));
             }
           }
-          this.weight = sum || 0;
+          this.volume = sum || 0;
           sums[index] = sum || 0;
           return;
         }
@@ -383,7 +384,7 @@ export default {
               sum += data[i].fullLoadWeight * data[i].quantity;
             }
           }
-          this.volume = sum || 0,
+          this.weight = sum || 0,
           sums[index] = sum || 0;
           return;
         }
