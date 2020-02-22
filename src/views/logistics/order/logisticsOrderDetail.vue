@@ -74,7 +74,7 @@
           <el-col :span="8"><div class="td">{{info.customsClearAmnt}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
-          <el-col :span="4"><div class="td label">关税（美元）</div></el-col>
+          <el-col :span="4"><div class="td label">{{'关税（' + rateChange[info.outCountryId] + '）'}}</div></el-col>
           <el-col :span="8"><div class="td">{{info.customsDutiesAmnt}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">汇率</div></el-col>
           <el-col :span="8"><div class="td">{{info.exchRate}}&nbsp;</div></el-col>
@@ -237,6 +237,7 @@ export default {
       compList: [],
       info: {},
       payList: [],
+      rateChange: ['美元', '英镑', '欧元', '日元', '法郎'],
       payTotal: 0,
       payPageSize: 10,
       payPageNum: 1

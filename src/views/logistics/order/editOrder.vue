@@ -34,7 +34,7 @@
               <el-input disabled :value="form.id"></el-input>
             </el-form-item>
             <el-form-item label="关联出库单号：">
-              <el-input disabled :value="form.stockoutOrderId"></el-input>
+              <el-input disabled :value="form.stockoutOrderSn"></el-input>
             </el-form-item>
             <el-form-item label="物流商名称：" prop="expcompId">
               <el-select filterable v-model="form.expcompId" placeholder="请选择物流商">
@@ -139,7 +139,7 @@
               </el-table-column>
             </el-table>
             <div class="spanDiv"></div>
-            <el-form-item label="预估计费重（kg）：">
+            <el-form-item label="预估实重（kg）：">
               <el-input disabled :value="weight"></el-input>
             </el-form-item>
             <el-form-item label="预估体积（m³）：">
