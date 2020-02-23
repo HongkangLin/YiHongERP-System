@@ -74,22 +74,26 @@
           <el-col :span="8"><div class="td">{{info.customsClearAmnt}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
+          <el-col :span="4"><div class="td label">其他费用（元）</div></el-col>
+          <el-col :span="8"><div class="td">{{info.otherAmount}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">{{'关税（' + rateChange[info.outCountryId] + '）'}}</div></el-col>
           <el-col :span="8"><div class="td">{{info.customsDutiesAmnt}}&nbsp;</div></el-col>
+        </el-row>
+        <el-row>
           <el-col :span="4"><div class="td label">汇率</div></el-col>
           <el-col :span="8"><div class="td">{{info.exchRate}}&nbsp;</div></el-col>
-        </el-row>
-        <el-row>
           <el-col :span="4"><div class="td label">关税（元）</div></el-col>
           <el-col :span="8"><div class="td">{{(info.customsDutiesAmnt * info.exchRate).toFixed(2)}}&nbsp;</div></el-col>
-          <el-col :span="4"><div class="td label">总运费（元）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.transCostAmount}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
+          <el-col :span="4"><div class="td label">总运费（元）</div></el-col>
+          <el-col :span="8"><div class="td">{{info.transCostAmount}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">费用合计（元）</div></el-col>
           <el-col :span="8"><div class="td">{{(parseFloat((info.customsDutiesAmnt * info.exchRate).toFixed(2)) + info.transCostAmount).toFixed(2)}}&nbsp;</div></el-col>
+        </el-row>
+        <el-row>
           <el-col :span="4"><div class="td label">备注</div></el-col>
-          <el-col :span="8"><div class="td">{{info.bak}}&nbsp;</div></el-col>
+          <el-col :span="20"><div class="td">{{info.bak}}&nbsp;</div></el-col>
         </el-row>
       </div>
       <div class="title"><i class="el-icon-collection-tag"></i><span>产品信息</span></div>

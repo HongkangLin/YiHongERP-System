@@ -166,6 +166,9 @@
             <el-form-item label="报关费（元）：" prop="customsClearAmnt">
               <el-input v-model="form.customsClearAmnt" maxlength="100" placeholder="请输入报关费，可以为0"></el-input>
             </el-form-item>
+            <el-form-item label="其他费用（元）：">
+              <el-input v-model="form.otherAmount" maxlength="100" placeholder="请输入其他费用，可以为0"></el-input>
+            </el-form-item>
             <el-form-item :label="'关税（' + rateChange[form.outCountryId] + '）：'" prop="customsDutiesAmnt">
               <el-input v-model="form.customsDutiesAmnt" maxlength="100" placeholder="请输入关税，单位随国家变化"></el-input>
             </el-form-item>
@@ -281,7 +284,7 @@ export default {
       return (customsDutiesAmnt * exchRate).toFixed(2);
     },
     allMoney () { // 总运费
-      return parseFloat(this.trans) + parseFloat(this.form.inwareCostAmount) + parseFloat(this.form.customsClearAmnt);
+      return parseFloat(this.trans) + parseFloat(this.form.inwareCostAmount) + parseFloat(this.form.customsClearAmnt) + parseFloat(this.form.otherAmount || 0);
     },
     total () { // 费用合计
       return parseFloat(this.rate) + parseFloat(this.allMoney);
@@ -402,13 +405,14 @@ export default {
               subzoneId = this.simpList[i].id;
             }
           }
-          let {id, realWeight, transCostType, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt, bak} = {...this.form};
+          let {id, realWeight, transCostType, otherAmount, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt, bak} = {...this.form};
           let param = {
             id,
             realWeight,
             realVolume,
             inwareCostAmount,
             customsDutiesAmnt,
+            otherAmount,
             transCostUnit,
             expcompId,
             exchRate,

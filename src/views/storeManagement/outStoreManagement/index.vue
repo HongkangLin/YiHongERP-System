@@ -52,7 +52,11 @@
         <el-table-column prop="deliverMethod" label="运输方式" align="center" min-width="130"></el-table-column>
         <el-table-column prop="status" label="出库状态" align="center" min-width="110"></el-table-column>
         <el-table-column prop="createTime" label="创建日期" align="center" min-width="130"></el-table-column>
-        <el-table-column prop="updateTime" label="出库日期" align="center" min-width="130"></el-table-column>
+        <el-table-column label="出库日期" align="center" min-width="130">
+          <template slot-scope="scope">
+            <div v-if="scope.row.status !== '待出库'">{{scope.row.updateTime}}</div>
+          </template>
+        </el-table-column>
         <el-table-column align="center" fixed="right" label="操作" width="160" v-if="roleCtl.stockoutorder_detail || roleCtl.stockoutorder_update || roleCtl.stockoutorder_stockout">
           <template slot-scope="scope">
             <!-- <el-button type="text" size="small" @click="handleView(scope.row.id)" v-if="roleCtl.stockoutorder_detail">查看</el-button> -->
