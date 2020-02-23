@@ -89,7 +89,7 @@
           <el-col :span="4"><div class="td label">总运费（元）</div></el-col>
           <el-col :span="8"><div class="td">{{info.transCostAmount}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">费用合计（元）</div></el-col>
-          <el-col :span="8"><div class="td">{{(parseFloat((info.customsDutiesAmnt * info.exchRate).toFixed(2)) + info.transCostAmount).toFixed(2)}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.totalCostAmount}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">备注</div></el-col>
