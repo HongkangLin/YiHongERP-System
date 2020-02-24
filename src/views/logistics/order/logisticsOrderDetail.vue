@@ -135,7 +135,7 @@
         </el-table-column>
         <el-table-column
           prop="fullLoadWeight"
-          label="整箱重量(g)"
+          label="整箱重量(kg)"
           align="center">
         </el-table-column>
         <el-table-column
@@ -166,7 +166,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="总重量(g)"
+          label="总重量(kg)"
           align="center">
           <template slot-scope="scope">
             {{scope.row.fullLoadWeight * scope.row.quantity}}
