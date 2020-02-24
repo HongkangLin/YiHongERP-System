@@ -63,7 +63,7 @@
               <el-table-column prop="goodsName" label="产品名称" align="center" min-width="130"></el-table-column>
               <el-table-column prop="goodsFNSKU" label="FNSKU" align="center" min-width="85"></el-table-column>
               <el-table-column prop="dimentions" label="外箱尺寸(cm)" align="center" min-width="90"></el-table-column>
-              <el-table-column prop="fullLoadWeight" label="整箱重量(g)" align="center" min-width="90"></el-table-column>
+              <el-table-column prop="fullLoadWeight" label="整箱重量(kg)" align="center" min-width="90"></el-table-column>
               <el-table-column prop="fullLoadQuantity" label="装箱数(套/箱)" align="center" min-width="90"></el-table-column>
               <el-table-column prop="quantity" label="件数" align="center" min-width="80"></el-table-column>
               <el-table-column prop="stockAvailCount" label="可用库存" align="center" min-width="80"></el-table-column>
@@ -79,7 +79,7 @@
                 </template>
               </el-table-column>
               <el-table-column prop="totalSpace" label="总体积(m³)" align="center" min-width="80"></el-table-column>
-              <el-table-column prop="totalWeight" label="总重量(g)" align="center" min-width="80"></el-table-column>
+              <el-table-column prop="totalWeight" label="总重量(kg)" align="center" min-width="80"></el-table-column>
               <el-table-column align="center" fixed="right" label="操作" width="80">
                 <template slot-scope="scope">
                   <el-button type="text" size="small" @click="removePdt(scope.row.goodsId)">移除</el-button>

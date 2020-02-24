@@ -130,7 +130,7 @@
               <el-table-column
                 label="总体积(m³)"
                 align="center">
-                <template slot-scope="scope">{{((scope.row.cartonLength * scope.row.cartonWidth * scope.row.cartonHeight)/1000000).toFixed(2)}}</template>
+                <template slot-scope="scope">{{((scope.row.cartonLength * scope.row.cartonWidth * scope.row.cartonHeight * scope.row.quantity)/1000000).toFixed(2)}}</template>
               </el-table-column>
               <el-table-column
                 label="总总量(kg)"

@@ -116,7 +116,7 @@
           <el-col :span="8"><div class="td">{{(info.goodsWeight * 2.2046226).toFixed(2)}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
-          <el-col :span="4"><div class="td label">整箱重量（g）</div></el-col>
+          <el-col :span="4"><div class="td label">整箱重量（kg）</div></el-col>
           <el-col :span="8"><div class="td">{{info.packingWeight}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">整箱重量（lb）</div></el-col>
           <el-col :span="8"><div class="td">{{(info.packingWeight * 2.2046226).toFixed(2)}}&nbsp;</div></el-col>

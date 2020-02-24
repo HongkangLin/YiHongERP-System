@@ -119,7 +119,7 @@
           <el-table-column
             prop="packingWeight"
             align="center"
-            label="整箱重量（g）">
+            label="整箱重量（kg）">
           </el-table-column>
           <el-table-column
             prop="packingQuantity"
