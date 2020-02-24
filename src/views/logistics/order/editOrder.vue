@@ -372,8 +372,8 @@ export default {
         if (index === 10) {
           let sum = 0;
           for (let i = 0, len = data.length; i < len; i++) {
-            if (data[i].cartonLength && data[i].cartonWidth && data[i].cartonHeight) {
-              sum += parseFloat(((data[i].cartonLength * data[i].cartonWidth * data[i].cartonHeight)/1000000).toFixed(2));
+            if (data[i].cartonLength && data[i].cartonWidth && data[i].cartonHeight && data[i].quantity) {
+              sum += parseFloat(((data[i].cartonLength * data[i].cartonWidth * data[i].cartonHeight * data[i].quantity)/1000000).toFixed(2));
             }
           }
           this.volume = sum || 0;
