@@ -589,7 +589,7 @@ export default {
       });
       this.tableData1 = data.list;
     },
-    async handleFast (id, skuid, rule) { // 快速编辑
+    async handleFast (id, skuid) { // 快速编辑
       this.skuid = skuid;
       this.id = id;
       let data = {};
@@ -611,7 +611,6 @@ export default {
         }] : [],
         fnskuFilePicUrl: data.data.fnskuFilePicUrl ? [{url: data.data.fnskuFilePicUrl}] : []
       };
-      this.rule = rule;
       this.fastVisible = true;
     },
     handleChange (value) { // 修改产品类型
