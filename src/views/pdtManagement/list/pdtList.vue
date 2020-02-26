@@ -128,7 +128,7 @@
                   size="mini"
                   type="text"
                   v-if="roleCtl.product_quick_update"
-                  @click="handleFast(scope.row.id, scope.row.skuId, 'hasRule')">快速编辑</el-button>
+                  @click="handleFast(scope.row.id, scope.row.skuId)">快速编辑</el-button>
                 <el-divider direction="vertical" v-if="roleCtl.product_delete"></el-divider>
                 <el-button
                   size="mini"
@@ -209,7 +209,7 @@
                   size="mini"
                   type="text"
                   v-if="roleCtl.product_quick_tmp_update"
-                  @click="handleFast(scope.row.id, scope.row.skuId, 'noRule')">快速编辑</el-button>
+                  @click="handleFast(scope.row.id, scope.row.skuId)">快速编辑</el-button>
                 <el-divider direction="vertical"  v-if="roleCtl.product_quick_tmp_update && roleCtl.product_delete"></el-divider>
                 <el-button
                   size="mini"
@@ -224,12 +224,12 @@
       </div>
     </div>
     <el-dialog title="快速编辑" :visible.sync="fastVisible" width="70%" top="20px">
-      <el-form ref="form" class="form" :model="form" :rules="rule === 'hasRule' ? rules : rules1" label-width="170px">
+      <el-form ref="form" class="form" :model="form" :rules="rules" label-width="170px">
         <el-form-item label="产品链接：">
           <el-input maxlength="100" v-model="form.goodsUrl" placeholder="请输入产品链接"></el-input>
         </el-form-item>
         <el-form-item label="FNSKU编号：" prop="fnskuId">
-          <el-input maxlength="100" :disabled="rule === 'hasRule'" v-model="form.fnskuId" placeholder="请输入FNSKU编号"></el-input>
+          <el-input maxlength="100" :disabled="activeName === '0'" v-model="form.fnskuId" placeholder="请输入FNSKU编号"></el-input>
         </el-form-item>
         <el-form-item label="FNSKU文件：" prop="fnskuFileUrl">
           <el-upload
@@ -307,7 +307,6 @@ export default {
         fnskuFileUrl: [],
         fnskuFilePicUrl: []
       },
-      rule: '',
       rules: {
         fnskuId: [
           {required: true, message: '请输入FNSKU编号', trigger: 'blur'}
@@ -317,17 +316,6 @@ export default {
         ],
         fnskuFilePicUrl: [
           {required: true, message: '请上传FNSKU图片', trigger: 'blur'}
-        ]
-      },
-      rules1: {
-        fnskuId: [
-          {required: false, message: '请输入FNSKU编号', trigger: 'blur'}
-        ],
-        fnskuFileUrl: [
-          {required: false, message: '请上传FNSKU文件', trigger: 'blur'}
-        ],
-        fnskuFilePicUrl: [
-          {required: false, message: '请上传FNSKU图片', trigger: 'blur'}
         ]
       },
       id: '', // 当前操作的id
@@ -459,9 +447,9 @@ export default {
       }
     },
     async confirmApplyForClose () { // 快速编辑
-      if (this.rule === 'hasRule') {
-        this.$refs['form'].validate(async valid => {
-          if (valid) {
+      this.$refs['form'].validate(async valid => {
+        if (valid) {
+          if (this.activeName === '0') {
             let data = await window.axios.post('/product/quickUpdateProductInfo', {
               skuId: this.skuid,
               fnskuId: this.form.fnskuId,
@@ -476,24 +464,24 @@ export default {
               this.queryList();
             }
           } else {
-            return false;
+            let data = await window.axios.post('/product/quickUpdateProductInfoTmp', {
+              id: this.id,
+              fnskuId: this.form.fnskuId,
+              goodsUrl: this.form.goodsUrl,
+              fnskuFileUrl: this.form.fnskuFileUrl[0] ? this.form.fnskuFileUrl[0].url : '',
+              fnskuFilePicUrl: this.form.fnskuFilePicUrl[0] ? this.form.fnskuFilePicUrl[0].url : '',
+              fnskuFileName: this.form.fnskuFileUrl[0] ? this.form.fnskuFileUrl[0].name : ''
+            });
+            if (data.code === 0) {
+              this.$message.success(data.message);
+              this.fastVisible = false;
+              this.queryProductInfoTmpList();
+            }
           }
-        });
-      } else {
-        let data = await window.axios.post('/product/quickUpdateProductInfoTmp', {
-          id: this.id,
-          fnskuId: this.form.fnskuId,
-          goodsUrl: this.form.goodsUrl,
-          fnskuFileUrl: this.form.fnskuFileUrl[0] ? this.form.fnskuFileUrl[0].url : '',
-          fnskuFilePicUrl: this.form.fnskuFilePicUrl[0] ? this.form.fnskuFilePicUrl[0].url : '',
-          fnskuFileName: this.form.fnskuFileUrl[0] ? this.form.fnskuFileUrl[0].name : ''
-        });
-        if (data.code === 0) {
-          this.$message.success(data.message);
-          this.fastVisible = false;
-          this.queryProductInfoTmpList();
+        } else {
+          return false;
         }
-      }
+      });
     },
     async getBrand () { // 获取品牌
       let data = await window.axios.post('/product/queryProductBrandListRule', {
@@ -605,7 +593,7 @@ export default {
       this.skuid = skuid;
       this.id = id;
       let data = {};
-      if (rule === 'hasRule') {
+      if (this.activeName === '0') {
         data = await window.axios.post(`/product/queryProductInfoDetail`, {
           skuId: skuid
         });
