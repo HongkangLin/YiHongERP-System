@@ -216,7 +216,7 @@
                   v-for="item in compBList"
                   :key="item.accountNo"
                   :label="item.accountName"
-                  :value="item.accountNo + ' ' + item.accountBankname + ' ' + item.accountName">
+                  :value="item.accountNo + '/' + item.accountBankname + '/' + item.accountName">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -519,9 +519,9 @@ export default {
         if (valid) {
           let curr = {...this.form, ...this.info};
           let param = JSON.parse(JSON.stringify(curr));
-          param.accountName = param.compB.split(' ')[2], // 乙方收款人
-          param.accountBankname = param.compB.split(' ')[1], // 乙方开户行
-          param.accountNo = param.compB.split(' ')[0], // 乙方收款账号
+          param.accountName = param.compB.split('/')[2], // 乙方收款人
+          param.accountBankname = param.compB.split('/')[1], // 乙方开户行
+          param.accountNo = param.compB.split('/')[0], // 乙方收款账号
           delete param.compB;
           // let time = new Date(param.expectDueTime);
           // param.expectDueTime = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate();
