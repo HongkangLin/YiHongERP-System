@@ -946,7 +946,7 @@ export default {
           this.$set(this.supplierList[idx], 'sel', true);
           this.form.list.push(this.supplierList[idx]);
         } else { // 编辑时逻辑
-          let data = await window.axios.post('/supplyrel/create', {list: [{
+          let data = await window.axios.post('/supplyrel/createbyproduct', {list: [{
             goodsId: this.$route.query.id,
             supplierId: this.supplierList[idx].id,
             price: this.supplierList[idx].price || 0

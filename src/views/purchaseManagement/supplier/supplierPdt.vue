@@ -234,14 +234,12 @@ export default {
           list: [{
             goodsId: this.pdtList[idx].id,
             supplierId: this.$route.params.id,
-            price: this.pdtList[idx].goodsGoalPrice
+            price: 0
           }]
         });
         if (data.code === 0) {
           this.$message.success(data.message);
           this.getPdt();
-        } else {
-          this.$message.warning(data.message);
         }
       }
     },
