@@ -234,7 +234,7 @@ export default {
           list: [{
             goodsId: this.pdtList[idx].id,
             supplierId: this.$route.params.id,
-            price: 0
+            price: ''
           }]
         });
         if (data.code === 0) {

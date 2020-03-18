@@ -188,7 +188,7 @@ export default {
           list: [{
             goodsId: this.$route.params.id,
             supplierId: this.supplierList[idx].id,
-            price: 0
+            price: ''
           }]
         });
         if (data.code === 0) {
