@@ -8,6 +8,8 @@
         <div class="head">
           <el-tabs v-model="activeName" class="statusTabs">
             <el-tab-pane :label="'全部/'+statusTotal.all" name="0"></el-tab-pane>
+            <el-tab-pane :label="'审核中/'+statusTotal.reviewing" name="5"></el-tab-pane>
+            <el-tab-pane :label="'驳回/'+statusTotal.rejected" name="6"></el-tab-pane>
             <el-tab-pane :label="'进行中/'+statusTotal.underway" name="1"></el-tab-pane>
             <el-tab-pane :label="'已完成/'+statusTotal.completed" name="2"></el-tab-pane>
             <el-tab-pane :label="'关闭中/'+statusTotal.closing" name="3"></el-tab-pane>
@@ -52,7 +54,7 @@
           <el-table-column align="center" label="状态" width="80">
             <template slot-scope="scope">
               <div class="status">{{scope.row.purchaseStatus}}</div>
-              <el-button type="text" size="small" v-if="scope.row.purchaseStatus==='关闭中' || scope.row.purchaseStatus==='已关闭'" @click="viewReviewDetail(scope.row.purchaseId)">审核详情</el-button>
+              <el-button type="text" size="small" v-if="scope.row.purchaseStatus==='关闭中' || scope.row.purchaseStatus==='已关闭' || scope.row.purchaseStatus==='审核中' || scope.row.purchaseStatus==='驳回'" @click="viewReviewDetail(scope.row.purchaseId, scope.row.purchaseStatus)">审核详情</el-button>
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建日期" align="center" min-width="110"></el-table-column>
@@ -144,7 +146,9 @@ export default {
         completed: 0, //已完成
         closing: 0, //关闭中
         closed: 0, //已关闭
-        all: 0 //全部
+        all: 0, //全部
+        reviewing: 0, //审核中
+        rejected: 0 //驳回
       },
 
       dialogTableVisible: false, //审核详情弹窗
@@ -210,6 +214,12 @@ export default {
           case 4:
             item.purchaseStatus = "已关闭";
             break;
+          case 5:
+            item.purchaseStatus = "审核中";
+            break;
+          case 6:
+            item.purchaseStatus = "驳回";
+            break;
         }
 
       })
@@ -230,6 +240,10 @@ export default {
           this.statusTotal.closing = item.count;
         } else if (item.purchaseStatus === 4) { //已关闭
           this.statusTotal.closed = item.count;
+        } else if (item.purchaseStatus === 5) { //审核中
+          this.statusTotal.reviewing = item.count;
+        } else if (item.purchaseStatus === 6) { //驳回
+          this.statusTotal.rejected = item.count;
         } else { //全部
           this.statusTotal.all = item.count;
         }
@@ -270,10 +284,11 @@ export default {
     },
 
     // 查看审核详情
-    viewReviewDetail(purchaseId) {
+    viewReviewDetail(purchaseId, purchaseStatus) {
       this.reviewDetailData = [];
       this.dialogTableVisible = true;
-      window.axios.get(`/approve/queryBussinessApproveDetail/${purchaseId}`).then((data) => {
+      const applyType = (purchaseStatus === '关闭中' || purchaseStatus === '已关闭') ? 'purchase.close' : 'purchase.add';
+      window.axios.get(`/approve/queryBussinessApproveDetail?bussinessNo=${purchaseId}&applyType=${applyType}`).then((data) => {
         if (data.code !== 0) return
         data.data.map((item) => {
           if (item.approveResult === "agree") {

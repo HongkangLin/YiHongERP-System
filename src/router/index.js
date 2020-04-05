@@ -224,6 +224,14 @@ const routes = [{
 		name: 'logisticsManagement',
 		component: () => import(/* webpackChunkName: "logisticsManagement" */ '../views/logistics/manager/logisticsManagement.vue'),
 	}, {
+		path: '/F0701/F070103', // 物流 > 物流管理 > 运输方式
+		name: 'shippingMethod',
+		component: () => import(/* webpackChunkName: "shippingMethod" */ '../views/logistics/shippingMethod/index.vue'),
+	}, {
+		path: 'addMethod', // 物流 > 物流管理 > 新增运输方式
+		name: 'addMethod',
+		component: () => import(/* webpackChunkName: "addMethod" */ '../views/logistics/shippingMethod/addMethod.vue'),
+	}, {
 		path: '/addLogistics', // 物流 > 物流管理 > 新增物流商
 		name: 'addLogistics',
 		component: () => import(/* webpackChunkName: "addLogistics" */ '../views/logistics/manager/addLogistics.vue'),
