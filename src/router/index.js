@@ -204,6 +204,10 @@ const routes = [{
 		name: 'dataDownload',
 		component: () => import(/* webpackChunkName: "dataDownload" */ '../views/data/dataDownload/index.vue'),
 	}, {
+		path: '/F0601/F060103', // 数据 > 成本核算
+		name: 'costCheck',
+		component: () => import(/* webpackChunkName: "costCheck" */ '../views/data/costCheck/index.vue'),
+	}, {
 		path: '/F0701/F070101', // 物流 > 物流管理 > 物流订单
 		name: 'logisticsOrder',
 		component: () => import(/* webpackChunkName: "logisticsOrder" */ '../views/logistics/order/logisticsOrder.vue'),
