@@ -45,6 +45,11 @@
                 type="text"
                 :disabled="!scope.row.searchContent"
                 @click="handleLook(scope.row.searchContent)">筛选条件</el-button>
+              <el-divider direction="vertical"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                @click="handleDelete(scope.row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -115,6 +120,14 @@ export default {
       str += '</table>';
       this.str = str;
       this.ruleVisible = true;
+    },
+    // 删除报表记录
+    handleDelete(id) {
+      window.axios.get("/reportRecord/deleteReportRecord/" + id).then((data) => {
+        if (data.code !== 0) return this.$message.error(data.message);
+        this.$message.success('删除成功');
+        this.queryList();
+      });
     },
     search () { // 查询按钮
       this.pageNum = 1;

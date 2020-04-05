@@ -273,6 +273,14 @@ const routes = [{
 	name: 'printPreviewPage',
 	component: () => import(/* webpackChunkName: "printPreviewPage" */ '../views/financeManagement/paymentManagement/printPreviewPage.vue'),
 }, {
+	path: '/F0801/F080101/previewMyApprovalPayDetail', // 审批 > 审批中心 > 我的审批 > 采购单付款申请-打印预览
+	name: 'previewMyApprovalPayDetail',
+	component: () => import(/* webpackChunkName: "previewMyApprovalPayDetail" */ '../views/approval/previewMyApprovalPayDetail.vue'),
+}, {
+	path: '/F0801/F080101/previewLogisticsPayDetail', // 审批 > 审批中心 > 我的审批 > 物流订单付款申请-打印预览
+	name: 'previewLogisticsPayDetail',
+	component: () => import(/* webpackChunkName: "previewLogisticsPayDetail" */ '../views/approval/previewLogisticsPayDetail.vue'),
+}, {
 	path: '/F0501/logisticsPrintPreviewPage', //物流付款单打印预览
 	name: 'logisticsPrintPreviewPage',
 	component: () => import(/* webpackChunkName: "logisticsPrintPreviewPage" */ '../views/financeManagement/paymentManagement/logisticsPrintPreviewPage.vue'),

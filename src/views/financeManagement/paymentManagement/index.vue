@@ -18,6 +18,14 @@
         <div class="content">
           <div class="inputDiv">
             <el-input maxlength="100" class="searchValue" @change="search" v-model="searchValue" placeholder="付款单号" clearable></el-input>
+            <el-select filterable class="selList" @change="search" v-model="supplierId" placeholder="供应商名称">
+              <el-option
+                v-for="item in supplierList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
             <el-date-picker v-model="createTimeRange" @change="search" value-format="yyyy-MM-dd" type="daterange" range-separator="" start-placeholder="请选择申请时间"></el-date-picker>
             <el-date-picker v-model="payTimeRange" @change="search" value-format="yyyy-MM-dd" type="daterange" range-separator="" start-placeholder="请选择付款时间"></el-date-picker>
           </div>
@@ -117,6 +125,8 @@ export default {
       searchValue: "", //付款单号
       createTimeRange: [], //申请时间
       payTimeRange: [], //付款时间
+      supplierId: null, // 供应商id
+      supplierList: [], // 供应商列表
 
       total: 0, // 总数
       pageNum: 1, // pageNumber
@@ -152,6 +162,7 @@ export default {
     }
   },
   created() {
+    this.getSupplier();
     this.queryList();
     this.queryStatusTotal();
   },
@@ -167,6 +178,10 @@ export default {
     }
   },
   methods: {
+    async getSupplier () { // 获取供应商
+      let data = await window.axios.get(`/supplier/simpListNoChk`);
+      this.supplierList = data.data.filter(item => item.status);
+    },
     async queryList () { 
       let params = {
         searchValue: this.searchValue,
@@ -176,7 +191,8 @@ export default {
         payTimeStart: this.payTimeRange ? this.payTimeRange[0] : null,
         payTimeEnd: this.payTimeRange ? this.payTimeRange[1] : null,
         pageNum: this.pageNum,
-        pageSize: this.pageSize
+        pageSize: this.pageSize,
+        supplierId: this.supplierId
       }
       let data = await window.axios.post('/finance/queryPayManagePage', params);
       if (data.code !== 0) return
@@ -410,6 +426,9 @@ export default {
           &.el-select {
             margin-right: 10px;
             width: 110px;
+          }
+          &.selList {
+            width: 190px;
           }
           &.el-date-editor {
             margin-right: 10px;

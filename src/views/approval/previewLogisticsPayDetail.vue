@@ -1,11 +1,6 @@
 <template>
   <div>
-		<!-- 顶部面包屑 -->
-    <div class="top">
-      <crumbs :list="crumbList"></crumbs>
-      <div class="printBtn" @click="print"><i class="el-icon-printer"></i> 打印</div>
-    </div>
-    <div class="approvalPage_wrap">
+    <div class="approvalPage_wrap" v-if="showHtml" id="sharePicBox">
       <div class="header">物流订单付款申请</div>
       <div class="contentArea">
         <!-- 采购单信息 -->
@@ -45,6 +40,7 @@
         </div>
       </div>
     </div>
+    <img :src="imgSrc" v-else alt="打印预览" class="previewImg">
     <!-- 审核弹窗 -->
     <el-dialog title="审核" :visible.sync="dialogVisible" width="45%">
       <el-form :model="ruleForm" label-width="100px" class="ruleForm">
@@ -69,17 +65,16 @@
         <el-button type="primary" @click="confirmApprove">确 定</el-button>
       </div>
     </el-dialog>
-    <!-- 打印预览弹窗 -->
-    <el-dialog :visible.sync="showPrintPreview" width="90%" top="5vh" class="printWindow">
-      <iframe :src="`/#/F0801/F080101/previewLogisticsPayDetail?id=${$route.query.id}&bussinessNo=${$route.query.bussinessNo}&doing=${$route.query.doing}`" class="myIframe" v-if="showPrintPreview"></iframe>
-    </el-dialog>
 	</div>
 </template>
 
 <script>
+import  html2canvas  from  'html2canvas'
 export default {
   data() {
     return {
+      showHtml: true,
+      imgSrc: "",
       crumbList: [{ // 面包屑
         name: '审批',
         path: '/F0801/F080101'
@@ -117,33 +112,34 @@ export default {
   created() {
     this.doing = this.$route.query.doing;
     this.id = this.$route.query.id;
-    this.getApprovalInfo();
-    this.getPeopleList();
+    this.init();
   },
   methods: {
-    getApprovalInfo() {
+    init() {
       let bussinessNo = this.$route.query.bussinessNo;
-      window.axios.get(`/express/order/queryPayApproveDetail/${bussinessNo}`).then((data) => {
-        if (data.code !== 0) return
-        let obj = data.data;
-        // 审核详情-审核结果
-        obj.approveList.map((item) => {
-          if (item.approveResult === "agree") {
-            item.approveResult = "通过"
-          } else if (item.approveResult === "disagree") {
-            item.approveResult = "驳回"
-          }
+      let _this = this;
+      axios.all([
+        axios.get(`/express/order/queryPayApproveDetail/${bussinessNo}`),
+        axios.get("/user/queryOtherUserList")
+      ])
+      .then(axios.spread(function (approvalInfoData, peopleListData) {
+        _this.getApprovalInfo(approvalInfoData.data);
+        _this.peopleList = peopleListData.data;
+        _this.$nextTick(() => {
+          _this.convertToImg();
         })
-        this.tableData = obj;
-      })
+      }));
     },
-
-    // 下一审批人下拉
-    getPeopleList() {
-      window.axios.get("/user/queryOtherUserList").then((data) => {
-        if (data.code !== 0) return
-        this.peopleList = data.data;
+    getApprovalInfo(obj) {
+      // 审核详情-审核结果
+      obj.approveList.map((item) => {
+        if (item.approveResult === "agree") {
+          item.approveResult = "通过"
+        } else if (item.approveResult === "disagree") {
+          item.approveResult = "驳回"
+        }
       })
+      this.tableData = obj;
     },
 
     // 确认审核
@@ -164,43 +160,30 @@ export default {
     backToList() {
       history.go(-1);
     },
-    // 打印
-    print() {
-      this.showPrintPreview = true;
+    convertToImg() {
+      let htmlDom = document.querySelector('#sharePicBox')
+      html2canvas( htmlDom , {
+        allowTaint: false,   
+        taintTest: true,    
+        useCORS: true,      
+        background: "#fff",
+      }).then((canvas) => {
+        //将图片转为base64
+        let imgBlob = canvas.toDataURL( 'image/jpeg', 1.0 );
+        // console.log(imgBlob);
+        this.imgSrc = imgBlob;
+        this.showHtml = false;
+        setTimeout(() => {
+          window.print();
+        }, 100);
+      })
     }
   },
 };
 </script>
 <style lang="less" scoped>
-.top {
-  position: relative;
-  .printBtn {
-    position: absolute;
-    right: 132px;
-    top: 10px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    width: 70px;
-    color: #999;
-    cursor: pointer;
-    border-radius: 4px;
-    background-color: white;
-    border: 1px solid rgb(228, 228, 228);
-  }
-}
-.printWindow.el-dialog__wrapper {
-  /deep/.el-dialog__header {
-    height: 54px;
-  }
-  /deep/.el-dialog__body {
-    padding: 0;
-    height: calc(90vh - 54px);
-    .myIframe {
-      width: 100%;
-      height: 100%;
-    }
-  }
+.previewImg {
+  width: 100%;
 }
 .approvalPage_wrap {
   box-sizing: border-box;

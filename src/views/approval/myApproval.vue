@@ -97,7 +97,8 @@ export default {
       toZW: {
         'exporder.pay': '物流订单付款申请',
         'purchase.pay': '采购单付款申请',
-        'purchase.close': '采购单关闭申请'
+        'purchase.close': '采购单关闭申请',
+        'purchase.add': '采购单新增申请'
       },
       activeName: "0", // 状态Tab
       searchValue: "", // 审批编号/付款单号/采购单号

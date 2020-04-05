@@ -1,7 +1,10 @@
 <template>
   <div>
 		<!-- 顶部面包屑 -->
-    <crumbs :list="crumbList"></crumbs>
+    <div class="top">
+      <crumbs :list="crumbList"></crumbs>
+      <div class="printBtn" @click="print"><i class="el-icon-printer"></i> 打印</div>
+    </div>
     <div class="approvalPage_wrap">
       <div class="header">付款审批</div>
       <div class="contentArea">
@@ -66,6 +69,10 @@
         <el-button type="primary" @click="confirmApprove">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 打印预览弹窗 -->
+    <el-dialog :visible.sync="showPrintPreview" width="90%" top="5vh" class="printWindow">
+      <iframe :src="`/#/F0801/F080101/previewMyApprovalPayDetail?id=${$route.query.id}&bussinessNo=${$route.query.bussinessNo}&doing=${$route.query.doing}`" class="myIframe" v-if="showPrintPreview"></iframe>
+    </el-dialog>
 	</div>
 </template>
 
@@ -104,7 +111,8 @@ export default {
         nextApproveUserId: null,
         feedbackReason: ""
       },
-      peopleList: [] //下一审批人下拉
+      peopleList: [], //下一审批人下拉
+      showPrintPreview: false
     }
   },
   created() {
@@ -175,11 +183,45 @@ export default {
 
     backToList() {
       history.go(-1);
+    },
+    // 打印
+    print() {
+      this.showPrintPreview = true;
     }
   },
 };
 </script>
 <style lang="less" scoped>
+.top {
+  position: relative;
+  .printBtn {
+    position: absolute;
+    right: 132px;
+    top: 10px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    width: 70px;
+    color: #999;
+    cursor: pointer;
+    border-radius: 4px;
+    background-color: white;
+    border: 1px solid rgb(228, 228, 228);
+  }
+}
+.printWindow.el-dialog__wrapper {
+  /deep/.el-dialog__header {
+    height: 54px;
+  }
+  /deep/.el-dialog__body {
+    padding: 0;
+    height: calc(90vh - 54px);
+    .myIframe {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
 .approvalPage_wrap {
   box-sizing: border-box;
   padding: 20px 60px;

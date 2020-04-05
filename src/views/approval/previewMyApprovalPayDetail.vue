@@ -1,24 +1,19 @@
 <template>
   <div>
-		<!-- 顶部面包屑 -->
-    <div class="top">
-      <crumbs :list="crumbList"></crumbs>
-      <div class="printBtn" @click="print"><i class="el-icon-printer"></i> 打印</div>
-    </div>
-    <div class="approvalPage_wrap">
-      <div class="header">物流订单付款申请</div>
+    <div class="approvalPage_wrap" v-if="showHtml" id="sharePicBox">
+      <div class="header">付款审批</div>
       <div class="contentArea">
         <!-- 采购单信息 -->
-        <div class="content-header"> <i class="el-icon-collection-tag"></i> 物流订单信息</div>
-         <el-table :data="tableData.expordersSimpInfo" border style="width: 100%">
-          <el-table-column align="center" prop="exporderId" label="物流单号" min-width="120"></el-table-column>
-          <el-table-column align="center" prop="accountName" label="收款单位" min-width="170"></el-table-column>
-          <el-table-column align="center" prop="totalQuantity" label="数量（件）" min-width="150"></el-table-column>
-          <el-table-column align="center" prop="totalCostAmount" label="物流总费用（元）" min-width="160"></el-table-column>
-          <el-table-column align="center" prop="applyingAmount" label="申请中费用（元）" min-width="130"></el-table-column>
+        <div class="content-header"> <i class="el-icon-collection-tag"></i> 采购单信息</div>
+         <el-table :data="tableData.financePurchaseDetailList" border style="width: 100%">
+          <el-table-column align="center" prop="id" label="采购单号" min-width="120"></el-table-column>
+          <el-table-column align="center" prop="supplierName" label="收款单位" min-width="170"></el-table-column>
+          <el-table-column align="center" prop="skucount" label="SKU数量" min-width="150"></el-table-column>
+          <el-table-column align="center" prop="goodsAmount" label="货款总金额（元）" min-width="160"></el-table-column>
           <el-table-column align="center" prop="paidAmount" label="已支付货款（元）" min-width="130"></el-table-column>
-          <el-table-column align="center" prop="deliverDate" label="发货日期" min-width="130"></el-table-column>
-          <el-table-column align="center" prop="creatorName" label="采购员" min-width="100"></el-table-column>
+          <el-table-column align="center" prop="purchaseStatus" label="状态" min-width="100"></el-table-column>
+          <el-table-column align="center" prop="createTime" label="创建日期" min-width="130"></el-table-column>
+          <el-table-column align="center" prop="purchaseName" label="采购员" min-width="100"></el-table-column>
         </el-table>
         <!-- 付款单信息 -->
         <div class="content-header"> <i class="el-icon-collection-tag"></i> 付款单信息</div>
@@ -32,11 +27,11 @@
         </section>
         <!-- 审核详情 -->
         <div class="content-header"> <i class="el-icon-collection-tag"></i> 审核详情</div>
-        <el-table :data="tableData.approveList" border style="width: 100%">
+        <el-table :data="tableData.purPayApproveRecordList" border style="width: 100%">
           <el-table-column align="center" prop="approveTime" label="审核时间" min-width="230"></el-table-column>
-          <el-table-column align="center" prop="approveUserName" label="审核人员" min-width="130"></el-table-column>
-          <el-table-column align="center" prop="approveResult" label="审核结果" min-width="130"></el-table-column>
-          <el-table-column align="center" prop="feedbackReason" label="反馈详情" min-width="540"></el-table-column>
+          <el-table-column align="center" prop="approverName" label="审核人员" min-width="130"></el-table-column>
+          <el-table-column align="center" prop="approveStatus" label="审核结果" min-width="130"></el-table-column>
+          <el-table-column align="center" prop="feedback" label="反馈详情" min-width="540"></el-table-column>
         </el-table>
         <!-- 按键区 -->
         <div class="submit" v-if="doing === 'me'">
@@ -45,6 +40,7 @@
         </div>
       </div>
     </div>
+    <img :src="imgSrc" v-else alt="打印预览" class="previewImg">
     <!-- 审核弹窗 -->
     <el-dialog title="审核" :visible.sync="dialogVisible" width="45%">
       <el-form :model="ruleForm" label-width="100px" class="ruleForm">
@@ -69,17 +65,16 @@
         <el-button type="primary" @click="confirmApprove">确 定</el-button>
       </div>
     </el-dialog>
-    <!-- 打印预览弹窗 -->
-    <el-dialog :visible.sync="showPrintPreview" width="90%" top="5vh" class="printWindow">
-      <iframe :src="`/#/F0801/F080101/previewLogisticsPayDetail?id=${$route.query.id}&bussinessNo=${$route.query.bussinessNo}&doing=${$route.query.doing}`" class="myIframe" v-if="showPrintPreview"></iframe>
-    </el-dialog>
 	</div>
 </template>
 
 <script>
+import  html2canvas  from  'html2canvas'
 export default {
   data() {
     return {
+      showHtml: true,
+      imgSrc: "",
       crumbList: [{ // 面包屑
         name: '审批',
         path: '/F0801/F080101'
@@ -87,7 +82,7 @@ export default {
         name: '审批中心',
         path: '/F0801/F080101'
       }, {
-        name: '物流订单付款申请',
+        name: '采购单付款申请',
         path: ''
       }],
       id: '',
@@ -99,9 +94,10 @@ export default {
       
       //付款单信息
       table1List: [
-        {col1: "付款单号", col2: "payId", col3: "收款单位", col4: "accountName"},
+        {col1: "付款单号", col2: "id", col3: "收款单位", col4: "supplierName"},
         {col1: "收款账号", col2: "accountNo", col3: "备注", col4: "bak"},
-        {col1: "本次申请费用（元）", col2: "applyAmount", col3: "总计", col4: "totalAmount"}
+        {col1: "本次申请货款（元）", col2: "applyAmount", col3: "运费（元）", col4: "transportFee"},
+        {col1: "其它（元）", col2: "otherFee", col3: "总计", col4: "calTotal"},
       ],
 
       dialogVisible: false,
@@ -117,33 +113,52 @@ export default {
   created() {
     this.doing = this.$route.query.doing;
     this.id = this.$route.query.id;
-    this.getApprovalInfo();
-    this.getPeopleList();
+    this.init();
   },
   methods: {
-    getApprovalInfo() {
+    init() {
       let bussinessNo = this.$route.query.bussinessNo;
-      window.axios.get(`/express/order/queryPayApproveDetail/${bussinessNo}`).then((data) => {
-        if (data.code !== 0) return
-        let obj = data.data;
-        // 审核详情-审核结果
-        obj.approveList.map((item) => {
-          if (item.approveResult === "agree") {
-            item.approveResult = "通过"
-          } else if (item.approveResult === "disagree") {
-            item.approveResult = "驳回"
-          }
+      let _this = this;
+      axios.all([
+        axios.get(`/finance/queryPayApproveDetail/${bussinessNo}`),
+        axios.get("/user/queryOtherUserList")
+      ])
+      .then(axios.spread(function (approvalInfoData, peopleListData) {
+        _this.getApprovalInfo(approvalInfoData.data);
+        _this.peopleList = peopleListData.data;
+        _this.$nextTick(() => {
+          _this.convertToImg();
         })
-        this.tableData = obj;
-      })
+      }));
     },
-
-    // 下一审批人下拉
-    getPeopleList() {
-      window.axios.get("/user/queryOtherUserList").then((data) => {
-        if (data.code !== 0) return
-        this.peopleList = data.data;
+    getApprovalInfo(obj) {
+      obj.financePurchaseDetailList.map((item) => {
+        // 采购状态
+        switch (item.purchaseStatus) {
+          case 1:
+            item.purchaseStatus = "进行中";
+            break;
+          case 2:
+            item.purchaseStatus = "已完成";
+            break;
+          case 3:
+            item.purchaseStatus = "关闭中";
+            break;
+          case 4:
+            item.purchaseStatus = "已关闭";
+            break;
+        }
       })
+      obj.calTotal = obj.applyAmount + obj.transportFee + obj.otherFee;
+      // 审核结果
+      obj.purPayApproveRecordList.map((item) => {
+        if (item.approveStatus === 1) {
+          item.approveStatus = "同意"
+        } else if (item.approveStatus === 2) {
+          item.approveStatus = "驳回"
+        }
+      })
+      this.tableData = obj;
     },
 
     // 确认审核
@@ -167,40 +182,31 @@ export default {
     // 打印
     print() {
       this.showPrintPreview = true;
+    },
+    convertToImg() {
+      let htmlDom = document.querySelector('#sharePicBox')
+      html2canvas( htmlDom , {
+        allowTaint: false,   
+        taintTest: true,    
+        useCORS: true,      
+        background: "#fff",
+      }).then((canvas) => {
+        //将图片转为base64
+        let imgBlob = canvas.toDataURL( 'image/jpeg', 1.0 );
+        // console.log(imgBlob);
+        this.imgSrc = imgBlob;
+        this.showHtml = false;
+        setTimeout(() => {
+          window.print();
+        }, 100);
+      })
     }
   },
 };
 </script>
 <style lang="less" scoped>
-.top {
-  position: relative;
-  .printBtn {
-    position: absolute;
-    right: 132px;
-    top: 10px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    width: 70px;
-    color: #999;
-    cursor: pointer;
-    border-radius: 4px;
-    background-color: white;
-    border: 1px solid rgb(228, 228, 228);
-  }
-}
-.printWindow.el-dialog__wrapper {
-  /deep/.el-dialog__header {
-    height: 54px;
-  }
-  /deep/.el-dialog__body {
-    padding: 0;
-    height: calc(90vh - 54px);
-    .myIframe {
-      width: 100%;
-      height: 100%;
-    }
-  }
+.previewImg {
+  width: 100%;
 }
 .approvalPage_wrap {
   box-sizing: border-box;
