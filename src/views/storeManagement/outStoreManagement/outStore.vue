@@ -58,11 +58,11 @@
       </div>
     </div>
     <!-- 确认出库弹窗 -->
-    <el-dialog title="确认出库" :visible.sync="dialogVisible" width="35%">
-      <div>确定要出库吗？出库之后当前出库单状态变更为已出库且不可修改</div>
+    <el-dialog title="是否生成报关单？" :visible.sync="dialogVisible" width="35%">
+      <div>是否生成报关单？生成之后财务可在报关单中下载，如果暂不生成，财务可在报关单中手动生成（当前操作不影响出库操作）</div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitOutStore">出 库</el-button>
+        <el-button @click="submitOutStore(false)">暂不生成</el-button>
+        <el-button type="primary" @click="submitOutStore(true)">生成报关单</el-button>
       </div>
     </el-dialog>
 	</div>
@@ -190,9 +190,10 @@ export default {
     },
 
     // 提交出库
-    submitOutStore() {
+    submitOutStore(bol) {
       let params = {
-        id : this.ruleForm.id
+        id : this.ruleForm.id,
+        genCustomsDecl: bol ? 1 : 0 // 是否生成报关单 0：不生成 1：生成
       }
       axios.post("/stockoutorder/stockout", params).then((data) => {
         if (data.code !== 0) return

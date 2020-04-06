@@ -156,6 +156,10 @@ const routes = [{
 		name: 'approvePayment',
 		component: () => import(/* webpackChunkName: "approvePayment" */ '../views/financeManagement/paymentManagement/approvePayment.vue'),
 	}, {
+		path: '/F0501/F050102', // 财务管理 > 报关单
+		name: 'customDeclaration',
+		component: () => import(/* webpackChunkName: "customDeclaration" */ '../views/financeManagement/customDeclaration/index.vue'),
+	}, {
 		path: '/F0601/F060101', // 数据 > 数据报表
 		name: 'dataTable',
 		component: () => import(/* webpackChunkName: "dataTable" */ '../views/data/dataTable/index.vue'),
