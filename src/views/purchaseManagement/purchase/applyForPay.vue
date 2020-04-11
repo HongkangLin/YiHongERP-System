@@ -41,6 +41,11 @@
               <el-input-number v-model="scope.row.applyAmount" :min="0" :max="scope.row.unpaidAmount" :controls="false" placeholder="请输入"></el-input-number>
             </template>
           </el-table-column>
+          <el-table-column prop="taxFee" label="税金（元）" min-width="120">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.taxFee" :min="0" :max="9999999999.99" :controls="false" placeholder="请输入"></el-input-number>
+            </template>
+          </el-table-column>
           <el-table-column prop="transportFee" label="运费（元）" min-width="120">
             <template slot-scope="scope">
               <el-input-number v-model="scope.row.transportFee" :min="0" :max="9999999999.99" :controls="false" placeholder="请输入"></el-input-number>
@@ -350,7 +355,8 @@ export default {
           applyAmount: item.applyAmount,
           transportFee: item.transportFee,
           otherFee: item.otherFee,
-          bak: item.bak
+          bak: item.bak,
+          taxFee: item.taxFee
         })
       })
       window.axios.post("/purchase/commitApplyPay", params).then((data) => {
