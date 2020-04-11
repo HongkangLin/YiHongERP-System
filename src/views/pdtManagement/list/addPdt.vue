@@ -230,7 +230,7 @@
               <el-input min="0" type="number" @blur="() => {if (this.form.clearanceUnitPrice < 0) {this.form.clearanceUnitPrice = 0} else if (this.form.clearanceUnitPrice > 99999999) {this.form.clearanceUnitPrice = 99999999}}" v-model="form.clearanceUnitPrice" placeholder="请输入清关单价"></el-input>
             </el-form-item>
             <el-form-item label="清关型号：">
-              <el-input maxlength="100" v-model="form.clearanceModel" placeholder="请输入清关型号"></el-input>
+              <el-input maxlength="20" v-model="form.clearanceModel" placeholder="请输入清关型号"></el-input>
             </el-form-item>
             <el-form-item class="append" label="国外进口关税：">
               <el-input min="0" type="number" @blur="() => {if (this.form.tariffs < 0) {this.form.tariffs = 0} else if (this.form.tariffs > 1000000000) {this.form.tariffs = 1000000000}}" v-model="form.tariffs" placeholder="请输入国外进口关税">
@@ -544,72 +544,100 @@ export default {
       return !!this.id;
     },
     fba () { // fba费计算
-      let length = this.goodsLengthIn === '-' ? 0 : this.goodsLengthIn;
-      let wide = this.goodsWideIn === '-' ? 0 : this.goodsWideIn;
-      let high = this.goodsHighIn === '-' ? 0 : this.goodsHighIn;
-      let weight = !this.form.goodsWeight ? 0 : (this.form.goodsWeight / 453).toFixed(2);
+      let length = this.goodsLengthIn === '-' ? 0 : parseFloat(this.goodsLengthIn); // 长Inch
+      let wide = this.goodsWideIn === '-' ? 0 : parseFloat(this.goodsWideIn); // 宽Inch
+      let high = this.goodsHighIn === '-' ? 0 : parseFloat(this.goodsHighIn); // 高Inch
+      // 将长宽高排序
+      let length_list_inch = [length, wide, high].sort(function (a, b) {return b - a});
+      let longest_edge = length_list_inch[0]; // 最长边
+      let long_side = length_list_inch[1]; // 中长边
+      let shortest_edge = length_list_inch[2]; // 最短边
+      let surrounded_degree = 2 * (long_side + shortest_edge); // 围度
+      let weight = !this.form.goodsWeight ? 0 : parseFloat((this.form.goodsWeight / 453).toFixed(2)); // 实际运输重量
       let fba_outbound_actual_weight = 0; // FBA出库实际重量
       let amazon_billing_volume_weight = 0; // 亚马逊计费体积
-      if (length >= 45 || wide >= 35 || high >= 20 || weight >= 20) { // 大尺寸
-        fba_outbound_actual_weight = parseFloat(weight) + 1;
-        amazon_billing_volume_weight = parseFloat((length * wide * high / 139).toFixed(2)) + 1;
-      } else { // 小尺寸
-        fba_outbound_actual_weight = parseFloat(weight) + 0.25;
+      let size = ''; // 标准
+      console.log('最长：' + longest_edge + ' 次长：' + long_side + ' 最短：' + shortest_edge);
+      console.log('围度：' + surrounded_degree + ' 运输重量：' + weight);
+      if ((!longest_edge || !long_side || !shortest_edge) && !weight) { // 无数据时计费0
+        return 0;
+      }
+      if (longest_edge <= 15 && long_side <= 12 && shortest_edge <= 0.75 && weight <= 1) { // 小号标准尺寸：最长边<=15inch,中长边<=12inch，最短边<=0.75inch,重量<=16oz(1lb)
+        fba_outbound_actual_weight = weight + 0.25;
         amazon_billing_volume_weight = parseFloat((length * wide * high / 139).toFixed(2)) + 0.25;
-      }
-      if (amazon_billing_volume_weight >= fba_outbound_actual_weight) { // 亚马逊计费体积重于FBA出库实际重量
-        if (amazon_billing_volume_weight <= 0.25) {
-          return 0;
-        }
-        if (amazon_billing_volume_weight < 0.625) {
-          return 2.48;
-        }
-        if (amazon_billing_volume_weight < 1) {
-          return 3.28;
-        }
-        if (amazon_billing_volume_weight < 2) {
-          return 4.76;
-        }
-        if (amazon_billing_volume_weight < 3) {
-          return 5.26;
-        }
-        if (amazon_billing_volume_weight < 20) {
-          return (5.26 + 0.38 * (Math.ceil(amazon_billing_volume_weight) - 3)).toFixed(2);
-        }
-        if (amazon_billing_volume_weight < 70) {
-          return (8.13 + 0.38 * (Math.ceil(amazon_billing_volume_weight) - 2)).toFixed(2);
-        }
-        if (amazon_billing_volume_weight < 150) {
-          return (9.44 + 0.38 * (Math.ceil(amazon_billing_volume_weight) - 2)).toFixed(2);
-        }
-        return (137.32 + 0.91 * (Math.ceil(amazon_billing_volume_weight) - 90)).toFixed(2);
+        size = 'small_standard';
+      } else if (longest_edge <= 18 && long_side <= 14 && shortest_edge <= 8 && weight <= 21) { // 大号标准尺寸: 最长边<=18inch,中长边<=14inch，最短边<=8inch,重量<=21lb
+        fba_outbound_actual_weight = weight + 0.25;
+        amazon_billing_volume_weight = parseFloat((length * wide * high / 139).toFixed(2)) + 0.25;
+        size = 'large_standard';
+      } else if (longest_edge <= 60 && long_side <= 30 && (longest_edge + surrounded_degree) <= 130 && weight <= 71) { // 小号大件: 最长边<=60inch,中长边<=30inch，最长边 + 围度<=130inch,重量<=71lb
+        fba_outbound_actual_weight = weight + 1;
+        amazon_billing_volume_weight = parseFloat((length * wide * high / 139).toFixed(2)) + 1;
+        size = 'small_oversize';
+      } else if (longest_edge <= 108 && (longest_edge + surrounded_degree) <= 130 && weight <= 151) { // 中号大件: 最长边<=108inch, 最长边 + 围度<=130inch,重量<=151lb
+        fba_outbound_actual_weight = weight + 1;
+        amazon_billing_volume_weight = parseFloat((length * wide * high / 139).toFixed(2)) + 1;
+        size = 'medium_oversize';
+      } else if (longest_edge <= 108 && (longest_edge + surrounded_degree) <= 165 && weight <= 151) { // 大号大件: 最长边<=108inch, 最长边 + 围度<=165inch,重量<=151lb
+        fba_outbound_actual_weight = weight + 1;
+        amazon_billing_volume_weight = parseFloat((length * wide * high / 139).toFixed(2)) + 1;
+        size = 'large_oversize';
       } else {
-        if (fba_outbound_actual_weight < 0.25) {
-          return 0;
-        }
-        if (fba_outbound_actual_weight < 0.625) {
-          return 2.48;
-        }
-        if (fba_outbound_actual_weight < 1) {
-          return 3.28;
-        }
-        if (fba_outbound_actual_weight < 2) {
-          return 4.76;
-        }
-        if (fba_outbound_actual_weight < 3) {
-          return 5.26;
-        }
-        if (fba_outbound_actual_weight < 20) {
-          return (5.26 + 0.38 * (Math.ceil(fba_outbound_actual_weight) - 3)).toFixed(2);
-        }
-        if (fba_outbound_actual_weight < 70) {
-          return (8.13 + 0.38 * (Math.ceil(fba_outbound_actual_weight) - 2)).toFixed(2);
-        }
-        if (fba_outbound_actual_weight < 150) {
-          return (9.44 + 0.38 * (Math.ceil(fba_outbound_actual_weight) - 2)).toFixed(2);
-        }
-        return (137.32 + 0.91 * (Math.ceil(fba_outbound_actual_weight) - 90)).toFixed(2);
+        fba_outbound_actual_weight = weight + 1;
+        amazon_billing_volume_weight = parseFloat((length * wide * high / 139).toFixed(2)) + 1;
+        size = 'special_oversize';
       }
+      console.log('FBA重：' + amazon_billing_volume_weight + ' 亚马逊重：' + fba_outbound_actual_weight);
+      let max = Math.max(amazon_billing_volume_weight, fba_outbound_actual_weight); // 取出计费更重的
+      if (size === 'small_standard') {
+        if (max <= 0.625) {
+          return 2.5;
+        } else if (max <= 1) {
+          return 2.63;
+        } else if (max <= 21){
+          size = 'large_standard';
+        }
+      }
+      if (size === 'large_standard') {
+        if (max <= 0.625) {
+          return 3.31;
+        } else if (max <= 1) {
+          return 3.48;
+        } else if (max <= 2) {
+          return 4.9;
+        } else if (max <= 3) {
+          return 5.42;
+        } else if (max <= 21){
+          return (5.42 + 0.38 * (Math.ceil(max) - 3)).toFixed(2);
+        } else if (max <= 71) {
+          size = 'small_oversize';
+        }
+      }
+      if (size === 'small_oversize') {
+        if (max <= 71) {
+          return (8.26 + 0.38 * (Math.ceil(max) - 2)).toFixed(2);
+        } else if (max <= 151) {
+          size = 'medium_oversize';
+        }
+      }
+      if (size === 'medium_oversize') {
+        if (max <= 151) {
+          return (11.37 + 0.39 * (Math.ceil(max) - 2)).toFixed(2);
+        } else {
+          size = 'special_oversize';
+        }
+      }
+      if (size === 'large_oversize') {
+        if (max <= 151) {
+          return (75.78 + 0.79 * (Math.ceil(max) - 90)).toFixed(2);
+        } else {
+          size = 'special_oversize';
+        }
+      }
+      if (size === 'special_oversize') {
+        return (137.32 + 0.91 * (Math.ceil(max) - 90)).toFixed(2);
+      }
+      return 0;
     }
   },
   async mounted () {
