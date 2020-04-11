@@ -211,6 +211,9 @@ export default {
         case 'exporder.pay': // 物流订单付款申请
           this.$router.push(`/F0801/F080101/logisticsPayDetail?id=${id}&bussinessNo=${bussinessNo}&doing=${doing}`);
           break;
+        case 'purchase.add': // 采购单新增申请
+          this.$router.push(`/F0801/F080101/myApprovalAddDetail?id=${id}&bussinessNo=${bussinessNo}`);
+          break;
       }
     },
 

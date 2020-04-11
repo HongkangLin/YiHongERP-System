@@ -268,6 +268,10 @@ const routes = [{
 		name: 'logisticsPayDetail',
 		component: () => import(/* webpackChunkName: "logisticsPayDetail" */ '../views/approval/logisticsPayDetail.vue'),
 	}, {
+		path: '/F0801/F080101/myApprovalAddDetail', // 审批 > 审批中心 > 我的审批 > 采购单新增申请
+		name: 'myApprovalAddDetail',
+		component: () => import(/* webpackChunkName: "myApprovalAddDetail" */ '../views/approval/myApprovalAddDetail.vue'),
+	}, {
 		path: '/F0101/F010101', // 系统管理-权限-用户管理
 		name: 'userMgmt',
 		component: () => import(/* webpackChunkName: "userMgmt" */ '../views/systemManagement/userMgmt.vue'),
