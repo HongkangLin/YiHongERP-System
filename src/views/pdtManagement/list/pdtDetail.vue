@@ -41,20 +41,20 @@
         <el-row>
           <el-col :span="4"><div class="td label">是否清货</div></el-col>
           <el-col :span="8"><div class="td">{{info.clearStocksFlag ? '清' : '不清'}}&nbsp;</div></el-col>
+          <el-col :span="4"><div class="td label">是否带电</div></el-col>
+          <el-col :span="8"><div class="td">{{info.clearStocksFlag ? '带' : '不带'}}&nbsp;</div></el-col>
+        </el-row>
+        <el-row>
           <el-col :span="4"><div class="td label">FNSKU编号</div></el-col>
           <el-col :span="8"><div class="td">{{info.fnskuId}}&nbsp;</div></el-col>
-        </el-row>
-        <el-row>
           <el-col :span="4"><div class="td label">FNSKU文件</div></el-col>
           <el-col :span="8"><div class="td"><a target="_black" :href="info.fnskuFileUrl">点击下载</a>&nbsp;</div></el-col>
-          <el-col :span="4"><div class="td label">防跟卖标签</div></el-col>
-          <el-col :span="8"><div class="td"><a target="_black" :href="info.fnskuPicUrl">点击查看</a>&nbsp;</div></el-col>
         </el-row>
         <el-row>
+          <el-col :span="4"><div class="td label">防跟卖标签</div></el-col>
+          <el-col :span="8"><div class="td"><a target="_black" :href="info.fnskuPicUrl">点击查看</a>&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">交期（天）</div></el-col>
           <el-col :span="8"><div class="td">{{maxDeliverDay}}&nbsp;</div></el-col>
-          <el-col :span="4"><div class="td label">&nbsp;</div></el-col>
-          <el-col :span="8"><div class="td">&nbsp;</div></el-col>
         </el-row>
         <el-row type="flex" align="stretch">
           <el-col :span="4" class="td label"><div>产品描述</div></el-col>
@@ -76,8 +76,8 @@
         <el-row>
           <el-col :span="4"><div class="td label">中文报关名</div></el-col>
           <el-col :span="8"><div class="td">{{info.chineseName}}&nbsp;</div></el-col>
-          <el-col :span="4"><div class="td label">&nbsp;</div></el-col>
-          <el-col :span="8"><div class="td">&nbsp;</div></el-col>
+          <el-col :span="4"><div class="td label">规格编码</div></el-col>
+          <el-col :span="8"><div class="td">{{info.specEncode}}&nbsp;</div></el-col>
         </el-row>
       </div>
       <div class="title"><i class="el-icon-collection-tag"></i><span>清关信息</span></div>
@@ -97,6 +97,12 @@
         <el-row>
           <el-col :span="4"><div class="td label">国外海关编码</div></el-col>
           <el-col :span="8"><div class="td">{{info.overseaCustomId}}&nbsp;</div></el-col>
+          <el-col :span="4"><div class="td label">清关单价</div></el-col>
+          <el-col :span="8"><div class="td">{{info.clearanceUnitPrice}}&nbsp;</div></el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="4"><div class="td label">清关型号</div></el-col>
+          <el-col :span="8"><div class="td">{{info.clearanceModel}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">国外进口关税</div></el-col>
           <el-col :span="8"><div class="td">{{info.tariffs}}&nbsp;</div></el-col>
         </el-row>

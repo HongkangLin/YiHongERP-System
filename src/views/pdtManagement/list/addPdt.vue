@@ -110,6 +110,15 @@
                 inactive-color="#ccc">
               </el-switch>
             </el-form-item>
+            <el-form-item label="是否带电：">
+              <el-switch
+                v-model="form.existBattery"
+                active-color="#1ABC9C"
+                active-text="带"
+                inactive-text="不带"
+                inactive-color="#ccc">
+              </el-switch>
+            </el-form-item>
             <el-form-item label="FNSKU编号：" prop="fnskuId">
               <el-input maxlength="100" :disabled="disabled" v-model="form.fnskuId" placeholder="请输入FNSKU编号"></el-input>
             </el-form-item>
@@ -192,6 +201,9 @@
             <el-form-item label="中文报关名：">
               <el-input maxlength="100" v-model="form.chineseName" placeholder="请输入中文报关名"></el-input>
             </el-form-item>
+            <el-form-item label="规格编码：">
+              <el-input maxlength="20" v-model="form.specEncode" placeholder="请输入规格编号"></el-input>
+            </el-form-item>
             <div class="spanDiv"></div>
             <!-- <el-form-item label="英文报关名：">
               <el-input maxlength="100" v-model="form.englishName" placeholder="请输入英文报关名"></el-input>
@@ -213,6 +225,12 @@
             </el-form-item>
             <el-form-item label="国外海关编码：">
               <el-input maxlength="20" v-model="form.overseaCustomId" placeholder="请输入国外海关编码"></el-input>
+            </el-form-item>
+            <el-form-item label="清关单价：">
+              <el-input min="0" type="number" @blur="() => {if (this.form.clearanceUnitPrice < 0) {this.form.clearanceUnitPrice = 0} else if (this.form.clearanceUnitPrice > 99999999) {this.form.clearanceUnitPrice = 99999999}}" v-model="form.clearanceUnitPrice" placeholder="请输入清关单价"></el-input>
+            </el-form-item>
+            <el-form-item label="清关型号：">
+              <el-input maxlength="100" v-model="form.clearanceModel" placeholder="请输入清关型号"></el-input>
             </el-form-item>
             <el-form-item class="append" label="国外进口关税：">
               <el-input min="0" type="number" @blur="() => {if (this.form.tariffs < 0) {this.form.tariffs = 0} else if (this.form.tariffs > 1000000000) {this.form.tariffs = 1000000000}}" v-model="form.tariffs" placeholder="请输入国外进口关税">
@@ -433,6 +451,7 @@ export default {
         fnskuFilePicUrl: [], // fnsku图片
         goodsUrl: '', // 产品链接
         clearStocksFlag: false, // 是否清货
+        existBattery: false, // 是否带电
         fnskuId: '', // fnsku
         fnskuPicUrl: [], // 防跟卖标签
         contractDescribe: '', // 合同描述
@@ -440,11 +459,14 @@ export default {
         customId: '', // 海关编码
         claimPrice: '', // 申报价值
         chineseName: '', // 中文报关名
+        specEncode: '', // 规格编号
         overseaInvoiceCn: '', // 国外发票中文名
         overseaInvoiceEn: '', // 国外发票英文名
         overseaInvoiceTexture: '', // 国外发票材质
         overseaInvoiceUse: '', // 国外发票用途
         overseaCustomId: '', // 国外海关编码
+        clearanceUnitPrice: '', // 清关单价
+        clearanceModel: '', // 清关型号
         // englishName: '', // 英文报关名
         tariffs: '', // 进口关税
         goodsLength: '', // 包装尺寸-长
@@ -661,6 +683,7 @@ export default {
       }
       data.data.status = data.data.status + '';
       data.data.clearStocksFlag = !!data.data.clearStocksFlag;
+      data.data.existBattery = !!data.data.existBattery;
       data.data.fnskuFileUrl = [{
         name: data.data.fnskuFileName,
         url: data.data.fnskuFileUrl
@@ -737,6 +760,14 @@ export default {
           });
           return;
         } else if (idx === 2) { // 第二页验证
+          if (this.form.goodsWeight > 20000) {
+            this.$message.warning('单个产品重量不允许超过20kg，清重新输入');
+            return;
+          }
+          if (this.form.packingLength > 63 || this.form.packingWide > 63 || this.form.packingHigh > 63) {
+            this.$message.warning('外箱尺寸长度不允许超过63cm，请重新输入');
+            return;
+          }
           this.$refs['form'].validate((valid) => {
             if (valid) {
               this.active = idx;
@@ -984,6 +1015,7 @@ export default {
       param.categoryParentId = this.typeList[this.currFirst].id; // 一级分类id
       param.categoryId = this.currSecond !== '' ? this.seconedList[this.currSecond].id : ''; // 二级分类id
       param.clearStocksFlag = ~~param.clearStocksFlag; // 是否清货
+      param.existBattery = ~~param.existBattery; // 是否带电
       param.fnskuFileName = param.fnskuFileUrl[0] ? param.fnskuFileUrl[0].name : ''; // fnsku文件名称
       param.fnskuFileUrl = param.fnskuFileUrl[0] ? param.fnskuFileUrl[0].url : ''; // fnsku文件
       param.fnskuFilePicUrl = param.fnskuFilePicUrl[0] ? param.fnskuFilePicUrl[0].url : ''; // fnsku图片
@@ -1066,7 +1098,7 @@ export default {
       height: 710px;
     }
     .secondLeft {
-      height: 2842px;
+      height: 3042px;
     }
     .left {
       position: relative;
@@ -1092,13 +1124,13 @@ export default {
         }
       }
       .moneyLabel {
-        top: 1460px;
+        top: 1550px;
       }
       .compLabel {
-        top: 1610px;
+        top: 1760px;
       }
       .ruleLabel {
-        top: 1940px;
+        top: 2180px;
       }
     }
     .right {
