@@ -205,11 +205,21 @@
                   v-if="roleCtl.product_update"
                   @click="handleEdit1(scope.row.id)">编辑</el-button>
                 <el-divider direction="vertical" v-if="roleCtl.product_update && roleCtl.product_quick_tmp_update"></el-divider>
-                <el-button
+                <el-dropdown v-if="roleCtl.product_quick_tmp_update" @command="handleCommand" style="color: #57B99D">
+                  <span class="el-dropdown-link">
+                    快速编辑<i class="el-icon-arrow-down el-icon--right"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item v-if="roleCtl.product_quick_update" :command="scope.row.id + '/' + scope.row.skuId + '/' + 'sale'">销售编辑</el-dropdown-item>
+                    <el-dropdown-item v-if="roleCtl.product_finance_update" :command="scope.row.id + '/' + scope.row.skuId + '/' + 'payment'">财务编辑</el-dropdown-item>
+                    <el-dropdown-item v-if="roleCtl.product_courier_update" :command="scope.row.id + '/' + scope.row.skuId + '/' + 'logistics'">物流编辑</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+                <!-- <el-button
                   size="mini"
                   type="text"
                   v-if="roleCtl.product_quick_tmp_update"
-                  @click="handleFast(scope.row.id, scope.row.skuId)">快速编辑</el-button>
+                  @click="handleFast(scope.row.id, scope.row.skuId)">销售编辑</el-button> -->
                 <el-divider direction="vertical"  v-if="roleCtl.product_quick_tmp_update && roleCtl.product_delete"></el-divider>
                 <el-button
                   size="mini"
@@ -223,7 +233,7 @@
         <div class="splitPage"><pageination :pageNum="pageNum1" :total="total1" :pageSize="pageSize1" @changePageSize="changePageSize1" @changePageNum="changeNum1"></pageination></div>
       </div>
     </div>
-    <el-dialog title="快速编辑" :visible.sync="fastVisible" width="70%" top="20px">
+    <el-dialog title="销售编辑" :visible.sync="fastVisible" width="70%" top="20px">
       <el-form ref="form" class="form" :model="form" :rules="rules" label-width="170px">
         <el-form-item label="产品链接：">
           <el-input maxlength="100" v-model="form.goodsUrl" placeholder="请输入产品链接"></el-input>
@@ -279,6 +289,57 @@
         <el-button type="primary" @click="confirmApplyForClose">确定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="财务编辑" :visible.sync="paymentVisible" width="50%" top="120px">
+      <el-form ref="paymentForm" class="form" :model="paymentForm" :rules="paymentRules" label-width="200px">
+        <el-form-item label="国内海关编码：" prop="customId">
+          <el-input maxlength="100" v-model="paymentForm.customId" placeholder="请输入国内海关编码"></el-input>
+        </el-form-item>
+        <el-form-item label="报税申报价值（美元）：" prop="claimPrice">
+          <el-input type="number" @blur="() => {if (paymentForm.claimPrice < 0) {paymentForm.claimPrice = 0} else if (paymentForm.claimPrice > 1000000000) {paymentForm.claimPrice = 1000000000}}" v-model="paymentForm.claimPrice" placeholder="请输入报税申报价值"></el-input>
+        </el-form-item>
+        <el-form-item label="中文报关名：" prop="chineseName">
+          <el-input maxlength="100" v-model="paymentForm.chineseName" placeholder="请输入中文报关名"></el-input>
+        </el-form-item>
+        <el-form-item label="规格编号：" prop="specEncode">
+          <el-input maxlength="20" v-model="paymentForm.specEncode" placeholder="请输入规格编号"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="paymentVisible = false">取 消</el-button>
+        <el-button type="primary" @click="paymentApplyForClose">确定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="物流编辑" :visible.sync="logisticsVisible" width="50%" top="120px">
+      <el-form ref="logisticsForm" class="form" :model="logisticsForm" :rules="logisticsRules" label-width="200px">
+        <el-form-item label="国外发票（中文品名）：" prop="overseaInvoiceCn">
+          <el-input maxlength="20" v-model="logisticsForm.overseaInvoiceCn" placeholder="请输入国外发票中文品名"></el-input>
+        </el-form-item>
+        <el-form-item label="国外发票（英文品名）：" prop="overseaInvoiceEn">
+          <el-input maxlength="20" v-model="logisticsForm.overseaInvoiceEn" placeholder="请输入国外发票英文品名"></el-input>
+        </el-form-item>
+        <el-form-item label="国外发票（材质）：" prop="overseaInvoiceTexture">
+          <el-input maxlength="20" v-model="logisticsForm.overseaInvoiceTexture" placeholder="请输入国外发票材质"></el-input>
+        </el-form-item>
+        <el-form-item label="国外发票（用途）：" prop="overseaInvoiceUse">
+          <el-input maxlength="20" v-model="logisticsForm.overseaInvoiceUse" placeholder="请输入国外发票用途"></el-input>
+        </el-form-item>
+        <el-form-item label="国外海关编码：" prop="overseaCustomId">
+          <el-input maxlength="20" v-model="logisticsForm.overseaCustomId" placeholder="请输入国外海关编码"></el-input>
+        </el-form-item>
+        <el-form-item label="国外进口税：" prop="tariffs">
+          <el-input type="number" @blur="() => {if (logisticsForm.tariffs < 0) {logisticsForm.tariffs = 0} else if (logisticsForm.tariffs > 1000000000) {logisticsForm.tariffs = 1000000000}}" v-model="logisticsForm.tariffs" placeholder="请输入国外进口税">
+            <template slot="append">%</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="清关单价：" prop="clearanceUnitPrice">
+          <el-input type="number" @blur="() => {if (logisticsForm.clearanceUnitPrice < 0) {logisticsForm.clearanceUnitPrice = 0} else if (logisticsForm.clearanceUnitPrice > 99999999) {logisticsForm.clearanceUnitPrice = 99999999}}" v-model="logisticsForm.clearanceUnitPrice" placeholder="请输入清关单价"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="logisticsVisible = false">取 消</el-button>
+        <el-button type="primary" @click="logisticsApplyForClose">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -316,6 +377,60 @@ export default {
         ],
         fnskuFilePicUrl: [
           {required: true, message: '请上传FNSKU图片', trigger: 'blur'}
+        ]
+      },
+      paymentVisible: false, // 财务快速编辑
+      paymentForm: { // 财务信息
+        customId: '',
+        claimPrice: '',
+        chineseName: '',
+        specEncode: ''
+      },
+      paymentRules: {
+        customId: [
+          {required: true, message: '请输入国内海关编码', trigger: 'blur'}
+        ],
+        claimPrice: [
+          {required: true, message: '请输入申报价值', trigger: 'blur'}
+        ],
+        chineseName: [
+          {required: true, message: '请输入中文报关名', trigger: 'blur'}
+        ],
+        specEncode: [
+          {required: true, message: '请输入规格编号', trigger: 'blur'}
+        ]
+      },
+      logisticsVisible: false, // 物流快速编辑
+      logisticsForm: { // 物流信息
+        overseaInvoiceCn: '',
+        overseaInvoiceEn: '',
+        overseaInvoiceTexture: '',
+        overseaInvoiceUse: '',
+        overseaCustomId: '',
+        tariffs: '',
+        clearanceUnitPrice: ''
+      },
+      logisticsRules: {
+        overseaInvoiceCn: [
+          {required: true, message: '请输入国外发票中文品名', trigger: 'blur'}
+        ],
+        overseaInvoiceEn: [
+          {required: true, message: '请输入国外发票英文品名', trigger: 'blur'}
+        ],
+        overseaInvoiceTexture: [
+          {required: true, message: '请输入国外发票材质', trigger: 'blur'}
+        ],
+        overseaInvoiceUse: [
+          {required: true, message: '请输入国外发票用途', trigger: 'blur'}
+        ],
+        overseaCustomId: [
+          {required: true, message: '请输入国外海关编码', trigger: 'blur'}
+        ],
+        tariffs: [
+          {required: true, message: '请输入国外进口税', trigger: 'blur'}
+        ],
+        clearanceUnitPrice: [
+          {required: true, message: '请输入清关单价', trigger: 'blur'}
         ]
       },
       id: '', // 当前操作的id
@@ -483,6 +598,45 @@ export default {
         }
       });
     },
+    async paymentApplyForClose () { // 财务快速编辑
+      this.$refs['paymentForm'].validate(async valid => {
+        if (valid) {
+          let data = await window.axios.post('/product/quickUpdateProductInfoForFinance', {
+            skuId: this.skuid,
+            customId: this.paymentForm.customId,
+            claimPrice: this.paymentForm.claimPrice,
+            chineseName: this.paymentForm.chineseName,
+            specEncode: this.paymentForm.specEncode
+          });
+          if (data.code === 0) {
+            this.$message.success(data.message);
+            this.paymentVisible = false;
+            this.queryProductInfoTmpList();
+          }
+        }
+      });
+    },
+    async logisticsApplyForClose () { // 物流快速编辑
+      this.$refs['logisticsForm'].validate(async valid => {
+        if (valid) {
+          let data = await window.axios.post('/product/quickUpdateProductInfoForCourier', {
+            skuId: this.skuid,
+            overseaInvoiceCn: this.logisticsForm.overseaInvoiceCn,
+            overseaInvoiceEn: this.logisticsForm.overseaInvoiceEn,
+            overseaInvoiceTexture: this.logisticsForm.overseaInvoiceTexture,
+            overseaInvoiceUse: this.logisticsForm.overseaInvoiceUse,
+            overseaCustomId: this.logisticsForm.overseaCustomId,
+            tariffs: this.logisticsForm.tariffs,
+            clearanceUnitPrice: this.logisticsForm.clearanceUnitPrice
+          });
+          if (data.code === 0) {
+            this.$message.success(data.message);
+            this.logisticsVisible = false;
+            this.queryProductInfoTmpList();
+          }
+        }
+      });
+    },
     async getBrand () { // 获取品牌
       let data = await window.axios.post('/product/queryProductBrandListRule', {
         goodsBrandNameOrLetter: '',
@@ -589,7 +743,11 @@ export default {
       });
       this.tableData1 = data.list;
     },
-    async handleFast (id, skuid) { // 快速编辑
+    handleCommand (command) {
+      let arr = command.split('/');
+      this.handleFast(...arr);
+    },
+    async handleFast (id, skuid, type = 'sale') { // 快速编辑
       this.skuid = skuid;
       this.id = id;
       let data = {};
@@ -602,16 +760,37 @@ export default {
           id: id
         });
       }
-      this.form = {
-        goodsUrl: data.data.goodsUrl, // 产品链接
-        fnskuId: data.data.fnskuId,
-        fnskuFileUrl: data.data.fnskuFileName ? [{
-          name: data.data.fnskuFileName,
-          url: data.data.fnskuFileUrl
-        }] : [],
-        fnskuFilePicUrl: data.data.fnskuFilePicUrl ? [{url: data.data.fnskuFilePicUrl}] : []
-      };
-      this.fastVisible = true;
+      if (type === 'sale') {
+        this.form = {
+          goodsUrl: data.data.goodsUrl, // 产品链接
+          fnskuId: data.data.fnskuId,
+          fnskuFileUrl: data.data.fnskuFileName ? [{
+            name: data.data.fnskuFileName,
+            url: data.data.fnskuFileUrl
+          }] : [],
+          fnskuFilePicUrl: data.data.fnskuFilePicUrl ? [{url: data.data.fnskuFilePicUrl}] : []
+        };
+        this.fastVisible = true;
+      } else if (type === 'payment') {
+        this.paymentForm = { // 财务信息
+          customId: data.data.customId,
+          claimPrice: data.data.claimPrice,
+          chineseName: data.data.chineseName,
+          specEncode: data.data.specEncode
+        };
+        this.paymentVisible = true;
+      } else if (type === 'logistics') {
+        this.logisticsForm = { // 物流信息
+          overseaInvoiceCn: data.data.overseaInvoiceCn,
+          overseaInvoiceEn: data.data.overseaInvoiceEn,
+          overseaInvoiceTexture: data.data.overseaInvoiceTexture,
+          overseaInvoiceUse: data.data.overseaInvoiceUse,
+          overseaCustomId: data.data.overseaCustomId,
+          tariffs: data.data.tariffs,
+          clearanceUnitPrice: data.data.clearanceUnitPrice
+        };
+        this.logisticsVisible = true;
+      }
     },
     handleChange (value) { // 修改产品类型
       this.categoryParentId = value[0];
