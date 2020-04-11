@@ -64,10 +64,10 @@
               <div>{{scope.row.bak.substring(0, 20)}}</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" fixed="right" label="操作" width="150" v-if="roleCtl.purchase_query || roleCtl.purchase_arrive || roleCtl.purchase_close">
+          <el-table-column align="center" fixed="right" label="操作" width="150" v-if="roleCtl.purchase_query || roleCtl.purchase_arrive || roleCtl.purchase_close || roleCtl.purchase_update">
             <template slot-scope="scope">
               <!-- <el-button type="text" size="small" @click="toDetailPage(scope.row.purchaseId)" v-if="roleCtl.purchase_query">详情</el-button> -->
-              <a class="link" target="_self" :href="`/#/F0301/purchaseOrderDetail?purchaseId=${scope.row.purchaseId}`" v-if="roleCtl.purchase_query">详情</a>
+              <a class="link" target="_self" :href="`/#/F0301/purchaseOrderDetail?purchaseId=${scope.row.purchaseId}`" v-if="roleCtl.purchase_query">查看</a>
               <el-divider v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_query && roleCtl.purchase_arrive" direction="vertical"></el-divider>
               <!-- <el-button v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_arrive" type="text" size="small" @click="toArrivePage(scope.row.purchaseId)">到货</el-button> -->
               <a class="link" target="_self" :href="`/#/F0301/arrivePage?purchaseId=${scope.row.purchaseId}`" v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_arrive">到货</a>
@@ -77,6 +77,8 @@
               <el-button v-if="scope.row.purchaseStatus === '进行中' && roleCtl.purchase_finish" type="text" size="small" @click="close(scope.row.purchaseId)">完结</el-button>
               <el-divider v-if="scope.row.approveShowFlag" direction="vertical"></el-divider>
               <el-button v-if="scope.row.approveShowFlag" type="text" size="small" @click="toApprovalPage(scope.row.purchaseId, scope.row.skuCount)">审批</el-button>
+              <el-divider v-if="scope.row.purchaseStatus==='驳回' && roleCtl.purchase_update" direction="vertical"></el-divider>
+              <el-button v-if="scope.row.purchaseStatus==='驳回' && roleCtl.purchase_update" type="text" size="small" @click="toEditPage(scope.row.purchaseId)">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -281,6 +283,10 @@ export default {
     // 到货
     toArrivePage(purchaseId) {
       window.open(`/#/F0301/arrivePage?purchaseId=${purchaseId}`);
+    },
+
+    toEditPage(purchaseId) {
+      window.open(`/#/F0301/editPage?purchaseId=${purchaseId}`);
     },
 
     // 查看审核详情
