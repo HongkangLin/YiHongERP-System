@@ -60,8 +60,33 @@
             align="center">
           </el-table-column>
           <el-table-column
+            prop="currentMonthTaxFeeAmount"
+            label="税金（元）"
+            align="center">
+          </el-table-column>
+          <el-table-column
+            prop="currentMonthTransportFeeAmount"
+            label="运费（元）"
+            align="center">
+          </el-table-column>
+          <el-table-column
+            prop="currentMonthOtherFeeAmount"
+            label="其他（元）"
+            align="center">
+          </el-table-column>
+          <el-table-column
             prop="currentMonthRemainAmount"
             label="本月剩余货款（元）"
+            align="center">
+          </el-table-column>
+          <el-table-column
+            prop="checkInAmount"
+            label="订单金额汇总（元）"
+            align="center">
+          </el-table-column>
+          <el-table-column
+            prop="paidAmount"
+            label="付款汇总（元）"
             align="center">
           </el-table-column>
         </el-table>
