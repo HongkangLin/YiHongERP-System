@@ -16,8 +16,14 @@
         <el-row>
           <el-col :span="4"><div class="td label">订单状态</div></el-col>
           <el-col :span="8"><div class="td">{{['未生成', '已生成', '审核中', '待付款', '已完成'][info.status]}}</div></el-col>
+          <el-col :span="4"><div class="td label">订单类型</div></el-col>
+          <el-col :span="8"><div class="td">常规订单&nbsp;</div></el-col>
+        </el-row>
+        <el-row>
           <el-col :span="4"><div class="td label">物流单号</div></el-col>
           <el-col :span="8"><div class="td">{{info.id}}&nbsp;</div></el-col>
+          <el-col :span="4"><div class="td label">运单号</div></el-col>
+          <el-col :span="8"><div class="td">{{info.deliverSn}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">关联出库单号</div></el-col>

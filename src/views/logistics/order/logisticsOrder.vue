@@ -20,7 +20,10 @@
         </div>
         <div class="content">
           <div class="inputDiv">
-            <el-input maxlength="100" class="searchValue" @change="search" v-model="idKeyword" placeholder="物流单号"></el-input>
+            <el-input maxlength="100" class="searchValue" @change="search" v-model="idKeyword" placeholder="物流单号/运单号"></el-input>
+            <el-select filterable v-model="deliverMethod" @change="search" placeholder="运输方式" clearable>
+              <el-option v-for="(item, idx) in way" :key="idx" :label="item.name" :value="item.id"></el-option>
+            </el-select>
             <el-select filterable v-model="expcompId" @change="search" placeholder="物流商" clearable>
               <el-option v-for="(item, idx) in expcompList" :key="idx" :label="item.label" :value="item.value"></el-option>
             </el-select>
@@ -33,12 +36,13 @@
       <section class="tableArea">
         <el-table :data="tableData" @selection-change="handleSelectionChange" border style="width: 100%">
           <el-table-column align="center" type="selection" width="55" fixed :selectable="row => {return row.status === '未生成' || row.status === '已生成'}"></el-table-column>
-          <el-table-column prop="id" label="物流单号" align="center" min-width="100"></el-table-column>
-          <el-table-column prop="expcompName" label="物流商名称" align="center" min-width="150">
+          <el-table-column prop="id" label="物流单号/yun" align="center" min-width="100"></el-table-column>
+          <el-table-column prop="expcompName" label="物流商" align="center" min-width="150">
             <template slot-scope="scope">
               {{scope.row.expcompName || '--'}}
             </template>
           </el-table-column>
+          <el-table-column prop="deliverSn" label="运单号" align="center" min-width="150"></el-table-column>
           <el-table-column prop="totalQuantity" label="数量（件）" align="center" min-width="100"></el-table-column>
           <el-table-column prop="deliverMethod" label="运输方式" align="center" min-width="150"></el-table-column>
           <el-table-column prop="totalCostAmount" label="物流总费用（元）" align="center" min-width="140"></el-table-column>
@@ -108,11 +112,12 @@ export default {
         name: '物流订单',
         path: ''
       }],
-      way: ['海运', '空运', '快递', '快船', '铁路'],
+      way: [],
       activeName: "0", //物流订单状态Tab
       idKeyword: "", // 物流单号
       expcompList: [], // 物流商选择列表
       expcompId: '', // 物流商id
+      deliverMethod: '', // 运输方式
       createTimeRange: [], // 发货日期
 
       total: 0, // 总数
@@ -142,6 +147,7 @@ export default {
   async created() {
     this.queryStatusTotal();
     await this.getExpcomp();
+    await this.getWay();
     this.queryList();
   },
   watch: {
@@ -154,6 +160,10 @@ export default {
     }
   },
   methods: {
+    async getWay () { // 获取运输方式
+      let data = await window.axios.get('/transport_type/listAll?pageSize=999999&pageNum=1&nameKeyword=');
+      this.way = data.data.list;
+    },
     async getExpcomp () { // 获取物流商
       let data = await window.axios.post('/express/queryExpressCompanyInfoListAuth', {
         pageSize: 9999999,
@@ -170,7 +180,7 @@ export default {
       this.expcompList = arr;
     },
     async queryList () { // 获取列表
-      let data = await window.axios.get(`/express/order/listAll?status=${this.activeName === '0' ? '' : parseInt(this.activeName) - 1}&idKeyword=${this.idKeyword}&expcompId=${this.expcompId}&deliverDateStart=${this.createTimeRange && this.createTimeRange[0] ? this.createTimeRange[0] : ''}&deliverDateEnd=${this.createTimeRange && this.createTimeRange[0] ? this.createTimeRange[1] : ''}&pageNum=${this.pageNum}&pageSize=${this.pageSize}`);
+      let data = await window.axios.get(`/express/order/listAll?status=${this.activeName === '0' ? '' : parseInt(this.activeName) - 1}&idKeyword=${this.idKeyword}&expcompId=${this.expcompId}&deliverMethod=${this.deliverMethod}&deliverDateStart=${this.createTimeRange && this.createTimeRange[0] ? this.createTimeRange[0] : ''}&deliverDateEnd=${this.createTimeRange && this.createTimeRange[0] ? this.createTimeRange[1] : ''}&pageNum=${this.pageNum}&pageSize=${this.pageSize}`);
       if (data.code !== 0) return
       let arr = data.data.list;
       arr.map((item) => {
@@ -193,7 +203,11 @@ export default {
             break;
         }
         // 运输方式
-        item.deliverMethod = this.way[item.deliverMethod];
+        for (let i = 0; i < this.way.length; i++) {
+          if (item.deliverMethod === this.way[i].id) {
+            item.deliverMethod = this.way[i].name;
+          }
+        }
       });
       this.tableData = arr;
       this.total = data.data.total;
