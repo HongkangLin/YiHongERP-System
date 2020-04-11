@@ -169,9 +169,18 @@
             <el-form-item label="其他费用（元）：">
               <el-input v-model="form.otherAmount" maxlength="100" placeholder="请输入其他费用，可以为0"></el-input>
             </el-form-item>
-            <el-form-item :label="'关税（' + rateChange[form.outCountryId] + '）：'" prop="customsDutiesAmnt">
+            <el-form-item label="关税 ：" prop="customsDutiesAmnt" class="tax">
               <el-input v-model="form.customsDutiesAmnt" maxlength="100" placeholder="请输入关税，单位随国家变化"></el-input>
+              <el-select v-model="form.customsDutiesCurtype" placeholder="请选择">
+                <el-option label="人民币" value='1'></el-option>
+                <el-option label="美元" value='2'></el-option>
+                <el-option label="欧元" value='3'></el-option>
+                <el-option label="韩元" value='4'></el-option>
+                <el-option label="泰铢" value='5'></el-option>
+                <el-option label="日元" value='6'></el-option>
+              </el-select>
             </el-form-item>
+            
             <el-form-item label="汇率：" prop="exchRate">
               <el-input v-model="form.exchRate" maxlength="100" placeholder="请输入人民币与关税货币的汇率"></el-input>
             </el-form-item>
@@ -311,6 +320,7 @@ export default {
     async getLogistics () { // 获取物流订单数据列表
       let data = await window.axios.get(`/express/order/detail/${this.$route.query.id}`);
       data.data.transCostType = data.data.transCostType.toString();
+      data.data.customsDutiesCurtype = data.data.customsDutiesCurtype === null ? '2' : data.data.customsDutiesCurtype.toString();
       this.form = data.data;
     },
     getSummaries (param) { // 计算汇总
@@ -405,7 +415,7 @@ export default {
               subzoneId = this.simpList[i].id;
             }
           }
-          let {id, realWeight, transCostType, otherAmount, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt, bak} = {...this.form};
+          let {id, realWeight, transCostType, otherAmount, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt, bak, customsDutiesCurtype} = {...this.form};
           let param = {
             id,
             realWeight,
@@ -419,7 +429,8 @@ export default {
             customsClearAmnt,
             subzoneId,
             transCostType,
-            bak
+            bak,
+            customsDutiesCurtype: Number(customsDutiesCurtype)
           };
           window.axios.post('/express/order/update', param).then(data => {
             this.loading = false;
@@ -448,6 +459,23 @@ export default {
   width: 100%;
   height: calc(100% - 50px);
   overflow: auto;
+  .el-form-item.tax /deep/.el-form-item__content {
+    display: flex;
+    justify-content: flex-start;
+    >.el-input {
+      width: 113px;
+      /deep/.el-input__inner {
+        width: 100% !important;
+      }
+    }
+    >.el-select {
+      width: 80px;
+      margin-left: 1px;
+      /deep/.el-input__inner {
+        width: 100% !important;
+      }
+    }
+  }
   /deep/.el-step__head.is-success {
     color: #1ABC9C;
     border-color: #1ABC9C;
