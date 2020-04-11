@@ -60,6 +60,10 @@ const routes = [{
 		name: 'arrivePage',
 		component: () => import(/* webpackChunkName: "arrivePage" */ '../views/purchaseManagement/purchase/arrivePage.vue'),
 	}, {
+		path: '/F0301/editPage', // 采购-采购管理-采购单-编辑
+		name: 'editPage',
+		component: () => import(/* webpackChunkName: "editPage" */ '../views/purchaseManagement/purchase/editPage.vue'),
+	}, {
 		path: '/F0301/approvalPage', // 采购-采购管理-采购单-审批
 		name: 'approvalPage',
 		component: () => import(/* webpackChunkName: "approvalPage" */ '../views/purchaseManagement/purchase/approvalPage.vue'),
