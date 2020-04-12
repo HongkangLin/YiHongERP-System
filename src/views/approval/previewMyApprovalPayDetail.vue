@@ -97,7 +97,8 @@ export default {
         {col1: "付款单号", col2: "id", col3: "收款单位", col4: "supplierName"},
         {col1: "收款账号", col2: "accountNo", col3: "备注", col4: "bak"},
         {col1: "本次申请货款（元）", col2: "applyAmount", col3: "运费（元）", col4: "transportFee"},
-        {col1: "其它（元）", col2: "otherFee", col3: "总计", col4: "calTotal"},
+        {col1: "税金（元）", col2: "taxFee", col3: "其它（元）", col4: "otherFee"},
+        {col1: "总计", col2: "calTotal", col3: "", col4: ""}
       ],
 
       dialogVisible: false,
