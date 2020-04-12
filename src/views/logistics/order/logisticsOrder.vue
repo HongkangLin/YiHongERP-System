@@ -36,7 +36,7 @@
       <section class="tableArea">
         <el-table :data="tableData" @selection-change="handleSelectionChange" border style="width: 100%">
           <el-table-column align="center" type="selection" width="55" fixed :selectable="row => {return row.status === '未生成' || row.status === '已生成'}"></el-table-column>
-          <el-table-column prop="id" label="物流单号/yun" align="center" min-width="100"></el-table-column>
+          <el-table-column prop="id" label="物流单号" align="center" min-width="100"></el-table-column>
           <el-table-column prop="expcompName" label="物流商" align="center" min-width="150">
             <template slot-scope="scope">
               {{scope.row.expcompName || '--'}}

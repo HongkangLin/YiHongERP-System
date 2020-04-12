@@ -124,11 +124,21 @@
                 <el-divider direction="vertical" v-if="roleCtl.product_update"></el-divider>
                 <a class="link" target="_self" :href="`/#/pdtDetail?id=${scope.row.id}&skuid=${scope.row.skuId}`">查看</a>
                 <el-divider direction="vertical" v-if="roleCtl.product_quick_update"></el-divider>
-                <el-button
+                <el-dropdown v-if="roleCtl.product_quick_update" @command="handleCommand" style="color: #57B99D; font-size: 100%;">
+                  <span class="el-dropdown-link">
+                    快速编辑<i class="el-icon-arrow-down el-icon--right"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item v-if="roleCtl.product_quick_update" :command="scope.row.id + '/' + scope.row.skuId + '/' + 'sale'">销售编辑</el-dropdown-item>
+                    <el-dropdown-item v-if="roleCtl.product_finance_update" :command="scope.row.id + '/' + scope.row.skuId + '/' + 'payment'">财务编辑</el-dropdown-item>
+                    <el-dropdown-item v-if="roleCtl.product_courier_update" :command="scope.row.id + '/' + scope.row.skuId + '/' + 'logistics'">物流编辑</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+                <!-- <el-button
                   size="mini"
                   type="text"
                   v-if="roleCtl.product_quick_update"
-                  @click="handleFast(scope.row.id, scope.row.skuId)">快速编辑</el-button>
+                  @click="handleFast(scope.row.id, scope.row.skuId)">快速编辑</el-button> -->
                 <el-divider direction="vertical" v-if="roleCtl.product_delete"></el-divider>
                 <el-button
                   size="mini"
@@ -205,7 +215,7 @@
                   v-if="roleCtl.product_update"
                   @click="handleEdit1(scope.row.id)">编辑</el-button>
                 <el-divider direction="vertical" v-if="roleCtl.product_update && roleCtl.product_quick_tmp_update"></el-divider>
-                <el-dropdown v-if="roleCtl.product_quick_tmp_update" @command="handleCommand" style="color: #57B99D">
+                <el-dropdown v-if="roleCtl.product_quick_tmp_update" @command="handleCommand" style="color: #57B99D; font-size: 100%;">
                   <span class="el-dropdown-link">
                     快速编辑<i class="el-icon-arrow-down el-icon--right"></i>
                   </span>
@@ -215,11 +225,6 @@
                     <el-dropdown-item v-if="roleCtl.product_courier_update" :command="scope.row.id + '/' + scope.row.skuId + '/' + 'logistics'">物流编辑</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-                <!-- <el-button
-                  size="mini"
-                  type="text"
-                  v-if="roleCtl.product_quick_tmp_update"
-                  @click="handleFast(scope.row.id, scope.row.skuId)">销售编辑</el-button> -->
                 <el-divider direction="vertical"  v-if="roleCtl.product_quick_tmp_update && roleCtl.product_delete"></el-divider>
                 <el-button
                   size="mini"

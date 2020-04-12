@@ -46,6 +46,9 @@
                 </el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="运单号：">
+              <el-input v-model="form.deliverSn" placeholder="请输入运单号"></el-input>
+            </el-form-item>
             <el-form-item label="数量（件）：">
               <el-input disabled :value="form.totalQuantity"></el-input>
             </el-form-item>
@@ -415,13 +418,14 @@ export default {
               subzoneId = this.simpList[i].id;
             }
           }
-          let {id, realWeight, transCostType, otherAmount, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt, bak, customsDutiesCurtype} = {...this.form};
+          let {id, realWeight, transCostType, deliverSn, otherAmount, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt, bak, customsDutiesCurtype} = {...this.form};
           let param = {
             id,
             realWeight,
             realVolume,
             inwareCostAmount,
             customsDutiesAmnt,
+            deliverSn,
             otherAmount,
             transCostUnit,
             expcompId,
