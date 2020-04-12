@@ -31,11 +31,12 @@
             <el-option label="已出库" value=1></el-option>
           </el-select> -->
           <el-select filterable v-model="deliverMethod" @change="search" placeholder="运输方式">
-            <el-option label="海运" value=0></el-option>
+            <!-- <el-option label="海运" value=0></el-option>
             <el-option label="空运" value=1></el-option>
             <el-option label="快递" value=2></el-option>
             <el-option label="快船" value=3></el-option>
-            <el-option label="铁路" value=4></el-option>
+            <el-option label="铁路" value=4></el-option> -->
+            <el-option :label="item.name" :value="item.id" v-for="(item, index) in deliverMethodList" :key="index"></el-option>
           </el-select>
         </div>
         <div class="sel" @click="search">查询</div>
@@ -104,6 +105,8 @@ export default {
     return {
       roleCtl: this.$store.state.role.roleCtl,
       activeName: 0,
+      deliverMethodList: [],
+      deliverMethod: '',
       statusTotal: {
         all: 0,
         underway: 0,
@@ -124,6 +127,7 @@ export default {
       status: null, //出库单状态
       type: null, //出库单类型
 
+      brandId: '',
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
@@ -142,6 +146,7 @@ export default {
     }
   },
   created() {
+    this.getDeliverMethodList();
     this.getBrand();
     this.getStoreList();
     this.queryList();
@@ -161,6 +166,15 @@ export default {
     }
   },
   methods: {
+    getDeliverMethodList() {
+      window.axios.get(`/transport_type/simpList`).then((data) => {
+        if (data.code !== 0) {
+          return;
+        } else {
+          this.deliverMethodList = data.data;
+        }
+      });
+    },
     async getBrand () { // 获取品牌
       let data = await window.axios.post('/product/queryProductBrandListRule', {
         goodsBrandNameOrLetter: '',
