@@ -126,10 +126,10 @@
               <el-input maxlength="100" v-model="form.currentSellingPrice" placeholder="请输入指定售价"></el-input>
             </el-form-item>
             <el-form-item label="利润率：" class="inline">
-              <el-input min="0" disabled type="number" v-model="profitRateAir" placeholder="-">
+              <el-input min="0" disabled :value="profitRateAir + '%'" placeholder="-">
                 <template slot="append">空运</template>
               </el-input>
-              <el-input disabled v-model="profitRateShip" type="number" class="leftSpan" placeholder="-">
+              <el-input disabled :value="profitRateShip + '%'" class="leftSpan" placeholder="-">
                 <template slot="append">海运</template>
               </el-input>
             </el-form-item>
@@ -410,13 +410,15 @@ export default {
       if (!this.form.currentSellingPrice || this.airTransportCost === '--' || this.purchaseCostDollar === '--') {
         return '--';
       }
-      return ((this.form.currentSellingPrice - 0.17 * this.form.currentSellingPrice - this.goodsFbaFee - this.airTransportCost - this.purchaseCostDollar) / this.form.currentSellingPrice).toFixed(2);
+      let data = ((this.form.currentSellingPrice - 0.17 * this.form.currentSellingPrice - this.goodsFbaFee - this.airTransportCost - this.purchaseCostDollar) / this.form.currentSellingPrice).toFixed(2);
+      return data;
     },
     profitRateShip () { // 利润率 海运
       if (!this.form.currentSellingPrice || this.airTransportCost === '--' || this.purchaseCostDollar === '--') {
         return '--';
       }
-      return ((this.form.currentSellingPrice - 0.17 * this.form.currentSellingPrice - this.goodsFbaFee - this.shippingCost - this.purchaseCostDollar) / this.form.currentSellingPrice).toFixed(2);
+      let data = ((this.form.currentSellingPrice - 0.17 * this.form.currentSellingPrice - this.goodsFbaFee - this.shippingCost - this.purchaseCostDollar) / this.form.currentSellingPrice).toFixed(2);
+      return data;
     },
     purchaseAmountSum () { // 采购总金额
       return this.form.orderQuantity * this.form.purchaseCostRmb;
