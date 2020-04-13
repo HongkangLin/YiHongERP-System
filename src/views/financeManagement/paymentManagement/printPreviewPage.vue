@@ -51,6 +51,7 @@
         <el-table-column prop="paidAmount" label="已支付货款（元）" align="center" ></el-table-column>
         <el-table-column prop="unpaidAmount" label="未支付货款（元）" align="center" ></el-table-column>
         <el-table-column prop="applyingAmount" label="本次申请货款（元）" align="center" ></el-table-column>
+        <el-table-column prop="taxFee" label="税金（元）" align="center" ></el-table-column>
         <el-table-column prop="transportFee" label="运费（元）" align="center" ></el-table-column>
         <el-table-column prop="otherFee" label="其它费用（元）" align="center" ></el-table-column>
         <el-table-column prop="bak" label="备注" align="center" ></el-table-column>
