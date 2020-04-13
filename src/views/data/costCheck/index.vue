@@ -141,7 +141,11 @@ export default {
 
     // 成本计算器
     toCalculator(_id) {
-      this.$router.push({path: '/F0601/F060103/addConst', query: {'id': _id}});
+      if (_id) {
+        this.$router.push({path: '/F0601/F060103/addConst', query: {'id': _id}});
+      } else {
+        this.$router.push('/F0601/F060103/addConst');
+      }
     },
 
     // 删除成本核算记录
