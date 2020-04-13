@@ -97,8 +97,37 @@
           </el-table-column>
           <el-table-column align="center" prop="feedbackReason" label="反馈详情" min-width="540"></el-table-column>
         </el-table>
+        <!-- 按键区 -->
+        <div class="submit" v-if="doing === 'me'">
+          <el-button type="primary" @click="dialogVisible = true" class="submitBtn">立即审批</el-button>
+          <el-button class="cancelBtn" @click="backToList">取 消</el-button>
+        </div>
       </div>
     </div>
+    <!-- 审核弹窗 -->
+    <el-dialog title="审核" :visible.sync="dialogVisible" width="45%">
+      <el-form :model="ruleForm" label-width="100px" class="ruleForm">
+        <el-form-item label="审核结果：" prop="approveResult">
+          <el-radio-group v-model="ruleForm.approveResult">
+            <el-radio label="agree">通过</el-radio>
+            <el-radio label="disagree">驳回</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="下一审批人：" prop="nextApproveUserId" v-if="ruleForm.approveResult === 'agree'">
+          <el-select filterable v-model="ruleForm.nextApproveUserId" placeholder="选择下一审批人" clearable>
+            <el-option v-for="item in peopleList" :key="item.id" :label="item.userName" :value="item.id"></el-option>
+          </el-select>
+          <div class="hint">不选下一审批人流程将终止并结束审批流程</div>
+        </el-form-item>
+        <el-form-item label="反馈原因：" prop="feedbackReason">
+          <el-input maxlength="100" v-model="ruleForm.feedbackReason" type="textarea" :rows="4" placeholder="请输入反馈原因"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmApprove">确 定</el-button>
+      </div>
+    </el-dialog>
 	</div>
 </template>
 
@@ -121,12 +150,22 @@ export default {
         purchaseInfo: {},
         productListOfPurchase: [],
         approveList: []
-      }
+      },
+      doing: '',
+      dialogVisible: false,
+      ruleForm: {
+        approveResult: "agree",
+        nextApproveUserId: null,
+        feedbackReason: ""
+      },
+      peopleList: [] //下一审批人下拉
     }
   },
   created() {
+    this.doing = this.$route.query.doing;
     this.id = this.$route.query.id;
     this.getApprovalInfo();
+    this.getPeopleList();
   },
   methods: {
     refreash () {
@@ -141,7 +180,6 @@ export default {
         this.info = data.data;
       })
     },
-
     getSummaries (param) { // 计算汇总
       const { columns, data } = param;
       const sums = [];
@@ -194,6 +232,31 @@ export default {
       });
 
       return sums;
+    },
+    backToList() {
+      history.go(-1);
+    },
+
+    // 下一审批人下拉
+    getPeopleList() {
+      window.axios.get("/user/queryOtherUserList").then((data) => {
+        if (data.code !== 0) return
+        this.peopleList = data.data;
+      })
+    },
+    // 确认审核
+    confirmApprove() {
+      let params = {
+        applyId: parseInt(this.id),
+        approveResult: this.ruleForm.approveResult,
+        nextApproveUserId: this.ruleForm.nextApproveUserId,
+        feedbackReason: this.ruleForm.approveResult === "agree" && this.ruleForm.feedbackReason === "" ? "同意" : this.ruleForm.feedbackReason
+      }
+      window.axios.post("/approve/executeApprove", params).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("已提交");
+        history.go(-1);
+      })
     }
   },
 };

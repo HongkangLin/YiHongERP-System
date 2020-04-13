@@ -45,7 +45,7 @@
         <el-table-column prop="stockoutTime" label="出库日期" align="center" min-width="130"></el-table-column>
         <el-table-column align="center" fixed="right" label="操作" width="160">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="window.open(scope.row.downUrl)" v-if="scope.row.status === 1">下载</el-button>
+            <el-button type="text" size="small" @click="downLoad(scope.row.downUrl)" v-if="scope.row.status === 1">下载</el-button>
             <el-button type="text" size="small" @click="handle(scope.row.stockoutOrderSn)" v-else>生成</el-button>
           </template>
         </el-table-column>
@@ -114,6 +114,9 @@ export default {
     this.getDeliverMethodList();
   },
   methods: {
+    downLoad(url) {
+      window.open(url);
+    },
     async queryList () { 
       let params = {
         keyword: this.keyword,

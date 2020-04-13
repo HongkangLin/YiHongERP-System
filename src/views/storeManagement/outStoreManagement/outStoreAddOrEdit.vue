@@ -27,11 +27,12 @@
           </el-form-item>
           <el-form-item label="运输方式：" prop="deliverMethod">
             <el-select filterable v-model="ruleForm.deliverMethod" placeholder="选择运输方式">
-              <el-option label="海运" value=0></el-option>
+              <el-option :label="item.name" :value="item.id" v-for="(item, index) in deliverMethodList" :key="index"></el-option>
+              <!-- <el-option label="海运" value=0></el-option>
               <el-option label="空运" value=1></el-option>
               <el-option label="快递" value=2></el-option>
               <el-option label="快船" value=3></el-option>
-              <el-option label="铁路" value=4></el-option>
+              <el-option label="铁路" value=4></el-option> -->
             </el-select>
           </el-form-item>
           <el-form-item label="出库国家：" prop="outCountry">
@@ -121,6 +122,7 @@
 export default {
   data() {
     return {
+      deliverMethodList: [],
       ruleForm: {
         id: null,
         sn: "", //出库单SN
@@ -226,10 +228,20 @@ export default {
     }
   },
   created() {
+    this.getDeliverMethodList();
     this.init();
     this.$route.query.outId && this.getInfoWhenEdit();
   },
   methods: {
+    getDeliverMethodList() {
+      window.axios.get(`/transport_type/simpList`).then((data) => {
+        if (data.code !== 0) {
+          return;
+        } else {
+          this.deliverMethodList = data.data;
+        }
+      });
+    },
     init() {
       window.axios.get("/warehouse/simpList").then((data) => {
         if (data.code !== 0) return
