@@ -256,14 +256,14 @@ export default {
       let lang = this.goodsLengthInch !== '-' ? parseFloat(this.goodsLengthInch) : 0;
       let wide = this.goodsWideInch !== '-' ? parseFloat(this.goodsWideInch) : 0;
       let high = this.goodsHighInch !== '-' ? parseFloat(this.goodsHighInch) : 0;
-      if (lang === 0 || wide === 0 || high === 0) {
+      if (this.goodsLengthInch === '-' || this.goodsWideInch === '-' || this.goodsHighInch === '-') {
         return '--';
       }
       return (((lang * wide * high) / 139) + 0.25).toFixed(2);
     },
     goodsActualWeight () { // FBA实际重量
       let weight = this.goodsWeightPound !== '-' ? parseFloat(this.goodsWeightPound) : 0;
-      if (weight === 0) {
+      if (this.goodsWeightPound === '-') {
         return '--';
       }
       return weight + 0.25;
@@ -432,13 +432,14 @@ export default {
     }
   },
   methods: {
-    getDetail () { // 获取详情
-      
+    async getDetail () { // 获取详情
+      let data = await window.axios.get(`/account_cost/queryAccountCostInfo4Update/${this.id}`);
+      data.data.mainPicUrl = data.data.mainPicUrl ? [{url: data.data.mainPicUrl}] : [];
+      this.form = data.data;
     },
     checkSize (file) { // 文件上传前检查文件大小和格式(小于2M)
       let name = file.name.split('.');
       let type = name[name.length - 1];
-      console.log('type: ' + type);
       if (type !== 'png' && type !== 'jpg') {
         this.$message({
           message: '文件格式错误',
@@ -469,30 +470,38 @@ export default {
     submit () { // 保存
       this.$refs['form'].validate(async (valid) => {
         if (valid) {
-          console.log(this.form);
           let param = JSON.parse(JSON.stringify(this.form));
           param.mainPicUrl = param.mainPicUrl[0] ? param.mainPicUrl[0].url : ''; // 商品主图
           param.salesFlag = ~~param.salesFlag;
-          let data = await window.axios.post('/account_cost/addAccountCostInfo', {
-            ...param,
-            goodsLengthInch: this.goodsLengthInch,
-            goodsWideInch: this.goodsWideInch,
-            goodsHighInch: this.goodsHighInch,
-            goodsWeightPound: this.goodsWeightPound,
-            goodsVolumeInch: this.goodsVolumeInch,
-            goodsActualWeight: this.goodsActualWeight,
-            airTransportWeight: this.airTransportWeight,
-            shippingCost: this.shippingCost,
-            airTransportCost: this.airTransportCost,
-            goodsFbaFee: this.goodsFbaFee,
-            purchaseCostDollar: this.purchaseCostDollar,
-            profitSellingPriceAir: this.profitSellingPriceAir,
-            profitSellingPriceShip: this.profitSellingPriceShip,
-            profitRateAir: this.profitRateAir,
-            profitRateShip: this.profitRateShip,
-            purchaseAmountSum: this.purchaseAmountSum,
-            turnoverSum: this.turnoverSum
-          });
+          param.goodsLengthInch = this.goodsLengthInch === '--' ? '' : this.goodsLengthInch;
+          param.goodsWideInch = this.goodsWideInch === '--' ? '' : this.goodsWideInch;
+          param.goodsHighInch = this.goodsHighInch === '--' ? '' : this.goodsHighInch;
+          param.goodsWeightPound = this.goodsWeightPound === '--' ? '' : this.goodsWeightPound;
+          param.goodsVolumeInch = this.goodsVolumeInch === '--' ? '' : this.goodsVolumeInch;
+          param.goodsActualWeight = this.goodsActualWeight === '--' ? '' : this.goodsActualWeight;
+          param.airTransportWeight = this.airTransportWeight === '--' ? '' : this.airTransportWeight;
+          param.shippingCost = this.shippingCost === '--' ? '' : this.shippingCost;
+          param.airTransportCost = this.airTransportCost === '--' ? '' : this.airTransportCost;
+          param.goodsFbaFee = this.goodsFbaFee === '--' ? '' : this.goodsFbaFee;
+          param.purchaseCostDollar = this.purchaseCostDollar === '--' ? '' : this.purchaseCostDollar;
+          param.profitSellingPriceAir = this.profitSellingPriceAir === '--' ? '' : this.profitSellingPriceAir;
+          param.profitSellingPriceShip = this.profitSellingPriceShip === '--' ? '' : this.profitSellingPriceShip;
+          param.profitRateAir = this.profitRateAir === '--' ? '' : this.profitRateAir;
+          param.profitRateShip = this.profitRateShip === '--' ? '' : this.profitRateShip;
+          param.purchaseAmountSum = this.purchaseAmountSum === '--' ? '' : this.purchaseAmountSum;
+          param.turnoverSum = this.turnoverSum === '--' ? '' : this.turnoverSum;
+          console.log(param);
+          let data = '';
+          if (this.id) { // 编辑
+            data = await window.axios.post('/account_cost/updateAccountCostInfo', {
+              id: this.id,
+              ...param
+            });
+          } else {
+            data = await window.axios.post('/account_cost/addAccountCostInfo', {
+              ...param
+            });
+          }
           if (data.code === 0) {
             this.$message.success(data.message);
             history.go(-1);
