@@ -9,7 +9,7 @@
           成本核算
           <div class="btns">
             <el-button @click="exportReport" type="primary">导出报表</el-button>
-            <el-button @click="toCalculator" type="primary">成本计算器</el-button>
+            <el-button @click="toCalculator()" type="primary">成本计算器</el-button>
           </div>
         </div>
         <div class="content">
