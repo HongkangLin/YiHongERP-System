@@ -205,7 +205,7 @@ export default {
         shippingUnitPrice: 1300,
         airTransportUnitPrice: 25,
         purchaseCostRmb: '',
-        exchangeRate: '',
+        exchangeRate: 6.5,
         currentSellingPrice: '',
         goodsGoalPrice: '',
         goodsUrlCompare: '',
