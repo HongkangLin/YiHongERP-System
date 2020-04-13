@@ -46,8 +46,8 @@
         <el-row>
           <el-col :span="4"><div class="td label">分区地址</div></el-col>
           <el-col :span="8"><div class="td">{{info.subzoneWhName}}&nbsp;</div></el-col>
-          <el-col :span="4"><div class="td label">&nbsp;</div></el-col>
-          <el-col :span="8"><div class="td">&nbsp;</div></el-col>
+          <el-col :span="4"><div class="td label">发票下载</div></el-col>
+          <el-col :span="8"><div class="td"><a :href="info.invoiceDownUrl" target="_black">点击下载</a></div></el-col>
         </el-row>
       </div>
       <div class="title"><i class="el-icon-collection-tag"></i><span>订单规格</span></div>
