@@ -15,6 +15,7 @@
             <el-tab-pane :label="'已完成/'+statusTotal.completed" name="5"></el-tab-pane>
           </el-tabs>
           <div class="btns">
+            <el-button @click="merge" plain v-if="roleCtl.express_order_merge">合并订单</el-button>
             <el-button @click="applyForPay" type="primary" v-if="roleCtl.express_order_applyPay">申请付款</el-button>
           </div>
         </div>
@@ -48,6 +49,11 @@
           <el-table-column prop="totalCostAmount" label="物流总费用（元）" align="center" min-width="140"></el-table-column>
           <el-table-column prop="applyingAmount" label="申请中费用（元）" align="center" min-width="140"></el-table-column>
           <el-table-column prop="paidAmount" label="已支付（元）" align="center" min-width="120"></el-table-column>
+          <el-table-column align="center" label="订单类型" width="80">
+            <template slot-scope="scope">
+              <div class="status">{{scope.row.mergeType === 0 ? '常规订单' : '合并订单'}}</div>
+            </template>
+          </el-table-column>
           <el-table-column align="center" label="状态" width="80">
             <template slot-scope="scope">
               <div class="status">{{scope.row.status}}</div>
@@ -66,6 +72,8 @@
               <a class="link" target="_self" :href="`/#/F0701/editLogisticsOrder?id=${scope.row.id}`" type="text" size="small" v-if="(scope.row.status === '未生成' || scope.row.status === '已生成') && roleCtl.express_order_update">编辑</a>
               <el-divider v-if="scope.row.status === '已生成' && roleCtl.express_order_update" direction="vertical"></el-divider>
               <a class="link" target="_self" :href="`/#/F0701/logisticsOrderDetail?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status !== '未生成'">查看</a>
+              <el-divider v-if="scope.row.mergeType === 2 && roleCtl.express_order_unmerge" direction="vertical"></el-divider>
+              <el-button type="text" size="small" v-if="scope.row.mergeType === 2 && roleCtl.express_order_unmerge" @click="unmergeOrder(scope.row.id)">取消合并</el-button>
               <!-- <el-divider v-if="scope.row.status === '审核中'" direction="vertical"></el-divider>
               <el-button type="text" size="small" v-if="scope.row.status === '审核中'" @click="showCloseOrderDialog(scope.row.id)">撤回</el-button> -->
             </template>
@@ -91,6 +99,22 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="closeOrderVisible = false">取 消</el-button>
         <el-button type="primary" @click="confirmApplyForClose">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 合并订单确认弹窗 -->
+    <el-dialog title="合并订单确认" :visible.sync="mergeOrders" width="35%">
+      <div class="mergeOrders">确定要合并订单吗？合并后可在合并订单内部添加/移除物流订单；如果你发现合并出错，可在合并后取消合并；合并不会造成原始物流单数据丢失。</div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="mergeOrders = false">取 消</el-button>
+        <el-button type="primary" @click="doMergeOrders">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 取消合并 -->
+    <el-dialog title="取消合并" :visible.sync="unmergeOrders" width="35%">
+      <div class="mergeOrders">确定要取消合并吗？取消后将无法找回当前合并订单，该合并订单中的所有物流订单将恢复“未生成”的原始状态，请谨慎操作！</div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="unmergeOrders = false">取 消</el-button>
+        <el-button type="primary" @click="doUnmerge">确 定</el-button>
       </div>
     </el-dialog>
 	</div>
@@ -140,8 +164,11 @@ export default {
       reviewDetailData: [],
 
       closeOrderVisible: false, //申请关闭物流订单弹窗
-      closeOrderId: ""
-      
+      closeOrderId: "",
+
+      mergeOrders: false,
+      unmergeOrders: false,
+      unmergeId: ''
     }
   },
   async created() {
@@ -312,7 +339,47 @@ export default {
         }
       });
     },
-
+    merge() {
+      if (!this.multipleSelection.length) {
+        return this.$message.warning("请选择物流订单");
+      }
+      let flag = false;
+      this.multipleSelection.map(item => {
+        if (item.status !== '未生成' || item.mergeType !== 0) {
+          flag = true;
+        }
+      });
+      if (flag) {
+        return this.$message.warning("仅允许“未生成”状态下的“常规订单”进行合并");
+      }
+      this.mergeOrders = true;
+    },
+    doMergeOrders() {
+      // console.log(this.multipleSelection);
+      let ids = [];
+      this.multipleSelection.map(item => {
+        ids.push(item.id);
+      })
+      window.axios.post("/express/order/merge", { ids }).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("合并订单成功");
+        this.mergeOrders = false;
+        this.queryList();
+      })
+    },
+    unmergeOrder(id) {
+      this.unmergeId = id;
+      this.unmergeOrders = true;
+    },
+    doUnmerge() {
+      window.axios.post("/express/order/unmerge", { id: this.unmergeId }).then((data) => {
+        if (data.code !== 0) return
+        this.$message.success("取消合并物流单成功");
+        this.unmergeId = '';
+        this.unmergeOrders = false;
+        this.queryList();
+      })
+    },
     // 申请付款
     applyForPay() {
       if (!this.multipleSelection.length) {
@@ -446,6 +513,9 @@ export default {
         color: #999999;
         margin-left: 100px;
         line-height: 16px;
+      }
+      .mergeOrders {
+        line-height: 18px;
       }
     }
   }
