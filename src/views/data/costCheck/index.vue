@@ -54,7 +54,7 @@
           <el-table-column prop="createTime" label="添加时间" align="center" min-width="90"></el-table-column>
           <el-table-column align="center" fixed="right" label="操作" width="150">
             <template slot-scope="scope">
-              <a class="link" target="_self" href="" type="text" size="small">编辑</a>
+              <el-button type="text" size="small" @click="toCalculator(scope.row.id)">编辑</el-button>
               <el-divider direction="vertical"></el-divider>
               <el-button type="text" size="small" @click="deleteRow(scope.row.id)">删除</el-button>
             </template>
@@ -140,8 +140,8 @@ export default {
     },
 
     // 成本计算器
-    toCalculator() {
-      this.$message('李大胖这里进');
+    toCalculator(_id) {
+      this.$router.push({path: '/F0601/F060103/addConst', query: {'id': _id}});
     },
 
     // 删除成本核算记录

@@ -216,6 +216,10 @@ const routes = [{
 		name: 'costCheck',
 		component: () => import(/* webpackChunkName: "costCheck" */ '../views/data/costCheck/index.vue'),
 	}, {
+		path: '/F0601/F060103/addConst', // 数据 > 成本核算 > 成本计算器
+		name: 'addConst',
+		component: () => import(/* webpackChunkName: "addConst" */ '../views/data/costCheck/addConst.vue'),
+	}, {
 		path: '/F0701/F070101', // 物流 > 物流管理 > 物流订单
 		name: 'logisticsOrder',
 		component: () => import(/* webpackChunkName: "logisticsOrder" */ '../views/logistics/order/logisticsOrder.vue'),
