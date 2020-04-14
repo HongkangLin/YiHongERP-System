@@ -71,7 +71,7 @@
     </el-dialog>
     <!-- 打印预览弹窗 -->
     <el-dialog :visible.sync="showPrintPreview" width="90%" top="5vh" class="printWindow">
-      <iframe :src="`/#/F0801/F080101/previewLogisticsPayDetail?id=${$route.query.id}&bussinessNo=${$route.query.bussinessNo}&doing=${$route.query.doing}`" class="myIframe" v-if="showPrintPreview"></iframe>
+      <iframe :src="`/#/F0801/F080101/previewLogisticsPayDetail?bussinessNo=${$route.query.bussinessNo}`" class="myIframe" v-if="showPrintPreview"></iframe>
     </el-dialog>
 	</div>
 </template>

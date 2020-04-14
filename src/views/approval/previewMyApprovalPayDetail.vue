@@ -1,71 +1,83 @@
 <template>
-  <div>
-    <div class="approvalPage_wrap" v-if="showHtml" id="sharePicBox">
-      <div class="header">付款审批</div>
-      <div class="contentArea">
-        <!-- 采购单信息 -->
-        <div class="content-header"> <i class="el-icon-collection-tag"></i> 采购单信息</div>
-         <el-table :data="tableData.financePurchaseDetailList" border style="width: 100%">
-          <el-table-column align="center" prop="id" label="采购单号" min-width="120"></el-table-column>
-          <el-table-column align="center" prop="supplierName" label="收款单位" min-width="170"></el-table-column>
-          <el-table-column align="center" prop="skucount" label="SKU数量" min-width="150"></el-table-column>
-          <el-table-column align="center" prop="goodsAmount" label="货款总金额（元）" min-width="160"></el-table-column>
-          <el-table-column align="center" prop="paidAmount" label="已支付货款（元）" min-width="130"></el-table-column>
-          <el-table-column align="center" prop="purchaseStatus" label="状态" min-width="100"></el-table-column>
-          <el-table-column align="center" prop="createTime" label="创建日期" min-width="130"></el-table-column>
-          <el-table-column align="center" prop="purchaseName" label="采购员" min-width="100"></el-table-column>
-        </el-table>
-        <!-- 付款单信息 -->
-        <div class="content-header"> <i class="el-icon-collection-tag"></i> 付款单信息</div>
-         <section class="table">
-          <el-row v-for="(item, index) in table1List" :key="index" type="flex" align="stretch">
-            <el-col :span="4" class="bg-grey">{{item.col1}}</el-col>
-            <el-col :span="8"><div class="content">{{tableData[item.col2]}}</div></el-col>
-            <el-col :span="4" class="bg-grey">{{item.col3}}</el-col>
-            <el-col :span="8"><div class="content">{{tableData[item.col4]}}</div></el-col>
-          </el-row>
-        </section>
-        <!-- 审核详情 -->
-        <div class="content-header"> <i class="el-icon-collection-tag"></i> 审核详情</div>
-        <el-table :data="tableData.purPayApproveRecordList" border style="width: 100%">
-          <el-table-column align="center" prop="approveTime" label="审核时间" min-width="230"></el-table-column>
-          <el-table-column align="center" prop="approverName" label="审核人员" min-width="130"></el-table-column>
-          <el-table-column align="center" prop="approveStatus" label="审核结果" min-width="130"></el-table-column>
-          <el-table-column align="center" prop="feedback" label="反馈详情" min-width="540"></el-table-column>
-        </el-table>
-        <!-- 按键区 -->
-        <div class="submit" v-if="doing === 'me'">
-          <el-button type="primary" @click="dialogVisible = true" class="submitBtn">立即审批</el-button>
-          <el-button class="cancelBtn" @click="backToList">取 消</el-button>
-        </div>
+  <div class="doc">
+    <!-- 打印区 -->
+    <div class="printArea" v-if="showHtml" id="sharePicBox">
+      <div class="title">采购单付款申请</div>
+      <div class="table row2">
+        <el-row>
+          <el-col :span="4" class="bg-grey">付款单号</el-col>
+          <el-col :span="8" class="content">{{printPageData.id}}</el-col>
+          <el-col :span="4" class="bg-grey">收款单位</el-col>
+          <el-col :span="8" class="content">{{printPageData.supplierName}}</el-col>
+        </el-row>
+      </div>
+      <div class="table row3">
+        <el-row>
+          <el-col :span="4" class="bg-grey">收款账号</el-col>
+          <el-col :span="8" class="content">{{printPageData.accountNo}}</el-col>
+          <el-col :span="4" class="bg-grey">本次申请货款（元）</el-col>
+          <el-col :span="8" class="content">{{printPageData.applyAmount}}</el-col>
+        </el-row>
+      </div>
+      <div class="table row3">
+        <el-row>
+          <el-col :span="4" class="bg-grey">运费（元）</el-col>
+          <el-col :span="8" class="content">{{printPageData.transportFee}}</el-col>
+          <el-col :span="4" class="bg-grey">税金（元）</el-col>
+          <el-col :span="8" class="content">{{printPageData.taxFee}}</el-col>
+        </el-row>
+      </div>
+      <div class="table row3">
+        <el-row>
+          <el-col :span="4" class="bg-grey">其它（元）</el-col>
+          <el-col :span="8" class="content">{{printPageData.otherFee}}</el-col>
+          <el-col :span="4" class="bg-grey">&nbsp;</el-col>
+          <el-col :span="8" class="content">&nbsp;</el-col>
+        </el-row>
+      </div>
+      <div class="table row4">
+        <el-row>
+          <el-col :span="4" class="bg-grey">金额大写</el-col>
+          <el-col :span="20" class="content" style="color:red;">{{amount_word}}</el-col>
+        </el-row>
+      </div>
+      <div class="table row5">
+        <el-row>
+          <el-col :span="4" class="bg-grey">金额小写</el-col>
+          <el-col :span="20" class="content" style="color:red;">¥ {{amount_num}}</el-col>
+        </el-row>
+      </div>
+      <div class="table row6">
+        <el-row>
+          <el-col :span="4" class="bg-grey">备注</el-col>
+          <el-col :span="20" class="content">{{printPageData.bak}}</el-col>
+        </el-row>
+      </div>
+      <el-table :data="printPageData.financePurchaseDetailList" border  show-summary :summary-method="getSummaries" :header-cell-style="{color:'#000', borderColor: '#333'}" :cell-style="{borderColor: '#333'}">
+        <el-table-column prop="id" label="采购单号" align="center" ></el-table-column>
+        <el-table-column prop="supplierName" label="收款单位" align="center" ></el-table-column>
+        <el-table-column prop="skucount" label="SKU数量" align="center" ></el-table-column>
+        <el-table-column prop="goodsAmount" label="货款总金额（元）" align="center" ></el-table-column>
+        <el-table-column prop="paidAmount" label="已支付货款（元）" align="center" ></el-table-column>
+        <el-table-column prop="purchaseStatus" label="状态" align="center" ></el-table-column>
+        <el-table-column prop="createTime" label="创建日期" align="center" ></el-table-column>
+        <el-table-column prop="purchaseName" label="采购员" align="center" ></el-table-column>
+      </el-table>
+      <div class="table last">
+        <el-row>
+          <el-col :span="3" class="bg-grey">审核人</el-col>
+          <el-col :span="3" class="content"></el-col>
+          <el-col :span="3" class="bg-grey">经理</el-col>
+          <el-col :span="3" class="content"></el-col>
+          <el-col :span="3" class="bg-grey">财务</el-col>
+          <el-col :span="3" class="content"></el-col>
+          <el-col :span="3" class="bg-grey">经办人</el-col>
+          <el-col :span="3" class="content"></el-col>
+        </el-row>
       </div>
     </div>
     <img :src="imgSrc" v-else alt="打印预览" class="previewImg">
-    <!-- 审核弹窗 -->
-    <el-dialog title="审核" :visible.sync="dialogVisible" width="45%">
-      <el-form :model="ruleForm" label-width="100px" class="ruleForm">
-        <el-form-item label="审核结果：" prop="approveResult">
-          <el-radio-group v-model="ruleForm.approveResult">
-            <el-radio label="agree">通过</el-radio>
-            <el-radio label="disagree">驳回</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="下一审批人：" prop="nextApproveUserId" v-if="ruleForm.approveResult === 'agree'">
-          <el-select filterable v-model="ruleForm.nextApproveUserId" placeholder="选择下一审批人" clearable>
-            <el-option v-for="item in peopleList" :key="item.id" :label="item.userName" :value="item.id"></el-option>
-          </el-select>
-          <div class="hint">不选下一审批人流程将终止并结束审批流程</div>
-        </el-form-item>
-        <el-form-item label="反馈原因：" prop="feedbackReason">
-          <el-input maxlength="100" v-model="ruleForm.feedbackReason" type="textarea" :rows="4" placeholder="请输入反馈原因"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmApprove">确 定</el-button>
-      </div>
-    </el-dialog>
-	</div>
+  </div>
 </template>
 
 <script>
@@ -75,115 +87,56 @@ export default {
     return {
       showHtml: true,
       imgSrc: "",
-      crumbList: [{ // 面包屑
-        name: '审批',
-        path: '/F0801/F080101'
-      }, {
-        name: '审批中心',
-        path: '/F0801/F080101'
-      }, {
-        name: '采购单付款申请',
-        path: ''
-      }],
-      id: '',
-      doing: '',
-      tableData: {
-        financePurchaseDetailList: [],
-        purPayApproveRecordList: []
-      }, 
-      
-      //付款单信息
-      table1List: [
-        {col1: "付款单号", col2: "id", col3: "收款单位", col4: "supplierName"},
-        {col1: "收款账号", col2: "accountNo", col3: "备注", col4: "bak"},
-        {col1: "本次申请货款（元）", col2: "applyAmount", col3: "运费（元）", col4: "transportFee"},
-        {col1: "税金（元）", col2: "taxFee", col3: "其它（元）", col4: "otherFee"},
-        {col1: "总计", col2: "calTotal", col3: "", col4: ""}
-      ],
-
-      dialogVisible: false,
-      ruleForm: {
-        approveResult: "agree",
-        nextApproveUserId: null,
-        feedbackReason: ""
+      printPageData: {
+        financePurchaseDetailList: []
       },
-      peopleList: [], //下一审批人下拉
-      showPrintPreview: false
+      amount_num: 0,
+      amount_word: ""
+    }
+  },
+  filters: {
+    timeStr (str) {
+      let date = new Date(str);
+      console.log(date);
+      return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
     }
   },
   created() {
-    this.doing = this.$route.query.doing;
-    this.id = this.$route.query.id;
     this.init();
   },
   methods: {
     init() {
       let bussinessNo = this.$route.query.bussinessNo;
-      let _this = this;
-      axios.all([
-        axios.get(`/finance/queryPayApproveDetail/${bussinessNo}`),
-        axios.get("/user/queryOtherUserList")
-      ])
-      .then(axios.spread(function (approvalInfoData, peopleListData) {
-        _this.getApprovalInfo(approvalInfoData.data);
-        _this.peopleList = peopleListData.data;
-        _this.$nextTick(() => {
-          _this.convertToImg();
-        })
-      }));
-    },
-    getApprovalInfo(obj) {
-      obj.financePurchaseDetailList.map((item) => {
-        // 采购状态
-        switch (item.purchaseStatus) {
-          case 1:
-            item.purchaseStatus = "进行中";
-            break;
-          case 2:
-            item.purchaseStatus = "已完成";
-            break;
-          case 3:
-            item.purchaseStatus = "关闭中";
-            break;
-          case 4:
-            item.purchaseStatus = "已关闭";
-            break;
-        }
-      })
-      obj.calTotal = obj.applyAmount + obj.transportFee + obj.otherFee;
-      // 审核结果
-      obj.purPayApproveRecordList.map((item) => {
-        if (item.approveStatus === 1) {
-          item.approveStatus = "同意"
-        } else if (item.approveStatus === 2) {
-          item.approveStatus = "驳回"
-        }
-      })
-      this.tableData = obj;
-    },
-
-    // 确认审核
-    confirmApprove() {
-      let params = {
-        applyId: parseInt(this.id),
-        approveResult: this.ruleForm.approveResult,
-        nextApproveUserId: this.ruleForm.nextApproveUserId,
-        feedbackReason: this.ruleForm.approveResult === "agree" && this.ruleForm.feedbackReason === "" ? "同意" : this.ruleForm.feedbackReason
-      }
-      window.axios.post("/approve/executeApprove", params).then((data) => {
+      window.axios.get(`/finance/queryPayApproveDetail/${bussinessNo}`).then((data) => {
         if (data.code !== 0) return
-        this.$message.success("已提交");
-        history.go(-1);
+        data.data.financePurchaseDetailList.map((item) => {
+          // 采购状态
+          switch (item.purchaseStatus) {
+            case 1:
+              item.purchaseStatus = "进行中";
+              break;
+            case 2:
+              item.purchaseStatus = "已完成";
+              break;
+            case 3:
+              item.purchaseStatus = "关闭中";
+              break;
+            case 4:
+              item.purchaseStatus = "已关闭";
+              break;
+          }
+        });
+        this.printPageData = data.data;
+        let calTotal = data.data.applyAmount + data.data.transportFee + data.data.otherFee;
+        this.amount_word = this.numToText(String(calTotal));
+        this.amount_num = calTotal.toFixed(2);
+        this.$nextTick(() => {
+          // window.print();
+          this.convertToImg();
+        })
       })
     },
 
-    backToList() {
-      history.go(-1);
-    },
-    // 打印
-    print() {
-      this.showPrintPreview = true;
-    },
     convertToImg() {
       let htmlDom = document.querySelector('#sharePicBox')
       html2canvas( htmlDom , {
@@ -197,87 +150,198 @@ export default {
         // console.log(imgBlob);
         this.imgSrc = imgBlob;
         this.showHtml = false;
+        // this.$nextTick(() => {
+          
+        // })
         setTimeout(() => {
           window.print();
         }, 100);
       })
+    },
+
+    getSummaries(param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '汇总';
+          return;
+        }
+        const values = data.map(item => Number(item[column.property]));
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          sums[index] = sums[index].toFixed(2); 
+        } else {
+          sums[index] = '';
+        }
+      });
+      // console.log("sums: ", sums);
+      sums[sums.length - 1] = "";
+      return sums;
+    },
+
+    // 金额小写转大写
+    numToText(money) {
+      //汉字的数字
+      var cnNums = new Array('零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖');
+      //基本单位
+      var cnIntRadice = new Array('', '拾', '佰', '仟');
+      //对应整数部分扩展单位
+      var cnIntUnits = new Array('', '万', '亿', '兆');
+      //对应小数部分单位
+      var cnDecUnits = new Array('角', '分');
+      //整数金额时后面跟的字符
+      var cnInteger = '整';
+      //整型完以后的单位
+      var cnIntLast = '元';
+      // 如果为负数
+      var cnIntMinus = '负';
+      // 负号处理后的数字
+      var cash;
+      //分离金额后用的数组，预定义
+      var parts;
+      //金额整数部分
+      var integerNum;
+      //金额小数部分
+      var decimalNum;
+      //输出的中文金额字符串
+      var chineseStr = '';
+
+      // 判断空
+      if (money == "") {
+        return "";
+      }
+      // 判断正负
+      if(money.charAt(0) === "-"){
+        chineseStr += cnIntMinus;
+        cash = money.slice(1);
+      }else{
+        cash = money;   
+      }
+      // 转换为浮点数类型,会自动去掉首尾的0
+      cash = parseFloat(cash);
+      if (cash == 0) {
+        chineseStr = cnNums[0] + cnIntLast + cnInteger;
+        return chineseStr;
+      }
+
+      // 转换为字符串
+      cash = cash.toString();
+      if (cash.indexOf('.') == -1) {
+        integerNum = cash;  //金额整数部分
+        decimalNum = ''; //金额小数部分
+      } else {
+        parts = cash.split(".");
+        integerNum = parts[0]; //金额整数部分
+        decimalNum = parts[1].substr(0, 2); //金额小数部分
+      }
+
+      // 转换整数部分
+      if (integerNum != '-' && parseInt(integerNum, 10) > 0) {
+        var intLen = integerNum.length;
+        var zero = 0; //标记零出现次数
+        for (let i = 0; i < intLen; i++) {
+          var intChar = integerNum.substr(i, 1);
+          var intSlen = intLen - i - 1;
+          var divided = intSlen / 4;
+          var remain = intSlen % 4;
+
+          if (intChar == "0") {
+            zero++;
+          } else {
+            if (zero > 0) {
+              chineseStr += cnNums[0];
+            }
+            zero = 0;
+            chineseStr += cnNums[parseInt(intChar)] + cnIntRadice[remain];
+          }
+          if (remain === 0 && divided > 0) {
+            chineseStr += cnIntUnits[divided];
+          }
+        }
+        chineseStr += cnIntLast; //加上'元'字
+      }
+
+      if (decimalNum != ''){ // 小数部分存在时
+          var decLen = decimalNum.length;
+          for(let i=0; i<decLen; i++){
+              var decChar = decimalNum.substr(i,1);
+              if(decChar != '0'){
+                  chineseStr += cnNums[parseInt(decChar)] + cnDecUnits[i];
+              }
+              if (decChar == '0' && parseInt(integerNum, 10) > 0){
+                  chineseStr += cnNums[parseInt(decChar)] + cnDecUnits[i];
+              }
+          }
+      }else{
+          chineseStr += cnInteger;
+      }
+      return chineseStr;
     }
-  },
+  }
 };
 </script>
 <style lang="less" scoped>
-.previewImg {
-  width: 100%;
-}
-.approvalPage_wrap {
-  box-sizing: border-box;
-  padding: 20px 60px;
-  background-color: #f6f7f9;
-  width: 100%;
-  min-height: calc(100% - 50px);
-  font-size: 12px;
-  .header {
+.doc {
+  padding: 20px 50px;
+  .previewImg {
+    width: 100%;
+  }
+  .title {
     color: #666666;
-    height: 50px;
-    line-height: 50px;
-    background-color: #f3f3f3;
-    padding-left: 20px;
-    border: 1px solid #e4e4e4;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 80PX;
+    text-align: center;
+    border: 1px solid #333;
+    border-bottom: none;
   }
-  .contentArea {
-    background-color: #fff;
-    border: 1px solid #e4e4e4;
-    border-top: none;
-    padding: 10px 30px;
-    .content-header {
-      color: #666666;
-      font-size: 16px;
-      font-weight: bold;
-      line-height: 58px;
-      .el-icon-collection-tag {
-        font-size: 18px;
+  .table {
+    &.row2 {
+      border-top: 1px solid #333;
+    }
+    &.row6 {
+      .el-row .el-col {
+        border-bottom: none;
       }
     }
-    .table {
-      font-size: 14px;
-      border-top: 1px solid #e4e4e4;
-      border-left: 1px solid #e4e4e4;
-      margin-bottom: 15px;
-      .el-row {
-        line-height: 40px;
-        .el-col {
-          border-bottom: 1px solid #e4e4e4;
-          border-right: 1px solid #e4e4e4;
-        }
-        .bg-grey {
-          text-align: right;
-          background-color: #f9fafc;
-          padding-right: 20px;
-        }
-        .content {
-          padding-left: 10px;
-        }
+    font-size: 14px;
+    border-left: 1px solid #333;
+    .el-row {
+      line-height: 45px;
+      .el-col {
+        height: 45px;
+        border-bottom: 1px solid #333;
+        border-right: 1px solid #333;
+      }
+      .bg-grey {
+        text-align: right;
+        background-color: #f9fafc;
+        padding-right: 20px;
+      }
+      .content {
+        padding-left: 10px;
       }
     }
-    .submit {
-      padding-top: 60px;
-      height: 100px;
-      .submitBtn,
-      .cancelBtn {
-        float: right;
-        margin-right: 20px;
-      }
-    }
-    
   }
-}
-.el-dialog__wrapper {
-  /deep/.el-dialog {
-    .hint {
-      font-size: 12px;
-      color: #999999;
-      margin-top: 6px;
-    }
+  .el-table--border {
+    border: 1px solid #333;
+  }
+  /deep/.el-table__footer-wrapper td {
+    border-top: 1px solid #333;
+  }
+  /deep/.el-table__footer-wrapper tbody td {
+    background-color: white;
+  }
+  /deep/.el-table--border td {
+    border-right: 1px solid #333;
   }
 }
 </style>

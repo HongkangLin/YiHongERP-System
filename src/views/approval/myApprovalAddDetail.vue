@@ -92,7 +92,7 @@
           <el-table-column align="center" prop="approveUserName" label="审核人员" min-width="130"></el-table-column>
           <el-table-column align="center" label="审核结果" min-width="130">
             <template slot-scope="scope">
-              <span>{{scope.row.approveResult === 'agree' ? '通过' : '驳回'}}</span>
+              <span>{{scope.row.approveResult === 'agree' ? '通过' : scope.row.approveResult === 'disagree' ? '驳回' : ''}}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="feedbackReason" label="反馈详情" min-width="540"></el-table-column>
