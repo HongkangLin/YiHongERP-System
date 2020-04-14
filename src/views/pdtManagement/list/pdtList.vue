@@ -124,7 +124,7 @@
                 <el-divider direction="vertical" v-if="roleCtl.product_update"></el-divider>
                 <a class="link" target="_self" :href="`/#/pdtDetail?id=${scope.row.id}&skuid=${scope.row.skuId}`">查看</a>
                 <el-divider direction="vertical" v-if="roleCtl.product_quick_update"></el-divider>
-                <el-dropdown v-if="roleCtl.product_quick_update" @command="handleCommand" style="color: #57B99D; font-size: 100%;">
+                <el-dropdown v-if="roleCtl.product_quick_update || roleCtl.product_finance_update || roleCtl.product_courier_update" @command="handleCommand" style="color: #57B99D; font-size: 100%;">
                   <span class="el-dropdown-link">
                     快速编辑<i class="el-icon-arrow-down el-icon--right"></i>
                   </span>
@@ -215,14 +215,14 @@
                   v-if="roleCtl.product_update"
                   @click="handleEdit1(scope.row.id)">编辑</el-button>
                 <el-divider direction="vertical" v-if="roleCtl.product_update && roleCtl.product_quick_tmp_update"></el-divider>
-                <el-dropdown v-if="roleCtl.product_quick_tmp_update" @command="handleCommand" style="color: #57B99D; font-size: 100%;">
+                <el-dropdown v-if="roleCtl.product_quick_tmp_update || roleCtl.product_finance_quick_tmp_update || roleCtl.product_courier_quick_tmp_update" @command="handleCommand" style="color: #57B99D; font-size: 100%;">
                   <span class="el-dropdown-link">
                     快速编辑<i class="el-icon-arrow-down el-icon--right"></i>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item v-if="roleCtl.product_quick_update" :command="scope.row.id + '/' + scope.row.skuId + '/' + 'sale'">销售编辑</el-dropdown-item>
-                    <el-dropdown-item v-if="roleCtl.product_finance_update" :command="scope.row.id + '/' + scope.row.skuId + '/' + 'payment'">财务编辑</el-dropdown-item>
-                    <el-dropdown-item v-if="roleCtl.product_courier_update" :command="scope.row.id + '/' + scope.row.skuId + '/' + 'logistics'">物流编辑</el-dropdown-item>
+                    <el-dropdown-item v-if="roleCtl.product_quick_tmp_update" :command="scope.row.id + '/' + scope.row.skuId + '/' + 'sale'">销售编辑</el-dropdown-item>
+                    <el-dropdown-item v-if="roleCtl.product_finance_quick_tmp_update" :command="scope.row.id + '/' + scope.row.skuId + '/' + 'payment'">财务编辑</el-dropdown-item>
+                    <el-dropdown-item v-if="roleCtl.product_courier_quick_tmp_update" :command="scope.row.id + '/' + scope.row.skuId + '/' + 'logistics'">物流编辑</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
                 <el-divider direction="vertical"  v-if="roleCtl.product_quick_tmp_update && roleCtl.product_delete"></el-divider>
@@ -613,17 +613,32 @@ export default {
     async paymentApplyForClose () { // 财务快速编辑
       this.$refs['paymentForm'].validate(async valid => {
         if (valid) {
-          let data = await window.axios.post('/product/quickUpdateProductInfoForFinance', {
-            skuId: this.skuid,
-            customId: this.paymentForm.customId,
-            claimPrice: this.paymentForm.claimPrice,
-            chineseName: this.paymentForm.chineseName,
-            specEncode: this.paymentForm.specEncode
-          });
-          if (data.code === 0) {
-            this.$message.success(data.message);
-            this.paymentVisible = false;
-            this.queryProductInfoTmpList();
+          if (this.activeName === '0') {
+            let data = await window.axios.post('/product/quickUpdateProductInfoForFinance', {
+              skuId: this.skuid,
+              customId: this.paymentForm.customId,
+              claimPrice: this.paymentForm.claimPrice,
+              chineseName: this.paymentForm.chineseName,
+              specEncode: this.paymentForm.specEncode
+            });
+            if (data.code === 0) {
+              this.$message.success(data.message);
+              this.paymentVisible = false;
+              this.queryList();
+            }
+          } else {
+            let data = await window.axios.post('/product/quickUpdateProductInfoTmpForFinance', {
+              id: this.id,
+              customId: this.paymentForm.customId,
+              claimPrice: this.paymentForm.claimPrice,
+              chineseName: this.paymentForm.chineseName,
+              specEncode: this.paymentForm.specEncode
+            });
+            if (data.code === 0) {
+              this.$message.success(data.message);
+              this.paymentVisible = false;
+              this.queryProductInfoTmpList();
+            }
           }
         }
       });
@@ -631,21 +646,40 @@ export default {
     async logisticsApplyForClose () { // 物流快速编辑
       this.$refs['logisticsForm'].validate(async valid => {
         if (valid) {
-          let data = await window.axios.post('/product/quickUpdateProductInfoForCourier', {
-            skuId: this.skuid,
-            overseaInvoiceCn: this.logisticsForm.overseaInvoiceCn,
-            overseaInvoiceEn: this.logisticsForm.overseaInvoiceEn,
-            overseaInvoiceTexture: this.logisticsForm.overseaInvoiceTexture,
-            overseaInvoiceUse: this.logisticsForm.overseaInvoiceUse,
-            overseaCustomId: this.logisticsForm.overseaCustomId,
-            tariffs: this.logisticsForm.tariffs,
-            clearanceUnitPrice: this.logisticsForm.clearanceUnitPrice,
-            clearanceModel: this.logisticsForm.clearanceModel
-          });
-          if (data.code === 0) {
-            this.$message.success(data.message);
-            this.logisticsVisible = false;
-            this.queryProductInfoTmpList();
+          if (this.activeName === '0') {
+            let data = await window.axios.post('/product/quickUpdateProductInfoForCourier', {
+              skuId: this.skuid,
+              overseaInvoiceCn: this.logisticsForm.overseaInvoiceCn,
+              overseaInvoiceEn: this.logisticsForm.overseaInvoiceEn,
+              overseaInvoiceTexture: this.logisticsForm.overseaInvoiceTexture,
+              overseaInvoiceUse: this.logisticsForm.overseaInvoiceUse,
+              overseaCustomId: this.logisticsForm.overseaCustomId,
+              tariffs: this.logisticsForm.tariffs,
+              clearanceUnitPrice: this.logisticsForm.clearanceUnitPrice,
+              clearanceModel: this.logisticsForm.clearanceModel
+            });
+            if (data.code === 0) {
+              this.$message.success(data.message);
+              this.logisticsVisible = false;
+              this.queryList();
+            }
+          } else {
+            let data = await window.axios.post('/product/quickUpdateProductInfoTmpForCourier', {
+              id: this.id,
+              overseaInvoiceCn: this.logisticsForm.overseaInvoiceCn,
+              overseaInvoiceEn: this.logisticsForm.overseaInvoiceEn,
+              overseaInvoiceTexture: this.logisticsForm.overseaInvoiceTexture,
+              overseaInvoiceUse: this.logisticsForm.overseaInvoiceUse,
+              overseaCustomId: this.logisticsForm.overseaCustomId,
+              tariffs: this.logisticsForm.tariffs,
+              clearanceUnitPrice: this.logisticsForm.clearanceUnitPrice,
+              clearanceModel: this.logisticsForm.clearanceModel
+            });
+            if (data.code === 0) {
+              this.$message.success(data.message);
+              this.logisticsVisible = false;
+              this.queryProductInfoTmpList();
+            }
           }
         }
       });

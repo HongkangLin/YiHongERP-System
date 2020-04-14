@@ -146,7 +146,7 @@ export default {
               break;
           }
         })
-        obj.calTotal = obj.applyAmount + obj.transportFee + obj.otherFee;
+        obj.calTotal = obj.applyAmount + obj.transportFee + obj.taxFee + obj.otherFee;
         // 审核结果
         obj.purPayApproveRecordList.map((item) => {
           if (item.approveStatus === 1) {

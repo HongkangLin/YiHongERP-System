@@ -127,7 +127,7 @@ export default {
           }
         });
         this.printPageData = data.data;
-        let calTotal = data.data.applyAmount + data.data.transportFee + data.data.otherFee;
+        let calTotal = data.data.applyAmount + data.data.transportFee + data.data.taxFee + data.data.otherFee;
         this.amount_word = this.numToText(String(calTotal));
         this.amount_num = calTotal.toFixed(2);
         this.$nextTick(() => {

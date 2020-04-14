@@ -25,6 +25,10 @@
             <el-select filterable v-model="deliverMethod" @change="search" placeholder="运输方式" clearable>
               <el-option v-for="(item, idx) in way" :key="idx" :label="item.name" :value="item.id"></el-option>
             </el-select>
+            <el-select filterable v-model="mergeType" @change="search" placeholder="订单类型" clearable>
+              <el-option label="常规订单" :value="0"></el-option>
+              <el-option label="合并订单" :value="2"></el-option>
+            </el-select>
             <el-select filterable v-model="expcompId" @change="search" placeholder="物流商" clearable>
               <el-option v-for="(item, idx) in expcompList" :key="idx" :label="item.label" :value="item.value"></el-option>
             </el-select>
@@ -136,6 +140,7 @@ export default {
         name: '物流订单',
         path: ''
       }],
+      mergeType: '',
       way: [],
       activeName: "0", //物流订单状态Tab
       idKeyword: "", // 物流单号
@@ -207,7 +212,7 @@ export default {
       this.expcompList = arr;
     },
     async queryList () { // 获取列表
-      let data = await window.axios.get(`/express/order/listAll?status=${this.activeName === '0' ? '' : parseInt(this.activeName) - 1}&idKeyword=${this.idKeyword}&expcompId=${this.expcompId}&deliverMethod=${this.deliverMethod}&deliverDateStart=${this.createTimeRange && this.createTimeRange[0] ? this.createTimeRange[0] : ''}&deliverDateEnd=${this.createTimeRange && this.createTimeRange[0] ? this.createTimeRange[1] : ''}&pageNum=${this.pageNum}&pageSize=${this.pageSize}`);
+      let data = await window.axios.get(`/express/order/listAll?status=${this.activeName === '0' ? '' : parseInt(this.activeName) - 1}&mergeType=${this.mergeType}&idKeyword=${this.idKeyword}&expcompId=${this.expcompId}&deliverMethod=${this.deliverMethod}&deliverDateStart=${this.createTimeRange && this.createTimeRange[0] ? this.createTimeRange[0] : ''}&deliverDateEnd=${this.createTimeRange && this.createTimeRange[0] ? this.createTimeRange[1] : ''}&pageNum=${this.pageNum}&pageSize=${this.pageSize}`);
       if (data.code !== 0) return
       let arr = data.data.list;
       arr.map((item) => {
