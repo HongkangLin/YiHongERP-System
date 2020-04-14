@@ -31,11 +31,6 @@
             <el-option label="已出库" value=1></el-option>
           </el-select> -->
           <el-select filterable v-model="deliverMethod" @change="search" placeholder="运输方式">
-            <!-- <el-option label="海运" value=0></el-option>
-            <el-option label="空运" value=1></el-option>
-            <el-option label="快递" value=2></el-option>
-            <el-option label="快船" value=3></el-option>
-            <el-option label="铁路" value=4></el-option> -->
             <el-option :label="item.name" :value="item.id" v-for="(item, index) in deliverMethodList" :key="index"></el-option>
           </el-select>
         </div>

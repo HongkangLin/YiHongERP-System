@@ -56,7 +56,7 @@
               <el-input disabled :value="form.deliverDate"></el-input>
             </el-form-item>
             <el-form-item label="运输方式：">
-              <el-input disabled :value="['海运', '空运', '快递', '快船', '铁路'][form.deliverMethod]"></el-input>
+              <el-input disabled :value="deliverMethodList[form.deliverMethod]"></el-input>
             </el-form-item>
             <el-form-item label="出库国家：">
               <el-input disabled :value="['美国', '英国', '德国', '日本', '法国'][form.outCountryId]"></el-input>
@@ -223,6 +223,7 @@ export default {
     //   }
     // };
     return {
+      deliverMethodList: [],
       loading: false,
       crumbList: [{ // 面包屑
         name: '物流',
@@ -306,9 +307,23 @@ export default {
   async mounted () {
     await this.getSimpList();
     await this.getExpcomp();
+    await this.getDeliverMethodList();
     this.getLogistics();
   },
   methods: {
+    getDeliverMethodList() {
+      window.axios.get(`/transport_type/simpList`).then((data) => {
+        if (data.code !== 0) {
+          return;
+        } else {
+          let arr = [];
+          data.data.forEach(item => {
+            arr.push(item.name);
+          });
+          this.deliverMethodList = arr;
+        }
+      });
+    },
     async getSimpList () { // 获取仓库列表
       let data = await window.axios.get(`/warehouse/simpList`);
       this.simpList = data.data;

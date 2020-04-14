@@ -51,6 +51,7 @@
 export default {
   data() {
     return {
+      deliverMethodList: [],
       crumbList: [{ // 面包屑
         name: '库存管理',
         path: '/F0401/F040103'
@@ -71,10 +72,20 @@ export default {
       tableData: {}, 
     }
   },
-  created() {
+  async created() {
+    await this.getDeliverMethodList();
     this.initTable();
   },
   methods: {
+    getDeliverMethodList() {
+      window.axios.get(`/transport_type/simpList`).then((data) => {
+        if (data.code !== 0) {
+          return;
+        } else {
+          this.deliverMethodList = data.data;
+        }
+      });
+    },
     timeStr (str) {
       let date = new Date(str);
       return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
@@ -85,26 +96,10 @@ export default {
         let obj = data.data;
         obj.status = obj.status === 0 ? "待出库" : "已出库";
         obj.type = obj.type === 0 ? "正常出库" : "退换货";
-        switch (obj.deliverMethod) {
-          case 0:
-            obj.deliverMethod = "海运";
-            break;
-        
-          case 1:
-            obj.deliverMethod = "空运";
-            break;
-
-          case 2:
-            obj.deliverMethod = "快递";
-            break;
-
-          case 3:
-            obj.deliverMethod = "快船";
-            break;
-
-          case 4:
-            obj.deliverMethod = "铁路";
-            break;
+        for (let i = 0; i < this.deliverMethodList.length; i++) {
+          if (obj.deliverMethod === this.deliverMethodList[i].id) {
+            obj.deliverMethod = this.deliverMethodList[i].name;
+          }
         }
         switch (obj.outCountryId) {
           case 0:

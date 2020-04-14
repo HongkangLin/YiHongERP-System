@@ -28,11 +28,6 @@
           <el-form-item label="运输方式：" prop="deliverMethod">
             <el-select filterable v-model="ruleForm.deliverMethod" placeholder="选择运输方式">
               <el-option :label="item.name" :value="item.id" v-for="(item, index) in deliverMethodList" :key="index"></el-option>
-              <!-- <el-option label="海运" value=0></el-option>
-              <el-option label="空运" value=1></el-option>
-              <el-option label="快递" value=2></el-option>
-              <el-option label="快船" value=3></el-option>
-              <el-option label="铁路" value=4></el-option> -->
             </el-select>
           </el-form-item>
           <el-form-item label="出库国家：" prop="outCountry">
@@ -227,8 +222,8 @@ export default {
       return obj;
     }
   },
-  created() {
-    this.getDeliverMethodList();
+  async created() {
+    await this.getDeliverMethodList();
     this.init();
     this.$route.query.outId && this.getInfoWhenEdit();
   },
@@ -285,22 +280,10 @@ export default {
       this.ruleForm.typeId = obj.type;
       this.ruleForm.type = obj.type ? "退换货" : "正常出库";
       this.ruleForm.deliverMethodId = obj.deliverMethod;
-      switch (obj.deliverMethod) {
-        case 0:
-          this.ruleForm.deliverMethod = "海运";
-          break;
-        case 1:
-          this.ruleForm.deliverMethod = "空运";
-          break;
-        case 2:
-          this.ruleForm.deliverMethod = "快递";
-          break;
-        case 3:
-          this.ruleForm.deliverMethod = "快船";
-          break;
-        case 4:
-          this.ruleForm.deliverMethod = "铁路";
-          break;
+      for (let i = 0; i < this.deliverMethodList.length; i++) {
+        if (obj.deliverMethod === this.deliverMethodList[i].id) {
+          this.ruleForm.deliverMethod = this.deliverMethodList[i].name;
+        }
       }
       this.ruleForm.outCountryId = obj.outCountryId;
       switch (obj.outCountryId) {

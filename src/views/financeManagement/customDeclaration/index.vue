@@ -97,7 +97,6 @@ export default {
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
-      // way: ['海运', '空运', '快递', '快船', '铁路'],
       tableData: [],
       form: {
         sn: ''

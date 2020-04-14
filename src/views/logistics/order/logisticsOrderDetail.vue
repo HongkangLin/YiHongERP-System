@@ -39,7 +39,7 @@
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">运输方式</div></el-col>
-          <el-col :span="8"><div class="td">{{['海运', '空运', '快递', '快船', '铁路'][info.deliverMethod]}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{deliverMethodList[info.deliverMethod]}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">出库国家</div></el-col>
           <el-col :span="8"><div class="td">{{['美国', '英国', '德国', '日本', '法国'][info.outCountryId]}}&nbsp;</div></el-col>
         </el-row>
@@ -241,6 +241,7 @@ export default {
   },
   data () {
     return {
+      deliverMethodList: [],
       typeList: ['', '审核中', '驳回', '待付款', '付款完成', '取消'],
       active: 0,
       id: '',
@@ -256,10 +257,24 @@ export default {
   async mounted () {
     this.id = this.$route.query.id;
     await this.getExpcomp();
+    await this.getDeliverMethodList();
     this.getInfo(); // 获取详情
     this.getPay(); // 获取付款记录
   },
   methods: {
+    getDeliverMethodList() {
+      window.axios.get(`/transport_type/simpList`).then((data) => {
+        if (data.code !== 0) {
+          return;
+        } else {
+          let arr = [];
+          data.data.forEach(item => {
+            arr.push(item.name);
+          });
+          this.deliverMethodList = arr;
+        }
+      });
+    },
     async getExpcomp () { // 获取物流商
       let data = await window.axios.post('/express/queryExpressCompanyInfoList', {
         pageSize: 999999,
