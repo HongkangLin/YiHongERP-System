@@ -156,7 +156,7 @@ export default {
         }
       });
       // console.log("sums: ", sums);
-      let num = Number(sums[4]) + Number(sums[5]) + Number(sums[6]);
+      let num = Number(sums[4]) + Number(sums[5]) + Number(sums[6]) + Number(sums[7]);
       this.amount_num = num.toFixed(2);
       this.amount_word = this.numToText(String(num));
       sums[sums.length - 1] = "";
