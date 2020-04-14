@@ -98,10 +98,13 @@ export default {
       },
 
       productList: [], //产品信息列表
-      dialogVisible: false
+      dialogVisible: false,
+
+      deliverMethodList: [] // 运输方式
     }
   },
-  created() {
+  async created() {
+    await this.getDeliverMethodList();
     this.getInfo();
   },
   methods: {
@@ -110,6 +113,15 @@ export default {
         if (data.code !== 0) return
         this.refillForm(data.data);
       })
+    },
+    getDeliverMethodList() {
+      window.axios.get(`/transport_type/simpList`).then((data) => {
+        if (data.code !== 0) {
+          return;
+        } else {
+          this.deliverMethodList = data.data;
+        }
+      });
     },
 
     // 编辑出库返显
@@ -124,22 +136,10 @@ export default {
       this.ruleForm.typeId = obj.type;
       this.ruleForm.type = obj.type ? "退换货" : "正常出库";
       this.ruleForm.deliverMethodId = obj.deliverMethod;
-      switch (obj.deliverMethod) {
-        case 0:
-          this.ruleForm.deliverMethod = "海运";
-          break;
-        case 1:
-          this.ruleForm.deliverMethod = "空运";
-          break;
-        case 2:
-          this.ruleForm.deliverMethod = "快递";
-          break;
-        case 3:
-          this.ruleForm.deliverMethod = "快船";
-          break;
-        case 4:
-          this.ruleForm.deliverMethod = "铁路";
-          break;
+      for (let i = 0; i < this.deliverMethodList.length; i++) {
+        if (this.deliverMethodList[i].id === obj.deliverMethod) {
+          this.ruleForm.deliverMethod = this.deliverMethodList[i].name;
+        }
       }
       switch (obj.outCountryId) {
         case 0:

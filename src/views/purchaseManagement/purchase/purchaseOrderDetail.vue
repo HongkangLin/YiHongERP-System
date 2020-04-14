@@ -153,6 +153,11 @@
           align="center">
         </el-table-column>
         <el-table-column
+          prop="taxFee"
+          label="税金"
+          align="center">
+        </el-table-column>
+        <el-table-column
           prop="transportFee"
           label="运费（元）"
           align="center">

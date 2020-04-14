@@ -131,7 +131,6 @@ export default {
       total: 0, // 总数
       pageNum: 1, // pageNumber
       pageSize: 10, // pageSize
-      way: ['海运', '空运', '快递', '快船', '铁路'],
       tableData: [{}],
       storeList: [], //仓库下拉
       form: {
@@ -232,7 +231,11 @@ export default {
       arr.map((item) => {
         item.status = item.status === 2 ? "已关闭" : item.status === 1 ? "已出库" : "待出库";
         item.type = item.type ? "退换货" : "正常出库";
-        item.deliverMethod = this.way[item.deliverMethod];
+        for (let i = 0; i < this.deliverMethodList.length; i++) {
+          if (item.deliverMethod === this.deliverMethodList[i].id) {
+            item.deliverMethod = this.deliverMethodList[i].name;
+          }
+        }
       })
       this.tableData = arr;
       this.total = data.data.total;

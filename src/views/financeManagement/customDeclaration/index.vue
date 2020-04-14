@@ -165,7 +165,7 @@ export default {
         if (data.code !== 0) {
           return;
         } else {
-          this.$message.error('生成成功，现在可以下载报关单！');
+          this.$message.success('生成成功，现在可以下载报关单！');
           setTimeout(() => {
             this.queryList();
             cb && cb();
@@ -179,7 +179,7 @@ export default {
         if (data.code !== 0) {
           return;
         } else {
-          this.$message.error('生成成功，现在可以下载报关单！');
+          this.$message.success('生成成功，现在可以下载报关单！');
           setTimeout(() => {
             this.queryList();
           }, 500);
