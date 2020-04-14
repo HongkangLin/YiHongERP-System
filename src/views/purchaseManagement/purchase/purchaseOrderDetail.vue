@@ -154,7 +154,7 @@
         </el-table-column>
         <el-table-column
           prop="taxFee"
-          label="税金"
+          label="税金（元）"
           align="center">
         </el-table-column>
         <el-table-column

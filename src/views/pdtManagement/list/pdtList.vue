@@ -297,13 +297,13 @@
     <el-dialog title="财务编辑" :visible.sync="paymentVisible" width="50%" top="120px">
       <el-form ref="paymentForm" class="form" :model="paymentForm" :rules="paymentRules" label-width="200px">
         <el-form-item label="国内海关编码：" prop="customId">
-          <el-input maxlength="100" v-model="paymentForm.customId" placeholder="请输入国内海关编码"></el-input>
+          <el-input maxlength="20" v-model="paymentForm.customId" placeholder="请输入国内海关编码"></el-input>
         </el-form-item>
         <el-form-item label="报税申报价值（美元）：" prop="claimPrice">
           <el-input type="number" @blur="() => {if (paymentForm.claimPrice < 0) {paymentForm.claimPrice = 0} else if (paymentForm.claimPrice > 1000000000) {paymentForm.claimPrice = 1000000000}}" v-model="paymentForm.claimPrice" placeholder="请输入报税申报价值"></el-input>
         </el-form-item>
         <el-form-item label="中文报关名：" prop="chineseName">
-          <el-input maxlength="100" v-model="paymentForm.chineseName" placeholder="请输入中文报关名"></el-input>
+          <el-input maxlength="20" v-model="paymentForm.chineseName" placeholder="请输入中文报关名"></el-input>
         </el-form-item>
         <el-form-item label="规格编号：" prop="specEncode">
           <el-input maxlength="20" v-model="paymentForm.specEncode" placeholder="请输入规格编号"></el-input>
@@ -338,6 +338,9 @@
         </el-form-item>
         <el-form-item label="清关单价：" prop="clearanceUnitPrice">
           <el-input type="number" @blur="() => {if (logisticsForm.clearanceUnitPrice < 0) {logisticsForm.clearanceUnitPrice = 0} else if (logisticsForm.clearanceUnitPrice > 99999999) {logisticsForm.clearanceUnitPrice = 99999999}}" v-model="logisticsForm.clearanceUnitPrice" placeholder="请输入清关单价"></el-input>
+        </el-form-item>
+        <el-form-item label="清关型号：" prop="clearanceModel">
+          <el-input maxlength="20" v-model="logisticsForm.clearanceModel" placeholder="请输入清关型号"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -413,7 +416,8 @@ export default {
         overseaInvoiceUse: '',
         overseaCustomId: '',
         tariffs: '',
-        clearanceUnitPrice: ''
+        clearanceUnitPrice: '',
+        clearanceModel: ''
       },
       logisticsRules: {
         overseaInvoiceCn: [
@@ -436,6 +440,9 @@ export default {
         ],
         clearanceUnitPrice: [
           {required: true, message: '请输入清关单价', trigger: 'blur'}
+        ],
+        clearanceModel: [
+          {required: true, message: '请输入清关型号', trigger: 'blur'}
         ]
       },
       id: '', // 当前操作的id
@@ -632,7 +639,8 @@ export default {
             overseaInvoiceUse: this.logisticsForm.overseaInvoiceUse,
             overseaCustomId: this.logisticsForm.overseaCustomId,
             tariffs: this.logisticsForm.tariffs,
-            clearanceUnitPrice: this.logisticsForm.clearanceUnitPrice
+            clearanceUnitPrice: this.logisticsForm.clearanceUnitPrice,
+            clearanceModel: this.logisticsForm.clearanceModel
           });
           if (data.code === 0) {
             this.$message.success(data.message);
@@ -792,7 +800,8 @@ export default {
           overseaInvoiceUse: data.data.overseaInvoiceUse,
           overseaCustomId: data.data.overseaCustomId,
           tariffs: data.data.tariffs,
-          clearanceUnitPrice: data.data.clearanceUnitPrice
+          clearanceUnitPrice: data.data.clearanceUnitPrice,
+          clearanceModel: data.data.clearanceModel
         };
         this.logisticsVisible = true;
       }
