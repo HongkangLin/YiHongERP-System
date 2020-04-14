@@ -1,6 +1,10 @@
 <template>
   <div>
-    <crumbs :list="crumbList" :showReturn="false"></crumbs>
+    <!-- <crumbs :list="crumbList" :showReturn="false"></crumbs> -->
+    <div class="top">
+      <crumbs :list="crumbList" :showReturn="false"></crumbs>
+      <div class="printBtn" @click="refreash"><i class="el-icon-refresh"></i> 刷新</div>
+    </div>
     <div class="dataDownload">
       <div class="search">
         <div class="head">
@@ -90,6 +94,9 @@ export default {
     this.queryList();
   },
   methods: {
+    refreash () {
+      location.reload();
+    },
     async queryList () { // 获取下载列表
       let data = await window.axios.post('/reportRecord/queryReportRecordList', {
         pageNum: this.pageNum,
@@ -156,6 +163,23 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.top {
+  position: relative;
+  .printBtn {
+    position: absolute;
+    right: 50px;
+    top: 10px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    width: 70px;
+    color: #999;
+    cursor: pointer;
+    border-radius: 4px;
+    background-color: white;
+    border: 1px solid rgb(228, 228, 228);
+  }
+}
 .dataDownload {
   box-sizing: border-box;
   padding: 20px 50px;

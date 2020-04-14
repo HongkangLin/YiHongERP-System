@@ -202,7 +202,8 @@
           </el-form>
           <el-divider></el-divider>
           <div class="next">
-            <div @click="submit">提交</div>
+            <div @click="submit('save')" class="pre">保存</div>
+            <div @click="submit">完成并提交</div>
           </div>
         </div>
       </div>
@@ -408,49 +409,90 @@ export default {
 
       return sums;
     },
-    submit () { // 提交
-      this.loading = true;
-      this.$refs['info'].validate((valid) => {
-        if (valid) {
-          let subzoneId = '';
-          for (let i = 0; i < this.simpList.length; i++) {
-            if (this.simpList[i].name === this.form.subzoneWhName) {
-              subzoneId = this.simpList[i].id;
-            }
-          }
-          let {id, realWeight, transCostType, deliverSn, otherAmount, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt, bak, customsDutiesCurtype} = {...this.form};
-          let param = {
-            id,
-            realWeight,
-            realVolume,
-            inwareCostAmount,
-            customsDutiesAmnt,
-            deliverSn,
-            otherAmount,
-            transCostUnit,
-            expcompId,
-            exchRate,
-            customsClearAmnt,
-            subzoneId,
-            transCostType,
-            bak,
-            customsDutiesCurtype: Number(customsDutiesCurtype)
-          };
-          window.axios.post('/express/order/update', param).then(data => {
-            this.loading = false;
-            if (data.code === 0) {
-              this.$message({
-                message: data.message,
-                type: 'success'
-              });
-              this.$router.replace('/F0701/F070101');
-            }
-          });
-        } else {
-          this.loading = false;
-          return false;
+    submit (type) { // 提交
+      if (type === 'save') { // 保存
+        if (!this.form.expcompId || !this.form.subzoneWhName) {
+          this.$message.warning('请先选择物流商和分区地址！');
+          return;
         }
-      });
+        let subzoneId = '';
+        for (let i = 0; i < this.simpList.length; i++) {
+          if (this.simpList[i].name === this.form.subzoneWhName) {
+            subzoneId = this.simpList[i].id;
+          }
+        }
+        let {id, realWeight, transCostType, deliverSn, otherAmount, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt, bak, customsDutiesCurtype} = {...this.form};
+        let param = {
+          id,
+          realWeight: realWeight || '',
+          realVolume: realWeight || '',
+          inwareCostAmount,
+          customsDutiesAmnt,
+          deliverSn,
+          otherAmount,
+          transCostUnit,
+          expcompId,
+          exchRate,
+          customsClearAmnt,
+          subzoneId,
+          transCostType,
+          bak: bak || '',
+          customsDutiesCurtype: Number(customsDutiesCurtype)
+        };
+        window.axios.post('/express/order/save', param).then(data => {
+          console.log(data);
+          if (data.code === 0) {
+            this.$message({
+              message: data.message,
+              type: 'success'
+            });
+            this.$router.go(-1);
+          }
+        });
+      } else { // 新增
+        this.loading = true;
+        this.$refs['info'].validate((valid) => {
+          if (valid) {
+            let subzoneId = '';
+            for (let i = 0; i < this.simpList.length; i++) {
+              if (this.simpList[i].name === this.form.subzoneWhName) {
+                subzoneId = this.simpList[i].id;
+              }
+            }
+            let {id, realWeight, transCostType, deliverSn, otherAmount, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt, bak, customsDutiesCurtype} = {...this.form};
+            let param = {
+              id,
+              realWeight,
+              realVolume,
+              inwareCostAmount,
+              customsDutiesAmnt,
+              deliverSn,
+              otherAmount,
+              transCostUnit,
+              expcompId,
+              exchRate,
+              customsClearAmnt,
+              subzoneId,
+              transCostType,
+              bak,
+              customsDutiesCurtype: Number(customsDutiesCurtype)
+            };
+            window.axios.post('/express/order/update', param).then(data => {
+              this.loading = false;
+              if (data.code === 0) {
+                this.$message({
+                  message: data.message,
+                  type: 'success'
+                });
+                this.$router.replace('/F0701/F070101');
+              }
+            });
+          } else {
+            this.loading = false;
+            return false;
+          }
+        });
+      }
     }
   }
 };

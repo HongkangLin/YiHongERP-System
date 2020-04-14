@@ -286,7 +286,7 @@ export default {
     },
 
     toEditPage(purchaseId) {
-      window.open(`/#/F0301/editPage?purchaseId=${purchaseId}`);
+      this.$router.push({path:`/F0301/editPage`, query: {purchaseId: purchaseId}});
     },
 
     // 查看审核详情

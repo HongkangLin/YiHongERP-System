@@ -188,8 +188,8 @@ export default {
   },
   methods: {
     async getWay () { // 获取运输方式
-      let data = await window.axios.get('/transport_type/listAll?pageSize=999999&pageNum=1&nameKeyword=');
-      this.way = data.data.list;
+      let data = await window.axios.get('/transport_type/simpList');
+      this.way = data.data;
     },
     async getExpcomp () { // 获取物流商
       let data = await window.axios.post('/express/queryExpressCompanyInfoListAuth', {

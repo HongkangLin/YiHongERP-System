@@ -8,7 +8,7 @@
         <div class="head">
           成本核算
           <div class="btns">
-            <el-button @click="exportReport" type="primary">导出报表</el-button>
+            <el-button @click="exportReport">导出报表</el-button>
             <el-button @click="toCalculator()" type="primary">成本计算器</el-button>
           </div>
         </div>
@@ -23,9 +23,11 @@
       <section class="tableArea">
         <el-table :data="tableData" border style="width: 100%">
           <el-table-column prop="accountCostId" label="核算编号" align="center" min-width="70"></el-table-column>
-          <el-table-column label="产品图片" align="center" min-width="80">
+          <el-table-column label="产品图片" align="center" min-width="90">
             <template slot-scope="scope">
-              <img class="img" :src="scope.row.mainPicUrl" alt="">
+              <div class="image">
+                <img class="img" :src="scope.row.mainPicUrl" alt="">
+              </div>
             </template>
           </el-table-column>
           <el-table-column prop="goodsName" label="产品名称" align="center" min-width="95"></el-table-column>
@@ -245,6 +247,15 @@ export default {
     .tableArea {
       background-color: #fff;
       margin-top: 25px;
+      .image {
+        width: 90px;
+        height: 80px;
+        padding-right: 10px;
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
       .font-red {
         color: red;
       }
