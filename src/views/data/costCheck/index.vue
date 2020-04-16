@@ -39,7 +39,11 @@
               <div>海运:{{scope.row.shippingCost}}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="purchaseCostDollar" label="采购成本（¥/$）" align="center" min-width="80"></el-table-column>
+          <el-table-column label="采购成本（¥/$）" align="center" min-width="80">
+            <template slot-scope="scope">
+              <div>{{scope.row.purchaseCostRmb + '/' + scope.row.purchaseCostDollar}}</div>
+            </template>
+          </el-table-column>
           <el-table-column label="30%利润售价（$）" align="left" min-width="98">
             <template slot-scope="scope">
               <div class="font-red">空运:{{scope.row.profitSellingPriceAir}}</div>

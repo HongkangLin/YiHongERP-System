@@ -73,9 +73,9 @@
           </el-table-column>
           <el-table-column align="center" fixed="right" label="操作" width="150">
             <template slot-scope="scope">
-              <a class="link" target="_self" :href="`/#/F0701/editLogisticsOrder?id=${scope.row.id}`" type="text" size="small" v-if="(scope.row.status === '未生成' || scope.row.status === '已生成') && roleCtl.express_order_update">编辑</a>
+              <a class="link" target="_self" :href="scope.row.mergeType === 2 && roleCtl.express_order_unmerge ? `/#/F0701/editMergeLogisticsOrder?id=${scope.row.id}` : `/#/F0701/editLogisticsOrder?id=${scope.row.id}`" type="text" size="small" v-if="(scope.row.status === '未生成' || scope.row.status === '已生成') && roleCtl.express_order_update">编辑</a>
               <el-divider v-if="scope.row.status === '已生成' && roleCtl.express_order_update" direction="vertical"></el-divider>
-              <a class="link" target="_self" :href="`/#/F0701/logisticsOrderDetail?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status !== '未生成'">查看</a>
+              <a class="link" target="_self" :href="scope.row.mergeType === 2 ? `/#/F0701/logisticsMergeOrderDetail?id=${scope.row.id}` : `/#/F0701/logisticsOrderDetail?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status !== '未生成'">查看</a>
               <el-divider v-if="scope.row.mergeType === 2 && roleCtl.express_order_unmerge" direction="vertical"></el-divider>
               <el-button type="text" size="small" v-if="scope.row.mergeType === 2 && roleCtl.express_order_unmerge" @click="unmergeOrder(scope.row.id)">取消合并</el-button>
               <!-- <el-divider v-if="scope.row.status === '审核中'" direction="vertical"></el-divider>
@@ -348,14 +348,14 @@ export default {
       if (!this.multipleSelection.length) {
         return this.$message.warning("请选择物流订单");
       }
-      let flag = false;
+      let flag = false, method = this.multipleSelection[0].deliverMethod;
       this.multipleSelection.map(item => {
-        if (item.status !== '未生成' || item.mergeType !== 0) {
+        if (item.status !== '未生成' || item.mergeType !== 0 || item.deliverMethod !== method) {
           flag = true;
         }
       });
       if (flag) {
-        return this.$message.warning("仅允许“未生成”状态下的“常规订单”进行合并");
+        return this.$message.warning("仅允许“未生成”状态下“相同运输方式”的“常规订单”进行合并");
       }
       this.mergeOrders = true;
     },
@@ -365,12 +365,13 @@ export default {
       this.multipleSelection.map(item => {
         ids.push(item.id);
       })
-      window.axios.post("/express/order/merge", { ids }).then((data) => {
-        if (data.code !== 0) return
-        this.$message.success("合并订单成功");
-        this.mergeOrders = false;
-        this.queryList();
-      })
+      this.$router.push({path: '/F0701/editMergeLogisticsOrder', query: {type: 'merge', id: ids}});
+      // window.axios.post("/express/order/merge", { ids }).then((data) => {
+      //   if (data.code !== 0) return
+      //   this.$message.success("合并订单成功");
+      //   this.mergeOrders = false;
+      //   this.queryList();
+      // })
     },
     unmergeOrder(id) {
       this.unmergeId = id;

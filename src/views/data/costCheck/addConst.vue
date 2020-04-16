@@ -410,14 +410,14 @@ export default {
       if (!this.form.currentSellingPrice || this.airTransportCost === '--' || this.purchaseCostDollar === '--') {
         return '--';
       }
-      let data = ((this.form.currentSellingPrice - 0.17 * this.form.currentSellingPrice - this.goodsFbaFee - this.airTransportCost - this.purchaseCostDollar) / this.form.currentSellingPrice).toFixed(2);
+      let data = ((this.form.currentSellingPrice - 0.17 * this.form.currentSellingPrice - this.goodsFbaFee - this.airTransportCost - this.purchaseCostDollar) / this.form.currentSellingPrice * 100).toFixed(2);
       return data;
     },
     profitRateShip () { // 利润率 海运
       if (!this.form.currentSellingPrice || this.airTransportCost === '--' || this.purchaseCostDollar === '--') {
         return '--';
       }
-      let data = ((this.form.currentSellingPrice - 0.17 * this.form.currentSellingPrice - this.goodsFbaFee - this.shippingCost - this.purchaseCostDollar) / this.form.currentSellingPrice).toFixed(2);
+      let data = ((this.form.currentSellingPrice - 0.17 * this.form.currentSellingPrice - this.goodsFbaFee - this.shippingCost - this.purchaseCostDollar) / this.form.currentSellingPrice * 100).toFixed(2);
       return data;
     },
     purchaseAmountSum () { // 采购总金额

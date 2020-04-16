@@ -31,8 +31,12 @@
             <img class="img" :src="scope.row.goodsPicUrl">
           </template>
         </el-table-column>
+        <el-table-column label="品牌" align="center" min-width="90">
+          <div>{{tableData.brandName}}</div>
+        </el-table-column>
         <el-table-column prop="goodsSku" label="SKU" align="center" min-width="90"></el-table-column>
         <el-table-column prop="goodsName" label="产品名称" align="center" min-width="90"></el-table-column>
+        <el-table-column prop="fnskuId" label="FNSKU" align="center" min-width="90"></el-table-column>
         <el-table-column prop="dimentions" label="外箱尺寸(cm)" align="center" min-width="90"></el-table-column>
         <el-table-column prop="fullLoadWeight" label="整箱重量(kg)" align="center" min-width="90"></el-table-column>
         <el-table-column prop="fullLoadQuantity" label="装箱数(套/箱)" align="center" min-width="90"></el-table-column>

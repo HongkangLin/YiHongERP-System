@@ -228,9 +228,17 @@ const routes = [{
 		name: 'editLogisticsOrder',
 		component: () => import(/* webpackChunkName: "editLogisticsOrder" */ '../views/logistics/order/editOrder.vue'),
 	}, {
+		path: '/F0701/editMergeLogisticsOrder', // 物流 > 物流管理 > 物流订单 > 编辑合并物流单
+		name: 'editMergeLogisticsOrder',
+		component: () => import(/* webpackChunkName: "editMergeLogisticsOrder" */ '../views/logistics/order/mergeOrderEdit.vue'),
+	}, {
 		path: '/F0701/logisticsOrderDetail', // 物流 > 物流管理 > 物流订单 > 详情
 		name: 'logisticsOrderDetail',
 		component: () => import(/* webpackChunkName: "logisticsOrderDetail" */ '../views/logistics/order/logisticsOrderDetail.vue'),
+	}, {
+		path: '/F0701/logisticsMergeOrderDetail', // 物流 > 物流管理 > 物流订单 > 合并订单详情
+		name: 'logisticsMergeOrderDetail',
+		component: () => import(/* webpackChunkName: "logisticsMergeOrderDetail" */ '../views/logistics/order/logisticsMergeOrderDetail.vue'),
 	}, {
 		path: '/F0701/logisticsApplyForPay', // 物流 > 物流管理 > 物流订单 > 申请付款
 		name: 'logisticsApplyForPay',

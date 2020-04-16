@@ -788,8 +788,8 @@ export default {
           });
           return;
         } else if (idx === 2) { // 第二页验证
-          if (this.form.goodsWeight > 20000) {
-            this.$message.warning('单个产品重量不允许超过20kg，清重新输入');
+          if (this.form.packingWeight > 20000) {
+            this.$message.warning('整箱重量不允许超过20kg，清重新输入');
             return;
           }
           if (this.form.packingLength > 63 || this.form.packingWide > 63 || this.form.packingHigh > 63) {
