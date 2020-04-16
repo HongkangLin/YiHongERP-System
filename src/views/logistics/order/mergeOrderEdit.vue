@@ -360,6 +360,7 @@ export default {
       ids: '',
       deliverMethodList: [],
       loading: false,
+      getId: '',
       deliverId: '',
       outCountryId: '',
       transCostType: '',
@@ -758,10 +759,11 @@ export default {
           ids.push(this.formList[j].id);
         }
         let idData = await window.axios.post(`/express/order/merge`, {
-          afterMergeExporderId: this.type === 'merge' ? '' : this.ids,
+          afterMergeExporderId: this.getId ? this.getId : this.type === 'merge' ? '' : this.ids,
           beforeMergeExporderIds: ids
         });
         let getId = idData.data;
+        this.getId = getId;
         let subzoneId = '';
         for (let i = 0; i < this.simpList.length; i++) {
           if (this.simpList[i].name === this.form.subzoneWhName) {
@@ -792,7 +794,7 @@ export default {
               message: data.message,
               type: 'success'
             });
-            this.$router.go(-1);
+            // this.$router.go(-1);
           }
         });
       } else { // 提交
