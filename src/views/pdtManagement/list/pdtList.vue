@@ -123,7 +123,7 @@
                 <a class="link" target="_self" :href="`/#/addPdt?id=${scope.row.id}&skuid=${scope.row.skuId}`" v-if="roleCtl.product_update">编辑</a>
                 <el-divider direction="vertical" v-if="roleCtl.product_update"></el-divider>
                 <a class="link" target="_self" :href="`/#/pdtDetail?id=${scope.row.id}&skuid=${scope.row.skuId}`">查看</a>
-                <el-divider direction="vertical" v-if="roleCtl.product_quick_update"></el-divider>
+                <el-divider direction="vertical" v-if="roleCtl.product_quick_update || roleCtl.product_finance_update || roleCtl.product_courier_update"></el-divider>
                 <el-dropdown v-if="roleCtl.product_quick_update || roleCtl.product_finance_update || roleCtl.product_courier_update" @command="handleCommand" style="color: #57B99D; font-size: 100%;">
                   <span class="el-dropdown-link">
                     快速编辑<i class="el-icon-arrow-down el-icon--right"></i>
@@ -214,7 +214,7 @@
                   type="text"
                   v-if="roleCtl.product_update"
                   @click="handleEdit1(scope.row.id)">编辑</el-button>
-                <el-divider direction="vertical" v-if="roleCtl.product_update && roleCtl.product_quick_tmp_update"></el-divider>
+                <el-divider direction="vertical" v-if="roleCtl.product_update && (roleCtl.product_quick_tmp_update || roleCtl.product_finance_quick_tmp_update || roleCtl.product_courier_quick_tmp_update)"></el-divider>
                 <el-dropdown v-if="roleCtl.product_quick_tmp_update || roleCtl.product_finance_quick_tmp_update || roleCtl.product_courier_quick_tmp_update" @command="handleCommand" style="color: #57B99D; font-size: 100%;">
                   <span class="el-dropdown-link">
                     快速编辑<i class="el-icon-arrow-down el-icon--right"></i>
