@@ -544,11 +544,11 @@ export default {
     async initEdit (ids) {
       let data = await window.axios.get(`/express/order/detail/${ids}`);
       this.formList = data.data.relatedUnmergedOrders;
-      this.transCostType = data.data.transCostType ? data.data.transCostType.toString() : '1';
-      this.customsDutiesCurtype = data.data.customsDutiesCurtype ? data.data.customsDutiesCurtype.toString() : '2';
       this.deliverId = data.data.deliverMethod;
       this.outCountryId = data.data.outCountryId;
       this.form = data.data;
+      this.form.transCostType = data.data.transCostType ? data.data.transCostType.toString() : '1';
+      this.form.customsDutiesCurtype = data.data.customsDutiesCurtype ? data.data.customsDutiesCurtype.toString() : '2';
       this.initData();
     },
     async getLogistics (ids) { // 获取物流订单数据列表
