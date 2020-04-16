@@ -34,7 +34,7 @@
               <el-input disabled value="合并订单"></el-input>
             </el-form-item>
             <el-form-item label="物流单号：">
-              <el-input disabled value="提交后生成"></el-input>
+              <el-input disabled :value="type === 'merge' ? '提交后生成' : ids"></el-input>
             </el-form-item>
             <el-form-item label="物流商名称：" prop="expcompId">
               <el-select filterable v-model="form.expcompId" placeholder="请选择物流商">
@@ -46,7 +46,7 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="运单号：">
+            <el-form-item label="运单号：" prop="deliverSn">
               <el-input v-model="form.deliverSn" placeholder="请输入运单号"></el-input>
             </el-form-item>
             <el-form-item label="数量（件）：">
@@ -98,9 +98,9 @@
                 align="center">
               </el-table-column>
               <el-table-column
+                prop="skuCount"
                 label="SKU数量"
                 align="center">
-                <template slot-scope="scope">{{scope.row.goods.length}}</template>
               </el-table-column>
               <el-table-column
                 prop="totalQuantity"
@@ -108,25 +108,19 @@
                 align="center">
               </el-table-column>
               <el-table-column
+                prop="totalCount"
                 label="本次出库"
                 align="center">
-                <template slot-scope="scope">
-                  {{scope.row.goods.reduce((a, b) => {return a + b.count}, 0)}}
-                </template>
               </el-table-column>
               <el-table-column
+                prop="totalVolume"
                 label="总体积(m³)"
                 align="center">
-                <template slot-scope="scope">
-                  {{scope.row.goods.reduce((a, b) => {return parseFloat(((b.cartonLength * b.cartonWidth * b.cartonHeight * b.quantity)/1000000).toFixed(2)) + a;}, 0)}}
-                </template>
               </el-table-column>
               <el-table-column
+                prop="totalWeight"
                 label="总总量(kg)"
                 align="center">
-                <template slot-scope="scope">
-                  {{scope.row.goods.reduce((a, b) => {return (b.fullLoadWeight * b.quantity) + a;}, 0)}}
-                </template>
               </el-table-column>
               <el-table-column
                 label="操作"
@@ -203,7 +197,7 @@
     </div>
     <div class="addSome" v-if="showOrder">
       <div class="title">
-        <span>物流订单详情</span>
+        <span>添加物流订单</span>
         <i class="el-icon-close" @click="closeOrder"></i>
       </div>
       <div class="content">
@@ -363,8 +357,13 @@ export default {
       pageSize: 4,
       totalNum: 0,
       type: '',
+      ids: '',
       deliverMethodList: [],
       loading: false,
+      deliverId: '',
+      outCountryId: '',
+      transCostType: '',
+      customsDutiesCurtype: '',
       crumbList: [{ // 面包屑
         name: '物流',
         path: '/F0701/F070101'
@@ -387,6 +386,9 @@ export default {
       rules: {
         expcompId: [
           {required: true, message: '请选择物流商', trigger: 'change'}
+        ],
+        deliverSn: [
+          {required: true, message: '请填写运单号', trigger: 'change'}
         ],
         subzoneWhName: [
           {required: true, message: '请选择分区地址', trigger: 'change'}
@@ -447,20 +449,18 @@ export default {
   },
   async mounted () {
     this.type = this.$route.query.type;
-    let ids = this.$route.query.id;
+    this.ids = this.$route.query.id;
     await this.getSimpList();
     await this.getExpcomp();
     await this.getDeliverMethodList();
     if (this.type === 'merge') { // 合并操作
       if (typeof ids === 'string') {
-        this.getLogistics(ids);
+        this.getLogistics([this.ids]);
       } else {
-        for (let i = 0, len = ids.length; i < len; i++) {
-          this.getLogistics(ids[i]);
-        }
+        this.getLogistics(this.ids);
       }
     } else { // 编辑操作
-      this.getLogistics(ids);
+      this.initEdit(this.ids);
     }
   },
   methods: {
@@ -488,7 +488,7 @@ export default {
     },
     handleAdd (idx) {
       if (this.orderList[idx].sel) { // 已经选择时，取消选择
-        this.orderList[idx].sel = false;
+        this.$set(this.orderList[idx], 'sel', false);
         let loc = '';
         for (let i = 0; i < this.formList.length; i++) {
           if (this.formList[i].id === this.orderList[idx].id) {
@@ -497,12 +497,13 @@ export default {
         }
         loc !== '' && this.formList.splice(loc, 1);
       } else { // 添加
-        this.orderList[idx].sel = true;
+        this.$set(this.orderList[idx], 'sel', true);
         this.formList.push(this.orderList[idx]);
       }
+      this.initData();
     },
     async queryList () { // 获取列表
-      let data = await window.axios.get(`/express/order/filterOrders4Merge?&idKeyword=${this.orderName}&deliverMethod=${this.form.deliverMethod}&outCountryId=${this.form.outCountryId}&pageNum=${this.pageNum}&pageSize=${this.pageSize}`);
+      let data = await window.axios.get(`/express/order/filterOrders4Merge?&idKeyword=${this.orderName}&deliverMethod=${this.deliverId}&outCountryId=${this.outCountryId}&pageNum=${this.pageNum}&pageSize=${this.pageSize}`);
       if (data.code !== 0) return
       let arr = data.data.list;
       arr.map((item) => {
@@ -540,11 +541,38 @@ export default {
       });
       this.compList = data.data.list;
     },
-    async getLogistics (_id) { // 获取物流订单数据列表
-      let data = await window.axios.get(`/express/order/detail/${_id}`);
-      data.data.transCostType = data.data.transCostType.toString();
-      data.data.customsDutiesCurtype = data.data.customsDutiesCurtype === null ? '2' : data.data.customsDutiesCurtype.toString();
-      this.formList.push(data.data);
+    async initEdit (ids) {
+      let data = await window.axios.get(`/express/order/detail/${ids}`);
+      this.formList = data.data.relatedUnmergedOrders;
+      this.transCostType = data.data.transCostType ? data.data.transCostType.toString() : '1';
+      this.customsDutiesCurtype = data.data.customsDutiesCurtype ? data.data.customsDutiesCurtype.toString() : '2';
+      this.deliverId = data.data.deliverMethod;
+      this.outCountryId = data.data.outCountryId;
+      this.form = data.data;
+      this.initData();
+    },
+    async getLogistics (ids) { // 获取物流订单数据列表
+      let data = await window.axios.post(`/express/order/querySelectedExpressInfo`, {
+        expressOrderIds: ids
+      });
+      this.formList = data.data;
+      this.transCostType = this.formList[0].transCostType ? this.formList[0].transCostType.toString() : '1';
+      this.customsDutiesCurtype = this.formList[0].customsDutiesCurtype ? this.formList[0].customsDutiesCurtype.toString() : '2';
+      this.deliverId = this.formList[0].deliverId;
+      this.outCountryId = this.formList[0].outCountryId;
+      let time = new Date();
+      let day = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate();
+      this.form = {
+        status: 0,
+        expcompId: '',
+        deliverSn: '',
+        deliverDate: day,
+        deliverMethod: this.deliverId,
+        outCountryId: this.outCountryId,
+        subzoneWhName: '',
+        transCostType: this.transCostType,
+        customsDutiesCurtype: this.customsDutiesCurtype
+      }
       this.initData();
     },
     del (id) { // 移除
@@ -558,26 +586,11 @@ export default {
       this.initData();
     },
     initData () {
-      if (this.type === 'merge') { // 未合并
-        this.form = {};
-        let num = 0, time = new Date();
-        let day = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate();
-        for (let i = 0; i < this.formList.length; i++) {
-          num += this.formList[i].totalQuantity;
-        }
-        this.form = {
-          status: 0,
-          expcompId: '',
-          deliverSn: '',
-          totalQuantity: num,
-          deliverDate: day,
-          deliverMethod: this.formList[0].deliverMethod,
-          outCountryId: this.formList[0].outCountryId,
-          subzoneWhName: ''
-        }
-      } else { // 已合并
-        this.form = this.formList[0];
+      let num = 0;
+      for (let i = 0; i < this.formList.length; i++) {
+        num += this.formList[i].totalQuantity;
       }
+      this.form.totalQuantity = num;
     },
     getSummaries (param) { // 计算汇总
       const { columns, data } = param;
@@ -590,8 +603,8 @@ export default {
         if (index === 2) {
           let sum = 0;
           for (let i = 0, len = data.length; i < len; i++) {
-            if (data[i].goods) {
-              sum += data[i].goods.length;
+            if (data[i].skuCount) {
+              sum += data[i].skuCount;
             }
           }
           sums[index] = '共' + sum + '类SKU';
@@ -614,8 +627,8 @@ export default {
         if (index === 4) {
           let sum = 0;
           for (let i = 0, len = data.length; i < len; i++) {
-            if (data[i].goods) {
-              sum += data[i].goods.reduce((a, b) => {return a + b.count}, 0)
+            if (data[i].totalCount) {
+              sum += data[i].totalCount;
             }
           }
           sums[index] = sum || 0;
@@ -624,8 +637,8 @@ export default {
         if (index === 5) {
           let sum = 0;
           for (let i = 0, len = data.length; i < len; i++) {
-            if (data[i].goods) {
-              sum += data[i].goods.reduce((a, b) => {return parseFloat(((b.cartonLength * b.cartonWidth * b.cartonHeight * b.quantity)/1000000).toFixed(2)) + a;}, 0);
+            if (data[i].totalVolume) {
+              sum += data[i].totalVolume;
             }
           }
           sums[index] = sum || 0;
@@ -635,33 +648,129 @@ export default {
         if (index === 6) {
           let sum = 0;
           for (let i = 0, len = data.length; i < len; i++) {
-            if (data[i].goods) {
-              sum += data[i].goods.reduce((a, b) => {return (b.fullLoadWeight * b.quantity) + a;}, 0);
+            if (data[i].totalWeight) {
+              sum += data[i].totalWeight;
             }
           }
           sums[index] = sum || 0;
           this.weight = sum || 0;
+          console.log(this.weight);
           return;
         }
       });
 
       return sums;
     },
-    submit (type) { // 提交
+    getSummaries1 (param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '汇总';
+          return;
+        }
+        if (index === 2) {
+          sums[index] = '共' + data.length + '类SKU';
+          return;
+        }
+        if (index === 1 || index === 3 || index === 4) {
+          sums[index] = '';
+          return;
+        }
+        if (index === 5) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].fullLoadWeight) {
+              sum += data[i].fullLoadWeight;
+            }
+          }
+          sums[index] = sum || 0;
+          return;
+        }
+        if (index === 6) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].fullLoadQuantity) {
+              sum += data[i].fullLoadQuantity;
+            }
+          }
+          sums[index] = sum || 0;
+          return;
+        }
+        if (index === 7) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].quantity) {
+              sum += data[i].quantity;
+            }
+          }
+          sums[index] = sum || 0;
+          return;
+        }
+        if (index === 9) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].count) {
+              sum += data[i].count;
+            }
+          }
+          sums[index] = sum || 0;
+          return;
+        }
+        if (index === 10) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].cartonLength && data[i].cartonWidth && data[i].cartonHeight) {
+              sum += parseFloat(((data[i].cartonLength * data[i].cartonWidth * data[i].cartonHeight)/1000000).toFixed(2));
+            }
+          }
+          this.weight = sum || 0;
+          sums[index] = sum || 0;
+          return;
+        }
+        if (index === 11) {
+          let sum = 0;
+          for (let i = 0, len = data.length; i < len; i++) {
+            if (data[i].fullLoadWeight && data[i].quantity) {
+              sum += data[i].fullLoadWeight * data[i].quantity;
+            }
+          }
+          this.volume = sum || 0,
+          sums[index] = sum || 0;
+          return;
+        }
+      });
+
+      return sums;
+    },
+    async submit (type) { // 提交
+      if (!this.formList.length) {
+        this.$message.warning('请至少保留一个物流单～');
+        return;
+      }
       if (type === 'save') { // 保存
         if (!this.form.expcompId || !this.form.subzoneWhName) {
           this.$message.warning('请先选择物流商和分区地址！');
           return;
         }
+        let ids = [];
+        for (let j = 0; j < this.formList.length; j++) {
+          ids.push(this.formList[j].id);
+        }
+        let idData = await window.axios.post(`/express/order/merge`, {
+          afterMergeExporderId: this.type === 'merge' ? '' : this.ids,
+          beforeMergeExporderIds: ids
+        });
+        let getId = idData.data;
         let subzoneId = '';
         for (let i = 0; i < this.simpList.length; i++) {
           if (this.simpList[i].name === this.form.subzoneWhName) {
             subzoneId = this.simpList[i].id;
           }
         }
-        let {id, realWeight, transCostType, deliverSn, otherAmount, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt, bak, customsDutiesCurtype} = {...this.form};
+        let {realWeight, transCostType, deliverSn, otherAmount, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt, bak, customsDutiesCurtype} = {...this.form};
         let param = {
-          id,
+          id: getId,
           realWeight: realWeight || '',
           realVolume: realWeight || '',
           inwareCostAmount,
@@ -677,8 +786,7 @@ export default {
           bak: bak || '',
           customsDutiesCurtype: Number(customsDutiesCurtype)
         };
-        window.axios.post('/express/order/save', param).then(data => {
-          console.log(data);
+        window.axios.post('/express/order/tmpSave', param).then(data => {
           if (data.code === 0) {
             this.$message({
               message: data.message,
@@ -687,10 +795,19 @@ export default {
             this.$router.go(-1);
           }
         });
-      } else { // 新增
+      } else { // 提交
         this.loading = true;
-        this.$refs['info'].validate((valid) => {
+        this.$refs['info'].validate(async (valid) => {
           if (valid) {
+            let ids = [];
+            for (let j = 0; j < this.formList.length; j++) {
+              ids.push(this.formList[j].id);
+            }
+            let idData = await window.axios.post(`/express/order/merge`, {
+              afterMergeExporderId: this.type === 'merge' ? '' : this.ids,
+              beforeMergeExporderIds: ids
+            });
+            let getId = idData.data;
             let subzoneId = '';
             for (let i = 0; i < this.simpList.length; i++) {
               if (this.simpList[i].name === this.form.subzoneWhName) {
@@ -699,7 +816,7 @@ export default {
             }
             let {id, realWeight, transCostType, deliverSn, otherAmount, realVolume, inwareCostAmount, customsDutiesAmnt, transCostUnit, expcompId, exchRate, customsClearAmnt, bak, customsDutiesCurtype} = {...this.form};
             let param = {
-              id,
+              id: getId,
               realWeight,
               realVolume,
               inwareCostAmount,

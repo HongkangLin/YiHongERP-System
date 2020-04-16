@@ -46,7 +46,7 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="运单号：">
+            <el-form-item label="运单号：" prop="deliverSn">
               <el-input v-model="form.deliverSn" placeholder="请输入运单号"></el-input>
             </el-form-item>
             <el-form-item label="数量（件）：">
@@ -246,6 +246,9 @@ export default {
       rules: {
         expcompId: [
           {required: true, message: '请选择物流商', trigger: 'change'}
+        ],
+        deliverSn: [
+          {required: true, message: '请填写运单号', trigger: 'change'}
         ],
         subzoneWhName: [
           {required: true, message: '请选择分区地址', trigger: 'change'}
