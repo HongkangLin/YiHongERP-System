@@ -163,10 +163,10 @@
               <el-input v-model="form.customsDutiesAmnt" maxlength="100" placeholder="请输入关税，单位随国家变化"></el-input>
               <el-select v-model="form.customsDutiesCurtype" placeholder="请选择">
                 <el-option label="美元" value='1'></el-option>
-                <el-option label="欧元" value='2'></el-option>
-                <el-option label="韩元" value='3'></el-option>
-                <el-option label="泰铢" value='4'></el-option>
-                <el-option label="日元" value='5'></el-option>
+                <el-option label="英镑" value='2'></el-option>
+                <el-option label="欧元" value='3'></el-option>
+                <el-option label="日元" value='4'></el-option>
+                <el-option label="法郎" value='5'></el-option>
               </el-select>
             </el-form-item>
             
@@ -268,7 +268,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="goodsId"
+            prop="brandName"
             label="品牌"
             align="center">
           </el-table-column>
