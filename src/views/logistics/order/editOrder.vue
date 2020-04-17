@@ -319,9 +319,9 @@ export default {
         if (data.code !== 0) {
           return;
         } else {
-          let arr = [];
+          let arr = {};
           data.data.forEach(item => {
-            arr.push(item.name);
+            arr[item.id] = item.name;
           });
           this.deliverMethodList = arr;
         }

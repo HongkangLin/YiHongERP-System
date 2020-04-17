@@ -522,9 +522,9 @@ export default {
         if (data.code !== 0) {
           return;
         } else {
-          let arr = [];
+          let arr = {};
           data.data.forEach(item => {
-            arr.push(item.name);
+            arr[item.id] = item.name;
           });
           this.deliverMethodList = arr;
         }
@@ -642,8 +642,8 @@ export default {
               sum += data[i].totalVolume;
             }
           }
-          sums[index] = sum || 0;
-          this.volume = sum || 0;
+          sums[index] = sum.toFixed(3) || 0;
+          this.volume = sum.toFixed(3) || 0;
           return;
         }
         if (index === 6) {
@@ -722,7 +722,7 @@ export default {
           let sum = 0;
           for (let i = 0, len = data.length; i < len; i++) {
             if (data[i].cartonLength && data[i].cartonWidth && data[i].cartonHeight) {
-              sum += parseFloat(((data[i].cartonLength * data[i].cartonWidth * data[i].cartonHeight)/1000000).toFixed(2));
+              sum += parseFloat(((data[i].cartonLength * data[i].cartonWidth * data[i].cartonHeight * data[i].quantity)/1000000).toFixed(2));
             }
           }
           this.weight = sum || 0;

@@ -119,7 +119,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="goodsId"
+          prop="brandName"
           label="品牌"
           align="center">
         </el-table-column>

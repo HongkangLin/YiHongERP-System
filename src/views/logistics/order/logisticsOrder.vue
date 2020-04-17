@@ -80,9 +80,9 @@
             <template slot-scope="scope">
               <a class="link" target="_self" :href="scope.row.mergeType === 2 && roleCtl.express_order_unmerge ? `/#/F0701/editMergeLogisticsOrder?id=${scope.row.id}` : `/#/F0701/editLogisticsOrder?id=${scope.row.id}`" type="text" size="small" v-if="(scope.row.status === '未生成' || scope.row.status === '已生成') && roleCtl.express_order_update">编辑</a>
               <el-divider v-if="scope.row.status === '已生成' && roleCtl.express_order_update" direction="vertical"></el-divider>
-              <a class="link" target="_self" :href="scope.row.mergeType === 2 ? `/#/F0701/logisticsMergeOrderDetail?id=${scope.row.id}` : `/#/F0701/logisticsOrderDetail?id=${scope.row.id}`" type="text" size="small" v-if="scope.row.status !== '未生成'">查看</a>
-              <el-divider v-if="scope.row.mergeType === 2 && roleCtl.express_order_unmerge" direction="vertical"></el-divider>
-              <el-button type="text" size="small" v-if="scope.row.mergeType === 2 && roleCtl.express_order_unmerge" @click="unmergeOrder(scope.row.id)">取消合并</el-button>
+              <a class="link" target="_self" :href="scope.row.mergeType === 2 ? `/#/F0701/logisticsMergeOrderDetail?id=${scope.row.id}` : `/#/F0701/logisticsOrderDetail?id=${scope.row.id}`" type="text" size="small">查看</a>
+              <el-divider v-if="scope.row.mergeType === 2 && roleCtl.express_order_unmerge && scope.row.status !== '待付款'" direction="vertical"></el-divider>
+              <el-button type="text" size="small" v-if="scope.row.mergeType === 2 && roleCtl.express_order_unmerge && scope.row.status !== '待付款'" @click="unmergeOrder(scope.row.id)">取消合并</el-button>
               <!-- <el-divider v-if="scope.row.status === '审核中'" direction="vertical"></el-divider>
               <el-button type="text" size="small" v-if="scope.row.status === '审核中'" @click="showCloseOrderDialog(scope.row.id)">撤回</el-button> -->
             </template>
@@ -400,8 +400,8 @@ export default {
       let firstExpcompName = this.multipleSelection[0].expcompName;
       let firstExpcompId = this.multipleSelection[0].expcompId;
       this.multipleSelection.map((item) => {
-        if (item.status !== "未生成" && item.status !== "已生成") {
-          this.$message.warning("只能对未生成或已生成的物流订单申请付款");
+        if (item.status !== "已生成") {
+          this.$message.warning("只能对已生成的物流订单申请付款");
           flag = false;
           return;
         } else if (item.expcompName === '' || item.expcompName === null) {
