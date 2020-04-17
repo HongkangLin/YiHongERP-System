@@ -300,7 +300,7 @@ export default {
       compList: [],
       info: {},
       payList: [],
-      rateChange: ['美元', '英镑', '欧元', '日元', '法郎'],
+      rateChange: ['', '美元', '英镑', '欧元', '日元', '法郎'],
       payTotal: 0,
       payPageSize: 10,
       payPageNum: 1,
