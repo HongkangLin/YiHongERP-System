@@ -64,6 +64,11 @@
               <el-button type="text" size="small" v-if="scope.row.status==='审核中'" @click="viewReviewDetail(scope.row.id)">审核详情</el-button>
             </template>
           </el-table-column>
+          <el-table-column label="出库国家" align="center" min-width="120">
+            <template slot-scope="scope">
+              {{['美国', '英国', '德国', '日本', '法国'][scope.row.outCountryId]}}
+            </template>
+          </el-table-column>
           <el-table-column prop="deliverDate" label="发货日期" align="center" min-width="110"></el-table-column>
           <el-table-column prop="applier" label="申请人" align="center" min-width="85"></el-table-column>
           <el-table-column label="备注" align="center" min-width="150">
@@ -348,14 +353,14 @@ export default {
       if (!this.multipleSelection.length) {
         return this.$message.warning("请选择物流订单");
       }
-      let flag = false, method = this.multipleSelection[0].deliverMethod;
+      let flag = false, method = this.multipleSelection[0].deliverMethod, cuntry = this.multipleSelection[0].outCountryId;
       this.multipleSelection.map(item => {
-        if (item.status !== '未生成' || item.mergeType !== 0 || item.deliverMethod !== method) {
+        if (item.status !== '未生成' || item.mergeType !== 0 || item.deliverMethod !== method || item.outCountryId !== cuntry) {
           flag = true;
         }
       });
       if (flag) {
-        return this.$message.warning("仅允许“未生成”状态下“相同运输方式”的“常规订单”进行合并");
+        return this.$message.warning("仅允许“未生成”状态下“相同运输方式和出库国家”的“常规订单”进行合并");
       }
       this.mergeOrders = true;
     },

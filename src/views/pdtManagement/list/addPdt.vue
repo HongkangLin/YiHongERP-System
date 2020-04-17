@@ -788,7 +788,7 @@ export default {
           });
           return;
         } else if (idx === 2) { // 第二页验证
-          if (this.form.packingWeight > 20000) {
+          if (this.form.packingWeight > 20) {
             this.$message.warning('整箱重量不允许超过20kg，清重新输入');
             return;
           }

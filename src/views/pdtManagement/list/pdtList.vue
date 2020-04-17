@@ -225,7 +225,7 @@
                     <el-dropdown-item v-if="roleCtl.product_courier_quick_tmp_update" :command="scope.row.id + '/' + scope.row.skuId + '/' + 'logistics'">物流编辑</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-                <el-divider direction="vertical"  v-if="roleCtl.product_quick_tmp_update && roleCtl.product_delete"></el-divider>
+                <el-divider direction="vertical"  v-if="(roleCtl.product_quick_tmp_update || roleCtl.product_finance_quick_tmp_update || roleCtl.product_courier_quick_tmp_update) && roleCtl.product_delete"></el-divider>
                 <el-button
                   size="mini"
                   type="text"

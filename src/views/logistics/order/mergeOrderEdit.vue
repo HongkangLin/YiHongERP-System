@@ -745,8 +745,8 @@ export default {
       return sums;
     },
     async submit (type) { // 提交
-      if (!this.formList.length) {
-        this.$message.warning('请至少保留一个物流单～');
+      if (this.formList.length < 2) {
+        this.$message.warning('请至少保留两个物流单～');
         return;
       }
       if (type === 'save') { // 保存
@@ -763,6 +763,9 @@ export default {
           beforeMergeExporderIds: ids
         });
         let getId = idData.data;
+        if (!getId) { // 物流单号不存在时停止往下执行
+          return;
+        }
         this.getId = getId;
         let subzoneId = '';
         for (let i = 0; i < this.simpList.length; i++) {
@@ -810,6 +813,9 @@ export default {
               beforeMergeExporderIds: ids
             });
             let getId = idData.data;
+            if (!getId) {
+              return;
+            }
             let subzoneId = '';
             for (let i = 0; i < this.simpList.length; i++) {
               if (this.simpList[i].name === this.form.subzoneWhName) {
@@ -1018,7 +1024,7 @@ export default {
   position: absolute;
   z-index: 100;
   top: 100px;
-  left: 30%;
+  left: calc(~'50% - 300px');
   width: 600px;
   background-color: white;
   border: 1px solid rgb(228, 228, 228);
@@ -1027,7 +1033,7 @@ export default {
   -webkit-box-shadow:0px 0px 7px rgb(228, 228, 228);
   box-shadow:0px 0px 7px rgb(228, 228, 228);
   &.lager {
-    left: 15%;
+    left: calc(~'50% - 500px');
     width: 1000px;
   }
   .pagin {

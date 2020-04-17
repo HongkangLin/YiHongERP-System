@@ -17,7 +17,7 @@
           <el-col :span="4"><div class="td label">订单状态</div></el-col>
           <el-col :span="8"><div class="td">{{['未生成', '已生成', '审核中', '待付款', '已完成'][info.status]}}</div></el-col>
           <el-col :span="4"><div class="td label">订单类型</div></el-col>
-          <el-col :span="8"><div class="td">常规订单&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">合并订单&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">物流单号</div></el-col>
@@ -26,14 +26,8 @@
           <el-col :span="8"><div class="td">{{info.deliverSn}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
-          <el-col :span="4"><div class="td label">关联出库单号</div></el-col>
-          <el-col :span="8"><div class="td">{{info.stockoutOrderSn}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">物流商名称</div></el-col>
           <el-col :span="8"><div class="td">{{info.expcompName}}&nbsp;</div></el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="4"><div class="td label">数量（件）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.totalQuantity}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">发货日期</div></el-col>
           <el-col :span="8"><div class="td">{{info.deliverDate}}&nbsp;</div></el-col>
         </el-row>
@@ -47,16 +41,18 @@
           <el-col :span="4"><div class="td label">分区地址</div></el-col>
           <el-col :span="8"><div class="td">{{info.subzoneWhName}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">发票下载</div></el-col>
-          <el-col :span="8"><div class="td"><a :href="info.invoiceDownUrl" target="_black">点击下载</a></div></el-col>
+          <el-col :span="8"><div class="td">
+            <el-button type="text" size="small" @click="downLoad(info.invoiceDownUrl, info.id)">点击下载</el-button>  
+          </div></el-col>
         </el-row>
       </div>
       <div class="title"><i class="el-icon-collection-tag"></i><span>订单规格</span></div>
       <div class="info">
         <el-row>
           <el-col :span="4"><div class="td label">预估实重（kg）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.weight}}</div></el-col>
+          <el-col :span="8"><div class="td">{{this.weight}}</div></el-col>
           <el-col :span="4"><div class="td label">预估体积（m³）</div></el-col>
-          <el-col :span="8"><div class="td">{{info.volume}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{this.volume}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">实际计费重（kg）</div></el-col>
@@ -308,7 +304,9 @@ export default {
       payTotal: 0,
       payPageSize: 10,
       payPageNum: 1,
-      goods: []
+      goods: [],
+      weight: '',
+      volume: ''
     };
   },
   async mounted () {
@@ -319,6 +317,17 @@ export default {
     this.getPay(); // 获取付款记录
   },
   methods: {
+    async downLoad (url, _id) { // 下载发票
+      if (!url) {
+        let data = await window.axios.post(`/express/order/getInvoiceDownUrl`, {
+          id: _id
+        });
+        url = data.data;
+      }
+      if (url) {
+        location.href = url;
+      }
+    },
     async showPdt (id) {
       let data = await window.axios.get(`/express/order/goodsDetail/${id}`);
       this.goods = data.data;
@@ -418,6 +427,7 @@ export default {
             }
           }
           sums[index] = sum.toFixed(2) || 0;
+          this.volume = sum.toFixed(2) || 0;
           return;
         }
         if (index === 6) {
@@ -428,6 +438,7 @@ export default {
             }
           }
           sums[index] = sum || 0;
+          this.weight = sum || 0;
           return;
         }
       });
@@ -650,7 +661,7 @@ export default {
   position: absolute;
   z-index: 100;
   top: 100px;
-  left: 15%;
+  left: calc(~'50% - 500px');
   width: 1000px;
   background-color: white;
   border: 1px solid rgb(228, 228, 228);
