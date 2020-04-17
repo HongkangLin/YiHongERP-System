@@ -162,12 +162,11 @@
             <el-form-item label="关税 ：" prop="customsDutiesAmnt" class="tax">
               <el-input v-model="form.customsDutiesAmnt" maxlength="100" placeholder="请输入关税，单位随国家变化"></el-input>
               <el-select v-model="form.customsDutiesCurtype" placeholder="请选择">
-                <el-option label="人民币" value='1'></el-option>
-                <el-option label="美元" value='2'></el-option>
-                <el-option label="欧元" value='3'></el-option>
-                <el-option label="韩元" value='4'></el-option>
-                <el-option label="泰铢" value='5'></el-option>
-                <el-option label="日元" value='6'></el-option>
+                <el-option label="美元" value='1'></el-option>
+                <el-option label="欧元" value='2'></el-option>
+                <el-option label="韩元" value='3'></el-option>
+                <el-option label="泰铢" value='4'></el-option>
+                <el-option label="日元" value='5'></el-option>
               </el-select>
             </el-form-item>
             
@@ -549,7 +548,7 @@ export default {
       this.outCountryId = data.data.outCountryId;
       this.form = data.data;
       this.form.transCostType = data.data.transCostType ? data.data.transCostType.toString() : '1';
-      this.form.customsDutiesCurtype = data.data.customsDutiesCurtype ? data.data.customsDutiesCurtype.toString() : '2';
+      this.form.customsDutiesCurtype = data.data.customsDutiesCurtype ? data.data.customsDutiesCurtype.toString() : '1';
       this.initData();
     },
     async getLogistics (ids) { // 获取物流订单数据列表
@@ -558,7 +557,7 @@ export default {
       });
       this.formList = data.data;
       this.transCostType = this.formList[0].transCostType ? this.formList[0].transCostType.toString() : '1';
-      this.customsDutiesCurtype = this.formList[0].customsDutiesCurtype ? this.formList[0].customsDutiesCurtype.toString() : '2';
+      this.customsDutiesCurtype = this.formList[0].customsDutiesCurtype ? this.formList[0].customsDutiesCurtype.toString() : '1';
       this.deliverId = this.formList[0].deliverId;
       this.outCountryId = this.formList[0].outCountryId;
       let time = new Date();

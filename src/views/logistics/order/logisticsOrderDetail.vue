@@ -84,7 +84,7 @@
         <el-row>
           <el-col :span="4"><div class="td label">其他费用（元）</div></el-col>
           <el-col :span="8"><div class="td">{{info.otherAmount}}&nbsp;</div></el-col>
-          <el-col :span="4"><div class="td label">{{'关税（' + rateChange[info.outCountryId] + '）'}}</div></el-col>
+          <el-col :span="4"><div class="td label">{{'关税（' + rateChange[info.customsDutiesCurtype] + '）'}}</div></el-col>
           <el-col :span="8"><div class="td">{{info.customsDutiesAmnt}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
@@ -250,7 +250,7 @@ export default {
       compList: [],
       info: {},
       payList: [],
-      rateChange: ['美元', '英镑', '欧元', '日元', '法郎'],
+      rateChange: ['美元', '欧元', '韩元', '泰铢', '日元'],
       payTotal: 0,
       payPageSize: 10,
       payPageNum: 1
