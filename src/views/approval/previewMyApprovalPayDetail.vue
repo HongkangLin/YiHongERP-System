@@ -8,7 +8,7 @@
           <el-col :span="4" class="bg-grey">付款单号</el-col>
           <el-col :span="8" class="content">{{printPageData.id}}</el-col>
           <el-col :span="4" class="bg-grey">收款单位</el-col>
-          <el-col :span="8" class="content">{{printPageData.supplierName}}</el-col>
+          <el-col :span="8" class="content">{{printPageData.accountName}}</el-col>
         </el-row>
       </div>
       <div class="table row3">
