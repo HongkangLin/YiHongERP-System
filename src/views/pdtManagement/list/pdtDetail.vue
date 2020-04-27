@@ -113,25 +113,25 @@
           <el-col :span="4"><div class="td label">产品包装尺寸（cm）</div></el-col>
           <el-col :span="8"><div class="td">{{info.goodsLength + ' * ' + info.goodsWide + ' * ' + info.goodsHigh}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">产品包装尺寸（in）</div></el-col>
-          <el-col :span="8"><div class="td">{{(info.goodsLength * 0.3937).toFixed(2) + ' * ' + (info.goodsWide * 0.3937).toFixed(2) + ' * ' + (info.goodsHigh * 0.3937).toFixed(2)}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.goodsLengthInch + ' * ' + info.goodsWideInch + ' * ' + info.goodsHighInch}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">每个产品重量（g）</div></el-col>
           <el-col :span="8"><div class="td">{{info.goodsWeight}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">单个产品重量（lb）</div></el-col>
-          <el-col :span="8"><div class="td">{{(info.goodsWeight * 0.0022046).toFixed(2)}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.goodsWeightPound}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">整箱重量（kg）</div></el-col>
           <el-col :span="8"><div class="td">{{info.packingWeight}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">整箱重量（lb）</div></el-col>
-          <el-col :span="8"><div class="td">{{(info.packingWeight * 2.2046226).toFixed(2)}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.packingWeightPound}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">外箱尺寸（cm）</div></el-col>
           <el-col :span="8"><div class="td">{{info.packingLength + ' * ' + info.packingWide + ' * ' + info.packingHigh}}&nbsp;</div></el-col>
           <el-col :span="4"><div class="td label">外箱尺寸（in）</div></el-col>
-          <el-col :span="8"><div class="td">{{(info.packingLength * 0.3937).toFixed(2) + ' * ' + (info.packingWide * 0.3937).toFixed(2) + ' * ' + (info.packingHigh * 0.3937).toFixed(2)}}&nbsp;</div></el-col>
+          <el-col :span="8"><div class="td">{{info.packingLengthInch + ' * ' + info.packingWideInch + ' * ' + info.packingHighInch}}&nbsp;</div></el-col>
         </el-row>
         <el-row>
           <el-col :span="4"><div class="td label">装箱数（套）</div></el-col>
