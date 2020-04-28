@@ -1055,22 +1055,22 @@ export default {
       param.claimPrice = param.claimPrice || 0; // 申报价值
       param.tariffs = param.tariffs || 0; // 进口关税
       param.goodsLength = param.goodsLength || 0; // 包装尺寸-长
-      param.goodsLengthInch = this.goodsLengthIn || 0; // 包装尺寸-长-英寸
+      param.goodsLengthInch = this.goodsLengthIn !== '-' ? this.goodsLengthIn : ''; // 包装尺寸-长-英寸
       param.goodsWide = param.goodsWide || 0; // 包装尺寸-宽
-      param.goodsWideInch = this.goodsWideIn || 0; // 包装尺寸-宽-英寸
+      param.goodsWideInch = this.goodsWideIn !== '-' ? this.goodsWideIn : ''; // 包装尺寸-宽-英寸
       param.goodsHigh = param.goodsHigh || 0; // 包装尺寸-高
-      param.goodsHighInch = this.goodsHighIn || 0; // 包装尺寸-高-英寸
+      param.goodsHighInch = this.goodsHighIn !== '-' ? this.goodsHighIn : ''; // 包装尺寸-高-英寸
       param.goodsWeight = param.goodsWeight || 0; // 产品重量
-      param.goodsWeightPound = this.goodsWeightLb || 0; // 产品重量（磅）
+      param.goodsWeightPound = this.goodsWeightLb !== '-' ? this.goodsWeightLb : ''; // 产品重量（磅）
       param.packingWeight = param.packingWeight || 0; // 整箱重量
-      param.packingWeightPound = this.packingWeightLb || 0; // 整箱重量（磅）
+      param.packingWeightPound = this.packingWeightLb !== '-' ? this.packingWeightLb : ''; // 整箱重量（磅）
       param.packingQuantity = param.packingQuantity || 0; // 装箱数
       param.packingLength = param.packingLength || 0; // 外箱尺寸-长
-      param.packingLengthInch = this.packingLengthIn || 0; // 外箱尺寸-长-英寸
+      param.packingLengthInch = this.packingLengthIn !== '-' ? this.packingLengthIn : ''; // 外箱尺寸-长-英寸
       param.packingWide = param.packingWide || 0; // 外箱尺寸-宽
-      param.packingWideInch = this.packingWideIn || 0; // 外箱尺寸-宽-英寸
+      param.packingWideInch = this.packingWideIn !== '-' ? this.packingWideIn : ''; // 外箱尺寸-宽-英寸
       param.packingHigh = param.packingHigh || 0; // 外箱尺寸-高
-      param.packingHighInch = this.packingHighIn || 0; // 外箱尺寸-高-英寸
+      param.packingHighInch = this.packingHighIn !== '-' ? this.packingHighIn : ''; // 外箱尺寸-高-英寸
       param.goodsFbaFee = this.fba;
       if (mode === 'save') { // 存为草稿时调用接口后中断后续执行
         param.id = this.saveId || ''; // 将id置为草稿箱id
