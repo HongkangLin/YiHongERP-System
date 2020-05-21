@@ -150,8 +150,8 @@ export default {
       let _start = this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[0] : '';
       let _end = this.createTimeRange && this.createTimeRange.length ? this.createTimeRange[1] : '';
       let data = await window.axios.post('/report/stockoutReport', {
-        checkInTimeStart: _start,
-        checkInTimeEnd: _end,
+        stockoutTimeStart: _start,
+        stockoutTimeEnd: _end,
         searchContent: `{"出库时间": "${this.timeStr}"}`
       });
       if (data.code === 0) {

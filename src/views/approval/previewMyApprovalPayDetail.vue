@@ -2,37 +2,29 @@
   <div class="doc">
     <!-- 打印区 -->
     <div class="printArea" v-if="showHtml" id="sharePicBox">
-      <div class="title">采购单付款申请</div>
+      <div class="title">采购付款单</div>
       <div class="table row2">
         <el-row>
           <el-col :span="4" class="bg-grey">付款单号</el-col>
           <el-col :span="8" class="content">{{printPageData.id}}</el-col>
+          <el-col :span="4" class="bg-grey">申请日期</el-col>
+          <el-col :span="8" class="content">{{printPageData.createTime | timeStr}}</el-col>
+        </el-row>
+      </div>
+      <div class="table row3">
+        <el-row>
+          <el-col :span="4" class="bg-grey">供应商</el-col>
+          <el-col :span="8" class="content">{{printPageData.supplierName}}</el-col>
           <el-col :span="4" class="bg-grey">收款单位</el-col>
           <el-col :span="8" class="content">{{printPageData.accountName}}</el-col>
         </el-row>
       </div>
       <div class="table row3">
         <el-row>
-          <el-col :span="4" class="bg-grey">收款账号</el-col>
+          <el-col :span="4" class="bg-grey">银行账号</el-col>
           <el-col :span="8" class="content">{{printPageData.accountNo}}</el-col>
-          <el-col :span="4" class="bg-grey">本次申请货款（元）</el-col>
-          <el-col :span="8" class="content">{{printPageData.applyAmount}}</el-col>
-        </el-row>
-      </div>
-      <div class="table row3">
-        <el-row>
-          <el-col :span="4" class="bg-grey">运费（元）</el-col>
-          <el-col :span="8" class="content">{{printPageData.transportFee}}</el-col>
-          <el-col :span="4" class="bg-grey">税金（元）</el-col>
-          <el-col :span="8" class="content">{{printPageData.taxFee}}</el-col>
-        </el-row>
-      </div>
-      <div class="table row3">
-        <el-row>
-          <el-col :span="4" class="bg-grey">其它（元）</el-col>
-          <el-col :span="8" class="content">{{printPageData.otherFee}}</el-col>
-          <el-col :span="4" class="bg-grey">&nbsp;</el-col>
-          <el-col :span="8" class="content">&nbsp;</el-col>
+          <el-col :span="4" class="bg-grey">开户行</el-col>
+          <el-col :span="8" class="content">{{printPageData.accountBankName}}</el-col>
         </el-row>
       </div>
       <div class="table row4">
@@ -55,13 +47,14 @@
       </div>
       <el-table :data="printPageData.financePurchaseDetailList" border  show-summary :summary-method="getSummaries" :header-cell-style="{color:'#000', borderColor: '#333'}" :cell-style="{borderColor: '#333'}">
         <el-table-column prop="id" label="采购单号" align="center" ></el-table-column>
-        <el-table-column prop="supplierName" label="收款单位" align="center" ></el-table-column>
-        <el-table-column prop="skucount" label="SKU数量" align="center" ></el-table-column>
         <el-table-column prop="goodsAmount" label="货款总金额（元）" align="center" ></el-table-column>
         <el-table-column prop="paidAmount" label="已支付货款（元）" align="center" ></el-table-column>
-        <el-table-column prop="purchaseStatus" label="状态" align="center" ></el-table-column>
-        <el-table-column prop="createTime" label="创建日期" align="center" ></el-table-column>
-        <el-table-column prop="purchaseName" label="采购员" align="center" ></el-table-column>
+        <el-table-column prop="unpaidAmount" label="未支付货款（元）" align="center" ></el-table-column>
+        <el-table-column prop="applyingAmount" label="本次申请货款（元）" align="center" ></el-table-column>
+        <el-table-column prop="taxFee" label="税金（元）" align="center" ></el-table-column>
+        <el-table-column prop="transportFee" label="运费（元）" align="center" ></el-table-column>
+        <el-table-column prop="otherFee" label="其它费用（元）" align="center" ></el-table-column>
+        <el-table-column prop="bak" label="备注" align="center" ></el-table-column>
       </el-table>
       <div class="table last">
         <el-row>
@@ -72,7 +65,7 @@
           <el-col :span="3" class="bg-grey">财务</el-col>
           <el-col :span="3" class="content"></el-col>
           <el-col :span="3" class="bg-grey">经办人</el-col>
-          <el-col :span="3" class="content"></el-col>
+          <el-col :span="3" class="content">{{printPageData.createIdName}}</el-col>
         </el-row>
       </div>
     </div>
@@ -127,9 +120,6 @@ export default {
           }
         });
         this.printPageData = data.data;
-        let calTotal = data.data.applyAmount + data.data.transportFee + data.data.taxFee + data.data.otherFee;
-        this.amount_word = this.numToText(String(calTotal));
-        this.amount_num = calTotal.toFixed(2);
         this.$nextTick(() => {
           // window.print();
           this.convertToImg();
@@ -183,6 +173,9 @@ export default {
         }
       });
       // console.log("sums: ", sums);
+      let num = Number(sums[4]) + Number(sums[5]) + Number(sums[6]) + Number(sums[7]);
+      this.amount_num = num.toFixed(2);
+      this.amount_word = this.numToText(String(num));
       sums[sums.length - 1] = "";
       return sums;
     },
