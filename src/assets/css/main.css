@@ -1,0 +1,55 @@
+/* 重写switch样式 */
+.switch .el-switch {
+    line-height: 25px;
+    height: 25px;
+    margin-left: -26.5px;
+}
+.switch .el-switch__core{
+    height: 25px;
+    width: 55px !important;
+    border-radius: 40px;
+}
+.switch .el-switch__core:after {
+    top: 3px;
+}
+.switch .el-switch__label {
+    height: 25px;
+}
+.switch .el-switch__label--left{
+    position: relative;
+    left: 46px;
+    color: #fff;
+    z-index: -1111;
+  }
+  .switch .el-switch__label--right{
+    position: relative;
+    right: 46px;
+    color: #fff;
+    z-index: -1111;
+  }
+  .switch .el-switch__label.is-active{
+    z-index: 1111;
+    color: #fff;
+  }
+  
+  .switch .el-switch__label--left{
+    position: relative;
+    left: 46px;
+    color: #fff;
+    z-index: -1111;
+  }
+  .switch .el-switch__label--right{
+    position: relative;
+    right: 46px;
+    color: #fff;
+    z-index: -1111;
+  }
+  .switch .el-switch__label--right.is-active{
+    z-index: 1111;
+    color: #fff !important;
+  }
+  .switch .el-switch__label--left.is-active{
+    z-index: 1111;
+    color: #9c9c9c !important;
+  
+  }

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <polygon fill="#1ABC9C"  points="15,129.9 0,103.92 15,77.94 45,77.94 60,103.92 45,129.9" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="15,181.86 0,155.88 15,129.9 45,129.9 60,155.88 45,181.86" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="60,103.92 45,77.94 60,51.96 90,51.96 105,77.94 90,103.92" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="60,155.88 45,129.9 60,103.92 90,103.92 105,129.9 90,155.88" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#3CC4A9" points="105,77.94 90,51.96 105,25.98 135,25.98 150,51.96 135,77.94" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#3CC4A9" points="105,129.9 90,103.92 105,77.94 135,77.94 150,103.92 135,129.9" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="105,181.86 90,155.88 105,129.9 135,129.9 150,155.88 135,181.86" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#3CC4A9" points="150,103.92 135,77.94 150,51.96 180,51.96 195,77.94 180,103.92" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="150,155.88 135,129.9 150,103.92 180,103.92 195,129.9 180,155.88" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="195,77.94 180,51.96 195,25.98 225,25.98 240,51.96 225,77.94" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="195,129.9 180,103.92 195,77.94 225,77.94 240,103.92 225,129.9" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="195,181.86 180,155.88 195,129.9 225,129.9 240,155.88 225,181.86" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#3CC4A9" points="240,51.96 225,25.98 240,0 270,0 285,25.98 270,51.96" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="240,103.92 225,77.94 240,51.96 270,51.96 285,77.94 270,103.92" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="240,155.88 225,129.9 240,103.92 270,103.92 285,129.9 270,155.88" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="285,77.94 270,51.96 285,25.98 315,25.98 330,51.96 315,77.94" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#3CC4A9" points="285,129.9 270,103.92 285,77.94 315,77.94 330,103.92 315,129.9" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="330,103.92 315,77.94 330,51.96 360,51.96 375,77.94 360,103.92" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#3CC4A9" points="330,155.88 315,129.9 330,103.92 360,103.92 375,129.9 360,155.88" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="375,77.94 360,51.96 375,25.98 405,25.98 420,51.96 405,77.94" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="375,129.9 360,103.92 375,77.94 405,77.94 420,103.92 405,129.9" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#3CC4A9" points="420,51.96 405,25.98 420,0 450,0 465,25.98 450,51.96" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="420,103.92 405,77.94 420,51.96 450,51.96 465,77.94 450,103.92" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="420,155.88 405,129.9 420,103.92 450,103.92 465,129.9 450,155.88" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#3CC4A9" points="420,207.84 405,181.86 420,155.88 450,155.88 465,181.86 450,207.84" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="465,77.94 450,51.96 465,25.98 495,25.98 510,51.96 495,77.94" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="465,129.9 450,103.92 465,77.94 495,77.94 510,103.92 495,129.9" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="510,103.92 495,77.94 510,51.96 540,51.96 555,77.94 540,103.92" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="510,155.88 495,129.9 510,103.92 540,103.92 555,129.9 540,155.88" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="555,77.94 540,51.96 555,25.98 585,25.98 600,51.96 585,77.94" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="555,129.9 540,103.92 555,77.94 585,77.94 600,103.92 585,129.9" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="600,103.92 585,77.94 600,51.96 630,51.96 645,77.94 630,103.92" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="645,77.94 630,51.96 645,25.98 675,25.98 690,51.96 675,77.94" stroke-width="2" stroke="#3CC4A9"/>
+  <polygon fill="#1ABC9C" points="645,129.9 630,103.92 645,77.94 675,77.94 690,103.92 675,129.9" stroke-width="2" stroke="#3CC4A9"/>
+</svg>
