@@ -241,16 +241,16 @@ export default {
   },
   computed: {
     goodsLengthInch () { // 包装尺寸英寸长
-      return this.form.goodsLength ? (this.form.goodsLength * 0.39).toFixed(2) : '-';
+      return this.form.goodsLength ? (this.form.goodsLength * 0.393700787402).toFixed(2) : '-';
     },
     goodsWideInch () { // 包装尺寸英寸宽
-      return this.form.goodsWide ? (this.form.goodsWide * 0.39).toFixed(2) : '-';
+      return this.form.goodsWide ? (this.form.goodsWide * 0.393700787402).toFixed(2) : '-';
     },
     goodsHighInch () { // 包装尺寸英寸高
-      return this.form.goodsHigh ? (this.form.goodsHigh * 0.39).toFixed(2) : '-';
+      return this.form.goodsHigh ? (this.form.goodsHigh * 0.393700787402).toFixed(2) : '-';
     },
     goodsWeightPound () { // 单个产品重量磅
-      return this.form.goodsWeight ? (this.form.goodsWeight * 0.0022026).toFixed(2) : '-';
+      return this.form.goodsWeight ? (this.form.goodsWeight * 0.0022046).toFixed(2) : '-';
     },
     goodsVolumeInch () { // 亚马逊计费重
       let lang = this.goodsLengthInch !== '-' ? parseFloat(this.goodsLengthInch) : 0;
