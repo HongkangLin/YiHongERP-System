@@ -189,7 +189,7 @@ export default {
     },
     handleShopName(command) {
       this.curShopObj = command;
-      this.queryBoxInfoByShopId({ shopId: command });
+      this.queryBoxInfoByShopId({ shopId: command.shopId });
     },
     handleEmail(command) {
       this.curEmailObj = command;
