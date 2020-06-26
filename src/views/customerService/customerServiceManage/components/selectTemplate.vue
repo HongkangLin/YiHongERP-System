@@ -9,7 +9,7 @@ export default {
   data() {
     return {
       prop: {
-        expandTrigger: "click"
+        expandTrigger: "hover"
       },
       options: [],
       backupData: {},
