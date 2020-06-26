@@ -4,29 +4,27 @@
     <crumbs :list="crumbList" :showReturn="false" :showRefresh="true"></crumbs>
     <el-container class="container">
       <email-aside ref="emailAside"></email-aside>
-      <email-head ref="emailHead"></email-head>
+      <email-head ref="emailHead"  v-if="emailType!='draftBox'"></email-head>
       <email-list @openDetails="openDetails" ref="emailList"></email-list>
       <!-- 草稿箱 新邮件 -->
-      <email-main-body
+      <draft-box-and-new-email
         :isSelectEmail="isSelectEmail"
-        ref="emailMainBody"
+        ref="draftBoxAndNewEmail"
         @deleteDraft="deleteDraft"
         v-if="emailType.includes('newEmail')||emailType.includes('draftBox')"
-      ></email-main-body>
+      ></draft-box-and-new-email>
       <!-- 禁链接回复 -->
-      <email-main-reply 
-      ref="forbiddenReply" 
-      v-if="emailType.includes('notice')||emailType.includes('amazon')"></email-main-reply>
+      <forbidden-reply
+        ref="forbiddenReply"
+        v-if="emailType.includes('notice')||emailType.includes('amazon')"
+      ></forbidden-reply>
       <!-- 站内信 -->
-      <stand-inside-letter 
-      ref="standInsideLetter" 
-      v-if="emailType.includes('standInsideLetter')||emailType.includes('buyers')" 
+      <stand-inside-letter
+        ref="standInsideLetter"
+        v-if="emailType.includes('standInsideLetter')||emailType.includes('buyers')"
       ></stand-inside-letter>
       <!-- 非对话框形式 -->
-      <notStandInsideLetter
-      ref="notStandInsideLetter" 
-      v-if="emailType.includes('other')" 
-      ></notStandInsideLetter>
+      <notStandInsideLetter ref="notStandInsideLetter" v-if="emailType.includes('other')||emailType.includes('custom')"></notStandInsideLetter>
     </el-container>
   </section>
 </template>
@@ -36,8 +34,8 @@
 import emailAside from "./emailAside";
 import emailList from "./emailList";
 import emailHead from "./emailHead";
-import emailMainBody from "./emailMainBody";
-import emailMainReply from "./emailMainReply";
+import draftBoxAndNewEmail from "./draftBoxAndNewEmail";
+import forbiddenReply from "./forbiddenReply";
 import standInsideLetter from "./standInsideLetter";
 import notStandInsideLetter from "./notStandInsideLetter";
 import { mapMutations, mapState } from "vuex";
@@ -47,8 +45,8 @@ export default {
     emailAside,
     emailList,
     emailHead,
-    emailMainBody,
-    emailMainReply,
+    draftBoxAndNewEmail,
+    forbiddenReply,
     standInsideLetter,
     notStandInsideLetter
   },
@@ -67,6 +65,13 @@ export default {
       ]
     };
   },
+  mounted(){
+    // setTimeout(()=>{
+    //   this.setIsSelectEmail(true)
+    //     this.$refs["standInsideLetter"].queryChatRoom(48);
+
+    // },2000)
+  },
   computed: {
     ...mapState("email", {
       emailType: state => state.emailType,
@@ -74,12 +79,12 @@ export default {
     })
   },
   methods: {
-    ...mapMutations("email", ["setIsSelectEmail"]),
+    ...mapMutations("email", ["setIsSelectEmail","setEmailType","setActiveMenu"]),
     openDetails(val) {
       if (this.emailType == "draftBox") {
         // 草稿
-        this.$refs["emailMainBody"].queryDraftEmailById(val);
-      } else if (this.emailType.includes("other")) {
+        this.$refs["draftBoxAndNewEmail"].queryDraftEmailById(val);
+      } else if (this.emailType.includes("other")||this.emailType.includes('custom')) {
         //其他邮件（对应原型上的其它邮件，就是可以回复的，邮件展示方法为普通展示的）非对话框形式
         this.$refs["notStandInsideLetter"].queryEmailDetails(val);
       } else if (
@@ -90,7 +95,7 @@ export default {
         this.$refs["standInsideLetter"].queryChatRoom(val);
       } else if (
         this.emailType.includes("notice") ||
-        this.emailType.includes("amazon")
+        this.emailType.includes("amazon") 
       ) {
         //通知类邮件（包含Q&A，还有亚马逊邮件）都是禁止回复的
         this.$refs["forbiddenReply"].queryEmailDetails(val);
@@ -99,6 +104,13 @@ export default {
     deleteDraft(obj) {
       this.$refs["emailList"].batchDel(obj);
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    if(this.emailType!="newEmail"){
+      this.setEmailType("standInsideLetter-all")
+       this.setActiveMenu("standInsideLetter-all");
+    }
+    next()
   }
 };
 </script>
@@ -106,9 +118,9 @@ export default {
 <style lang="less" scoped>
 .container {
   position: relative;
-  margin: 20px 50px 0;
+  margin: 20px 50px;
   box-sizing: border-box;
-  height: 800px;
+  height: calc(100vh - 140px);;
   border: 1px solid #e4e4e4;
 }
 </style>

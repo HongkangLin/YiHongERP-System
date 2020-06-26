@@ -249,16 +249,40 @@ export default {
             break;
           }
         }
-        const specialList = ['邮箱绑定','分发规则','邮件分类','消息模板','投诉类型','邮件消息']
+        const specialList = ['邮箱绑定','分发规则','邮件分类','消息模板','投诉类型','邮件消息'];
+       
         if (specialList.includes(arr[0])) {
-          for (let i = 0, len = funcList.length; i < len; i++) {
-            if (funcList[i].funcName.split("-")[0] !== "邮件消息"&&funcList[i].funcName.split("-")[1] === "列表") {
-              this.$set(funcList[i], "check", true);
+            const ctrlGroup = arr[0]== "邮件消息"?["邮件消息-列表","邮件消息-同步邮件","邮件消息-标记已读","邮件消息-标记未读"]:[`${arr[0]}-列表`];//四个权限捆绑
+            const groupCtlArr = funcList.filter(val => {
+              return ctrlGroup.includes(val.funcName)
+            })  
+            const otherCtlArr = funcList.filter(val => {
+              return !ctrlGroup.includes(val.funcName)
+            }) 
+            let _this = this;
+            function setCheckStatus(status){
+              for (let j = 0; j < groupCtlArr.length; j++) {
+                for (let k = 0; k< funcList.length; k++) {
+                  if(funcList[k].funcName==groupCtlArr[j].funcName){
+                      _this.$set(funcList[k], "check", status);
+                  } 
+                }
+              }
+            }  
+            if(funcList[index].check){
+              setCheckStatus(funcList[index].check)
+            }else{
+              let flag = otherCtlArr.some((item)=>{
+                return item.check == true
+              })
+              if(flag){
+                setCheckStatus(true)
+              }else{
+                if(ctrlGroup.includes(funcList[index].funcName)){
+                    setCheckStatus(false)
+                }
+              }
             }
-            if (funcList[i].funcName.split("-")[0] === "邮件消息"&&funcList[i].funcName !== "邮件消息-发送邮件") {
-              this.$set(funcList[i], "check", funcList[index].check);
-            }
-          }
         }
 
         if (funcList[index].check && pos !== "") {

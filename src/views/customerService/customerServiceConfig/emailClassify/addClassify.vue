@@ -126,6 +126,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "~@/assets/css/variables.less";
 .addType {
   /deep/.el-input--small {
     .el-input__inner {
@@ -168,7 +169,7 @@ export default {
       height: 35px;
       line-height: 35px;
       text-align: center;
-      background-color: #1abc9c;
+      background-color: @themeColor;
       margin-top: 20px;
       border-radius: 4px;
       color: white;

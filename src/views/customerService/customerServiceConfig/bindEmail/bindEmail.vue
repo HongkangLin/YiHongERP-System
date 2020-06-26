@@ -25,7 +25,11 @@
           <el-table-column prop="shopName" label="网店名称" align="center"></el-table-column>
           <el-table-column prop="emailUsername" label="邮箱账号" align="center"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" align="center"></el-table-column>
-          <el-table-column prop="customerUserName" label="客服" align="center"></el-table-column>
+          <el-table-column label="客服" align="center">
+            <template slot-scope="scope">
+             {{joinCustomName(scope.row)}}
+            </template>
+          </el-table-column>
           <el-table-column prop="createUserName" label="创建人" align="center"></el-table-column>
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
@@ -62,11 +66,11 @@
     <el-dialog title="设置客服" :visible.sync="dialogFormVisible" width="450px">
       <el-form :model="form">
         <el-form-item label="选择客服:" :required="true">
-          <el-select v-model="form.customerId" placeholder="请选择客服">
+          <el-select v-model="form.customerIdList" placeholder="请选择客服" filterable multiple >
             <el-option
-              v-for="(item,index) in serviceOpt"
-              :key="index"
-              :label="item.userName"
+              v-for="(item) in serviceOpt"
+              :key="item.customerId"
+              :label="item.customerUserName"
               :value="item.customerId"
             ></el-option>
           </el-select>
@@ -110,8 +114,9 @@ export default {
       serviceOpt: [],
       form: {
         id: "", //邮箱id
-        customerId: "" //客服id
-      }
+        customerIdList:[] //客服id
+      },
+      // form:[]
     };
   },
   mounted() {
@@ -141,11 +146,20 @@ export default {
           res.data.forEach(item => {
             this.serviceOpt.push({
               customerId: item.id,
-              userName: item.userName
+              customerUserName: item.userName
             });
           });
         }
       });
+    },
+    joinCustomName(row){
+      if(row.customerList&&row.customerList.length){
+        let customerName = [];
+        row.customerList.map(item=>{
+          customerName.push(item.customerUserName)
+        })
+        return customerName.join(',')
+      }
     },
     search() {
       // 查询按钮
@@ -157,30 +171,22 @@ export default {
       this.$router.push({ path: "/bindEmailCompnent", query: { id } });
     },
     close() {
-      this.serviceOpt.map((item, index) => {
-        if (item.customerId == 1) {
-          this.serviceOpt.splice(index, 1);
-        }
-      });
       this.dialogFormVisible = false;
     },
     openDialog(index, row) {
+      this.form.id="";
+      this.form.customerIdList=[]; 
       this.form.id = row.id;
-      if (row.customerId == 1) {
-        this.serviceOpt = [
-          ...this.serviceOpt,
-          {
-            customerId: 1,
-            userName: "管理员"
-          }
-        ];
-      }
-      this.form.customerId = row.customerId;
+      let customerIdList = [];
+      row.customerList.map(item=>{
+        customerIdList.push(item.customerId)
+      })
+      this.form.customerIdList = customerIdList;
       // 设置客服
       this.dialogFormVisible = true;
     },
     setService() {
-      if (!this.form.customerId) {
+      if (!this.form.customerIdList.length) {
         this.$message.error("请选择客服!");
         return;
       }
@@ -213,6 +219,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "~@/assets/css/variables.less";
 .brandManagement {
   .content {
     /deep/.el-input--small .el-input__inner {
@@ -224,7 +231,7 @@ export default {
     color: #ccc;
   }
   /deep/.el-switch__label--right {
-    color: #1abc9c;
+    color: @themeColor;
   }
   box-sizing: border-box;
   padding: 20px 50px;
@@ -250,7 +257,7 @@ export default {
         }
         &.new {
           font-size: 14px;
-          background-color: #1abc9c;
+          background-color: @themeColor;
           color: white;
           width: 100px;
           cursor: pointer;
@@ -271,9 +278,9 @@ export default {
         &.sel {
           width: 80px;
           font-size: 14px;
-          border: 1px solid #1abc9c;
+          border: 1px solid @themeColor;
           border-radius: 4px;
-          color: #1abc9c;
+          color: @themeColor;
           cursor: pointer;
           text-align: center;
         }
@@ -281,7 +288,7 @@ export default {
           width: 180px;
           font-size: 14px;
           border-radius: 4px;
-          color: #1abc9c;
+          color: @themeColor;
           margin-right: 20px;
         }
         .selList {

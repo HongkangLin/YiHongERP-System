@@ -9,7 +9,7 @@
           @click="handleSelect('newEmail')"
         >新邮件</el-button>
         <p>店铺</p>
-        <el-dropdown trigger="click" @command="handleShopName">
+        <el-dropdown trigger="click" @command="handleShopName" v-if="curShopObj.shopName">
           <span class="el-dropdown-link">
             <span class="el-dropdown-info">{{curShopObj.shopName}}</span>
             <i class="el-icon-caret-bottom el-icon--right"></i>
@@ -22,8 +22,9 @@
             >{{item.shopName}}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+        <p v-else class="noData">暂无店铺</p>
         <p>邮箱</p>
-        <el-dropdown trigger="hover" @command="handleEmail">
+        <el-dropdown trigger="hover" @command="handleEmail" v-if="curEmailObj.emailUsername">
           <span class="el-dropdown-link">
             <span class="el-dropdown-info">{{curEmailObj.emailUsername}}</span>
             <i class="el-icon-caret-bottom el-icon--right"></i>
@@ -36,15 +37,16 @@
             >{{item.emailUsername}}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+        <p v-else class="noData">暂无邮箱</p>
       </div>
       <el-menu
-        :default-openeds="lastOperation.type"
+        :default-openeds="openeds"
         background-color="#f3f3f3"
         active-text-color="#1ABC9C"
         :default-active="activeMenu"
         @select="handleSelect"
         v-if="itemList.length"
-        style="padding-bottom: 20px;"
+        class="setScrollbar"
       >
         <el-submenu :index="item.name" class="bd_bt_1" v-for="(item,i) in itemList" :key="i">
           <template slot="title">
@@ -56,8 +58,12 @@
               {{child.itemName}}
               <span
                 class="num"
-                v-if="(child.itemName=='需要回复'&&item.needReplyCount !=null)||(child.itemName=='未读'&& item.unseenCount  !=null)"
-              >（{{delData(child.itemName,item)}}）</span>
+                v-if="child.itemName=='需要回复'&&item.needReplyCount !=null"
+              >（{{asideNum[child.name]}}）</span>
+              <span
+                class="num"
+                v-if="child.itemName=='未读'&& item.unseenCount !=null"
+              >（{{asideNum[child.name]}}）</span>
             </el-menu-item>
           </el-menu-item-group>
         </el-submenu>
@@ -66,31 +72,45 @@
           <span slot="title">草稿箱</span>
         </el-menu-item>
       </el-menu>
+      <div class="noAsideData" v-else>暂无数据</div>
     </div>
   </el-aside>
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
-      // activeMenu: "standInsideLetter-all",
+      roleCtl: this.$store.state.role.roleCtl,
       shopList: [],
       emailList: [],
       curShopObj: {},
-      curEmailObj: {},
-      itemList: []
+      curEmailObj: {}
     };
   },
   created() {
-    this.queryShopNameList();
+    if(this.roleCtl.mail_query){
+        this.queryShopNameList();
+    }else{
+      this.$message.warning("无权查看")
+    }
+  
   },
   computed: {
     ...mapState("email", {
       activeMenu: state => state.activeMenu,
-      lastOperation: state => state.lastOperation
-    })
+      asideNum: state => state.asideNum,
+      itemList: state => state.itemList
+    }),
+    ...mapGetters("email", ["originalAsideNum"]),
+    openeds() {
+      let arr = [];
+      this.itemList.forEach(item => {
+        arr.push(item.name);
+      });
+      return arr;
+    }
   },
   methods: {
     ...mapMutations("email", [
@@ -99,8 +119,10 @@ export default {
       "setMultipleSelection",
       "setEmailBoxData",
       "setLastOperation",
-      "setItemList"
+      "setItemList",
+      "setAsideNum"
     ]),
+    ...mapActions("email", ["queryItemList"]),
     delData(itemName, item) {
       if (itemName === "需要回复") {
         if (item.needReplyCount != null) {
@@ -112,54 +134,6 @@ export default {
         }
       }
     },
-    async queryItemList(boxId) {
-      await this.API.queryItemList(boxId).then(res => {
-        if (res.code === 0 && res.data.length) {
-          const obj = {
-            站内信: "standInsideLetter",
-            "Q&A": "notice",
-            亚马逊邮件: "amazon",
-            其他邮件: "other",
-            买家邮件: "buyers",
-            自定义: "custom",
-            草稿箱: "draftBox"
-          };
-          res.data.map((item, index, arr) => {
-            item.name = obj[item.itemName];
-            item.itemName = item.itemName == "Q&A" ? "Q&A通知" : item.itemName;
-            if (item.itemName == "站内信" || item.itemName == "买家邮件") {
-              item.childList = [
-                { name: `${item.name}-all`, itemName: "全部" },
-                { name: `${item.name}-needReply`, itemName: "需要回复" },
-                { name: `${item.name}-unseen`, itemName: "未读" },
-                { name: `${item.name}-replied`, itemName: "已回复" }
-              ];
-            } else if (item.noticeFlag) {
-              item.childList = [
-                { name: `${item.name}-all`, itemName: "全部" },
-                { name: `${item.name}-unseen`, itemName: "未读" }
-              ];
-            } else if (item.itemName == "其他邮件") {
-              item.childList = [
-                { name: `${item.name}-all`, itemName: "全部" },
-                { name: `${item.name}-unseen`, itemName: "未读" },
-                { name: `${item.name}-sended`, itemName: "已发送" }
-              ];
-            } else if (item.itemName == "草稿箱") {
-              arr.splice(index, 1);
-            } else if (item.itemName == "自定义") {
-              item.childList = [
-                { name: `${item.name}-all`, itemName: "全部" },
-                { name: `${item.name}-unseen`, itemName: "未读" },
-                { name: `${item.name}-replied`, itemName: "已回复" }
-              ];
-            }
-          });
-          this.itemList = [...res.data];
-          this.setItemList([...res.data]);
-        }
-      });
-    },
     // 查询店铺列表
     queryShopNameList() {
       this.API.queryShopNameList().then(res => {
@@ -167,6 +141,9 @@ export default {
           this.shopList = res.data;
           this.curShopObj = res.data[0];
           this.queryBoxInfoByShopId({ shopId: this.curShopObj.shopId });
+        } else {
+          this.$message.error("没有数据");
+          return;
         }
       });
     },
@@ -175,52 +152,38 @@ export default {
         if (res.code === 0 && res.data.length) {
           this.emailList = res.data;
           this.handleEmail(res.data[0]);
+        } else {
+          this.$message.error("没有数据");
+          return;
         }
       });
     },
-
-    //新邮件
-    createEmail() {},
     handleSelect(i) {
-      console.log(i);
-      const data = [
-        "standInsideLetter-all",
-        "standInsideLetter-needReply",
-        "standInsideLetter-unseen",
-        "standInsideLetter-replied",
-        "notice-all",
-        "notice-unseen",
-        "amazon-all",
-        "amazon-unseen",
-        "buyers-all",
-        "buyers-needReply",
-        "buyers-unseen",
-        "buyers-replied",
-        "custom-all",
-        "custom-unseen",
-        "custom-replied",
-        "other-all",
-        "other-unseen",
-        "other-sended",
-        "draftBox",
-        "newEmail"
-      ];
-      let index = data.findIndex(val => {
+      let keys = [];
+      let list = [...this.itemList];
+      list.map((item, k) => {
+        if (item.childList && item.childList.length) {
+          item.childList.map(arr => {
+            keys.push(arr.name);
+          });
+        }
+      });
+      keys.push(...["draftBox", "newEmail"]);
+      let index = keys.findIndex(val => {
         return val == i;
       });
-      if (data[index] == "newEmail") {
+      if (keys[index] == "newEmail") {
         if (!this.emailList.length) {
           this.$message.warning("请先绑定邮箱!");
           return;
         }
         this.setLastOperation({
-          type: [data[index].split("-")[0]],
           operate: this.$store.state.email.emailType
         });
-        this.$router.push("/emailMainBody");
+        this.$router.push("/draftBoxAndNewEmail");
       }
       // 切换选项时,需要重置一些数据
-      this.setEmailType(data[index]);
+      this.setEmailType(keys[index]);
       this.setIsSelectEmail(false);
       this.setMultipleSelection([]);
     },
@@ -240,14 +203,28 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "~@/assets/css/variables.less";
 .emailAside {
   overflow: hidden;
   box-sizing: border-box;
   font-size: 12px;
   width: 200px;
-
+  border-right: 1px solid #e4e4e4;
   .msg_left {
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    .noAsideData {
+      background: #f3f3f3;
+      font-weight: 400;
+      font-style: normal;
+      font-size: 12px;
+      color: #666666;
+      flex: 1 1 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 
   .msg_left_top {
@@ -262,9 +239,15 @@ export default {
       height: 20px;
       line-height: 20px;
     }
+    .noData {
+      font-weight: 400;
+      font-style: normal;
+      font-size: 12px;
+      color: #5e5e5e;
+    }
     .msg_left_top_btn {
       color: #fff;
-      background: #1abc9c;
+      background: @themeColor;
       width: calc(162px - 28px);
       font-size: 12px;
     }
@@ -300,61 +283,45 @@ export default {
     height: calc(100% - 150px);
     font-size: 12px;
     color: rgba(0, 0, 0, 0.647058823529412);
-    padding-left: 14px;
     text-align: left;
     overflow-y: auto;
-    /*修改滚动条样式*/
-    &::-webkit-scrollbar {
-      width: 2px;
-      height: 6px;
-    }
-    &::-webkit-scrollbar-track {
-      background: rgb(239, 239, 239);
-      border-radius: 2px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: #bfbfbf;
-      border-radius: 4px;
-    }
-    &::-webkit-scrollbar-thumb:hover {
-      background: #333;
-    }
-    &::-webkit-scrollbar-corner {
-      background: #179a16;
-    }
-    /*修改滚动条样式*/
     .num {
       display: contents;
     }
-  }
-  /deep/.el-menu-item {
-    padding-left: 30px !important;
-    min-width: 0px !important ;
-    height: 36px;
-    line-height: 36px;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 12px;
-    color: #666;
   }
   .draftBox {
     margin-left: 23px;
     padding-left: 0 !important;
     height: 36px;
     line-height: 36px;
-    font-size: 14px;
+    font-size: 14px !important;
     color: #333333;
   }
   /deep/.el-submenu__title:hover,
   /deep/.el-menu-item:hover {
     background: none !important;
   }
+  /deep/.el-menu-item {
+    padding-left: 30px;
+    min-width: 0px;
+    height: 32px;
+    line-height: 32px;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 12px;
+    color: #666;
+  }
   /deep/.el-submenu__title {
-    height: 36px;
-    line-height: 36px;
+    height: 32px;
+    line-height: 32px;
     font-size: 14px;
     color: #333333;
-    padding-left: 0 !important;
+    padding-left: 14px !important;
+  }
+  /deep/.el-menu--inline {
+    /deep/.el-menu-item {
+      padding-left: 58px !important ;
+    }
   }
   /deep/.el-submenu__title i:nth-last-of-type(1) {
     display: none;

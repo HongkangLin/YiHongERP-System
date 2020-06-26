@@ -50,30 +50,6 @@
 <script>
 export default {
   data() {
-    const emailReg = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
-    let validateEmail = (rule, value, callback) => {
-      if (value) {
-        let list = value.replace(/；/, ";").split(";");
-        if (list[list.length - 1] === "") {
-          list.splice(list.length - 1, 1);
-        }
-        let i;
-        for (let index = 0; index < list.length; index++) {
-          const element = list[index];
-          if (!emailReg.test(element)) {
-            // callback(new Error(`第${index + 1}个邮箱格式错误!`));
-            i = index;
-          }
-        }
-        if (typeof i == "number") {
-          callback(new Error(`第${i + 1}个邮箱格式错误!`));
-        } else {
-          callback();
-        }
-      } else {
-        callback();
-      }
-    };
     return {
       roleCtl: this.$store.state.role.roleCtl,
       crumbList: [
@@ -94,10 +70,7 @@ export default {
           { required: true, message: "请输入规则名称", trigger: "blur" }
         ],
         boxId: [{ required: true, message: "请选择邮箱账号", trigger: "blur" }],
-        itemId: [
-          { required: true, message: "请选择邮件分类", trigger: "blur" }
-        ],
-        sendboxContains: [{ validator: validateEmail, trigger: "blur" }]
+        itemId: [{ required: true, message: "请选择邮件分类", trigger: "blur" }]
       },
       id: "",
       simpList: [],
@@ -189,6 +162,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "~@/assets/css/variables.less";
 .addType {
   /deep/.el-input--small {
     .el-input__inner {
@@ -240,7 +214,7 @@ export default {
       height: 35px;
       line-height: 35px;
       text-align: center;
-      background-color: #1abc9c;
+      background-color: @themeColor;
       margin-top: 20px;
       border-radius: 4px;
       color: white;

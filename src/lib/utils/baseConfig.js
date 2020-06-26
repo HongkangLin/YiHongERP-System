@@ -196,7 +196,11 @@ const API = {
     //移动邮件分类
     moveEmailItem(data) {
         return request('/mail/moveEmailItem', data)
-    }
+    },
+     //选择一级投诉消息模板接口
+     selectEmailTemplateLevelOne() {
+        return request(`/emailTemplate/selectEmailTemplateLevelOne`, '', 'get')
+    },
 }
 
 export default API

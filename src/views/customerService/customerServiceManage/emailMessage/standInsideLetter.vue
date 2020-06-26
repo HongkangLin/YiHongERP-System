@@ -7,32 +7,43 @@
     <el-container v-if="isSelectEmail" style="height:100%">
       <el-container class="left" v-if="emailInfoList!=null&&emailInfoList.length">
         <el-header>
-          <p class="p1">
-            <span class="name">{{emailInfoList[0].fromAlias}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
-            <span class="formAddr">{{emailInfoList[0].fromAddr}}</span>
+          <p class="infotitle">
+            <span class="name" :class="{'resetName':otherAlias}">{{otherAlias}}</span>
+            <span class="formAddr hideTxt">{{otherAddr}}</span>
           </p>
-          <p class="p11">{{emailInfoList[0].subjectName}}</p>
+          <p
+            class="subjectName hideTxt"
+            v-if="emailInfoList[0].subjectName"
+          >{{emailInfoList[0].subjectName}}</p>
         </el-header>
         <el-main
           style="border-bottom: 1px solid #e4e4e4;padding: 10px; transform: scale(1,1); "
           :style="resetCss"
           ref="main"
         >
-          <div class="more" @click="more" v-if="emailInfoList.length<copyData.length">{{loadingTxt}}</div>
-          <div class="dialog">
+          <div
+            class="loadMore"
+            @click="loadMore"
+            v-if="emailInfoList.length<copyData.length"
+          >{{loadingTxt}}</div>
+          <div class="chatRoom setScrollbar">
             <div
-              class="dialogItem"
+              class="chatItem"
               :class="{itemRight:item.side=='right'}"
               v-for="(item,index) in emailInfoList"
               :key="index"
             >
               <span class="sentDate">{{item.sentDate}}</span>
-              <div class="d1">
-                <div v-html="item.type==2?item.str:item.contentText" class="d2" :ref="'txt_'+index"></div>
+              <div class="chatContent">
+                <div
+                  v-html="item.type==2?item.str:item.contentText"
+                  class="chatTxt"
+                  :ref="'txt_'+index"
+                ></div>
                 <div
                   v-if="item.contentText.length>300"
                   @click="toggle(item,index)"
-                  class="d3"
+                  class="toggle"
                   :ref="'toggle_'+index"
                 >展开显示更多</div>
               </div>
@@ -42,7 +53,6 @@
                 <img
                   class="download"
                   @click="downloadAll(item.attachList)"
-                  style="color: #1ABC9C;"
                   src="../../../../assets/image/svg/download.svg"
                 />
               </div>
@@ -51,14 +61,9 @@
         </el-main>
         <el-footer style="height:140px;padding: 0 10px 10px;" v-if="roleCtl.mail_sendMail">
           <div style="position:relative">
-            <el-cascader
-              placeholder="请选择模板"
-              :options="options"
-              :props="{ expandTrigger: 'click'}"
-              @change="handleChange"
-              style="margin-top: 8px;"
-            ></el-cascader>
+            <selectTemplate @handleChange="handleChange" style="margin-top:8px" :key="isResouceShow"></selectTemplate>
             <p class="txt">{{reply.length}}/{{maxlen}}</p>
+
             <el-input
               type="textarea"
               :rows="textareaRow"
@@ -68,38 +73,52 @@
               id="txt"
               @blur="handleInputBlur($event)"
             ></el-input>
-            <el-upload
-              class="upload-demo"
-              action="/erp/file/upload"
-              :headers="{'x-token': token}"
-              :before-upload="beforeUpload"
-              :on-remove="onRemove"
-              :on-error="() => {this.$message.error('上传失败')}"
-              :on-success="onSuccess"
-              accept="pdf, doc, docx, xls, xlsx, jpg, gif, png, jpeg, txt"
-              :file-list="attachList"
-            >
-              <el-button size="small" class="el-icon-upload">上传附件</el-button>
-            </el-upload>
-            <el-button size="small" @click="markUnRead">标记未读</el-button>
-            <el-button size="small" @click="markReplyOnPlatform">已在平台回复</el-button>
-            <el-button
-              size="small"
-              @click="replyInsideMail"
-              :disabled="reply.length==0"
-              :class="reply.length==0?'disable':'able'"
-            >发送</el-button>
+            <div class="email-operate">
+              <el-upload
+                class="upload-demo"
+                action="/erp/file/upload"
+                :headers="{'x-token': token}"
+                :before-upload="beforeUpload"
+                :on-remove="onRemove"
+                :on-error="() => {this.$message.error('上传失败')}"
+                :on-success="onSuccess"
+                accept="pdf, doc, docx, xls, xlsx, jpg, gif, png, jpeg, txt"
+                :file-list="attachList"
+              >
+                <el-button size="small" class="el-icon-upload">上传附件</el-button>
+              </el-upload>
+              <div class="btn">
+                <el-button
+                  size="small"
+                  @click="markUnRead"
+                  v-if='emailType.includes("all")||emailType.includes("needReply")'
+                >标记未读</el-button>
+                <el-button
+                  size="small"
+                  @click="markReplyOnPlatform"
+                  v-if='emailType.includes("standInsideLetter")&&!emailType.includes("replied")'
+                >已在平台回复</el-button>
+                <el-button
+                  size="small"
+                  @click="replyInsideMail"
+                  :disabled="reply.length==0"
+                  :class="reply.length==0?'disable':'able'"
+                >发送</el-button>
+              </div>
+            </div>
           </div>
         </el-footer>
       </el-container>
-      <el-aside width="240px" class="right" v-if="formData">
+      <el-aside width="240px" class="right"  v-if="emailInfoList!=null&&emailInfoList.length">
         <div class="title">订单信息</div>
         <el-form label-position="top" label-width="80px" :model="formData">
-          <el-form-item label="ASIN" >
-            <div @click="openPrompt('asin')" style="color: #3bb19c;height: 32px;">{{formData.asin}}</div>
+          <el-form-item label="ASIN" class="asin">
+            <div @click="jump('asin')" style="color: #3bb19c;height: 32px;">{{formData.asin}}</div>
+            <img src="../../../../assets/image/svg/pen.svg" @click="openPrompt('asin')" />
           </el-form-item>
-          <el-form-item label="订单号"  >
-            <div @click="openPrompt('orderNo')" style="color: #3bb19c;height: 32px;">{{formData.orderNo}}</div>
+          <el-form-item label="订单号" class="orderNo">
+            <div @click="jump('orderNo')" style="color: #3bb19c;height: 32px;">{{formData.orderNo}}</div>
+            <img src="../../../../assets/image/svg/pen.svg" @click="openPrompt('orderNo')" />
           </el-form-item>
           <el-form-item label="下单时间">
             <div>{{formData.orderTime||'--'}}</div>
@@ -111,7 +130,12 @@
             <div>{{formData.receiveTime||'--'}}</div>
           </el-form-item>
           <el-form-item label="产品" class="productDesc">
-            <span @click="openPrompt('productDesc')">{{formData.productDesc||'--'}}</span>
+            <div>{{formData.productDesc||'--'}}</div>
+            <img
+              src="../../../../assets/image/svg/pen.svg"
+              @click="openPrompt('productDesc')"
+              :class="{'productImg':formData.productDesc}"
+            />
           </el-form-item>
           <el-form-item label="数量">
             <div>{{formData.amount||'--'}}</div>
@@ -122,7 +146,7 @@
               type="textarea"
               maxlength="200"
               :rows="6"
-              @blur="blur('customerBak')"
+              @blur="saveEmailOrder()"
               placeholder="请输入200字以内备注"
               style="resize:none"
             ></el-input>
@@ -135,143 +159,12 @@
 <script>
 import unselectEmail from "./unselectEmail";
 import { mapMutations, mapState, mapActions } from "vuex";
-import mixin from "./mixin/selectTemplate";
-// import { type } from "os";
-import { downloadFile } from "@/lib/utils/common";
-let mock = [
-  {
-    side: "left",
-    subjectName: "RE: Broken Containers Received",
-    fromAlias: "Gonzalez, Karen 158",
-    fromAddr: "Karen.Gonzalez@FreshPoint.com",
-    toAddr: "support <support@hoojo.net>",
-    sentDate: "2020-06-12 01:49:51",
-    contentText:
-      "This is Jessica the associate who received your email and I hope that you are doing fine today. Sorry to know that one of the lid was",
-    attachList: [
-      {
-        id: 34,
-        messageId: 48,
-        sort: 1,
-        type: 2,
-        url:
-          "http://47.112.213.96/group1/M00/00/15/rBLP3l7nJkOAai6HAAAkvquL8BE882.png?attname=image001.png",
-        fileName: "image001.png",
-        draftFlag: 1
-      },
-      {
-        id: 35,
-        messageId: 48,
-        sort: 2,
-        type: 2,
-        url:
-          "http://47.112.213.96/group1/M00/00/15/rBLP3l7nJkOAfwCnAAAC5WCrUAg126.jpg?attname=image002.jpg",
-        fileName: "image002.jpg",
-        draftFlag: 1
-      }
-    ]
-  },
-  {
-    side: "left",
-    subjectName: "RE: Broken Containers Received",
-    fromAlias: "Gonzalez, Karen 158",
-    fromAddr: "Karen.Gonzalez@FreshPoint.com",
-    toAddr: "support <support@hoojo.net>",
-    sentDate: "2020-06-12 01:49:51",
-    contentText:
-      "This is Jessica the associate who received your email and I hope that you are doing fine today. Sorry to know that one of the lid was missing. Please accept our sincere apologies for the inconvenience caused. I am afraid that we don't have extra lid to replace the faulty one at the moment since all of our goods are stocked as a whole set at amazon warehouse. To make things right for you, how about we refund you 5 USD as compensation? Or if you have other thoughts? please do let me know. Looking forward to hearing from you soon. Once again, please accept our sincere apology for the inconvenience caused! Warmest Regards This is Jessica the associate who received your email and I hope that you are doing fine today. Sorry to know that one of the lid was missing. Please accept our sincere apologies for the inconvenience caused. I am afraid that we don't have extra lid to replace the faulty one at the moment since all of our goods are stocked as a whole set at amazon warehouse. To make things right for you, how about we refund you 5 USD as compensation? Or if you have other thoughts? please do let me know. Looking forward to hearing from you soon. Once again, please accept our sincere apology for the inconvenience caused! Warmest Regards This is Jessica the associate who received your email and I hope that you are doing fine today. Sorry to know that one of the lid was missing. Please accept our sincere apologies for the inconvenience caused. I am afraid that we don't have extra lid to replace the faulty one at the moment since all of our goods are stocked as a whole set at amazon warehouse. To make things right for you, how about we refund you 5 USD as compensation? Or if you have other thoughts? please do let me know. Looking forward to hearing from you soon. Once again, please accept our sincere apology for the inconvenience caused! Warmest Regards",
-    attachList: [
-      {
-        id: 34,
-        messageId: 48,
-        sort: 1,
-        type: 2,
-        url:
-          "http://47.112.213.96/group1/M00/00/15/rBLP3l7nJkOAai6HAAAkvquL8BE882.png?attname=image001.png",
-        fileName: "image001.png",
-        draftFlag: 1
-      },
-      {
-        id: 35,
-        messageId: 48,
-        sort: 2,
-        type: 2,
-        url:
-          "http://47.112.213.96/group1/M00/00/15/rBLP3l7nJkOAfwCnAAAC5WCrUAg126.jpg?attname=image002.jpg",
-        fileName: "image002.jpg",
-        draftFlag: 1
-      }
-    ]
-  },
-  {
-    side: "right",
-    subjectName: "RE: Broken Containers Received",
-    fromAlias: "Gonzalez, Karen 158",
-    fromAddr: "Karen.Gonzalez@FreshPoint.com",
-    toAddr: "support <support@hoojo.net>",
-    sentDate: "2020-06-12 01:49:51",
-    contentText:
-      "This is Jessica the associate who received your email and I hope that you are doing fine today. Sorry to know that one of the lid was missing. Please accept our sincere apologies for the inconvenience caused. I am afraid that we don't have extra lid to replace the faulty one at the moment since all of our goods are stocked as a whole set at amazon warehouse. To make things right for you, how about we refund you 5 USD as compensation? Or if you have other thoughts? please do let me know. Looking forward to hearing from you soon. Once again, please accept our sincere apology for the inconvenience caused! Warmest Regards This is Jessica the associate who received your email and I hope that you are doing fine today. Sorry to know that one of the lid was missing. Please accept our sincere apologies for the inconvenience caused. I am afraid that we don't have extra lid to replace the faulty one at the moment since all of our goods are stocked as a whole set at amazon warehouse. To make things right for you, how about we refund you 5 USD as compensation? Or if you have other thoughts? please do let me know. Looking forward to hearing from you soon. Once again, please accept our sincere apology for the inconvenience caused! Warmest Regards This is Jessica the associate who received your email and I hope that you are doing fine today. Sorry to know that one of the lid was missing. Please accept our sincere apologies for the inconvenience caused. I am afraid that we don't have extra lid to replace the faulty one at the moment since all of our goods are stocked as a whole set at amazon warehouse. To make things right for you, how about we refund you 5 USD as compensation? Or if you have other thoughts? please do let me know. Looking forward to hearing from you soon. Once again, please accept our sincere apology for the inconvenience caused! Warmest Regards",
-    attachList: [
-      {
-        id: 34,
-        messageId: 48,
-        sort: 1,
-        type: 2,
-        url:
-          "http://47.112.213.96/group1/M00/00/15/rBLP3l7nJkOAai6HAAAkvquL8BE882.png?attname=image001.png",
-        fileName: "image001.png",
-        draftFlag: 1
-      },
-      {
-        id: 35,
-        messageId: 48,
-        sort: 2,
-        type: 2,
-        url:
-          "http://47.112.213.96/group1/M00/00/15/rBLP3l7nJkOAfwCnAAAC5WCrUAg126.jpg?attname=image002.jpg",
-        fileName: "image002.jpg",
-        draftFlag: 1
-      }
-    ]
-  },
-  {
-    side: "left",
-    subjectName: "RE: Broken Containers Received",
-    fromAlias: "Gonzalez, Karen 158",
-    fromAddr: "Karen.Gonzalez@FreshPoint.com",
-    toAddr: "support <support@hoojo.net>",
-    sentDate: "2020-06-12 01:49:51",
-    contentText:
-      "This is Jessica the associate who received your email and I hope that you are doing fine today. Sorry to know that one of the lid was missing. Please accept our sincere apologies for the inconvenience caused. I am afraid that we don't have extra lid to replace the faulty one at the moment since all of our goods are stocked as a whole set at amazon warehouse. To make things right for you, how about we refund you 5 USD as compensation? Or if you have other thoughts? please do let me know. Looking forward to hearing from you soon. Once again, please accept our sincere apology for the inconvenience caused! Warmest Regards This is Jessica the associate who received your email and I hope that you are doing fine today. Sorry to know that one of the lid was missing. Please accept our sincere apologies for the inconvenience caused. I am afraid that we don't have extra lid to replace the faulty one at the moment since all of our goods are stocked as a whole set at amazon warehouse. To make things right for you, how about we refund you 5 USD as compensation? Or if you have other thoughts? please do let me know. Looking forward to hearing from you soon. Once again, please accept our sincere apology for the inconvenience caused! Warmest Regards This is Jessica the associate who received your email and I hope that you are doing fine today. Sorry to know that one of the lid was missing. Please accept our sincere apologies for the inconvenience caused. I am afraid that we don't have extra lid to replace the faulty one at the moment since all of our goods are stocked as a whole set at amazon warehouse. To make things right for you, how about we refund you 5 USD as compensation? Or if you have other thoughts? please do let me know. Looking forward to hearing from you soon. Once again, please accept our sincere apology for the inconvenience caused! Warmest Regards",
-    attachList: [
-      {
-        id: 34,
-        messageId: 48,
-        sort: 1,
-        type: 2,
-        url:
-          "http://47.112.213.96/group1/M00/00/15/rBLP3l7nJkOAai6HAAAkvquL8BE882.png?attname=image001.png",
-        fileName: "image001.png",
-        draftFlag: 1
-      },
-      {
-        id: 35,
-        messageId: 48,
-        sort: 2,
-        type: 2,
-        url:
-          "http://47.112.213.96/group1/M00/00/15/rBLP3l7nJkOAfwCnAAAC5WCrUAg126.jpg?attname=image002.jpg",
-        fileName: "image002.jpg",
-        draftFlag: 1
-      }
-    ]
-  }
-];
+import { downloadFile, getCurrentDate } from "@/lib/utils/common";
+import selectTemplate from "../components/selectTemplate";
 export default {
-  mixins: [mixin],
   components: {
-    unselectEmail
+    unselectEmail,
+    selectTemplate
   },
   name: "standInsideLetter",
   data() {
@@ -280,30 +173,43 @@ export default {
       token: localStorage.getItem("token"),
       reply: "",
       maxlen: 4000,
-      formData: null,
+      formData: {
+        id: "",
+        messageId: "",
+        asin: "",
+        orderNo: "",
+        orderTime: "",
+        deliveryTime: "",
+        receiveTime: "",
+        productDesc: "",
+        customerBak: "",
+        amount: ""
+      },
       emailInfoList: [], //展示的数据
       copyData: [], // 原数据
-      handData: [], // 处理后的数据
-      options: [],
       complaintLevelOneId: "",
       complaintLevelTwoId: "",
+      templateId:"",
       attachList: [],
       replyMessageId: "",
-      originalId:'',
+      originalId: "",
+      messageId: "",
       allFileSize: 0,
-      size: 2, // 默认显示4条, 加载更多增加4条
+      size: 4, // 默认显示4条, 加载更多增加4条
       i: 1,
-      loading: false
+      loading: false,
+      otherAlias: "",
+      otherAddr: "",
+      isResouceShow:0
     };
   },
-  created() {
-    console.log(1);
-  },
+  created() {},
   computed: {
     ...mapState("email", {
       emailType: state => state.emailType,
       isSelectEmail: state => state.isSelectEmail,
-      emailBoxData: state => state.emailBoxData
+      emailBoxData: state => state.emailBoxData,
+      curReply: state => state.curReply
     }),
     loadingTxt() {
       return this.loading ? "加载中..." : "加载更多";
@@ -313,31 +219,35 @@ export default {
     },
     resetCss() {
       let h;
-      if(this.reply&&!this.attachList.length){
-        h = "height:calc(100% - 210px - 171px);flex: initial;"
-      }else if(this.attachList.length&&!this.reply){
-        h = "height:calc(100% - 210px - 52px);flex: initial;"
-      }else if(this.reply&&this.attachList.length){
-        h = "height:calc(100% - 210px - 171px - 52px);flex: initial;"
-      }else{
-        h = ""
+      if (this.reply && !this.attachList.length) {
+        h = "height:calc(100% - 210px - 171px);flex: initial;";
+      } else if (this.attachList.length && !this.reply) {
+        h = "height:calc(100% - 210px - 52px);flex: initial;";
+      } else if (this.reply && this.attachList.length) {
+        h = "height:calc(100% - 210px - 171px - 52px);flex: initial;";
+      } else {
+        h = "";
       }
-      return h
+      return h;
     }
   },
-  watch: {
-  },
+  watch: {},
   methods: {
-    ...mapMutations("email", ["setIsSelectEmail", "setMultipleSelection"]),
-    ...mapActions("email", ["queryEmailByPage"]),
+    ...mapMutations("email", [
+      "setIsSelectEmail",
+      "setMultipleSelection",
+      "openDetailResetAsideNum"
+    ]),
+    ...mapActions("email", ["queryEmailByPage", "queryItemList"]),
     queryChatRoom(messageId) {
-      // let id = 107;
-      this.originalId = messageId;
       this.initData();
+      ++this.isResouceShow;
+      this.messageId = messageId;
       this.API.queryChatRoom(messageId).then(res => {
         if (res.code === 0) {
-          this.formData = { ...res.data.order };
           res.data.emailList.forEach(item => {
+            let contentText = item.contentText == null ? "" : item.contentText;
+            item.contentText  = contentText.replace(/^\s+|\s+$/g,"")
             if (item.contentText && item.contentText.length > 300) {
               item.str = item.contentText.substr(0, 300);
               item.str1 = item.contentText.substr(300);
@@ -346,31 +256,53 @@ export default {
               item.type = 1; // 全部
             }
           });
-          // this.copyData = [...res.data.emailList];
-          this.copyData = [...mock];
-          this.replyMessageId = this.copyData[this.copyData.length-1].id
-          this.emailInfoList.push(
-            ...this.copyData.slice(
-              this.copyData.length - this.size * this.i
-            )
-          );
-          this.i++;
+          this.replyMessageId =
+            res.data.emailList[res.data.emailList.length - 1].messageId;
+          this.originalId = res.data.emailList[0].messageId;
+          this.otherAddr = res.data.emailList[0].fromAddr; // 收件人邮箱
+          this.otherAlias = res.data.emailList[0].fromAlias; // 收件人别名
+          this.copyData = [...res.data.emailList];
+          if (this.i * this.size > this.copyData.length) {
+            this.emailInfoList.unshift(
+              ...this.copyData.slice(0, this.copyData.length)
+            );
+          } else {
+            this.emailInfoList.unshift(
+              ...this.copyData.slice(
+                this.copyData.length - this.i * this.size,
+                this.copyData.length
+              )
+            );
+            this.i++;
+          }
+          this.formData = Object.assign(this.formData, res.data.order);
           this.setIsSelectEmail(true);
         }
+        // console.log(this.formData);
+      }).catch(()=>{
+        this.$message.error('网络故障!')
       });
     },
     initData() {
-      this.reply = "";
-      this.formData = {};
+      this.formData = {
+        id: "",
+        messageId: "",
+        asin: "",
+        orderNo: "",
+        orderTime: "",
+        deliveryTime: "",
+        receiveTime: "",
+        productDesc: "",
+        customerBak: "",
+        amount: ""
+      };
       this.emailInfoList = []; //展示的数据
       this.copyData = []; // 原数据
-      this.handData = []; // 处理后的数据
-      this.options = [];
+      this.reply = "";
       this.complaintLevelOneId = "";
       this.complaintLevelTwoId = "";
+      this.templateId = "",
       this.attachList = [];
-      this.replyMessageId = "";
-      this.originalId = "",
       this.allFileSize = 0;
       this.i = 1;
       this.loading = false;
@@ -399,30 +331,38 @@ export default {
       });
       return arr.join(",");
     },
-    more() {
-      console.log("加载更多");
+    loadMore() {
       this.loading = true;
-      if (this.i * this.size - 1 == this.copyData.length) {
-        setTimeout(() => {
-          this.emailInfoList.unshift(...this.copyData.slice(0, 1));
-          this.loading = false;
-        }, 1200);
-      } else {
-        setTimeout(() => {
-          this.emailInfoList.unshift(
-            ...this.copyData.slice(
-              this.copyData.length - this.i * this.size,
-              this.copyData.length - this.size * (this.i - 1)
-            )
-          );
-          this.i++;
-          this.loading = false;
-        }, 1200);
-      }
+      this.$nextTick(() => {
+        if (this.i * this.size > this.copyData.length) {
+          setTimeout(() => {
+            this.emailInfoList.unshift(
+              ...this.copyData.slice(
+                0,
+                this.copyData.length - this.size * (this.i - 1)
+              )
+            );
+            this.loading = false;
+          }, 600);
+        } else {
+          setTimeout(() => {
+            this.emailInfoList.unshift(
+              ...this.copyData.slice(
+                this.copyData.length - this.i * this.size,
+                this.copyData.length - this.size * (this.i - 1)
+              )
+            );
+            this.i++;
+            this.loading = false;
+          }, 600);
+        }
+      });
     },
     markUnRead() {
-      this.setMultipleSelection([]);
-      this.markUnRead({ messageId: this.originalId }).then(res => {
+      this.API.markUnRead({
+        idList: [this.curReply.uid],
+        boxId: this.emailBoxData.boxId
+      }).then(res => {
         if (res.code === 0) {
           this.cb();
           this.$message.success("标记未读成功");
@@ -430,8 +370,10 @@ export default {
       });
     },
     markReplyOnPlatform() {
-      this.setMultipleSelection([]);
-      this.markReplyOnPlatform({ messageId: this.originalId }).then(res => {
+      this.API.markReplyOnPlatform({
+        idList: [this.curReply.uid],
+        boxId: this.emailBoxData.boxId
+      }).then(res => {
         if (res.code === 0) {
           this.cb();
           this.$message.success("标记已在平台回复成功");
@@ -440,10 +382,8 @@ export default {
     },
     cb() {
       this.setMultipleSelection([]);
-      this.queryEmailByPage({ pageNum: 1 });
-    },
-    blur(){
-        this.saveEmailOrder();
+      this.setIsSelectEmail(false);
+      this.queryItemList();
     },
     openPrompt(type) {
       this.$prompt("请输入", "提示", {
@@ -459,14 +399,27 @@ export default {
         inputErrorMessage: "请输入内容"
       })
         .then(({ value }) => {
-          this.formData[type] = value;
-          console.log(this.formData);
+          this.formData = Object.assign(this.formData, { [type]: value });
           this.saveEmailOrder();
         })
         .catch(() => {});
     },
     saveEmailOrder() {
-      this.API.saveEmailOrder(this.formData).then(res => {});
+      let data = { ...this.formData };
+      data.messageId = this.messageId;
+      this.API.saveEmailOrder(data).then(res => {
+        if(res.code==0&&res.data!=null){
+          this.formData.id = res.data
+        }
+      });
+    },
+    jump(type) {
+      if (this.formData[type] == "" || this.formData[type] == "--") return;
+      let jumpRule = {
+        asin: `https://www.amazon.com/dp/${this.formData[type]}`,
+        orderNo: `https://sellercentral.amazon.com/orders-v3/order/${this.formData[type]}`
+      };
+      window.open(`${jumpRule[type]}`);
     },
     // 上传
     beforeUpload(file) {
@@ -538,29 +491,22 @@ export default {
         this.reply += val;
       }
     },
-    handleChange(val) {
-      this.complaintLevelOneId = val[0];
-      this.complaintLevelTwoId = val[1] || "";
-      this.options.forEach(item => {
-        if (
-          val[0] == item.complaintLevelOneId &&
-          val[1] == item.complaintLevelTwoId &&
-          val[2] == item.id
-        ) {
-          let str = this.replacePlaceholder(item.templateContent);
-          this.insertTxt(str);
-        }
-      });
+    handleChange(data) {
+      let str = this.replacePlaceholder(data.templateContent);
+      this.complaintLevelOneId = data.complaintLevelOneId;
+      this.complaintLevelTwoId = data.complaintLevelTwoId;
+      this.templateId = data.id;
+      this.insertTxt(str || "");
     },
     replacePlaceholder(str) {
       return str
         .replace(
           new RegExp(`\\{{买家昵称\\}}`, "g"),
-          this.emailBoxData.emailUsername
+          this.otherAlias||this.otherAddr|| ""
         )
         .replace(
           new RegExp(`\\{{店铺名称\\}}`, "g"),
-          this.emailBoxData.shopName
+          this.emailBoxData.shopName || ""
         )
         .replace(
           new RegExp(`\\{{订单编号\\}}`, "g"),
@@ -575,12 +521,13 @@ export default {
       let data = {
         originalId: this.originalId,
         replyMessageId: this.replyMessageId,
-        complaintLevelOneId: this.complaintLevelOneId,
-        complaintLevelTwoId: this.complaintLevelTwoId,
+        bocomplaintLevelOneIdxId: this.complaintLevelOneId,
+        bocomplaintLevelTwoIdxId: this.complaintLevelTwoId,
+        templateId:this.templateId,
         boxId: this.emailBoxData.boxId,
         subject: this.emailInfoList[0].subjectName,
         fromAddr: this.emailBoxData.emailUsername,
-        toAddr: this.emailInfoList[0].fromAddr,
+        toAddr: this.otherAddr,
         html: `<html>${this.reply}</html>`
       };
       let attachList = [];
@@ -592,20 +539,33 @@ export default {
         });
       });
       data.attachList = attachList;
-      // 测试
-      // data.toAddr = "729731265@qq.com";
-      // data.boxId = 13;
-      // data.fromAddr = "18927464275@189.cn";
-      // 测试
-      this.API.replyInsideMail(data).then(res => {
-       
-      });
+
+      this.$loading({ text: "发送中...", background: "rgba(0, 0, 0, 0.8)" });
+      this.API.replyInsideMail(data)
+        .then(res => {
+          if (res.code == 0) {
+            this.$message.success("操作成功");
+            // 回复成功改变侧边啦数字
+            if (
+              this.curReply.messageId == this.messageId &&
+              this.curReply.replyFlag == 0
+            ) {
+              this.openDetailResetAsideNum({ type: "needReply" });
+            }
+          }
+          this.$loading().close();
+          this.queryChatRoom(this.originalId);
+        })
+        .catch(() => {
+          this.$loading().close();
+        });
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
+@import "~@/assets/css/variables.less";
 .emailContent {
   position: absolute;
   top: 60px;
@@ -628,37 +588,62 @@ export default {
       border-bottom: 1px solid #e4e4e4;
       padding: 5px 10px;
       font-weight: 650;
-      .p1 {
+      height: auto !important;
+      .infotitle {
+        display: flex;
         height: 24px;
         line-height: 24px;
         span:nth-child(1) {
-          font-size: 14px;
+          font-size: 16px;
+          color: #000;
+          min-width: fit-content;
         }
         span:nth-child(2) {
           color: #999999;
         }
+        .resetName {
+          margin-right: 10px;
+        }
+      }
+      .subjectName {
+        color: #999999;
+        height: 24px;
+        line-height: 24px;
       }
     }
-    // /deep/.el-main{
-    //   height: calc((100% - 260px) - 171px);
-    // }
     .el-footer {
       height: 150px;
       .upload-demo {
         display: inline-block;
         margin-right: 10px;
       }
-      /deep/.el-icon-upload {
-        color: rgba(59, 177, 156, 1);
+
+      .email-operate {
+        height: 48px;
+        padding-right: 10px;
+        background-color: #fafafa;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        /deep/.el-icon-upload {
+          color: rgba(59, 177, 156, 1);
+        }
+        .disable {
+          background: #fff;
+          color: #999;
+        }
+        .able {
+          background: @themeColor;
+          color: #fff;
+        }
       }
-      .disable {
-        background: #fff;
-        color: #999;
-      }
-      .able {
-        background-color: #1abc9c;
-        color: #fff;
-      }
+
       .el-textarea {
         margin: 10px 0;
         /deep/.el-textarea__inner {
@@ -690,7 +675,7 @@ export default {
           flex-direction: row;
           margin: 8px 10px 0 0;
           width: 160px;
-           transition: none !important;
+          transition: none !important;
           /deep/.el-upload-list__item-name {
             line-height: 18px;
             padding: 0;
@@ -709,7 +694,7 @@ export default {
         }
       }
     }
-    .more {
+    .loadMore {
       position: fixed;
       transform: translateX(-50%);
       left: 50%;
@@ -724,34 +709,12 @@ export default {
       text-align: center;
       cursor: pointer;
     }
-    .dialog {
+    .chatRoom {
       display: flex;
       flex-direction: column;
       height: 100%;
       overflow-y: auto;
-
-      /*修改滚动条样式*/
-      &::-webkit-scrollbar {
-        width: 2px;
-        height: 6px;
-      }
-      &::-webkit-scrollbar-track {
-        background: rgb(239, 239, 239);
-        border-radius: 2px;
-      }
-      &::-webkit-scrollbar-thumb {
-        background: #bfbfbf;
-        border-radius: 4px;
-      }
-      &::-webkit-scrollbar-thumb:hover {
-        background: #333;
-      }
-      &::-webkit-scrollbar-corner {
-        background: #179a16;
-      }
-      /*修改滚动条样式*/
-
-      .dialogItem {
+      .chatItem {
         width: 45%;
         line-height: 18px;
         margin: 15px 0;
@@ -764,15 +727,19 @@ export default {
           line-height: 24px;
           display: inline-block;
         }
-        .d1 {
+        .chatContent {
           border: 1px solid #e4e4e4;
           border-radius: 4px;
           background: #f8f8f8;
-          .d2 {
-            padding: 8px 5px 5px;
+          .chatTxt {
             transition: 0.3s;
+            white-space: pre-wrap;
+            padding: 8px;
+            line-height: 16px;
+            word-wrap: break-word;
+            word-break: break-word;
           }
-          .d3 {
+          .toggle {
             text-align: center;
             border-top: 1px solid #e4e4e4;
             height: 22px;
@@ -810,6 +777,7 @@ export default {
             height: 16px;
             top: 2px;
             position: absolute;
+            color: @themeColor;
           }
         }
       }
@@ -818,52 +786,11 @@ export default {
       }
     }
 
-    .p11 {
-      color: #999999;
-      height: 24px;
-      line-height: 24px;
-    }
-    .p2 {
-      height: 26px;
-      line-height: 26px;
-    }
-    .p3 {
-      font-weight: 650;
-      text-align: justify;
-      height: 24px;
-      line-height: 24px;
-    }
-    .content {
-      border: 1px solid #e4e4e4;
-      height: 575px;
-      padding: 8px;
-      .p4 {
-        height: 27px;
-        line-height: 27px;
-        color: #ff0000;
-        border: 1px solid rgba(255, 0, 0, 1);
-        background-color: rgba(255, 204, 204, 1);
-        text-indent: 10px;
-        box-sizing: border-box;
-      }
-      .p5 {
-        padding: 40px 8px 0;
-      }
-    }
-    .p6 {
-      margin-top: 20px;
-      text-indent: 10px;
-      color: #bcbcbc;
-      height: 36px;
-      line-height: 36px;
-      border: 1px solid rgba(228, 228, 228, 1);
-      background-color: rgba(242, 242, 242, 1);
-      box-sizing: border-box;
-    }
     .txt {
       position: absolute;
-      top: 16px;
+      top: 28px;
       right: 0;
+      color: #999;
     }
   }
   .right {
@@ -877,6 +804,7 @@ export default {
       }
       /deep/.el-form-item {
         margin-bottom: 0;
+
         /deep/.el-form-item__label {
           padding: 0;
           line-height: 26px;
@@ -893,15 +821,61 @@ export default {
           padding: 0;
         }
       }
-      .productDesc span {
-        font-family: "PingFangHK-Semibold", "PingFang HK Semibold",
-          "PingFang HK";
-        font-weight: 650;
-        font-style: normal;
-        font-size: 12px;
-        line-height: 24px;
-        color: #3bb19c;
-        text-align: left;
+
+      .asin,
+      .orderNo {
+        .el-form-item__content {
+          display: flex;
+          cursor: pointer;
+          div {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          &:hover {
+            img {
+              display: inline-block;
+            }
+          }
+
+          img {
+            display: none;
+            width: 16px;
+            height: 32px;
+          }
+        }
+      }
+      .productDesc {
+        .el-form-item__content {
+          display: flex;
+          cursor: pointer;
+          div {
+            font-family: "PingFangHK-Semibold", "PingFang HK Semibold",
+              "PingFang HK";
+            font-weight: 650;
+            font-style: normal;
+            font-size: 12px;
+            line-height: 20px;
+            color: #3bb19c;
+            text-align: left;
+          }
+          &:hover {
+            img {
+              display: inline-block;
+            }
+          }
+          .productImg {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+          }
+          img {
+            display: none;
+            width: 16px;
+            height: 18px;
+          }
+        }
       }
     }
   }

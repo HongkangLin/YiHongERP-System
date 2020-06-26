@@ -10,12 +10,12 @@ function resolve(dir) {
 module.exports = {
 	outputDir: 'erp',
 	productionSourceMap: false,
-	// ÔÚvue.config.jsÎÄ¼şÖĞÌí¼ÓÅäÖÃ
+	// åœ¨vue.config.jsæ–‡ä»¶ä¸­æ·»åŠ é…ç½®
 	configureWebpack: config => {
 		if (isProduction) {
-			// ÎªÉú²ú»·¾³ĞŞ¸ÄÅäÖÃ...
+			// ä¸ºç”Ÿäº§ç¯å¢ƒä¿®æ”¹é…ç½®...
 			config.plugins.push(
-				//Éú²ú»·¾³×Ô¶¯É¾³ıconsole
+				//ç”Ÿäº§ç¯å¢ƒè‡ªåŠ¨åˆ é™¤console
 				new UglifyJsPlugin({
 					uglifyOptions: {
 						compress: {
@@ -30,31 +30,31 @@ module.exports = {
 			);
 		}
 	},
-	// cssÏà¹ØÅäÖÃ
+	// cssç›¸å…³é…ç½®
 	css: {
-		// ÊÇ·ñÊ¹ÓÃcss·ÖÀë²å¼ş ExtractTextPlugin
-		// ÌáÈ¡ CSS ÔÚ¿ª·¢»·¾³Ä£Ê½ÏÂÊÇÄ¬ÈÏ²»¿ªÆôµÄ£¬ÒòÎªËüºÍ CSS ÈÈÖØÔØ²»¼æÈİ¡£
+		// æ˜¯å¦ä½¿ç”¨cssåˆ†ç¦»æ’ä»¶ ExtractTextPlugin
+		// æå– CSS åœ¨å¼€å‘ç¯å¢ƒæ¨¡å¼ä¸‹æ˜¯é»˜è®¤ä¸å¼€å¯çš„ï¼Œå› ä¸ºå®ƒå’Œ CSS çƒ­é‡è½½ä¸å…¼å®¹ã€‚
 		extract: isProduction?true:false,
-		// ¿ªÆô CSS source maps?
+		// å¼€å¯ CSS source maps?
 		sourceMap: false,
-		// cssÔ¤ÉèÆ÷ÅäÖÃÏî
-		// ÆôÓÃ CSS modules for all css / pre-processor files.
+		// cssé¢„è®¾å™¨é…ç½®é¡¹
+		// å¯ç”¨ CSS modules for all css / pre-processor files.
 		modules: false,
 	},
 	chainWebpack: config => {
-		config.resolve.symlinks(true) // ĞŞ¸´ÈÈ¸üĞÂÊ§Ğ§
+		config.resolve.symlinks(true) // ä¿®å¤çƒ­æ›´æ–°å¤±æ•ˆ
 		// config
 		// 	.entry('index')
 		// 	.add('babel-polyfill')
 		// 	.end();
-		// Éú²ú»·¾³ÅäÖÃ
+		// ç”Ÿäº§ç¯å¢ƒé…ç½®
 		if (isProduction) {
-			// É¾³ıÔ¤¼ÓÔØ
+			// åˆ é™¤é¢„åŠ è½½
 			config.plugins.delete('preload');
 			config.plugins.delete('prefetch');
-			// Ñ¹Ëõ´úÂë
+			// å‹ç¼©ä»£ç 
 			config.optimization.minimize(true);
-			// ·Ö¸î´úÂë
+			// åˆ†å‰²ä»£ç 
 			config.optimization.splitChunks({
 				chunks: 'all'
 			})

@@ -1,5 +1,5 @@
 <template>
-  <el-cascader placeholder="请选择模板" :props="prop" :options="options" @change="handleChange" :key="isResouceShow"></el-cascader>
+  <el-cascader placeholder="请选择模板" :props="prop" :options="options" @change="handleChange" :show-all-levels="false"></el-cascader>
 </template>  
 
 
@@ -13,7 +13,7 @@ export default {
       },
       options: [],
       backupData: {},
-      isResouceShow:0
+      // isResouceShow:0
     };
   },
   mounted() {
@@ -73,7 +73,8 @@ export default {
             templateContent: item.templateContent
           };
           this.$emit("handleChange", data);
-          ++this.isResouceShow
+          // ++this.isResouceShow;
+          // console.log(this.isResouceShow)
         }
       });
     },

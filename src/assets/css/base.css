@@ -60,3 +60,9 @@ table {
 body{
   background: #fff !important;
 }
+
+.hideTxt {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

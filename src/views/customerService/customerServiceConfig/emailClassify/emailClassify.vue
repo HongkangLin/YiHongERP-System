@@ -25,7 +25,7 @@
           <el-table-column prop="itemName" label="分类名称" align="center"></el-table-column>
           <el-table-column prop="createName" label="创建人" align="center"></el-table-column>
           <el-table-column align="center" label="类型">
-            <template slot-scope="scope">{{scope.itemType==0?"系统预设":"用户自定义"}}</template>
+            <template slot-scope="scope">{{scope.row.itemType==0?"系统预设":"用户自定义"}}</template>
           </el-table-column>
           <el-table-column prop="bak" label="备注" align="center"></el-table-column>
           <el-table-column label="操作" align="center">
@@ -33,16 +33,17 @@
               <el-button
                 size="mini"
                 type="text"
-                v-if="roleCtl.mailitem_update"
+                v-if="roleCtl.mailitem_update&&scope.row.itemType==1"
                 @click="handleEdit(scope.row.id)"
               >编辑</el-button>
-              <el-divider direction="vertical" v-if="roleCtl.mailitem_update&&roleCtl.mailitem_delete"></el-divider>
+              <el-divider direction="vertical" v-if="roleCtl.mailitem_update&&roleCtl.mailitem_delete&&scope.row.itemType==1"></el-divider>
               <el-button
                 size="mini"
                 type="text"
-                v-if="roleCtl.mailitem_delete"
+                v-if="roleCtl.mailitem_delete&&scope.row.itemType==1"
                 @click="handleDelete(scope.$index, scope.row)"
               >删除</el-button>
+              <span class="noCtl" v-if="scope.row.itemType==0">--</span>
             </template>
           </el-table-column>
         </el-table>
@@ -187,6 +188,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "~@/assets/css/variables.less";
 .brandManagement {
   .content {
     /deep/.el-input--small .el-input__inner {
@@ -198,7 +200,7 @@ export default {
     color: #ccc;
   }
   /deep/.el-switch__label--right {
-    color: #1abc9c;
+    color: @themeColor;
   }
   box-sizing: border-box;
   padding: 20px 50px;
@@ -228,7 +230,7 @@ export default {
         }
         &.new {
           font-size: 14px;
-          background-color: #1abc9c;
+          background-color: @themeColor;
           color: white;
           width: 100px;
           cursor: pointer;
@@ -249,9 +251,9 @@ export default {
         &.sel {
           width: 80px;
           font-size: 14px;
-          border: 1px solid #1abc9c;
+          border: 1px solid @themeColor;
           border-radius: 4px;
-          color: #1abc9c;
+          color: @themeColor;
           cursor: pointer;
           text-align: center;
         }
@@ -259,7 +261,7 @@ export default {
           width: 180px;
           font-size: 14px;
           border-radius: 4px;
-          color: #1abc9c;
+          color: @themeColor;
           margin-right: 20px;
         }
         .selList {
@@ -273,6 +275,9 @@ export default {
   }
   .table {
     margin-top: 20px;
+    .noCtl{
+      color: @themeColor;
+    }
   }
 }
 </style>

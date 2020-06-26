@@ -47,7 +47,7 @@
                 :maxlength="maxlen"
                 ref="textArea"
                 id="textarea"
-                :rows="7"
+                :rows="18"
                 v-model="formData.templateContent"
                 placeholder="请输入模板内容"
                 @input="descInput"
@@ -206,6 +206,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "~@/assets/css/variables.less";
 .addType {
   /deep/.el-input--small {
     .el-input__inner {
@@ -229,13 +230,14 @@ export default {
   .content {
     border: 1px solid rgb(228, 228, 228);
     border-top: none;
-    overflow: hidden;
+    overflow-y: auto;
+    height: calc(100% - 50px);
     .base {
       box-sizing: border-box;
-      width: 510px;
+      width: 760px;
       margin: 40px auto 0 auto;
       .el-input--small {
-        width: 400px;
+        width: 650px;
       }
     }
     .desc {
@@ -248,7 +250,7 @@ export default {
       height: 35px;
       line-height: 35px;
       text-align: center;
-      background-color: #1abc9c;
+      background-color:  @themeColor;
       margin-top: 20px;
       border-radius: 4px;
       color: white;

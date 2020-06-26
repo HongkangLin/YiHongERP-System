@@ -196,6 +196,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "~@/assets/css/variables.less";
 .pdtType {
   box-sizing: border-box;
   padding: 20px 50px;
@@ -222,7 +223,7 @@ export default {
         }
         &.new {
           font-size: 14px;
-          background-color: #1abc9c;
+          background-color:  @themeColor;
           color: white;
           width: 100px;
           cursor: pointer;

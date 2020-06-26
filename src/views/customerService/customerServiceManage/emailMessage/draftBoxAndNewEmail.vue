@@ -67,13 +67,9 @@
         >
           <el-button size="small" class="el-icon-upload">上传附件</el-button>
         </el-upload>
-        <el-cascader
-          placeholder="请选择模板"
-          :options="options"
-          :props="{ expandTrigger: 'click'}"
-          @change="handleChange"
-        ></el-cascader>
-        <p class="txt">{{ruleForm.html.length}}/{{maxlen}}</p>
+
+        <selectTemplate @handleChange="handleChange"  :key="isResouceShow"></selectTemplate>
+        <p class="txt" v-if="ruleForm&&ruleForm.html">{{ruleForm.html.length}}/{{maxlen}}</p>
       </el-form-item>
       <el-form-item v-if="roleCtl.mail_sendMail">
         <el-input
@@ -91,15 +87,15 @@
 </template>
 <script>
 import unselectEmail from "./unselectEmail";
+import selectTemplate from "../components/selectTemplate";
 import { mapState, mapActions, mapMutations } from "vuex";
 export default {
   name: "draftBoxAndNewEmail",
-  inheritAttrs: false,
   components: {
-    unselectEmail
+    unselectEmail,
+    selectTemplate
   },
   data() {
-    // const emailReg = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
     let validateEmail = (rule, value, callback) => {
       if (value) {
         let list = value.replace(/；/, ";").split(";");
@@ -109,18 +105,7 @@ export default {
         if (list.length > 10) {
           callback(new Error(`最多输入10个邮箱!`));
         }
-        // let i;
-        // for (let index = 0; index < list.length; index++) {
-        //   const element = list[index];
-        //   if (!emailReg.test(element)) {
-        //     i = index;
-        //   }
-        // }
-        // if (typeof i == "number") {
-        //   callback(new Error(`第${i + 1}个邮箱格式错误!`));
-        // } else {
         callback();
-        // }
       } else {
         callback();
       }
@@ -160,12 +145,13 @@ export default {
         draftId: "", // 草稿箱id,如果不为空，说明是编辑草稿
         attachList: [],
         complaintLevelTwoId: "",
-        complaintLevelOneId: ""
-      }, 
-      options: [],
+        complaintLevelOneId: "",
+        templateId: ""
+      },
       allFileSize: 0,
       blurEndIndex: undefined,
-      blurStartIndex: undefined
+      blurStartIndex: undefined,
+      isResouceShow:0
     };
   },
   created() {
@@ -180,9 +166,8 @@ export default {
     }
     //在页面刷新时将vuex里的信息保存到sessionStorage里
     if (this.emailType === "newEmail") {
-      window.addEventListener("beforeunload",this.setSession());
+      window.addEventListener("beforeunload", this.setSession());
     }
-    this.queryList();
   },
   computed: {
     ...mapState("email", {
@@ -243,53 +228,34 @@ export default {
         this.ruleForm.html += val;
       }
     },
-    handleChange(val) {
-      this.ruleForm.complaintLevelOneId = val[0];
-      this.ruleForm.complaintLevelTwoId = val[1] || "";
-      this.options.forEach(item => {
-        if (
-          val[0] == item.complaintLevelOneId &&
-          val[1] == item.complaintLevelTwoId &&
-          val[2] == item.id
-        ) {
-          this.insertTxt(item.templateContent);
-        }
-      });
+    handleChange(data) {
+      let str = this.replacePlaceholder(data.templateContent);
+      this.ruleForm.complaintLevelOneId = data.complaintLevelOneId;
+      this.ruleForm.complaintLevelTwoId = data.complaintLevelTwoId;
+      this.ruleForm.templateId = data.id;
+
+      this.insertTxt(str || "");
     },
-    async queryList() {
-      // 查询模板列表
-      let data = {
-        pageSize: 9999,
-        pageNum: 1
-      };
-      this.API.selectEmailTemplateInfoList(data).then(res => {
-        if (res.code === 0) {
-          res.data.forEach(item => {
-            item.label = item.complaintLevelOneName;
-            item.value = item.complaintLevelOneId;
-            item.children = [];
-            item.children.push({
-              label: item.complaintLevelTwoName,
-              value: item.complaintLevelTwoId
-            });
-            item.children.forEach(list => {
-              list.children = [];
-              list.children.push({
-                label: item.templateName,
-                value: item.id
-              });
-            });
-          });
-          this.options.push(...res.data); // 初始化新增分类页面可选分类
-        }
-      });
+    replacePlaceholder(str) {
+      return str
+        .replace(
+          new RegExp(`\\{{买家昵称\\}}`, "g"),
+          "买家昵称"
+        )
+        .replace(
+          new RegExp(`\\{{店铺名称\\}}`, "g"),
+          this.emailBoxData.shopName || "店铺名称"
+        )
+        .replace(new RegExp(`\\{{订单编号\\}}`, "g"), "订单编号")
+        .replace(new RegExp(`\\{{亚马逊商品编号\\}}`, "g"), "亚马逊商品编号");
     },
     //查询草稿箱邮件详情
     queryDraftEmailById(id) {
+      this.initData();
+      ++this.isResouceShow;
       this.API.queryDraftEmailById(id).then(res => {
         if (res.code === 0 && res.data) {
           if (res.data.attachList) {
-            this.fileList = [];
             res.data.attachList.forEach(item => {
               this.fileList.push({
                 name: item.fileName,
@@ -297,11 +263,11 @@ export default {
                 fileSize: item.fileSize ? item.fileSize : 0
               });
             });
+          res.data.attachList = [];
           }
           res.data.html = res.data.text ? res.data.text : "";
           this.ruleForm = Object.assign(this.ruleForm, res.data);
           this.ruleForm.draftId = this.ruleForm.id;
-          this.ruleForm.attachList = [];
           delete this.ruleForm.text;
           delete this.ruleForm.id;
           this.setIsSelectEmail(true);
@@ -345,6 +311,7 @@ export default {
     uploadProgress(event, file, fileList) {},
     // 上传成功
     onSuccess(response) {
+      console.log(response)
       if (response.code === 0) {
         setTimeout(() => {
           this.fileList.push({
@@ -352,6 +319,7 @@ export default {
             url: response.data.originUrl,
             fileSize: response.data.fileSize
           });
+
         }, 800);
       }
     },
@@ -360,6 +328,11 @@ export default {
       this.fileList = fileList;
     },
     submitForm(formName, type) {
+      if (type == "sendMail" && !this.ruleForm.toAddr) {
+        this.$message.warning("请输入收件人");
+        return;
+      }
+
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.postData(type);
@@ -369,9 +342,10 @@ export default {
       });
     },
     // 处理数据
-    handleData() {
+    handleData(type) {
       const ruleForm = JSON.parse(JSON.stringify(this.ruleForm));
       ruleForm.html = `<html>${ruleForm.html}</html>`;
+
       this.fileList.forEach(item => {
         ruleForm.attachList.push({
           originUrl: item.url,
@@ -379,56 +353,88 @@ export default {
           fileSize: item.fileSize
         });
       });
-      // 从新邮件进入
-      if (this.emailType == "newEmail") {
-        delete ruleForm.draftId;
+      let data = {
+        boxId: ruleForm.boxId,
+        subject: ruleForm.subject,
+        fromAddr: ruleForm.fromAddr,
+        toAddr: ruleForm.toAddr,
+        ccAddr: ruleForm.ccAddr,
+        html: ruleForm.html,
+        attachList: ruleForm.attachList
+      };
+      if (this.emailType == "draftBox") {
+        if (type == "saveDraft") {
+          data.id = ruleForm.draftId;
+        } else {
+          data.draftId = ruleForm.draftId;
+        }
       }
-      return ruleForm;
+      if ( typeof ruleForm.templateId == "number") {
+         data.templateId = ruleForm.templateId;
+        if (type == "saveDraft") {
+           data.complaintLevelOneId = ruleForm.complaintLevelOneId;
+          data.complaintLevelTwoId = ruleForm.complaintLevelTwoId;
+        } else {
+            data.bocomplaintLevelOneIdxId = ruleForm.complaintLevelOneId;
+          data.bocomplaintLevelTwoIdxId = ruleForm.complaintLevelTwoId;
+        }
+      }
+
+      return data;
     },
     // 发送 草稿箱id,如果不为空，说明是在草稿箱那里发送的
     postData(type) {
-      if (this.handleData()) {
-        this.$loading({
-          text: `${type == "sendMail" ? "发送中..." : "存储草稿中..."}`,
-          background: "rgba(0, 0, 0, 0.8)"
-        });
-        this.API[type](this.handleData())
-          .then(res => {
-            if (res.code === 0) {
-              this.initData();
-              this.$loading().close();
-              setTimeout(() => {
-                this.$message.success(
-                  `${type == "sendMail" ? "发送成功" : "存储草稿成功"}`
-                );
-              }, 200);
-
-              if (this.emailType == "newEmail") {
-                this.$router.go(-1);
-                this.setActiveMenu(this.lastOperation.operate);
-                this.setEmailType(this.lastOperation.operate);
-                this.clearSessionStorage();
-              } else {
-                this.close();
-                this.queryDraftEmailByPage();
-              }
-            } else {
-              this.$loading().close();
-            }
-          })
-          .catch(() => {
+      let data = this.handleData(type);
+      this.$loading({
+        text: `${type == "sendMail" ? "发送中..." : "存储草稿中..."}`,
+        background: "rgba(0, 0, 0, 0.8)"
+      });
+      this.API[type](data)
+        .then(res => {
+          if (res.code === 0) {
             this.$loading().close();
             setTimeout(() => {
-              this.$message.error("网络故障,请重新操作");
+              this.$message.success(
+                `${type == "sendMail" ? "发送成功" : "存储草稿成功"}`
+              );
             }, 200);
-          });
-      }
+
+            if (this.emailType == "newEmail") {
+              this.$router.go(-1);
+              this.setActiveMenu(this.lastOperation.operate);
+              this.setEmailType(this.lastOperation.operate);
+              this.clearSessionStorage();
+            } else {
+              this.close();
+              this.queryDraftEmailByPage();
+            }
+          } else {
+            this.$loading().close();
+          }
+        })
+        .catch(() => {
+          this.$loading().close();
+          setTimeout(() => {
+            this.$message.error("网络故障,请重新操作");
+          }, 200);
+        });
     },
     initData() {
       this.allFileSize = 0;
-      this.ruleForm = {};
-      this.ruleForm.fromAddr = this.emailBoxData.emailUsername;
-      this.ruleForm.boxId = this.emailBoxData.boxId;
+      this.fileList = [];
+      this.ruleForm = {
+        boxId: this.emailBoxData.boxId,
+        subject: "",
+        fromAddr:this.emailBoxData.emailUsername,
+        toAddr: "",
+        ccAddr: "",
+        html: "",
+        draftId: "",
+        attachList: [],
+        complaintLevelTwoId: "",
+        complaintLevelOneId: "",
+        templateId:""
+      };
     },
     // 删除草稿
     deleteDraft(type) {
@@ -441,13 +447,14 @@ export default {
       this.setIsSelectEmail(false);
     },
     destroyed() {
-      window.removeEventListener("beforeunload",this.setSession())
-    },
+      window.removeEventListener("beforeunload", this.setSession());
+    }
   }
 };
 </script>
 
 <style lang="less" scoped>
+@import "~@/assets/css/variables.less";
 .emailContent {
   position: absolute;
   left: 500px;
@@ -474,7 +481,7 @@ export default {
       }
       &.new {
         font-size: 14px;
-        background-color: #1abc9c;
+        background-color: @themeColor;
         color: white;
         width: 100px;
         cursor: pointer;
@@ -492,7 +499,7 @@ export default {
       height: 30px;
       &:nth-child(1) {
         color: #fff;
-        background: #1abc9c;
+        background: @themeColor;
       }
     }
   }

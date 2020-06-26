@@ -24,7 +24,7 @@
               <el-input min="0" type="number" @blur="() => {if (this.formData.emailCategorySortId < 0) {this.formData.emailCategorySortId = 0} else if (this.formData.emailCategorySortId > 999) {this.formData.emailCategorySortId = 999}}" v-model="formData.emailCategorySortId" placeholder="请输入分类排序"></el-input>
             </el-form-item>
             <el-form-item label="分类描述：">
-              <el-input type="textarea" maxlength="100" :rows="7" v-model="formData.emailCategoryDescribe" placeholder="请输入内容"></el-input>
+              <el-input type="textarea" maxlength="100" :rows="12" v-model="formData.emailCategoryDescribe" placeholder="请输入内容"></el-input>
             </el-form-item>
             <el-form-item>
               <div class="submit" @click="submit('formData')">提交</div>
@@ -143,6 +143,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "~@/assets/css/variables.less";
 .addType {
   /deep/.el-input--small {
     .el-input__inner {
@@ -167,6 +168,7 @@ export default {
     border: 1px solid rgb(228, 228, 228);
     border-top: none;
     overflow: hidden;
+    height: calc(100% - 50px);
     .base {
       box-sizing: border-box;
       width: 510px;
@@ -185,7 +187,7 @@ export default {
       height: 35px;
       line-height: 35px;
       text-align: center;
-      background-color: #1ABC9C;
+      background-color:  @themeColor;
       margin-top: 20px;
       border-radius: 4px;
       color: white;

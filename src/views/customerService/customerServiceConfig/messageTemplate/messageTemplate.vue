@@ -131,7 +131,7 @@ export default {
   mounted() {
     if (this.roleCtl.emailTemplate_query) {
       this.queryList();
-      this.queryShopNameList();
+      this.queryAllShopNameList();
       this.queryAllCategoryRule();
     }
   },
@@ -186,8 +186,8 @@ export default {
         }
       });
     },
-    queryShopNameList() {
-      this.API.queryShopNameList().then(res => {
+    queryAllShopNameList() {
+      this.API.queryAllShopNameList().then(res => {
         if (res.code === 0) {
           this.shopNameList = [...res.data];
         }
@@ -267,6 +267,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "~@/assets/css/variables.less";
 .brandManagement {
   .content {
     /deep/.el-input--small .el-input__inner {
@@ -278,7 +279,7 @@ export default {
     color: #ccc;
   }
   /deep/.el-switch__label--right {
-    color: #1abc9c;
+    color: @themeColor;
   }
   box-sizing: border-box;
   padding: 20px 50px;
@@ -308,7 +309,7 @@ export default {
         }
         &.new {
           font-size: 14px;
-          background-color: #1abc9c;
+          background-color: @themeColor;
           color: white;
           width: 100px;
           cursor: pointer;
@@ -329,9 +330,9 @@ export default {
         &.sel {
           width: 80px;
           font-size: 14px;
-          border: 1px solid #1abc9c;
+          border: 1px solid @themeColor;
           border-radius: 4px;
-          color: #1abc9c;
+          color: @themeColor;
           cursor: pointer;
           text-align: center;
         }
@@ -339,7 +340,7 @@ export default {
           width: 180px;
           font-size: 14px;
           border-radius: 4px;
-          color: #1abc9c;
+          color: @themeColor;
           margin-right: 20px;
         }
         .selList {

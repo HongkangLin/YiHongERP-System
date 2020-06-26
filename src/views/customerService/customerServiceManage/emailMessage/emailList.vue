@@ -40,8 +40,11 @@
       :data="tableData"
       tooltip-effect="dark"
       @selection-change="handleSelectionChange"
+      @current-change="handleCurrentChange"
       @row-click="openDetails"
+      :highlight-current-row="true"
       :class="{'setTable':emailType=='draftBox'}"
+      class="setScrollbar"
     >
       <el-table-column type="selection" width="25"></el-table-column>
       <el-table-column label="全选">
@@ -49,20 +52,21 @@
           <div style="text-align:justify">
             <span class="sender">
               <span
+                v-if="scope.row.replyFlag!=1&&emailType!='draftBox'"
                 :class="scope.row.seenFlag==1?'reply':'notReply'"
-                v-if="emailType!='draftBox'"
               ></span>
-              <img class="replied" src="../../../../assets/image/svg/reply.svg" v-if="scope.row.replyPlatformFlag==1&&(emailType.includes('standInsideLetter')||emailType.includes('buyers'))"/>
-              {{scope.row.fromAddr||scope.row.fromAlias}}
+              <img
+                class="replied"
+                src="../../../../assets/image/svg/reply.svg"
+                v-if="scope.row.replyFlag==1"
+              />
+              {{scope.row.showName}}
             </span>
             <i class="el-icon-paperclip" v-if="scope.row.resourceCount"></i>
             <span class="sendTime">{{scope.row.createTime||scope.row.sentDate}}</span>
           </div>
           <div class="content">{{scope.row.subjectName||scope.row.sujectName||'&lt;无主题&gt;'}}</div>
-          <div
-            v-if="scope.row.replyPlatformFlag==1&&(emailType.includes('standInsideLetter')||emailType.includes('buyers'))"
-            class="tips"
-          >已在平台回复</div>
+          <div v-if="scope.row.replyPlatformFlag==1" class="tips">已在平台回复</div>
         </template>
       </el-table-column>
     </el-table>
@@ -90,38 +94,14 @@ export default {
         pageSize: 20,
         total: 0
       },
-      curId: "",
       rangeDate: "",
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
         }
-        // shortcuts: [
-        //   {
-        //     text: "今天",
-        //     onClick(picker) {
-        //       picker.$emit("pick", new Date());
-        //     }
-        //   },
-        //   {
-        //     text: "昨天",
-        //     onClick(picker) {
-        //       const date = new Date();
-        //       date.setTime(date.getTime() - 3600 * 1000 * 24);
-        //       picker.$emit("pick", date);
-        //     }
-        //   },
-        //   {
-        //     text: "一周前",
-        //     onClick(picker) {
-        //       const date = new Date();
-        //       date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-        //       picker.$emit("pick", date);
-        //     }
-        //   }
-        // ]
       },
-      isActive: false
+      isActive: false,
+      currentRow: null
     };
   },
   watch: {
@@ -135,27 +115,24 @@ export default {
         this.delData(this.emailType);
       }
     },
-    // draftEmail: {
-    //   handler(newVal) {
-    //     if (newVal.code === 0) {
-    //       newVal.data.list.forEach(item => {
-    //         item.createTime = item.createTime.split(" ")[0];
-    //       });
-    //       this.tableData =
-    //         newVal.data.pageNum > 1
-    //           ? this.tableData.concat(newVal.data.list)
-    //           : newVal.data.list;
-    //       this.pageData.pageSize = newVal.data.pageSize;
-    //       this.pageData.total = newVal.data.total;
-    //     }
-    //   },
-    //   deep: true
-    // }
     emailList: {
       handler(newVal) {
         if (newVal.code === 0) {
           newVal.data.list.forEach(item => {
-            item.createTime = item.createTime?item.createTime.split(" ")[0]:item.sentDate.split(" ")[0];
+            item.createTime = item.createTime
+              ? item.createTime.split(" ")[0]
+              : item.sentDate.split(" ")[0];
+
+            if (this.emailType == "draftBox") {
+              item.showName =
+                item.toAddr || "<无收件人>";
+            } else {
+              if (item.fromAddr == this.emailBoxData.emailUsername) {
+                item.showName = item.toMainAlias || item.toMainAddr;
+              } else {
+                item.showName = item.fromAlias || item.fromAddr;
+              }
+            }
           });
           this.tableData =
             newVal.data.pageNum > 1
@@ -203,12 +180,12 @@ export default {
     ...mapState("email", {
       emailType: state => state.emailType,
       itemList: state => state.itemList,
-      emailList:state => state.emailList,
+      emailList: state => state.emailList,
       isSelectEmail: state => state.isSelectEmail,
-      // draftEmail: state => state.draftEmail,
       emailBoxData: state => state.emailBoxData,
       itemId: state => state.mailObj.itemId,
-      itemFlag: state => state.mailObj.itemFlag
+      itemFlag: state => state.mailObj.itemFlag,
+      currentId: state => state.currentId
     }),
     ...mapGetters("email", ["selectList"])
   },
@@ -217,8 +194,16 @@ export default {
     ...mapMutations("email", [
       "setMultipleSelection",
       "setIsSelectEmail",
-      "setMailObj"
+      "setMailObj",
+      "openDetailResetAsideNum",
+      "setcurReply",
+      "setCurrentId"
     ]),
+    // 高亮当前行
+    handleCurrentChange(val) {
+      this.currentRow = val;
+      // val.seenFlag=1;
+    },
     // 展示日期组件
     showDate() {
       this.isActive = !this.isActive;
@@ -226,8 +211,8 @@ export default {
     },
     // 选择日期
     selectDate(val) {
-      console.log(this.rangeDate);
-      console.log(val);
+      // console.log(this.rangeDate);
+      // console.log(val);
     },
     delData(val) {
       this.tableData = [];
@@ -238,7 +223,7 @@ export default {
       };
       this.searchValue = "";
       if (val === "draftBox") {
-        this.queryDraftEmailByPage({ pageNum: 1 });
+        this.queryDraftEmailByPage();
       } else if (val === "newEmail") {
       } else {
         let itemId, itemFlag;
@@ -253,13 +238,28 @@ export default {
           }
         });
         this.setMailObj({ itemId, itemFlag });
-        this.queryEmailByPage({ pageNum: 1 });
+        this.queryEmailByPage();
       }
     },
     // 邮件详情
     openDetails(row) {
+      // 修改待回复数量
+      if (row.replyFlag == 0) {
+        this.setcurReply(row);
+      }
+
+      // 已读变未读状态修改
+      if (row.messageId && row.seenFlag == 0) {
+        this.$nextTick(() => {
+          this.openDetailResetAsideNum({ type: "unseen" });
+          row.seenFlag = 1;
+        });
+      }
+
+      // 展开详情 id--草稿箱  messageId--其他所有类型
       if (row.id || row.messageId) {
-        this.curId = row.id || row.messageId;
+        let currentId = row.id || row.messageId;
+        this.setCurrentId(currentId);
         this.$emit("openDetails", row.id || row.messageId);
       }
     },
@@ -267,23 +267,23 @@ export default {
     handleSelectionChange(val) {
       this.setMultipleSelection(val);
     },
+    // 查询
     search() {
-      // if (!this.searchValue) return;
       if (this.emailType == "draftBox") {
         this.queryDraftEmailByPage({
-          pageNum: 1,
           searchValue: this.searchValue,
-          searchType: this.searchType
+          searchType: this.searchType,
+          pageNum: 1
         });
       } else {
         this.queryEmailByPage({
-          pageNum: 1,
           searchValue: this.searchValue,
-          searchType: this.searchType
+          searchType: this.searchType,
+          pageNum: 1
         });
       }
     },
-    // 删除
+    // 草稿箱删除邮件
     batchDel(obj) {
       let list = { draftIdList: [] };
       if (obj && obj.type == "single") {
@@ -299,16 +299,11 @@ export default {
       this.API.batchDelDraft(list).then(res => {
         if (res.code === 0) {
           // 已打开的邮件在删除的列表中需要关闭右侧详情
-          if (list.draftIdList.includes(this.curId)) {
+          if (list.draftIdList.includes(this.currentId)) {
             this.setIsSelectEmail(false);
           }
-          for (let j = 0; j < list.draftIdList.length; j++) {
-            for (let i = 0; i < this.tableData.length; i++) {
-              if (this.tableData[i].id == list.draftIdList[j]) {
-                this.tableData.splice(i, 1);
-              }
-            }
-          }
+          this.setMultipleSelection([]);
+          this.queryDraftEmailByPage();
           this.$message.success("删除邮件成功");
         }
       });
@@ -318,6 +313,7 @@ export default {
 </script>
 
 <style scoped  lang="less">
+@import "~@/assets/css/variables.less";
 .msg_right {
   position: absolute;
   top: 60px;
@@ -336,10 +332,17 @@ export default {
     border-right: 1px solid #e4e4e4;
     position: relative;
     padding: 0 8px;
-    &input:nth-child(2) {
-      padding-right: 55px;
-      padding-left: 4px;
+    .el-input {
+      // input:nth-of-type(1) {
+      //   padding-right: 55px;
+      //   padding-left: 4px;
+      // }
+      /deep/.el-input__inner {
+        padding-right: 55px;
+        padding-left: 4px;
+      }
     }
+
     .select {
       width: 80px;
       padding: 0;
@@ -407,27 +410,6 @@ export default {
   }
   /* 搜索框样式*/
 
-  /*修改滚动条样式*/
-  /deep/.el-table::-webkit-scrollbar {
-    width: 2px;
-    height: 6px;
-  }
-  /deep/.el-table::-webkit-scrollbar-track {
-    background: rgb(239, 239, 239);
-    border-radius: 2px;
-  }
-  /deep/.el-table::-webkit-scrollbar-thumb {
-    background: #bfbfbf;
-    border-radius: 4px;
-  }
-  /deep/.el-table::-webkit-scrollbar-thumb:hover {
-    background: #333;
-  }
-  /deep/.el-table::-webkit-scrollbar-corner {
-    background: #179a16;
-  }
-  /*修改滚动条样式*/
-
   /* 表格样式及内部样式*/
   /deep/.el-table {
     overflow-y: auto;
@@ -486,12 +468,15 @@ export default {
   /deep/.el-table__row {
     position: relative;
   }
+  /deep/.el-table__body tr.current-row > td {
+    background: #f2f2f2 !important;
+  }
   /* 表格样式及内部样式*/
   .reply {
     background: #a5a5a5;
   }
   .notReply {
-    background: #1abc9c;
+    background: @themeColor;
   }
   .content {
     // position: relative;
@@ -502,7 +487,8 @@ export default {
   .sender {
     color: #666;
     font-size: 12px;
-    width: 160px;
+    max-width: 160px;
+    margin-right: 5px;
     display: inline-block;
     overflow: hidden; //超出的文本隐藏
     text-overflow: ellipsis; //溢出用省略号显示
@@ -522,7 +508,7 @@ export default {
       width: 12px;
       height: 12px;
       position: absolute;
-      top: 15px;
+      top: 13px;
       left: -18px;
       font-size: 14px;
       font-weight: 600;
@@ -530,8 +516,7 @@ export default {
   }
   /deep/.el-icon-paperclip {
     position: absolute;
-    top: 15px;
-    left: 88px;
+    top: 13px;
     font-size: 14px;
     font-weight: 600;
   }

@@ -100,7 +100,7 @@ export default {
   methods: {
     init() {
       let bussinessNo = this.$route.query.bussinessNo;
-      window.axios.get(`/finance/queryPayApproveDetail/${bussinessNo}`).then((data) => {
+      window.axios.get(`/finance/queryPurchasePayDetail4Approve/${bussinessNo}`).then((data) => {
         if (data.code !== 0) return
         data.data.financePurchaseDetailList.map((item) => {
           // 采购状态

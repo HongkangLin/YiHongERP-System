@@ -88,9 +88,109 @@ function saveAs(blob, filename) {
     }
 }
 
+function jsonMerge(jsonArr,keyArr){
+	let newJson = [] //合并好的数据都放在这个数组里
+	jsonArr.forEach((itemJson,indexJson)=>{
+		let mark = -1
+		let finded = newJson.find((itemFind, indexFind) => {
+			if (itemFind[keyArr[0]] === itemJson[keyArr[0]]) {
+				mark = indexFind
+				return itemFind[keyArr[0]] === itemJson[keyArr[0]]
+			}
+		})
+		if(!finded){
+			let value = {}
+			value[keyArr[0]] = itemJson[keyArr[0]]
+			value['children'] = []
+			let info = {}
+			for(let i in itemJson){
+				if(i!==keyArr[0]){
+					info[i] = itemJson[i]
+				}
+			}
+			value['children'].push(info)
+
+   			// console.log(info)                            
+			newJson.push(value)
+		}else{
+			let info = {}
+			for(let i in itemJson){
+				if(i!==keyArr[0]){
+					info[i] = itemJson[i]
+				}
+			}
+			newJson[mark]['children'].push(info)
+       
+		}
+	})
+	// 递归的条件是不断的缩减keyArr的length，每次都去除第零个，直到为0
+	if(keyArr.length === 1){
+		return newJson
+	}else{
+		return newJson.map((itemInfo)=>{
+			let newKeyArr = []
+			keyArr.forEach((item,index)=>{
+				if(index>0){
+					newKeyArr.push(item)
+				}
+			})
+			return{
+				[keyArr[0]]:itemInfo[keyArr[0]],
+				'children':jsonMerge(itemInfo['children'],newKeyArr)
+			}
+		})
+	}
+}
+
+ /**
+     *获取当前时间
+     *format=1精确到天
+     *format=2精确到分
+    */
+   function getCurrentDate(format) {
+    var now = new Date();
+    var year = now.getFullYear(); //得到年份
+    var month = now.getMonth();//得到月份
+    var date = now.getDate();//得到日期
+    var day = now.getDay();//得到周几
+    var hour = now.getHours();//得到小时
+    var minu = now.getMinutes();//得到分钟
+    var sec = now.getSeconds();//得到秒
+    month = month + 1;
+    if (month < 10) month = "0" + month;
+    if (date < 10) date = "0" + date;
+    if (hour < 10) hour = "0" + hour;
+    if (minu < 10) minu = "0" + minu;
+    // if (sec < 10) sec = "0" + sec;
+    var time = "";
+    //精确到天
+    if(format==1){
+      time = year + "-" + month + "-" + date;
+    }
+    //精确到分
+    else if(format==2){
+      time = year + "-" + month + "-" + date+ " " + hour + ":" + minu;
+    }
+    return time;
+  }
+
+
+  function escape(str) {
+    str = str.replace(/&/g, '&amp;')
+    str = str.replace(/</g, '&lt;')
+    str = str.replace(/>/g, '&gt;')
+    str = str.replace(/"/g, '&quto;')
+    str = str.replace(/'/g, '&#39;')
+    str = str.replace(/`/g, '&#96;')
+    str = str.replace(/\//g, '&#x2F;')
+    return str
+  }
 
 export {
     request,
     encrypt,
-    downloadFile
+    downloadFile,
+    jsonMerge,
+    getCurrentDate,
+    escape
 }

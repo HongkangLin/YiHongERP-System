@@ -306,9 +306,9 @@ const routes = [{
 		name: 'emailMessage',
 		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceManage/emailMessage/emailMessage.vue'),
 	}, {
-		path: '/emailMainBody', // 客服-客服管理-新邮件
-		name: 'emailMainBody',
-		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceManage/emailMessage/emailMainBody.vue'),
+		path: '/draftBoxAndNewEmail', // 客服-客服管理-新邮件
+		name: 'draftBoxAndNewEmail',
+		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceManage/emailMessage/draftBoxAndNewEmail.vue'),
 	}, {
 		path: '/F1002/F100201', // 客服-客服配置-邮箱绑定
 		name: 'bindEmail',

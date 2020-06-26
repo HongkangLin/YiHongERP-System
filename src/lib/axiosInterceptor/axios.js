@@ -25,7 +25,7 @@ axios.interceptors.response.use(function (response) {
     localStorage.removeItem('token');
     location.replace(location.origin + '/#/login');
   } else if (response.data.code !== 0) { // 请求不成功全局提示
-    Message.error(response.data.message);
+    Message.error(response.data.message||"请求出错");
   }
   return response.data;
 }, function (error) {
