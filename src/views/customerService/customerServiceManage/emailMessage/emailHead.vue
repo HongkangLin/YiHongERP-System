@@ -69,7 +69,7 @@ export default {
       return this.roleCtl.mail_sendMail&&this.emailType.includes("standInsideLetter")&&!this.emailType.includes("replied");
     },
     isShowMoveEmailItem() {
-      return !this.emailType.includes("standInsideLetter")&&!this.emailType.includes("replied")&&!this.emailType.includes("sended")
+      return !this.emailType.includes("standInsideLetter")&&!this.emailType.includes("buyers")&&!this.emailType.includes("replied")&&!this.emailType.includes("sended")
     }
   },
   methods: {
