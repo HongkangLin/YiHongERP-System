@@ -113,21 +113,51 @@
         <div class="title">订单信息</div>
         <el-form label-position="top" label-width="80px" :model="formData">
           <el-form-item label="ASIN" class="asin">
-            <div @click="jump('asin')" style="color: #3bb19c;height: 32px;">{{formData.asin}}</div>
+            <div @click="jump('asin')">{{formData.asin}}</div>
             <img src="../../../../assets/image/svg/pen.svg" @click="openPrompt('asin')" />
           </el-form-item>
           <el-form-item label="订单号" class="orderNo">
-            <div @click="jump('orderNo')" style="color: #3bb19c;height: 32px;">{{formData.orderNo}}</div>
+            <div @click="jump('orderNo')" >{{formData.orderNo}}</div>
             <img src="../../../../assets/image/svg/pen.svg" @click="openPrompt('orderNo')" />
           </el-form-item>
-          <el-form-item label="下单时间">
+          <el-form-item label="下单时间"  class="orderTime">
             <div>{{formData.orderTime||'--'}}</div>
+            <el-date-picker
+              v-model="formData.orderTime"
+              ref="orderTime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              default-time="23:59:59"
+              @change="chooseDate('orderTime')"
+              :picker-options="pickerOptions"
+              type="datetime">
+            </el-date-picker>
+             <img src="../../../../assets/image/svg/pen.svg" @click="showDatePicker('orderTime')" />
           </el-form-item>
-          <el-form-item label="发货时间">
+          <el-form-item label="发货时间"  class="deliveryTime">
             <div>{{formData.deliveryTime||'--'}}</div>
+            <el-date-picker
+              v-model="formData.deliveryTime"
+               ref="deliveryTime"
+               value-format="yyyy-MM-dd HH:mm:ss"
+               default-time="23:59:59"
+               @change="chooseDate('deliveryTime')"
+               :picker-options="pickerOptions"
+              type="datetime">
+            </el-date-picker>
+             <img src="../../../../assets/image/svg/pen.svg" @click="showDatePicker('deliveryTime')" />
           </el-form-item>
-          <el-form-item label="收货时间">
+          <el-form-item label="收货时间"  class="receiveTime">
             <div>{{formData.receiveTime||'--'}}</div>
+            <el-date-picker
+              v-model="formData.receiveTime"
+              ref="receiveTime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              default-time="23:59:59"
+              @change="chooseDate('receiveTime')"
+              :picker-options="pickerOptions"
+              type="datetime">
+            </el-date-picker>
+             <img src="../../../../assets/image/svg/pen.svg" @click="showDatePicker('receiveTime')" />
           </el-form-item>
           <el-form-item label="产品" class="productDesc">
             <div>{{formData.productDesc||'--'}}</div>
@@ -200,7 +230,12 @@ export default {
       loading: false,
       otherAlias: "",
       otherAddr: "",
-      isResouceShow:0
+      isResouceShow:0,
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      }
     };
   },
   created() {},
@@ -386,7 +421,14 @@ export default {
       this.queryItemList();
     },
     openPrompt(type) {
-      this.$prompt("请输入", "提示", {
+      let msg;
+      let obj = {
+        asin:"请输入ASIN",
+        orderNo:"请输入订单号",
+        productDesc:"请输入产品"
+      }
+      msg = obj[type];
+      this.$prompt(msg, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         inputValidator(value) {
@@ -404,12 +446,21 @@ export default {
         })
         .catch(() => {});
     },
+    showDatePicker(type){
+      this.$refs[type].handleFocus()
+    },
+    chooseDate(type){
+      console.log(this.formData[type])
+      // this.formData = Object.assign(this.formData, { [type]: value });
+      this.saveEmailOrder();
+    },
     saveEmailOrder() {
       let data = { ...this.formData };
       data.messageId = this.messageId;
       this.API.saveEmailOrder(data).then(res => {
         if(res.code==0&&res.data!=null){
           this.formData.id = res.data
+          this.$message.success("编辑成功")
         }
       });
     },
@@ -563,7 +614,11 @@ export default {
   }
 };
 </script>
-
+<style>
+.el-time-panel{
+  width: 155px;
+}
+</style>
 <style lang="less" scoped>
 @import "~@/assets/css/variables.less";
 .emailContent {
@@ -704,7 +759,7 @@ export default {
       font-weight: 400;
       font-style: normal;
       font-size: 12px;
-      color: #3bb19c;
+      color:  @themeColor;
       width: 100%;
       text-align: center;
       cursor: pointer;
@@ -811,11 +866,8 @@ export default {
           font-weight: 650;
           color: #666666;
         }
-        // /deep/.el-form-item__content{
-        //   height: 32px;
-        // }
         /deep/.el-input__inner {
-          color: #3bb19c;
+          color: @themeColor;
           border: none;
           outline: none;
           padding: 0;
@@ -823,10 +875,15 @@ export default {
       }
 
       .asin,
-      .orderNo {
+      .orderNo,
+      .orderTime,
+      .deliveryTime,
+      .receiveTime {
         .el-form-item__content {
           display: flex;
           cursor: pointer;
+          color:  @themeColor;
+          height: 32px;
           div {
             overflow: hidden;
             text-overflow: ellipsis;
@@ -845,6 +902,18 @@ export default {
           }
         }
       }
+      .orderTime,
+      .deliveryTime,
+      .receiveTime{
+        .el-date-editor{
+          visibility: hidden;
+          position: absolute;
+          z-index: 6;
+          .el-input__suffix{
+            display: none !important;
+          }
+        }
+      }
       .productDesc {
         .el-form-item__content {
           display: flex;
@@ -856,7 +925,7 @@ export default {
             font-style: normal;
             font-size: 12px;
             line-height: 20px;
-            color: #3bb19c;
+            color:  @themeColor;
             text-align: left;
           }
           &:hover {
