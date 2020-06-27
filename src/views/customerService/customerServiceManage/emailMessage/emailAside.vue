@@ -139,8 +139,14 @@ export default {
       this.API.queryShopNameList().then(res => {
         if (res.code === 0 && res.data.length) {
           this.shopList = res.data;
-          this.curShopObj = res.data[0];
-          this.queryBoxInfoByShopId({ shopId: this.curShopObj.shopId });
+          let index = res.data.findIndex(item=>{return item.shopId == window.localStorage.shopId});
+          if(index!=-1){
+            this.curShopObj = res.data[index];
+          }else{
+            this.curShopObj = res.data[0];
+            window.localStorage.shopId = this.curShopObj.shopId;
+          }
+          this.queryBoxInfoByShopId({shopId:this.curShopObj.shopId });
         } else {
           this.$message.error("没有数据");
           return;
@@ -151,7 +157,14 @@ export default {
       this.API.queryBoxInfoByShopId(data).then(res => {
         if (res.code === 0 && res.data.length) {
           this.emailList = res.data;
-          this.handleEmail(res.data[0]);
+          let index = res.data.findIndex(item=>{return item.boxId == window.localStorage.boxId});
+          let command;
+          if(index!=-1){
+            command = res.data[index];
+          }else{
+            command = res.data[0];
+          }
+          this.handleEmail(command);
         } else {
           this.$message.error("没有数据");
           return;
@@ -188,10 +201,13 @@ export default {
       this.setMultipleSelection([]);
     },
     handleShopName(command) {
+      window.localStorage.shopId = command.shopId;
       this.curShopObj = command;
       this.queryBoxInfoByShopId({ shopId: command.shopId });
     },
     handleEmail(command) {
+       
+      window.localStorage.boxId = command.boxId;
       this.curEmailObj = command;
       let obj = { ...command };
       obj.shopName = this.curShopObj.shopName;
