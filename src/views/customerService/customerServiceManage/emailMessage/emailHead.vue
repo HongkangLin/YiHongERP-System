@@ -44,7 +44,7 @@ export default {
     ...mapState("email", {
       emailType: state => state.emailType,
       emailBoxData: state => state.emailBoxData,
-            currentId: state => state.currentId
+      curEmailObj: state => state.curEmailObj
     }),
     ...mapGetters("email", ["selectList"]),
     isShowSync() {
@@ -76,7 +76,8 @@ export default {
     ...mapMutations("email", [
       "setMultipleSelection",
       "moveEmailResetAsideNum",
-      "markReadOrUnreadResetAsideNum"
+      "markReadOrUnreadResetAsideNum",
+      "setIsSelectEmail",
     ]),
     ...mapActions("email", [
       "syncMail",
@@ -155,7 +156,7 @@ export default {
       };
       this[type](data).then(res => {
         if (res.code === 0) {
-           if (this.selectList.includes(this.currentId)) {
+           if (this.selectList.includes(this.curEmailObj.messageId)) {
             this.setIsSelectEmail(false);
           }
           this.setMultipleSelection([]);

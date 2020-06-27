@@ -114,11 +114,11 @@
         <el-form label-position="top" label-width="80px" :model="formData">
           <el-form-item label="ASIN" class="asin">
             <div @click="jump('asin')">{{formData.asin}}</div>
-            <img src="../../../../assets/image/svg/pen.svg" @click="openPrompt('asin')" />
+            <img src="../../../../assets/image/svg/pen.svg" @click="openPrompt('asin')"  v-if="roleCtl.mail_sendMail"/>
           </el-form-item>
           <el-form-item label="订单号" class="orderNo">
             <div @click="jump('orderNo')" >{{formData.orderNo}}</div>
-            <img src="../../../../assets/image/svg/pen.svg" @click="openPrompt('orderNo')" />
+            <img src="../../../../assets/image/svg/pen.svg" @click="openPrompt('orderNo')"  v-if="roleCtl.mail_sendMail"/>
           </el-form-item>
           <el-form-item label="下单时间"  class="orderTime">
             <div>{{formData.orderTime||'--'}}</div>
@@ -131,7 +131,7 @@
               :picker-options="pickerOptions"
               type="datetime">
             </el-date-picker>
-             <img src="../../../../assets/image/svg/pen.svg" @click="showDatePicker('orderTime')" />
+             <img src="../../../../assets/image/svg/pen.svg" @click="showDatePicker('orderTime')"  v-if="roleCtl.mail_sendMail"/>
           </el-form-item>
           <el-form-item label="发货时间"  class="deliveryTime">
             <div>{{formData.deliveryTime||'--'}}</div>
@@ -144,7 +144,7 @@
                :picker-options="pickerOptions"
               type="datetime">
             </el-date-picker>
-             <img src="../../../../assets/image/svg/pen.svg" @click="showDatePicker('deliveryTime')" />
+             <img src="../../../../assets/image/svg/pen.svg" @click="showDatePicker('deliveryTime')"  v-if="roleCtl.mail_sendMail"/>
           </el-form-item>
           <el-form-item label="收货时间"  class="receiveTime">
             <div>{{formData.receiveTime||'--'}}</div>
@@ -157,7 +157,7 @@
               :picker-options="pickerOptions"
               type="datetime">
             </el-date-picker>
-             <img src="../../../../assets/image/svg/pen.svg" @click="showDatePicker('receiveTime')" />
+             <img src="../../../../assets/image/svg/pen.svg" @click="showDatePicker('receiveTime')"  v-if="roleCtl.mail_sendMail"/>
           </el-form-item>
           <el-form-item label="产品" class="productDesc">
             <div>{{formData.productDesc||'--'}}</div>
@@ -244,7 +244,7 @@ export default {
       emailType: state => state.emailType,
       isSelectEmail: state => state.isSelectEmail,
       emailBoxData: state => state.emailBoxData,
-      curReply: state => state.curReply
+      curEmailObj: state => state.curEmailObj
     }),
     loadingTxt() {
       return this.loading ? "加载中..." : "加载更多";
@@ -395,7 +395,7 @@ export default {
     },
     markUnRead() {
       this.API.markUnRead({
-        idList: [this.curReply.uid],
+        idList: [this.curEmailObj.uid],
         boxId: this.emailBoxData.boxId
       }).then(res => {
         if (res.code === 0) {
@@ -406,7 +406,7 @@ export default {
     },
     markReplyOnPlatform() {
       this.API.markReplyOnPlatform({
-        idList: [this.curReply.uid],
+        idList: [this.curEmailObj.uid],
         boxId: this.emailBoxData.boxId
       }).then(res => {
         if (res.code === 0) {
@@ -598,13 +598,14 @@ export default {
             this.$message.success("操作成功");
             // 回复成功改变侧边啦数字
             if (
-              this.curReply.messageId == this.messageId &&
-              this.curReply.replyFlag == 0
+              this.curEmailObj.messageId == this.messageId &&
+              this.curEmailObj.replyFlag == 0
             ) {
               this.openDetailResetAsideNum({ type: "needReply" });
             }
           }
           this.$loading().close();
+          this.$emit("changeReplyStatus",this.originalId)
           this.queryChatRoom(this.originalId);
         })
         .catch(() => {

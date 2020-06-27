@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -103,7 +103,6 @@ export default {
       asideNum: state => state.asideNum,
       itemList: state => state.itemList
     }),
-    ...mapGetters("email", ["originalAsideNum"]),
     openeds() {
       let arr = [];
       this.itemList.forEach(item => {
@@ -120,7 +119,7 @@ export default {
       "setEmailBoxData",
       "setLastOperation",
       "setItemList",
-      "setAsideNum"
+      "setCurEmailObj"
     ]),
     ...mapActions("email", ["queryItemList"]),
     delData(itemName, item) {
@@ -199,6 +198,8 @@ export default {
       this.setEmailType(keys[index]);
       this.setIsSelectEmail(false);
       this.setMultipleSelection([]);
+      this.setCurEmailObj({})
+
     },
     handleShopName(command) {
       window.localStorage.shopId = command.shopId;

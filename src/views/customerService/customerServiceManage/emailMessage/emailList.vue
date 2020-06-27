@@ -140,6 +140,7 @@ export default {
               : newVal.data.list;
           this.pageData.pageSize = newVal.data.pageSize;
           this.pageData.total = newVal.data.total;
+          this.setEmailList({})
         }
       },
       deep: true
@@ -185,7 +186,7 @@ export default {
       emailBoxData: state => state.emailBoxData,
       itemId: state => state.mailObj.itemId,
       itemFlag: state => state.mailObj.itemFlag,
-      currentId: state => state.currentId
+      curEmailObj: state => state.curEmailObj,
     }),
     ...mapGetters("email", ["selectList"])
   },
@@ -196,8 +197,8 @@ export default {
       "setIsSelectEmail",
       "setMailObj",
       "openDetailResetAsideNum",
-      "setcurReply",
-      "setCurrentId"
+      "setCurEmailObj",
+      "setEmailList"
     ]),
     // 高亮当前行
     handleCurrentChange(val) {
@@ -243,10 +244,6 @@ export default {
     },
     // 邮件详情
     openDetails(row) {
-      // 修改待回复数量
-      if (row.replyFlag == 0) {
-        this.setcurReply(row);
-      }
 
       // 已读变未读状态修改
       if (row.messageId && row.seenFlag == 0) {
@@ -258,8 +255,7 @@ export default {
 
       // 展开详情 id--草稿箱  messageId--其他所有类型
       if (row.id || row.messageId) {
-        let currentId = row.id || row.messageId;
-        this.setCurrentId(currentId);
+        this.setCurEmailObj(row); // 当前点击的邮件数据
         this.$emit("openDetails", row.id || row.messageId);
       }
     },
@@ -299,14 +295,24 @@ export default {
       this.API.batchDelDraft(list).then(res => {
         if (res.code === 0) {
           // 已打开的邮件在删除的列表中需要关闭右侧详情
-          if (list.draftIdList.includes(this.currentId)) {
+          if (list.draftIdList.includes(this.curEmailObj.id)) {
             this.setIsSelectEmail(false);
+            this.setCurEmailObj({})
           }
           this.setMultipleSelection([]);
           this.queryDraftEmailByPage();
           this.$message.success("删除邮件成功");
         }
       });
+    },
+    changeItemReplyStatus(val){
+      if(val){
+        this.tableData.forEach(item=>{
+          if(item.messageId==val&&item.replyFlag==0){
+            item.replyFlag = 1
+          }
+        })
+      }
     }
   }
 };

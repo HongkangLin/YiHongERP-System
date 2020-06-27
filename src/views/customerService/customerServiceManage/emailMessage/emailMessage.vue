@@ -21,6 +21,7 @@
       <!-- 站内信 -->
       <stand-inside-letter
         ref="standInsideLetter"
+        @changeReplyStatus="changeReplyStatus"
         v-if="emailType.includes('standInsideLetter')||emailType.includes('buyers')"
       ></stand-inside-letter>
       <!-- 非对话框形式 -->
@@ -103,6 +104,9 @@ export default {
     },
     deleteDraft(obj) {
       this.$refs["emailList"].batchDel(obj);
+    },
+    changeReplyStatus(val){
+       this.$refs["emailList"].changeItemReplyStatus(val);
     }
   },
   beforeRouteLeave (to, from, next) {

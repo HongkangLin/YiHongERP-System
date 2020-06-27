@@ -4,18 +4,15 @@ export default {
   state: {
     emailBoxData: {}, // 当前邮箱数据
     lastOperation: {}, // 上一次操作,新邮件返回时用到
-    emailType: 'standInsideLetter-all', // 操作类型
+    emailType: 'standInsideLetter-all', // 侧边栏点击类型
     activeMenu: "standInsideLetter-all",
     isSelectEmail: false, //是否选中邮件
-    draftEmail: {}, // 草稿箱数据
-    emailList: {}, // 草稿箱数据
+    emailList: {}, // 邮箱数据
     multipleSelection: [], //列表选中数据
     itemList: [], //侧边栏数据
     mailObj: {}, // 当前邮件数据
-    asideNum: {},
-    originalAsideNum: {},
-    curReply: {},
-    currentId:"" // 当前点击的列表id messageid
+    asideNum: {}, // 侧边栏数据
+    curEmailObj:{} // 当前点击的邮件列表
   },
   getters: {
     // 选中的邮件id列表
@@ -49,9 +46,6 @@ export default {
     }
   },
   mutations: {
-    setCurrentId(state,id){
-      state.currentId = id;
-    },
     setEmailBoxData(state, data) {
       state.emailBoxData = data;
     },
@@ -69,9 +63,6 @@ export default {
     },
     setEmailList(state, result) {
       state.emailList = { ...result };
-    },
-    setDraftEmail(state, result) {
-      state.draftEmail = { ...result };
     },
     setMultipleSelection(state, data) {
       state.multipleSelection = [...data];
@@ -96,9 +87,8 @@ export default {
       }
       state.asideNum = { ...obj }
     },
-
-    setcurReply(state, obj) {
-      state.curReply = { ...obj }
+    setCurEmailObj(state, obj) {
+      state.curEmailObj = { ...obj }
     }
   },
   actions: {
