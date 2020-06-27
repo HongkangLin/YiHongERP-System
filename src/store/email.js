@@ -102,6 +102,7 @@ export default {
     }
   },
   actions: {
+    // 生成侧边栏数组
     async queryItemList({ commit, state ,getters}){
       await API.queryItemList(state.emailBoxData.boxId).then(res=>{
         if (res.code === 0 && res.data.length) {
@@ -235,6 +236,7 @@ export default {
       return await API.moveEmailItem({
         boxId: state.emailBoxData.boxId,
         messageIdList: getters.selectList,
+        uidList: getters.uidList,
         targetItemId
       })
     }
