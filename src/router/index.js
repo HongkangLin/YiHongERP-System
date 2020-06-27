@@ -304,51 +304,51 @@ const routes = [{
 	}, {
 		path: '/F1001/F100101', // 客服-客服管理-邮件消息
 		name: 'emailMessage',
-		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceManage/emailMessage/emailMessage.vue'),
+		component: () => import(/* webpackChunkName: "emailMessage" */ '../views/customerService/customerServiceManage/emailMessage/emailMessage.vue'),
 	}, {
 		path: '/draftBoxAndNewEmail', // 客服-客服管理-新邮件
 		name: 'draftBoxAndNewEmail',
-		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceManage/emailMessage/draftBoxAndNewEmail.vue'),
+		component: () => import(/* webpackChunkName: "draftBoxAndNewEmail" */ '../views/customerService/customerServiceManage/emailMessage/draftBoxAndNewEmail.vue'),
 	}, {
 		path: '/F1002/F100201', // 客服-客服配置-邮箱绑定
 		name: 'bindEmail',
-		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceConfig/bindEmail/bindEmail.vue'),
+		component: () => import(/* webpackChunkName: "bindEmail" */ '../views/customerService/customerServiceConfig/bindEmail/bindEmail.vue'),
 	}, {
 		path: '/bindEmailCompnent', // 客服-客服配置-邮箱绑定1
 		name: 'bindEmailCompnent',
-		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceConfig/bindEmail/bindEmailCompnent.vue'),
+		component: () => import(/* webpackChunkName: "bindEmailCompnent" */ '../views/customerService/customerServiceConfig/bindEmail/bindEmailCompnent.vue'),
 	}, {
 		path: '/F1002/F100202', // 客服-客服配置-邮箱分类
 		name: 'emailClassify',
-		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceConfig/emailClassify/emailClassify.vue'),
+		component: () => import(/* webpackChunkName: "emailClassify" */ '../views/customerService/customerServiceConfig/emailClassify/emailClassify.vue'),
 	}, {
 		path: '/addClassify', // 客服-客服配置-新增分类
 		name: 'addClassify',
-		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceConfig/emailClassify/addClassify.vue'),
+		component: () => import(/* webpackChunkName: "addClassify" */ '../views/customerService/customerServiceConfig/emailClassify/addClassify.vue'),
 	}, {
 		path: '/F1002/F100203', // 客服-客服配置-分发规则
 		name: 'distributionRule',
-		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceConfig/distributionRule/distributionRule.vue'),
+		component: () => import(/* webpackChunkName: "distributionRule" */ '../views/customerService/customerServiceConfig/distributionRule/distributionRule.vue'),
 	}, {
 		path: '/addDistributionRule', // 客服-客服配置-分发规则
 		name: 'addDistributionRule',
-		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceConfig/distributionRule/addDistributionRule.vue'),
+		component: () => import(/* webpackChunkName: "addDistributionRule" */ '../views/customerService/customerServiceConfig/distributionRule/addDistributionRule.vue'),
 	}, {
 		path: '/F1002/F100204', // 客服-客服配置-消息模板
 		name: 'messageTemplate',
-		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceConfig/messageTemplate/messageTemplate.vue'),
+		component: () => import(/* webpackChunkName: "messageTemplate" */ '../views/customerService/customerServiceConfig/messageTemplate/messageTemplate.vue'),
 	}, {
 		path: '/createTemplate', // 客服-客服配置-创建模板
 		name: 'createTemplate',
-		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceConfig/messageTemplate/createTemplate.vue'),
+		component: () => import(/* webpackChunkName: "createTemplate" */ '../views/customerService/customerServiceConfig/messageTemplate/createTemplate.vue'),
 	}, {
 		path: '/F1002/F100205', // 客服-客服配置-投诉类型
 		name: 'complaintsType',
-		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceConfig/complaintsType/complaintsType.vue'),
+		component: () => import(/* webpackChunkName: "complaintsType" */ '../views/customerService/customerServiceConfig/complaintsType/complaintsType.vue'),
 	}, {
 		path: '/addComplaintsType', // 客服-客服配置-投诉类型
 		name: 'addComplaintsType',
-		component: () => import(/* webpackChunkName: "userRoleMgmt" */ '../views/customerService/customerServiceConfig/complaintsType/addComplaintsType.vue'),
+		component: () => import(/* webpackChunkName: "addComplaintsType" */ '../views/customerService/customerServiceConfig/complaintsType/addComplaintsType.vue'),
 	}]
 }, {
 	path: '/F0501/printPreviewPage', //采购付款单打印预览
