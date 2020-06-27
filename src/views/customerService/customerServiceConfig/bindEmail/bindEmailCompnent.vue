@@ -85,8 +85,12 @@
             ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitForm('ruleForm','bind')">立即绑定</el-button>
-            <el-button @click="submitForm('ruleForm')">测试邮箱状态</el-button>
+            <el-button
+              type="primary"
+              @click="submitForm('ruleForm','bind')"
+              :disabled="!isCheck"
+            >立即绑定</el-button>
+            <el-button @click="submitForm('ruleForm','checkBoxStatus')">测试邮箱状态</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -180,7 +184,8 @@ export default {
       id: "",
       encryptedPwd: "",
       isChange: 0,
-      shopNameList: []
+      shopNameList: [],
+      isCheck: false
     };
   },
   mounted() {
@@ -245,21 +250,14 @@ export default {
     async submitForm(formName, type) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.checkBoxStatus(this.dealData("checkBoxStatus"), type);
-          this.$loading({
-            text: "数据处理中....",
-            background: "rgba(0, 0, 0, 0.8)"
-          });
-        } else {
-          this.$message.error("请完善信息!");
-        }
-      });
-    },
-    checkBoxStatus(parmas, type) {
-      this.API.checkBoxStatus(parmas)
-        .then(res => {
-          if (res.code === 0) {
-            if (type) {
+          if (type == "checkBoxStatus") {
+            this.checkBoxStatus();
+          } else {
+            if (this.isCheck) {
+              this.$loading({
+                text: "数据处理中....",
+                background: "rgba(0, 0, 0, 0.8)"
+              });
               let operate;
               if (type === "bind" && this.id) {
                 operate = "updateBox";
@@ -267,13 +265,21 @@ export default {
                 operate = "addBox";
               }
               this.request(this.dealData(operate), operate);
-            } else {
-              this.$loading().close();
-              this.$message.success(`${res.message}`);
             }
-          } else {
-            this.$loading().close();
           }
+        } else {
+          this.$message.error("请完善信息!");
+        }
+      });
+    },
+    checkBoxStatus() {
+      let parmas = this.dealData("checkBoxStatus");
+      this.API.checkBoxStatus(parmas)
+        .then(res => {
+          if (res.code === 0) {
+            this.isCheck = true;
+          }
+          this.$message.success(`${res.message}`);
         })
         .catch(err => {
           this.$loading().close();
@@ -285,9 +291,9 @@ export default {
         .then(res => {
           this.$loading().close();
           if (res.code === 0) {
-            this.$message.success(`${res.message}`);
             this.$router.back();
           }
+          this.$message.success(`${res.message}`);
         })
         .catch(err => {
           this.$loading().close();
