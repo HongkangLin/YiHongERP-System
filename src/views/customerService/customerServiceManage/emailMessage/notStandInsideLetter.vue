@@ -146,9 +146,10 @@ export default {
               myframe.contentWindow.document
             ) {
               (function() {
-                myframe.contentWindow.document.open();
-                myframe.contentWindow.document.close();
-                let iframeHtml = myframe.contentWindow.document.getElementsByTagName(
+                let doc =  myframe.contentWindow.document;
+                doc.open();
+                doc.close();
+                let iframeHtml = doc.getElementsByTagName(
                   "html"
                 )[0];
                 iframeHtml.innerHTML =
@@ -157,19 +158,26 @@ export default {
                     : newVal.contentText;
                 myframe.height = 0;
                 setTimeout(function() {
-                  myframe.contentWindow.document.body.style.whiteSpace = "pre-wrap";
-                    myframe.contentWindow.document.body.style.wordBreak = "break-word";
-                  // myframe.height =myframe.contentWindow.document.documentElement.scrollHeight ||myframe.contentWindow.document.body.scrollHeight;
-                   myframe.height =   Math.max(myframe.contentWindow.document.documentElement.getBoundingClientRect().height,myframe.contentWindow.document.body.getBoundingClientRect().height)
+                  
+                  doc.body.style.wordBreak = "break-word";
+                  let  reg = /<(?:(?:\/?[A-Za-z]\w*\b(?:[=\s](['"]?)[\s\S]*?\1)*)|(?:!--[\s\S]*?--))\/?>/g;
+                  let iframeBody = doc.getElementsByTagName("body")[0];
+                  if(!reg.test(iframeBody.innerHTML)){
+                    doc.body.style.whiteSpace =
+                    "pre-wrap";
+                  }
+              
+                  let height =  Math.max(doc.documentElement.getBoundingClientRect().height,doc.body.getBoundingClientRect().height)||doc.documentElement.scrollHeight ||doc.body.scrollHeight;
+                   myframe.height = height;
                   iframeHtml.style.overflow = "hidden";
-                  myframe.contentWindow.document.documentElement.scrollTop = 0;
+                  doc.documentElement.scrollTop = 0;
                   let base = document.createElement("base");
                   base.target = "_blank";
-                  myframe.contentWindow.document
+                  doc
                     .getElementsByTagName("head")[0]
                     .appendChild(base);
                   // 阻止默认事件
-                  myframe.contentWindow.document.addEventListener(
+                  doc.addEventListener(
                     "click",
                     e => {
                       e.preventDefault();
@@ -177,7 +185,7 @@ export default {
                   );
                 }, 100);
                 // 复制链接
-                let el = myframe.contentWindow.document.getElementsByTagName(
+                let el = doc.getElementsByTagName(
                   "a"
                 );
                 let copyInput = document.querySelector("#copyInput");
@@ -220,7 +228,9 @@ export default {
                 myframe.contentWindow.document
               ){
                 myframe.height= 0;
-              myframe.height =   Math.max(myframe.contentWindow.document.documentElement.getBoundingClientRect().height,myframe.contentWindow.document.body.getBoundingClientRect().height)
+                let doc =  myframe.contentWindow.document;
+                let height =  Math.max(doc.documentElement.getBoundingClientRect().height,doc.body.getBoundingClientRect().height)||doc.documentElement.scrollHeight ||doc.body.scrollHeight;
+                myframe.height =  height
               }
         },66);
       }

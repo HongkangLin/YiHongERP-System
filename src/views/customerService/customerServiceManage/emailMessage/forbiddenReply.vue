@@ -11,7 +11,7 @@
           <span class="formAddr hideTxt">{{emailDetail.fromAddr}}</span>
         </p>
         <p class="toAddr">
-           <span>收件人:</span>
+          <span>收件人:</span>
           <span class="hideTxt">{{emailDetail.toAddr}}</span>
         </p>
         <p class="subject">
@@ -50,7 +50,7 @@ export default {
       row: 1,
       isDisable: true
     };
-  }, 
+  },
   mounted() {},
   computed: {
     ...mapState("email", {
@@ -72,43 +72,44 @@ export default {
               myframe.contentWindow.document
             ) {
               (function() {
-                myframe.contentWindow.document.open();
-                myframe.contentWindow.document.close();
-                let iframeHtml = myframe.contentWindow.document.getElementsByTagName(
-                  "html"
-                )[0];
+                let doc = myframe.contentWindow.document;
+                doc.open();
+                doc.close();
+                let iframeHtml = doc.getElementsByTagName("html")[0];
                 iframeHtml.innerHTML =
                   newVal.contentHtml != null
                     ? newVal.contentHtml
                     : newVal.contentText;
                 myframe.height = 0;
                 setTimeout(function() {
-                  myframe.contentWindow.document.body.style.whiteSpace =
-                    "pre-wrap";
-                  myframe.height =
-                    myframe.contentWindow.document.documentElement
-                      .scrollHeight ||
-                    myframe.contentWindow.document.body.scrollHeight;
+                  doc.body.style.wordBreak = "break-word";
+                  let reg = /<(?:(?:\/?[A-Za-z]\w*\b(?:[=\s](['"]?)[\s\S]*?\1)*)|(?:!--[\s\S]*?--))\/?>/g;
+                  let iframeBody = doc.getElementsByTagName("body")[0];
+                  if (!reg.test(iframeBody.innerHTML)) {
+                    doc.body.style.whiteSpace = "pre-wrap";
+                  }
+
+                  let height =
+                    Math.max(
+                      doc.documentElement.getBoundingClientRect().height,
+                      doc.body.getBoundingClientRect().height
+                    ) ||
+                    doc.documentElement.scrollHeight ||
+                    doc.body.scrollHeight;
+                  myframe.height = height;
                   iframeHtml.style.overflow = "hidden";
-                  myframe.contentWindow.document.documentElement.scrollTop = 0;
+                  doc.documentElement.scrollTop = 0;
 
                   let base = document.createElement("base");
                   base.target = "_blank";
-                  myframe.contentWindow.document
-                    .getElementsByTagName("head")[0]
-                    .appendChild(base);
+                  doc.getElementsByTagName("head")[0].appendChild(base);
                   // 阻止默认事件
-                  myframe.contentWindow.document.addEventListener(
-                    "click",
-                    e => {
-                      e.preventDefault();
-                    }
-                  );
+                  doc.addEventListener("click", e => {
+                    e.preventDefault();
+                  });
                 }, 100);
                 // 复制链接
-                let el = myframe.contentWindow.document.getElementsByTagName(
-                  "a"
-                );
+                let el = doc.getElementsByTagName("a");
                 let copyInput = document.querySelector("#copyInput");
                 for (let i in el) {
                   try {
@@ -133,8 +134,35 @@ export default {
       }
     }
   },
+  mounted() {
+    window.addEventListener("resize", this.resizeThrottler, false);
+  },
   methods: {
     ...mapMutations("email", ["setIsSelectEmail"]),
+    resizeThrottler() {
+      let myframe = document.getElementById("myframe");
+      if (!this.resizeTimeout) {
+        this.resizeTimeout = setTimeout(() => {
+          this.resizeTimeout = null;
+          if (
+            myframe &&
+            myframe.contentWindow &&
+            myframe.contentWindow.document
+          ) {
+            myframe.height = 0;
+            let doc = myframe.contentWindow.document;
+            let height =
+              Math.max(
+                doc.documentElement.getBoundingClientRect().height,
+                doc.body.getBoundingClientRect().height
+              ) ||
+              doc.documentElement.scrollHeight ||
+              doc.body.scrollHeight;
+            myframe.height = height;
+          }
+        }, 66);
+      }
+    },
     // 查询邮件详情
     queryEmailDetails(messageId) {
       this.replyMessageId = messageId;
@@ -153,6 +181,9 @@ export default {
         }
       });
     }
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.resizeThrottler);
   }
 };
 </script>
@@ -200,7 +231,7 @@ export default {
         display: flex;
         .name {
           font-size: 16px;
-           min-width: fit-content;
+          min-width: fit-content;
         }
         .formAddr {
           color: #999999;
@@ -216,8 +247,8 @@ export default {
         background: #f6f7f9;
         color: #bcbcbc;
         font-weight: 400;
-        span:nth-of-type(1){
-         min-width: fit-content;
+        span:nth-of-type(1) {
+          min-width: fit-content;
         }
         span:nth-of-type(2) {
           color: #666;
@@ -230,7 +261,7 @@ export default {
         height: 24px;
         line-height: 24px;
         color: #999999;
-        span:nth-of-type(2){
+        span:nth-of-type(2) {
           min-width: fit-content;
         }
       }

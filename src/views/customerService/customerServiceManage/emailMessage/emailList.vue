@@ -111,8 +111,10 @@ export default {
       }
     },
     itemList: {
-      handler() {
-        this.delData(this.emailType);
+      handler(newVal) {
+        if(newVal&&newVal.length){
+            this.delData(this.emailType);
+        }
       }
     },
     emailList: {

@@ -450,8 +450,6 @@ export default {
       this.$refs[type].handleFocus()
     },
     chooseDate(type){
-      console.log(this.formData[type])
-      // this.formData = Object.assign(this.formData, { [type]: value });
       this.saveEmailOrder();
     },
     saveEmailOrder() {

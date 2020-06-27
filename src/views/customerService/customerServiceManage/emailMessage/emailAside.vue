@@ -122,16 +122,9 @@ export default {
       "setCurEmailObj"
     ]),
     ...mapActions("email", ["queryItemList"]),
-    delData(itemName, item) {
-      if (itemName === "需要回复") {
-        if (item.needReplyCount != null) {
-          return item.needReplyCount;
-        }
-      } else if (itemName === "未读") {
-        if (item.unseenCount != null) {
-          return item.unseenCount;
-        }
-      }
+    // 初始化侧边栏数据,从一个有数据的账号切换到没有数据的账号时,有可能会有缓存,
+    initAside(){
+      this.setItemList([])
     },
     // 查询店铺列表
     queryShopNameList() {
@@ -148,6 +141,7 @@ export default {
           this.queryBoxInfoByShopId({shopId:this.curShopObj.shopId });
         } else {
           this.$message.error("没有数据");
+          this.initAside()
           return;
         }
       });
@@ -166,6 +160,7 @@ export default {
           this.handleEmail(command);
         } else {
           this.$message.error("没有数据");
+          this.initAside()
           return;
         }
       });
