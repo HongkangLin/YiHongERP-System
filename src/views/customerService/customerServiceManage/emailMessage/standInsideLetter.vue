@@ -579,6 +579,13 @@ export default {
         toAddr: this.otherAddr,
         html: `<html>${this.reply}</html>`
       };
+      if(data.fromAddr==this.curEmailObj.fromAddr){
+          data.fromAlias = this.curEmailObj.fromAlias
+          data.toMainAlias = this.curEmailObj.toMainAlias
+      }else{
+          data.fromAlias = this.curEmailObj.toMainAlias
+          data.toMainAlias = this.curEmailObj.fromAlias
+      }
       let attachList = [];
       this.attachList.forEach(item => {
         attachList.push({

@@ -191,10 +191,7 @@ export default {
       }
       // 切换选项时,需要重置一些数据
       this.setEmailType(keys[index]);
-      this.setIsSelectEmail(false);
-      this.setMultipleSelection([]);
-      this.setCurEmailObj({})
-
+      this.setEmailData()
     },
     handleShopName(command) {
       window.localStorage.shopId = command.shopId;
@@ -209,6 +206,12 @@ export default {
       obj.shopName = this.curShopObj.shopName;
       this.setEmailBoxData(obj);
       this.queryItemList(command.boxId);
+      this.setEmailData()
+    },
+    setEmailData(){
+      this.setIsSelectEmail(false);
+      this.setMultipleSelection([]);
+      this.setCurEmailObj({})
     }
   }
 };

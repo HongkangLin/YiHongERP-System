@@ -114,7 +114,8 @@ export default {
       emailType: state => state.emailType,
       isSelectEmail: state => state.isSelectEmail,
       emailBoxData: state => state.emailBoxData,
-      itemList: state => state.itemList
+      itemList: state => state.itemList,
+      curEmailObj: state => state.curEmailObj
     }),
     textareaRow() {
       return this.reply ? 10 : 1;
@@ -338,7 +339,13 @@ export default {
         data.fromAddr = this.emailDetail.toAddr;
         data.toAddr = this.emailDetail.fromAddr;
       }
-
+      if(data.fromAddr==this.curEmailObj.fromAddr){
+          data.fromAlias = this.curEmailObj.fromAlias
+          data.toMainAlias = this.curEmailObj.toMainAlias
+      }else{
+          data.fromAlias = this.curEmailObj.toMainAlias
+          data.toMainAlias = this.curEmailObj.fromAlias
+      }
       let quoteData = {
         from: escape(this.emailDetail.fromAddr),
         to: escape(this.emailDetail.toAddr),

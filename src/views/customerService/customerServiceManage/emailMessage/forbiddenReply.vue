@@ -51,7 +51,6 @@ export default {
       isDisable: true
     };
   },
-  mounted() {},
   computed: {
     ...mapState("email", {
       emailType: state => state.emailType,
